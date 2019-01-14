@@ -18,10 +18,11 @@ private:
 	static MainApplication* m_Instance;
 
 	MainApplication();
-	~MainApplication();
+	
 
 public:
 	
+	~MainApplication();
 
 	static MainApplication* Instance()
 	{
