@@ -1,9 +1,13 @@
 #pragma once
 
-#include <SDL.h>
 #include <string>
 #include <iostream>
+
+#include <SDL.h>
 #include <SDL_image.h>
+
+#include "TextureManager.h"
+
 
 // Singleton class structure
 class MainApplication
@@ -16,6 +20,8 @@ private:
 	bool m_IsRunning;			// Indicates that the current game instance is running
 
 	static MainApplication* m_Instance;
+
+	TextureManager* TextureContainer;
 
 	MainApplication();
 	

@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <iostream>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -12,19 +13,29 @@
 class TextureManager
 {
 private:
+	TextureManager();
 
 	static TextureManager *m_Instance;
 	std::map<std::string, SDL_Texture*> m_TextureContainer;
 
 public:
-	TextureManager();
 	~TextureManager();
 
-	bool load(std::string Pathname, std::string TextureID, SDL_Renderer* pRenderer);
+	static TextureManager* Instance()
+	{
+		if (m_Instance == nullptr)
+		{
+			return new TextureManager();
+		}
+		else
+		{
+			return m_Instance;
+		}
+	}
 
-	
-	
-	//void DrawCurrentFrame(std::string TextureID, int TopLeftX, int TopLeftY, int Width,
-	//	int Height,)
+	bool load(std::string Pathname, std::string TextureID, SDL_Renderer* pRenderer);
+	void DrawCurrentFrame(std::string TextureID, Rect Dimensions, SDL_RendererFlip Flip, 
+		 SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame = 1);
+	int RemoveTexture(std::string TextureID);
 };
 

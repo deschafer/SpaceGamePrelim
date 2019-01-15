@@ -22,6 +22,9 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	int topLeftXPos = TopLeftXPos;		// Default X/Y positions
 	int topLeftYPos = TopLeftYPos;		// ... 
 
+	// Save a pointer to TextureManager instance
+	TextureContainer = TextureManager::Instance();
+
 	// First initialize SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
@@ -47,7 +50,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 			g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, 0);
 
-			if (g_pRenderer != 0) // renderer init success
+			if (g_pRenderer != nullptr) // renderer init success
 			{
 				std::cout << "Renderer creation success\n";
 				SDL_SetRenderDrawColor(g_pRenderer, 105, 165, 200, 255);
@@ -72,6 +75,8 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	}
 	// everything succeeded lets draw the window
 	std::cout << "SDL intiialization was successful" << std::endl;
+
+	TextureContainer->load("Assets/arc2.png", "Source", g_pRenderer);
 
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
@@ -110,7 +115,6 @@ void MainApplication::HandleEvents()
 void MainApplication::Update()
 {
 
-	
 
 
 }
@@ -128,6 +132,7 @@ void MainApplication::Render()
 	// Draw the objects on the map
 	// Then draw the UI elements
 	// Then draw any overlayed menus
+	TextureContainer->DrawCurrentFrame("Source", Rect(20, 20, 200, 200), SDL_FLIP_NONE, g_pRenderer, 1);
 
 	SDL_RenderPresent(g_pRenderer);
 }
