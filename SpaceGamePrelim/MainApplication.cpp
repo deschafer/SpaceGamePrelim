@@ -1,4 +1,9 @@
+
+
+
 #include "MainApplication.h"
+
+
 
 // init static member
 MainApplication* MainApplication::m_Instance = nullptr;
@@ -76,6 +81,10 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	// everything succeeded lets draw the window
 	std::cout << "SDL intiialization was successful" << std::endl;
 
+	Player = new GameEntity(new TextureProperties(Rect(0, 0, 100, 100), 
+		"Source", 1, 3, 1, 3), Vector(100, 100), 
+		Vector(100, 0), Vector(100, 0));
+
 	TextureContainer->load("Assets/arc2.png", "Source", g_pRenderer);
 
 	// intialize joysticks/gamepads if supported
@@ -115,7 +124,7 @@ void MainApplication::HandleEvents()
 void MainApplication::Update()
 {
 
-
+	Player->Update();
 
 }
 
@@ -132,7 +141,9 @@ void MainApplication::Render()
 	// Draw the objects on the map
 	// Then draw the UI elements
 	// Then draw any overlayed menus
-	TextureContainer->DrawCurrentFrame("Source", Rect(20, 20, 200, 200), SDL_FLIP_NONE, g_pRenderer, 1);
+
+	Player->Draw();
+	//TextureContainer->DrawCurrentFrame("Source", Rect(0, 0, 100, 100), SDL_FLIP_NONE, g_pRenderer, 3);
 
 	SDL_RenderPresent(g_pRenderer);
 }

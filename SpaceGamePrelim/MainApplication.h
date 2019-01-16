@@ -7,15 +7,15 @@
 #include <SDL_image.h>
 
 #include "TextureManager.h"
-
+#include "GameEntity.h"
 
 // Singleton class structure
 class MainApplication
 {
 private:
 
-	SDL_Window* g_pWindow = 0;
-	SDL_Renderer* g_pRenderer = 0;
+	SDL_Window* g_pWindow;
+	SDL_Renderer* g_pRenderer;
 
 	bool m_IsRunning;			// Indicates that the current game instance is running
 
@@ -25,6 +25,7 @@ private:
 
 	MainApplication();
 	
+	GameEntity* Player;
 
 public:
 	
@@ -34,7 +35,8 @@ public:
 	{
 		if (m_Instance == nullptr)
 		{
-			return new MainApplication();
+			m_Instance = new MainApplication();
+			return m_Instance;
 		}
 		else
 		{
@@ -48,6 +50,9 @@ public:
 	void HandleEvents();
 	void Update();
 	void Render();
+
+	SDL_Renderer* GetRenderer() { return g_pRenderer; }
+	SDL_Window* GetWindow() { return g_pWindow; }
 
 	bool IsRunning() { return m_IsRunning; }
 

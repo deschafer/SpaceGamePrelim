@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "BasicTypes.h"
 
+
 #include <string>
 
 class GameEntity : public GameObject
@@ -10,9 +11,10 @@ class GameEntity : public GameObject
 public:
 	GameEntity();
 	virtual ~GameEntity();
-	GameEntity(/*loader class,*/ Vector InitPosition, Vector InitVelocity, Vector InitAccel);
+	GameEntity(TextureProperties* Properties, 
+		Vector InitPosition, Vector InitVelocity, Vector InitAccel);
 
-	virtual bool Load(/* params here*/) {}
+	virtual bool Load(TextureProperties* Properties);
 	virtual void Update();
 	virtual void Draw();
 	virtual void Delete();
@@ -25,7 +27,7 @@ private:
 	Vector m_Velocity;
 	Vector m_Acceleration;
 
-	Rect Dimensions;
+	Rect m_Dimensions;
 
 	// Animation properties
 	int m_CurrentFrame;

@@ -51,6 +51,17 @@ bool TextureManager::load(std::string Pathname, std::string TextureID, SDL_Rende
 void TextureManager::DrawCurrentFrame(std::string TextureID, Rect Dim, SDL_RendererFlip Flip, 
 	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
 {
+
+	cout << "type (CDSL inside) -- "
+		<< TextureID << endl
+		<< Dim.Height() << endl
+		<< Dim.Width() << endl
+		<< Dim.TopLeftX() << endl
+		<< Dim.TopLeftY() << endl
+		<< CurrentFrame << endl
+		<< CurrentRow << endl;
+
+	cout << "Drawing";
 	// Local vars
 	SDL_Rect SourceRect;
 	SDL_Rect DestRect;

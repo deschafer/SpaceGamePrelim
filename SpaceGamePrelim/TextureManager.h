@@ -25,7 +25,8 @@ public:
 	{
 		if (m_Instance == nullptr)
 		{
-			return new TextureManager();
+			m_Instance = new TextureManager();
+			return m_Instance;
 		}
 		else
 		{

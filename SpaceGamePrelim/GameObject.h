@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BasicTypes.h"
 
 // Basic, abstract object class
 class GameObject
@@ -12,7 +13,7 @@ protected:
 
 public:
 
-	virtual bool Load(/* takes the loader class here too*/) = 0;
+	virtual bool Load(TextureProperties *Properties) = 0;
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 	virtual void Delete() = 0;
