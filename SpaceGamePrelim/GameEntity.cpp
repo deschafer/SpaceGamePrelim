@@ -26,6 +26,19 @@ GameEntity::GameEntity(TextureProperties* Properties,
 	m_CurrentRow = Properties->GetCurrentRow();
 }
 
+GameEntity::GameEntity(TextureProperties* Properties, Vector InitPosition)
+{
+	m_Dimensions = Properties->GetDimensions();
+	m_TextureID = Properties->GetTextureID();
+	m_CurrentFrame = Properties->GetCurrentFrame();
+	m_AnimationSpeed = Properties->GetAnimationSpeed();
+	m_CurrentRow = Properties->GetCurrentRow();
+
+	m_Acceleration = Vector(0, 0);
+	m_Velocity = Vector(0, 0);
+	m_Position = InitPosition;
+}
+
 //
 // Load()
 // Loads this Game object's corresponding texture in the
@@ -45,9 +58,8 @@ void GameEntity::Update()
 {
 
 	m_Position += m_Velocity;
-	m_Velocity += m_Velocity;
+	m_Velocity += m_Acceleration;
 
-	// need to set rect dimensions !!!
 
 }
 
@@ -61,9 +73,9 @@ void GameEntity::Draw()
 {
 	SDL_Renderer* Temp = MainApplication::Instance()->GetRenderer();
 	
-	TextureManager::Instance()->DrawCurrentFrame(m_TextureID, m_Dimensions, SDL_FLIP_NONE,
-		MainApplication::Instance()->GetRenderer(), m_CurrentRow, m_CurrentFrame);
-	//TextureManager::Instance()->DrawCurrentFrame("Source", Rect(0, 0, 100, 100), SDL_FLIP_NONE, Temp, 3);
+	TextureManager::Instance()->DrawCurrentFrame(m_TextureID, m_Position.getX(), 
+		m_Position.getY(), m_Dimensions, SDL_FLIP_NONE, MainApplication::Instance()->GetRenderer(), 
+		m_CurrentRow, m_CurrentFrame);
 }
 
 //

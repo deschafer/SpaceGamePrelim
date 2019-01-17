@@ -37,6 +37,8 @@ public:
 	bool load(std::string Pathname, std::string TextureID, SDL_Renderer* pRenderer);
 	void DrawCurrentFrame(std::string TextureID, Rect Dimensions, SDL_RendererFlip Flip, 
 		 SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame = 1);
+	void TextureManager::DrawCurrentFrame(std::string TextureID, int X, int Y, Rect Dim, SDL_RendererFlip Flip,
+		SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame);
 	int RemoveTexture(std::string TextureID);
 };
 

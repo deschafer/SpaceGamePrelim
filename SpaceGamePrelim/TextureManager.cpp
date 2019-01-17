@@ -52,16 +52,6 @@ void TextureManager::DrawCurrentFrame(std::string TextureID, Rect Dim, SDL_Rende
 	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
 {
 
-	cout << "type (CDSL inside) -- "
-		<< TextureID << endl
-		<< Dim.Height() << endl
-		<< Dim.Width() << endl
-		<< Dim.TopLeftX() << endl
-		<< Dim.TopLeftY() << endl
-		<< CurrentFrame << endl
-		<< CurrentRow << endl;
-
-	cout << "Drawing";
 	// Local vars
 	SDL_Rect SourceRect;
 	SDL_Rect DestRect;
@@ -73,6 +63,26 @@ void TextureManager::DrawCurrentFrame(std::string TextureID, Rect Dim, SDL_Rende
 	SourceRect.h = DestRect.h = Dim.Height();
 	DestRect.x = Dim.TopLeftX();
 	DestRect.y = Dim.TopLeftY();
+
+	SDL_RenderCopyEx(pRenderer, m_TextureContainer[TextureID], &SourceRect,
+		&DestRect, 0, 0, Flip);
+}
+
+void TextureManager::DrawCurrentFrame(std::string TextureID, int X, int Y, Rect Dim, SDL_RendererFlip Flip,
+	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
+{
+
+	// Local vars
+	SDL_Rect SourceRect;
+	SDL_Rect DestRect;
+
+	// Setting information to draw this frame correctly
+	SourceRect.x = Dim.Width() * CurrentFrame;
+	SourceRect.y = Dim.Height() * (CurrentRow - 1);
+	SourceRect.w = DestRect.w = Dim.Width();
+	SourceRect.h = DestRect.h = Dim.Height();
+	DestRect.x = X;
+	DestRect.y = Y;
 
 	SDL_RenderCopyEx(pRenderer, m_TextureContainer[TextureID], &SourceRect,
 		&DestRect, 0, 0, Flip);

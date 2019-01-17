@@ -24,6 +24,8 @@ public:
 	int Width() { return m_Width; }
 	int Height() { return m_Height; }
 
+	void SetOffset(int offsetX, int offsetY) { m_TopLeftX += offsetX; m_TopLeftY += offsetY; }
+
 	Rect();
 	~Rect();
 };

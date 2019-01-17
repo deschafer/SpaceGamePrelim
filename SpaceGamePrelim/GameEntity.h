@@ -13,6 +13,8 @@ public:
 	virtual ~GameEntity();
 	GameEntity(TextureProperties* Properties, 
 		Vector InitPosition, Vector InitVelocity, Vector InitAccel);
+	GameEntity::GameEntity(TextureProperties* Properties, Vector InitPosition);
+
 
 	virtual bool Load(TextureProperties* Properties);
 	virtual void Update();

@@ -19,6 +19,7 @@ public:
 	TextureProperties();
 	TextureProperties(Rect Dimensions, std::string TextureID, int CurrentFrame, 
 		int NumberFrames, int AnimationSpeed, int CurrentRow);
+	TextureProperties(Rect Dimensions, std::string TextureID);
 
 	Rect GetDimensions() { return m_Dimensions; }
 	int GetCurrentFrame() { return m_CurrentFrame; }

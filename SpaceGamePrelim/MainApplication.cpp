@@ -83,7 +83,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	Player = new GameEntity(new TextureProperties(Rect(0, 0, 100, 100), 
 		"Source", 1, 3, 1, 3), Vector(100, 100), 
-		Vector(100, 0), Vector(100, 0));
+		Vector(.05, 0), Vector(.5, 0));
 
 	TextureContainer->load("Assets/arc2.png", "Source", g_pRenderer);
 
