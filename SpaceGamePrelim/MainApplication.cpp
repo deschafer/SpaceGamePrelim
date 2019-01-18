@@ -85,13 +85,6 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene"));
 	ActiveSceneManager::Instance()->AddScene(new TestScene("test scene", true));
 
-	/*
-	Player = new GameEntity(new TextureProperties(Rect(0, 0, 100, 100), 
-		"Source", 1, 3, 1, 3), Vector(100, 100), 
-		Vector(.05, 0), Vector(.5, 0));
-
-	TextureContainer->load("Assets/arc2.png", "Source", g_pRenderer);
-	*/
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
 
