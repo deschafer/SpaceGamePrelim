@@ -1,14 +1,14 @@
 #pragma once
 #include "Scene.h"
 
-#include <string>
 
-class MenuScene : public Scene
+
+class TestScene : public Scene
 {
 public:
-	MenuScene();
-	MenuScene(std::string SceneID, bool Paused = 0);
-	virtual ~MenuScene();
+	TestScene();
+	TestScene(std::string SceneID, bool Paused = 0);
+	virtual ~TestScene();
 
 	virtual bool Enter();
 	virtual void Exit();

@@ -8,6 +8,9 @@
 
 #include "TextureManager.h"
 #include "GameEntity.h"
+#include "ActiveSceneManager.h"
+#include "MenuScene.h"
+#include "TestScene.h"
 
 // Singleton class structure
 class MainApplication

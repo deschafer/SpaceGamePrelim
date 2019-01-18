@@ -23,6 +23,7 @@ GameEntity::GameEntity(TextureProperties* Properties,
 	m_TextureID = Properties->GetTextureID();
 	m_CurrentFrame = Properties->GetCurrentFrame();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
+	m_NumberFrames = Properties->GetNumberFrames();
 	m_CurrentRow = Properties->GetCurrentRow();
 }
 
@@ -33,6 +34,7 @@ GameEntity::GameEntity(TextureProperties* Properties, Vector InitPosition)
 	m_CurrentFrame = Properties->GetCurrentFrame();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
 	m_CurrentRow = Properties->GetCurrentRow();
+	m_NumberFrames = Properties->GetNumberFrames();
 
 	m_Acceleration = Vector(0, 0);
 	m_Velocity = Vector(0, 0);
@@ -60,6 +62,7 @@ void GameEntity::Update()
 	m_Position += m_Velocity;
 	m_Velocity += m_Acceleration;
 
+	m_CurrentFrame = int(((SDL_GetTicks() / m_AnimationSpeed) % m_NumberFrames));
 
 }
 

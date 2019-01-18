@@ -20,6 +20,7 @@ ActiveSceneManager::~ActiveSceneManager()
 //
 int ActiveSceneManager::AddScene(Scene* NewScene)
 {
+	if (NewScene == nullptr) throw "NewScene was nullptr";
 	try {
 		m_OpenScenes.push_back(NewScene);
 	}
@@ -41,6 +42,9 @@ int ActiveSceneManager::AddScene(Scene* NewScene)
 
 	// Get a ptr to the current, active scene
 	m_ActiveScene = m_OpenScenes.back();
+
+	// Initialiaze the state
+	m_ActiveScene->Enter();
 	return 0;
 }
 
@@ -50,9 +54,10 @@ int ActiveSceneManager::AddScene(Scene* NewScene)
 //
 int ActiveSceneManager::RemoveActiveScene()
 {
+	m_ActiveScene->Exit();
 
 	try {
-		m_OpenScenes.pop_back();
+		if(!m_OpenScenes.empty()) m_OpenScenes.pop_back();
 	}
 	catch (const std::bad_alloc &) {
 		SDL_ShowSimpleMessageBox(0, "Error", "std vector pop_back bad allocation -- AddScene",
@@ -86,7 +91,7 @@ int ActiveSceneManager::Purge()
 
 	try {
 		// May need to do more here to clear all memory in the scenes
-		m_OpenScenes.clear();
+		if(!m_OpenScenes.empty()) m_OpenScenes.clear();
 	}
 	catch (const std::bad_alloc &) {
 		SDL_ShowSimpleMessageBox(0, "Error", "std vector clear bad allocation -- AddScene",
@@ -116,8 +121,38 @@ int ActiveSceneManager::Purge()
 void ActiveSceneManager::Update()
 {
 
-	m_ActiveScene->Update();
+	bool DoNotUpdate = false;
 
+	/*
+	if(m_ActiveScene != nullptr)
+		m_ActiveScene->Update();
+	else
+	{
+		throw "ActiveScene was nullptr";
+	}
+	*/
+
+	if (m_ActiveScene != nullptr && m_ActiveScene->IsPauseScreen())
+	{
+		DoNotUpdate = true;
+	}
+	
+
+	// Iterate through all the scenes under the active scene
+	// located at the rear of the vector
+	if (!m_OpenScenes.empty() && !DoNotUpdate)
+	{
+		for (int i = 0; i < m_OpenScenes.size() - 1; i++)
+		{
+			m_OpenScenes[i]->Update();
+		}
+	}
+
+	if (m_ActiveScene != nullptr) m_ActiveScene->Update();
+	else
+	{
+		throw "ActiveScene was nullptr";
+	}
 }
 
 //
@@ -126,7 +161,24 @@ void ActiveSceneManager::Update()
 //
 void ActiveSceneManager::Render()
 {
+	/*
+	if(m_ActiveScene != nullptr)
+		m_ActiveScene->Render();
+	else
+	{
+		throw "ActiveScene was nullptr";
+	}
+	*/
 
-	m_ActiveScene->Render();
+	// Iterate through all the scenes in the vector
+	// drawing them in the correct order
+	if (!m_OpenScenes.empty())
+	{
+		for (int i = 0; i < m_OpenScenes.size(); i++)
+		{
+			m_OpenScenes[i]->Render();
+		}
+	}
+
 
 }
