@@ -34,7 +34,7 @@ bool TestScene::Enter()
 
 	Scene::m_Objects.push_back(Temp);
 
-	Temp = new GameEntity(new TextureProperties(Rect(-220, -200, 100, 100),
+	Temp = new Player(new TextureProperties(Rect(-220, -200, 100, 100),
 		"tank", 1, 3, 60, 1), Vector(200, 100),
 		Vector(0, 0), Vector(0, 0));
 

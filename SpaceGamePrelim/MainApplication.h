@@ -11,6 +11,7 @@
 #include "ActiveSceneManager.h"
 #include "MenuScene.h"
 #include "TestScene.h"
+#include "InputManager.h"
 
 // Singleton class structure
 class MainApplication

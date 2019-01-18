@@ -22,7 +22,6 @@ MainApplication::~MainApplication()
 bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int TopLeftYPos,
 	int WndWidth, int WndHeight, bool Fullscreen, bool WndCentered)
 {
-
 	int WndFlags = SDL_WINDOW_SHOWN;	// Sets default window style
 	int topLeftXPos = TopLeftXPos;		// Default X/Y positions
 	int topLeftYPos = TopLeftYPos;		// ... 
@@ -52,7 +51,6 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 		if (g_pWindow != 0)
 		{
 			std::cout << "Window creation success\n";
-
 			g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, 0);
 
 			if (g_pRenderer != nullptr) // renderer init success
@@ -65,7 +63,6 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 				std::cout << "Render creation failed" << std::endl;
 				return false;
 			}
-
 		}
 		else
 		{
@@ -81,12 +78,17 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	// everything succeeded lets draw the window
 	std::cout << "SDL intiialization was successful" << std::endl;
 
-	
+	// Temporary addition of scenes here
 	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene"));
 	ActiveSceneManager::Instance()->AddScene(new TestScene("test scene", true));
+	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene", false));
+
+
 
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
+
+
 
 	return true;
 }
@@ -98,19 +100,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 //
 void MainApplication::HandleEvents()
 {
-
-	SDL_Event event;
-	while (SDL_PollEvent(&event))
-	{
-		switch (event.type)
-		{
-		case SDL_QUIT:
-			Terminate();
-			break;
-		default:
-			break;
-		}
-	}
+	InputManager::Instance()->HandleEvents();
 }
 
 //

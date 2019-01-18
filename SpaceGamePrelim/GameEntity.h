@@ -22,7 +22,7 @@ public:
 	virtual void Delete();
 
 
-private:
+protected:
 
 	// Movement properties
 	Vector m_Position;
