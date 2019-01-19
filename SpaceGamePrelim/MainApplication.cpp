@@ -80,8 +80,8 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	// Temporary addition of scenes here
 	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene"));
-	ActiveSceneManager::Instance()->AddScene(new TestScene("test scene", true));
-	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene", false));
+	//ActiveSceneManager::Instance()->AddScene(new TestScene("test scene", true));
+	//ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene", false));
 
 
 

@@ -37,6 +37,8 @@ protected:
 	int m_AnimationSpeed;
 	int m_CurrentRow;
 
+	Callback m_Callback;
+
 	std::string m_TextureID;
 };
 

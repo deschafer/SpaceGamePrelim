@@ -24,20 +24,17 @@ MenuScene::~MenuScene()
 
 bool MenuScene::Enter()
 {
-	GameEntity *Temp = new GameEntity(new TextureProperties(Rect(0, 0, 100, 100),
-		"Source", 1, 3, 1, 3), Vector(100, 100),
-		Vector(.5, .5), Vector(0, 0));
+	
 
-	TextureManager::Instance()->load("Assets/arc2.png", "Source", 
+	TextureManager::Instance()->load("Assets/expl2.png", "Explosion", 
 		MainApplication::Instance()->GetRenderer());
 
-	Scene::m_Objects.push_back(Temp);
+	GameEntity *Temp = new Button(new TextureProperties(Rect(0, 0, 32, 31),
+		"Explosion", 1, 3, 1, 1), Vector(100, 100),
+		Vector(0, 0), Vector(0, 0), s_ButtonHandler);
 
-	Temp = new GameEntity(new TextureProperties(Rect(-220, -200, 100, 100),
-		"Source", 1, 3, 1, 3), Vector(200, 100),
-		Vector(.5, 0), Vector(0, 0));
 
-	Scene::m_Objects.push_back(Temp);
+	m_Objects.push_back(Temp);
 
 	cout << "Entering a menuscene\n";
 	return true;
@@ -60,4 +57,9 @@ void MenuScene::Render()
 
 	Scene::Render();
 
+}
+
+void MenuScene::s_ButtonHandler()
+{
+	cout << "Menu button has been clicked\n";
 }

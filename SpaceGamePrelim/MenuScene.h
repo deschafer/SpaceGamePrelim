@@ -1,10 +1,14 @@
 #pragma once
 #include "Scene.h"
+#include "Button.h"
 
 #include <string>
 
 class MenuScene : public Scene
 {
+private:
+
+
 public:
 	MenuScene();
 	MenuScene(std::string SceneID, bool Paused = 0);
@@ -15,6 +19,8 @@ public:
 
 	virtual void Update() override;
 	virtual void Render() override;
+
+	static void s_ButtonHandler();
 
 };
 
