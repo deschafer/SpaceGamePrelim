@@ -57,6 +57,15 @@
     <ClCompile Include="Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MapObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapCell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MapManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainApplication.h">
@@ -102,6 +111,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapCoordinate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapCell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultMapObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

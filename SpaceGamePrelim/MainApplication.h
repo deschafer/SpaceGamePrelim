@@ -12,24 +12,26 @@
 #include "MenuScene.h"
 #include "TestScene.h"
 #include "InputManager.h"
+#include "MapManager.h"
 
 // Singleton class structure
 class MainApplication
 {
 private:
 
+	int m_WindowWidth;
+	int m_WindowHeight;
+	bool m_ResolutionChanged;
+
 	SDL_Window* g_pWindow;
 	SDL_Renderer* g_pRenderer;
 
-	bool m_IsRunning;			// Indicates that the current game instance is running
-
+	bool m_IsRunning;			
 	static MainApplication* m_Instance;
-
 	TextureManager* TextureContainer;
+	GameEntity* Player;
 
 	MainApplication();
-	
-	GameEntity* Player;
 
 public:
 	
@@ -48,6 +50,10 @@ public:
 		}
 	}
 
+	int GetWndWidth() { return m_WindowWidth; }
+	int GetWndHeight() { return m_WindowHeight; }
+	bool ResolutionChanged();
+
 	bool Initialize(const char * WindowTitle, int TopLeftXPos, int TopLeftYPos,
 		int WndWidth, int WndHeight, bool Fullscreen, bool WndCentered = true);
 	
@@ -63,7 +69,5 @@ public:
 	void Terminate() { m_IsRunning = false; }	// Terminates this game instance
 	void Clean();
 	
-
-
 };
 

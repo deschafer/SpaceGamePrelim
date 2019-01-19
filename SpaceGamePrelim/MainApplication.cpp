@@ -9,7 +9,10 @@
 MainApplication* MainApplication::m_Instance = nullptr;
 
 
-MainApplication::MainApplication() : m_IsRunning(true)
+MainApplication::MainApplication() : 
+	m_IsRunning(true),
+	m_WindowHeight(0),
+	m_WindowWidth(0)
 {}
 
 MainApplication::~MainApplication()
@@ -20,11 +23,15 @@ MainApplication::~MainApplication()
 //
 //
 bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int TopLeftYPos,
-	int WndWidth, int WndHeight, bool Fullscreen, bool WndCentered)
+	int WndWidth, int WndHeight, bool Fullscreen, bool WndCentered) 
 {
 	int WndFlags = SDL_WINDOW_SHOWN;	// Sets default window style
 	int topLeftXPos = TopLeftXPos;		// Default X/Y positions
 	int topLeftYPos = TopLeftYPos;		// ... 
+
+	m_WindowHeight = WndHeight;
+	m_WindowWidth = WndWidth;
+	m_ResolutionChanged = true;
 
 	// Save a pointer to TextureManager instance
 	TextureContainer = TextureManager::Instance();
@@ -78,6 +85,8 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	// everything succeeded lets draw the window
 	std::cout << "SDL intiialization was successful" << std::endl;
 
+	TextureContainer->load("Assets/block.png", "DefaultMap", g_pRenderer);
+
 	// Temporary addition of scenes here
 	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene"));
 	//ActiveSceneManager::Instance()->AddScene(new TestScene("test scene", true));
@@ -111,6 +120,11 @@ void MainApplication::HandleEvents()
 //
 void MainApplication::Update()
 {
+	// First update the map objects
+	
+
+
+	// Then update other objects on top of the map objects
 	try {
 		ActiveSceneManager::Instance()->Update();
 	}
@@ -135,6 +149,8 @@ void MainApplication::Render()
 	// Then draw the UI elements
 	// Then draw any overlayed menus
 
+	MapManager::Instance()->DrawGrid();
+
 	try {
 		ActiveSceneManager::Instance()->Render();
 	}
@@ -142,7 +158,7 @@ void MainApplication::Render()
 	{
 
 	}
-
+	SDL_SetRenderDrawColor(g_pRenderer, 105, 165, 200, 255);
 	SDL_RenderPresent(g_pRenderer);
 }
 
@@ -161,4 +177,19 @@ void MainApplication::Clean()
 	SDL_DestroyRenderer(g_pRenderer);
 	// Finally, closing application
 	SDL_Quit();
+}
+
+//
+//
+//
+//
+bool MainApplication::ResolutionChanged()
+{
+
+	if (m_ResolutionChanged)
+	{
+		m_ResolutionChanged = false;
+		return true;
+	}
+	else return false;
 }

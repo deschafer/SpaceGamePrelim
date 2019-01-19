@@ -136,6 +136,9 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainApplication.cpp" />
+    <ClCompile Include="MapCell.cpp" />
+    <ClCompile Include="MapManager.cpp" />
+    <ClCompile Include="MapObject.cpp" />
     <ClCompile Include="MenuScene.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Rect.cpp" />
@@ -148,10 +151,15 @@
     <ClInclude Include="ActiveSceneManager.h" />
     <ClInclude Include="BasicTypes.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="DefaultMapObject.h" />
     <ClInclude Include="GameEntity.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MainApplication.h" />
+    <ClInclude Include="MapCell.h" />
+    <ClInclude Include="MapCoordinate.h" />
+    <ClInclude Include="MapManager.h" />
+    <ClInclude Include="MapObject.h" />
     <ClInclude Include="MenuScene.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Rect.h" />

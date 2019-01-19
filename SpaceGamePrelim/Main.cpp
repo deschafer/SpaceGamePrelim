@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 
 	MainApplication* Application = MainApplication::Instance();	// Getting the app instance
 
-	if (Application->Initialize("SpaceGamePrelim", 100, 100, 1400, 900, false))
+	if (Application->Initialize("SpaceGamePrelim", 100, 100, 1408, 896, false))
 	{
 
 		// Main event loop 
