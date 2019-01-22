@@ -8,6 +8,7 @@
 #include "TextureManager.h"
 #include "MapCell.h"
 
+
 // Singleton class structure
 class MapManager
 {
@@ -37,6 +38,9 @@ private:
 
 
 	void DrawDefaultRoom();
+	void DrawDefinedRoom();
+	void DrawVisibleCells();
+
 
 public:
 
