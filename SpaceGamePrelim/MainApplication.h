@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 #include <SDL.h>
 #include <SDL_image.h>
@@ -13,6 +14,7 @@
 #include "TestScene.h"
 #include "InputManager.h"
 #include "MapManager.h"
+#include "RoomManager.h"
 
 // Singleton class structure
 class MainApplication

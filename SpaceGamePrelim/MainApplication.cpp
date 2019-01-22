@@ -96,7 +96,23 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	//ActiveSceneManager::Instance()->AddScene(new TestScene("test scene", true));
 	//ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene", false));
 
+	std::vector<int> Sides;
+	Sides.push_back(rand() % 20);
+	Sides.push_back(rand() % 20);
+	Sides.push_back(5);
+	Sides.push_back(5);
+	Sides.push_back(8);
+	Sides.push_back(8);
+	std::vector<char> Turns;
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('R');
 
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(Sides, Turns, 5, 5),
+		"Rectangle");
 
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well

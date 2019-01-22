@@ -7,6 +7,7 @@
 #include "MapObject.h"
 #include "TextureManager.h"
 #include "MapCell.h"
+#include "RoomManager.h"
 
 
 // Singleton class structure
@@ -28,6 +29,7 @@ private:
 	
 	MapObject*** m_VisibleObjectArray;	// 2D array of pointers to mapobjects visible
 
+	RoomManager* m_RoomManager;
 
 	std::vector<MapObject*> m_LoadedMapObjects;
 

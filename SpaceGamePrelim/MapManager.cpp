@@ -7,7 +7,7 @@
 
 #include <map>
 
-#define RANDOM 653
+#define RANDOM 71245
 
 using namespace std;
 
@@ -62,6 +62,8 @@ MapManager::MapManager() :
 	m_ActiveWndWidth(0),
 	m_Init(true)
 {
+	
+	m_RoomManager = RoomManager::Instance();
 }
 
 
@@ -97,7 +99,6 @@ void MapManager::DrawGrid()
 
 	if (m_Init)
 	{
-		srand(RANDOM);
 		for (int i = 0; i < m_Columns; i++)
 		{
 			for (int j = 0; j < m_Rows; j++)
@@ -166,182 +167,6 @@ void MapManager::DrawVisibleCells()
 //
 void MapManager::DrawDefaultRoom()
 {
-	int StartX = 3;
-	int StartY = 6;
-
-	static bool complete = false;
-	int Width = 25;
-	int Height = 6;
-	int MaxHeightX = StartX;
-	int MaxHeightY = StartY + Height;
-	int MaxWidthX = StartX + Width;
-	int MaxWidthY = StartY;
-
-	int rng = 0; // 0 = south, 1 = west, 2 = north, 3 = east
-	int count = 0;
-	int TempX = StartX;
-	int TempY = StartY;
-
-	bool Switch = false;
-	bool SwitchStart = false;
-	bool EventPossible = false;
-
-	Event EventType = Event::NONE;
-	Direction CurrentDirection = Direction::EAST;
-
-	map<pair<int, int>, bool> CurrentLocations;
-
-	int LengthParam = rand() % 7;
-	int HeightParam = rand() % 3;
-
-	while (!complete)
-	{
-		count++;
-
-
-
-		m_VisibleObjectArray[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
-		
-
-
-		if (CurrentDirection == Direction::EAST)
-		{
-			if ((TempX + 1) < (MaxWidthX - LengthParam))
-			{
-				TempX++;
-
-			}
-			else
-			{
-				complete = true;
-				break;
-			}
-
-
-			if (EventType == Event::SWITCH)
-			{
-				int num = rand() % 2;
-
-				cout << num;
-				
-				if (((TempY - 1) > StartY) && num == 0)
-				{
-					TempY--;
-					TempX--;
-				}
-				else if (((TempY + 1) < (MaxHeightY - HeightParam)) && num == 1)
-				{
-					TempY++;
-					TempX--;
-				}
-
-				// Reset the event
-				EventType = Event::NONE;
-			}
-			
-
-
-			if (count % 2 == 0)
-			{
-				EventPossible = true;
-			}
-
-		}
-		else if (CurrentDirection == Direction::SOUTH)
-		{
-
-		}
-		else if (CurrentDirection == Direction::WEST)
-		{
-
-		}
-		else if (CurrentDirection == Direction::NORTH)
-		{
-
-		}
-
-		if (EventPossible)
-		{
-
-			int num = rand() % 3;
-
-			if (num == 0)
-			{
-				EventType = Event::SWITCH;
-			}
-			else if (num == 1)
-			{
-				EventType = Event::CHANGE_DIR;
-			}
-			else
-			{
-				EventType = Event::NONE;
-			}
-
-			EventPossible = false;
-		}
-
-	}
-
-	/*
-
-
-	if (TempX < (MaxWidthX - LengthParam) && TempY < MaxHeightY && TempY >= StartY  && TempX >= StartX)
-		{
-			m_VisibleObjectArray[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
-		}
-		else
-		{
-			complete = true;
-		}
-
-		// Moving east
-		TempX++;
-		
-		if ((rand() % 10) == 0 && !Switch)
-		{
-			Switch = true;
-			SwitchStart = true;
-
-			TempY++;
-
-		}
-		if (SwitchStart)
-		{
-			TempX--;
-			SwitchStart = false;
-		}
-
-
-
-
-	// Setting the pointers
-	for (int x = StartX; x < m_Columns && x < MaxWidthX; x++)
-	{
-
-		for (int y = StartY; y < m_Rows && y < MaxHeightY; y++)
-		{
-
-			m_VisibleObjectArray[x][y] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(x * 32, y * 32));
-
-		}
-
-	}
-	*/
-
-	// Setting the pointers
-	for (int x = StartX; x < m_Columns && x < MaxWidthX; x++)
-	{
-
-		for (int y = StartY; y < m_Rows && y < MaxHeightY; y++)
-		{
-			if(m_VisibleObjectArray[x][y] != nullptr)
-				m_VisibleObjectArray[x][y]->Draw();
-
-		}
-
-	}
-
 
 }
 
@@ -349,7 +174,9 @@ void MapManager::DrawDefaultRoom()
 void MapManager::DrawDefinedRoom()
 {
 
-	int StartX = 6;
+	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("Rectangle");
+
+	int StartX = 10;
 	int StartY = 6;
 
 	static bool complete = false;
@@ -382,15 +209,11 @@ void MapManager::DrawDefinedRoom()
 
 	pair<int, int> CurrentPair;
 
-	Sides.push_back(rand()%20);
-	Sides.push_back(rand()%20);
-	Sides.push_back(3);
-	Sides.push_back(2);
-
-	Turns.push_back('R');
-	Turns.push_back('R');
-	Turns.push_back('R');
-	Turns.push_back('R');
+	for (int i = 0; i < Properties->m_Sides.size(); i++)
+	{
+		Sides.push_back(Properties->m_Sides[i]);
+		Turns.push_back(Properties->m_Turns[i]);
+	}
 
 	int LengthParam = rand() % 7;
 	int HeightParam = rand() % 3;
@@ -439,8 +262,14 @@ void MapManager::DrawDefinedRoom()
 		}
 		else if (CurrentDirection == Direction::WEST)
 		{
+			if ((TempX - 1) == StartX)
+			{
+			}
+			else
+			{
+				TempX--;
 
-			TempX--;
+			}
 
 		}
 		else if (CurrentDirection == Direction::NORTH)

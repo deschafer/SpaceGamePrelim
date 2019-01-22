@@ -18,6 +18,11 @@ int main(int argc, char* argv[])
 	const int FPS = 60;
 	const int DELAY_TIME = 1000.0f / FPS;
 
+	int seed;
+
+	cin >> seed;
+	srand(seed);
+
 	MainApplication* Application = MainApplication::Instance();	// Getting the app instance
 
 	if (Application->Initialize("SpaceGamePrelim", 100, 100, 1408, 896, false))

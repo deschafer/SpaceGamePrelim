@@ -41,7 +41,9 @@ bool TextureManager::load(std::string Pathname, std::string TextureID, SDL_Rende
 		m_TextureContainer[TextureID] = Texture;
 	}
 
+#ifdef DEBUG
 	cout << "New texture " << TextureID << " loaded successfully." << endl;
+#endif // DEBUG
 }
 
 //
