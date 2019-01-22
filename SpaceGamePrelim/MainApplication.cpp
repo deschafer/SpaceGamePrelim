@@ -63,7 +63,9 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 			if (g_pRenderer != nullptr) // renderer init success
 			{
 				std::cout << "Renderer creation success\n";
-				SDL_SetRenderDrawColor(g_pRenderer, 105, 165, 200, 255);
+				//SDL_SetRenderDrawColor(g_pRenderer, 105, 165, 200, 255);
+				SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 0, 0);
+
 			}
 			else
 			{
@@ -86,6 +88,8 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	std::cout << "SDL intiialization was successful" << std::endl;
 
 	TextureContainer->load("Assets/block.png", "DefaultMap", g_pRenderer);
+	TextureContainer->load("Assets/room.png", "Room", g_pRenderer);
+
 
 	// Temporary addition of scenes here
 	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene"));
@@ -158,7 +162,7 @@ void MainApplication::Render()
 	{
 
 	}
-	SDL_SetRenderDrawColor(g_pRenderer, 105, 165, 200, 255);
+
 	SDL_RenderPresent(g_pRenderer);
 }
 

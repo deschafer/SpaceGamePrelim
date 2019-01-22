@@ -6,6 +6,7 @@
 
 #include "MapObject.h"
 #include "TextureManager.h"
+#include "MapCell.h"
 
 // Singleton class structure
 class MapManager
@@ -20,9 +21,12 @@ private:
 	int m_OffsetX;
 	int m_OffsetY;
 
+	bool m_Init;
+
 	static MapManager* m_Instance;
 	
 	MapObject*** m_VisibleObjectArray;	// 2D array of pointers to mapobjects visible
+
 
 	std::vector<MapObject*> m_LoadedMapObjects;
 
@@ -30,6 +34,9 @@ private:
 
 	void LoadDefaultMapObjects();
 	void DrawDefaultMapObjects();
+
+
+	void DrawDefaultRoom();
 
 public:
 
