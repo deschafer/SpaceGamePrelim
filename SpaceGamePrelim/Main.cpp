@@ -18,9 +18,9 @@ int main(int argc, char* argv[])
 	const int FPS = 60;
 	const int DELAY_TIME = 1000.0f / FPS;
 
-	int seed;
+	int seed = 78;
 
-	cin >> seed;
+	//cin >> seed;
 	srand(seed);
 
 	MainApplication* Application = MainApplication::Instance();	// Getting the app instance

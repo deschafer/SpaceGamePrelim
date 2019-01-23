@@ -15,26 +15,27 @@
 
 struct RoomProperties
 {
-	std::vector<int> m_Sides; // # of sides must equal # of turns
+	//std::vector<int> m_Sides; // # of sides must equal # of turns
 	std::vector<char> m_Turns; // # of turns must equal # of sides
+	std::vector<bool> m_GreaterSideDefinition;
 	
 	int m_Variation;		// Parameter denoting the level of variation in the 
 						// Generated rooms
 	int m_Extremism;	// Higher number forces more extreme versions of rooms
 
-	RoomProperties(std::vector<int> Sides, std::vector<char> Turns,
+	RoomProperties(std::vector<bool> GreaterSides, std::vector<char> Turns,
 		int Variation, int Extreme) :
 		m_Variation(Variation),
 		m_Extremism(Extreme)
 	{
-		if (Sides.size() != Turns.size())
+		if (GreaterSides.size() != Turns.size())
 		{
 			throw "Sizes of vectors do not match!";
 			abort();
 		}
-		for (int i = 0; i < Sides.size(); i++)
+		for (size_t i = 0; i < GreaterSides.size(); i++)
 		{
-			m_Sides.push_back(Sides[i]);
+			m_GreaterSideDefinition.push_back(GreaterSides[i]);
 			m_Turns.push_back(Turns[i]);
 		}
 	}

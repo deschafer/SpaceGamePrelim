@@ -142,7 +142,7 @@ void ActiveSceneManager::Update()
 	// located at the rear of the vector
 	if (!m_OpenScenes.empty() && !DoNotUpdate)
 	{
-		for (int i = 0; i < m_OpenScenes.size() - 1; i++)
+		for (size_t i = 0; i < m_OpenScenes.size() - 1; i++)
 		{
 			m_OpenScenes[i]->Update();
 		}
@@ -174,7 +174,7 @@ void ActiveSceneManager::Render()
 	// drawing them in the correct order
 	if (!m_OpenScenes.empty())
 	{
-		for (int i = 0; i < m_OpenScenes.size(); i++)
+		for (size_t i = 0; i < m_OpenScenes.size(); i++)
 		{
 			m_OpenScenes[i]->Render();
 		}

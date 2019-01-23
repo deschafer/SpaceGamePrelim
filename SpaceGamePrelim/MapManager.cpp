@@ -12,12 +12,17 @@
 using namespace std;
 
 enum class Direction{EAST, SOUTH, WEST, NORTH};
+enum class Side{TOP, RIGHT, BOTTOM, LEFT, COMPL};
 enum class Event{NONE, CHANGE_DIR, SWITCH};
 
 
 Direction TurnRight(Direction Dir);
 Direction TurnLeft(Direction Dir);
 Direction Turn(Direction Dir, char code);
+Side NextSide(Side side);
+Side CorrespondingSide(Direction Dir);
+Direction CorrespondingDirection(Side side);
+
 
 Direction TurnRight(Direction Dir)
 {
@@ -51,6 +56,60 @@ Direction Turn(Direction Dir, char code)
 	}
 	else
 		abort();
+
+}
+
+Side NextSide(Side side)
+{
+	int num = static_cast<int>(side);
+	num += 1;
+
+	return static_cast<Side>(num);
+}
+
+Side CorrespondingSide(Direction Dir)
+{
+
+	switch (Dir)
+	{
+	case Direction::EAST:
+		return Side::TOP;
+
+	case Direction::SOUTH:
+		return Side::RIGHT;
+
+	case Direction::WEST:
+		return Side::BOTTOM;
+
+	case Direction::NORTH:
+		return Side::LEFT;
+
+	default:
+		break;
+	}
+
+}
+
+Direction CorrespondingDirection(Side side)
+{
+
+	switch (side)
+	{
+	case Side::TOP:
+		return Direction::EAST;
+
+	case Side::RIGHT:
+		return Direction::SOUTH;
+
+	case Side::BOTTOM:
+		return Direction::WEST;
+
+	case Side::LEFT:
+		return Direction::NORTH;
+
+	default:
+		break;
+	}
 
 }
 
@@ -173,27 +232,32 @@ void MapManager::DrawDefaultRoom()
 
 void MapManager::DrawDefinedRoom()
 {
-
 	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("Rectangle");
+
+	float ParamInnerSizeY = .25;
+	float ParamInnerSizeX = .25;
+
+	static bool complete = false;
+	if (complete) return;
 
 	int StartX = 10;
 	int StartY = 6;
-
-	static bool complete = false;
-	int Width = 25;
-	int Height = 6;
+	int Width = 20;
+	int Height = 10;
 	int MaxHeightX = StartX;
 	int MaxHeightY = StartY + Height;
 	int MaxWidthX = StartX + Width;
 	int MaxWidthY = StartY;
-
 	int rng = 0; // 0 = south, 1 = west, 2 = north, 3 = east
 	int count = 0;
+	int Count = 0;
+	int CountRecord = 0;
 	int TempX = StartX;
 	int TempY = StartY;
-
 	int CurrentLengthQuota = 0;
 
+	bool Test = 0;
+	bool SizingComplete = false;
 	bool Switch = false;
 	bool SwitchStart = false;
 	bool EventPossible = false;
@@ -201,22 +265,163 @@ void MapManager::DrawDefinedRoom()
 
 	Event EventType = Event::NONE;
 	Direction CurrentDirection = Direction::EAST;
+	Direction CurrentDirectionTemp;
+	Side CurrentSide = Side::TOP;
 
 	map<pair<int, int>, bool> CurrentLocations;
 
 	vector<int> Sides; // size = number of sides, each side has a length.
+	vector<bool> SideDef;
 	vector<char> Turns;
+
+	vector<int> TempSidesEast;
+	vector<int> TempSidesSouth;
+	vector<int> TempSidesWest;
+	vector<int> TempSidesNorth;
 
 	pair<int, int> CurrentPair;
 
-	for (int i = 0; i < Properties->m_Sides.size(); i++)
+	for (size_t i = 0; i < Properties->m_GreaterSideDefinition.size(); i++)
 	{
-		Sides.push_back(Properties->m_Sides[i]);
+		SideDef.push_back(Properties->m_GreaterSideDefinition[i]);
 		Turns.push_back(Properties->m_Turns[i]);
 	}
 
-	int LengthParam = rand() % 7;
-	int HeightParam = rand() % 3;
+
+
+
+	// Determining the side lengths for each of the 
+	// sides in this defined room.
+	while (!SizingComplete)
+	{
+		CurrentDirectionTemp = CorrespondingDirection(CurrentSide);
+		CountRecord = Count;
+
+		// Adding empty sides to the record
+		do
+		{
+			Test = SideDef[Count];
+			if (CurrentDirectionTemp == Direction::EAST && CurrentSide != Side::BOTTOM)
+			{
+				TempSidesEast.push_back(0 - (TempSidesSouth.size() + TempSidesNorth.size())); // placeholder for a side to be set later
+			}
+			else if (CurrentDirectionTemp == Direction::SOUTH && CurrentSide != Side::LEFT)
+			{
+				TempSidesSouth.push_back(0 - (TempSidesWest.size() + TempSidesEast.size())); // placeholder for a side to be set later
+			}
+			else if (CurrentDirectionTemp == Direction::WEST && CurrentSide != Side::TOP)
+			{
+				TempSidesWest.push_back(0 - (TempSidesSouth.size() + TempSidesNorth.size())); // placeholder for a side to be set later
+			}
+			else if (CurrentDirectionTemp == Direction::NORTH && CurrentSide != Side::RIGHT)
+			{
+				TempSidesNorth.push_back(0 - (TempSidesWest.size() + TempSidesEast.size())); // placeholder for a side to be set later
+			}
+
+			CurrentDirectionTemp = Turn(CurrentDirectionTemp, Turns[Count]);
+
+			cout << "1";
+			Count++;
+		} while (Test != true);
+
+		// Then we deal with these sides
+
+		bool TempComplete = false;
+		int X_Size = 0;
+		int Y_Size = 0;
+
+
+		while (!TempComplete)
+		{
+			X_Size = TempSidesEast.size();
+
+			// first deal with x positions
+			for (int i = 0; i < X_Size; i++)
+			{
+				TempSidesEast[i] = Width / X_Size; // all set to equal size for now
+			}
+
+			X_Size = TempSidesWest.size();
+
+			// first deal with x positions
+			for (int i = 0; i < X_Size; i++)
+			{
+				TempSidesWest[i] = Width / X_Size; // all set to equal size for now
+			}
+
+			Y_Size = TempSidesSouth.size();
+
+			for (int i = 0; i < Y_Size; i++)
+			{
+				TempSidesSouth[i] = static_cast<int>((Height * ParamInnerSizeY) / Y_Size); // all set to equal size for now
+			}
+
+			Y_Size = TempSidesNorth.size();
+
+			for (int i = 0; i < Y_Size; i++)
+			{
+				TempSidesNorth[i] = static_cast<int>((Height * ParamInnerSizeY) / Y_Size); // all set to equal size for now
+			}
+
+			TempComplete = true;
+		}
+
+		int CountWest = 0;
+		int CountEast = 0;
+		int CountNorth = 0;
+		int CountSouth = 0;
+
+		CurrentDirectionTemp = Direction::EAST;
+
+		// Before touching any other sides, we add these to the sides
+		Count = CountRecord;
+		do
+		{
+			Test = SideDef[Count];
+			if (CurrentDirectionTemp == Direction::EAST && CurrentSide != Side::BOTTOM)
+			{
+				Sides.push_back(TempSidesEast[CountEast]);
+				CountEast++;
+			}
+			else if (CurrentDirectionTemp == Direction::SOUTH && CurrentSide != Side::LEFT)
+			{
+				Sides.push_back(TempSidesSouth[CountSouth]); // placeholder for a side to be set later
+				CountSouth++;
+			}
+			else if (CurrentDirectionTemp == Direction::WEST && CurrentSide != Side::TOP)
+			{
+				Sides.push_back(TempSidesWest[CountWest]); // placeholder for a side to be set later
+				CountWest++;
+			}
+			else if (CurrentDirectionTemp == Direction::NORTH && CurrentSide != Side::RIGHT)
+			{
+				Sides.push_back(TempSidesNorth[CountNorth]); // placeholder for a side to be set later
+				CountNorth++;
+			}
+
+			CurrentDirectionTemp = Turn(CurrentDirectionTemp, Turns[Count]);
+
+			cout << "2";
+			Count++;
+
+		} while (Test != true);
+
+
+		if ((CurrentSide = NextSide(CurrentSide)) == Side::LEFT)
+		{
+			SizingComplete = true;
+		}
+
+	}
+	// ------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
 
 
 	while (!complete)
@@ -262,19 +467,20 @@ void MapManager::DrawDefinedRoom()
 		}
 		else if (CurrentDirection == Direction::WEST)
 		{
+			/*
 			if ((TempX - 1) == StartX)
 			{
 			}
 			else
 			{
-				TempX--;
-
+				
 			}
+			*/
+			TempX--;
 
 		}
 		else if (CurrentDirection == Direction::NORTH)
 		{
-
 			
 
 			if (LastSide)
