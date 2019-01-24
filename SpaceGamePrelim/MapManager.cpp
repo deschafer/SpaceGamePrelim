@@ -22,7 +22,8 @@ Direction Turn(Direction Dir, char code);
 Side NextSide(Side side);
 Side CorrespondingSide(Direction Dir);
 Direction CorrespondingDirection(Side side);
-
+bool SideHorizontal(Side side);
+bool SideVertical(Side side);
 
 Direction TurnRight(Direction Dir)
 {
@@ -107,6 +108,56 @@ Direction CorrespondingDirection(Side side)
 	case Side::LEFT:
 		return Direction::NORTH;
 
+	default:
+		break;
+	}
+
+}
+
+bool SideHorizontal(Side side)
+{
+	switch (side)
+	{
+	case Side::TOP:
+		return true;
+		break;
+	case Side::RIGHT:
+		return false;
+		break;
+	case Side::BOTTOM:
+		return true;
+		break;
+	case Side::LEFT:
+		return false;
+		break;
+	case Side::COMPL:
+		throw "incorrect side";
+		break;
+	default:
+		break;
+	}
+
+}
+
+bool SideVertical(Side side)
+{
+	switch (side)
+	{
+	case Side::TOP:
+		return false;
+		break;
+	case Side::RIGHT:
+		return true;
+		break;
+	case Side::BOTTOM:
+		return false;
+		break;
+	case Side::LEFT:
+		return true;
+		break;
+	case Side::COMPL:
+		throw "incorrect side";
+		break;
 	default:
 		break;
 	}
@@ -230,9 +281,15 @@ void MapManager::DrawDefaultRoom()
 }
 
 
+//
+// DrawDefinedRoom()
+// Preliminary version of the room generation that will be a part of 
+// every room.
+//
+//
 void MapManager::DrawDefinedRoom()
 {
-	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("Rectangle");
+	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("Complex");
 
 	float ParamInnerSizeY = .25;
 	float ParamInnerSizeX = .25;
@@ -242,8 +299,8 @@ void MapManager::DrawDefinedRoom()
 
 	int StartX = 10;
 	int StartY = 6;
-	int Width = 20;
-	int Height = 10;
+	int Width = 15;
+	int Height = 15;
 	int MaxHeightX = StartX;
 	int MaxHeightY = StartY + Height;
 	int MaxWidthX = StartX + Width;
@@ -255,6 +312,8 @@ void MapManager::DrawDefinedRoom()
 	int TempX = StartX;
 	int TempY = StartY;
 	int CurrentLengthQuota = 0;
+	int HorizontalDeficit = 0;
+	int VerticalDeficit = 0;
 
 	bool Test = 0;
 	bool SizingComplete = false;
@@ -330,7 +389,7 @@ void MapManager::DrawDefinedRoom()
 		int X_Size = 0;
 		int Y_Size = 0;
 
-
+		// Determining an actual size for these sides
 		while (!TempComplete)
 		{
 			X_Size = TempSidesEast.size();
@@ -338,7 +397,21 @@ void MapManager::DrawDefinedRoom()
 			// first deal with x positions
 			for (int i = 0; i < X_Size; i++)
 			{
-				TempSidesEast[i] = Width / X_Size; // all set to equal size for now
+				if (SideVertical(CurrentSide))
+				{
+					TempSidesEast[i] = static_cast<int>((Width * ParamInnerSizeX) / (X_Size)); // all set to equal size for now
+				}
+				else
+				{
+					//if (HorizontalDeficit)
+					//{
+					//	HorizontalDeficit--;
+					//}
+					//else
+					//{
+						TempSidesEast[i] = Width / X_Size - HorizontalDeficit; // all set to equal size for now
+					//}
+				}
 			}
 
 			X_Size = TempSidesWest.size();
@@ -346,24 +419,74 @@ void MapManager::DrawDefinedRoom()
 			// first deal with x positions
 			for (int i = 0; i < X_Size; i++)
 			{
-				TempSidesWest[i] = Width / X_Size; // all set to equal size for now
+				if (SideVertical(CurrentSide))
+				{
+					TempSidesWest[i] = static_cast<int>((Width * ParamInnerSizeX) / (X_Size)); // all set to equal size for now
+				}
+				else
+				{
+					//if (HorizontalDeficit)
+					//{
+					//	HorizontalDeficit--;
+					//}
+					//else
+					//{
+						TempSidesWest[i] = Width / X_Size - HorizontalDeficit; // all set to equal size for now
+					//}
+				}
 			}
 
 			Y_Size = TempSidesSouth.size();
 
 			for (int i = 0; i < Y_Size; i++)
 			{
-				TempSidesSouth[i] = static_cast<int>((Height * ParamInnerSizeY) / Y_Size); // all set to equal size for now
+				if (SideHorizontal(CurrentSide))
+				{
+					TempSidesSouth[i] = static_cast<int>((Height * ParamInnerSizeY) / (Y_Size)); // all set to equal size for now
+				}
+				else
+				{
+					TempSidesSouth[i] = Height / Y_Size; // all set to equal size for now
+
+				}
 			}
 
 			Y_Size = TempSidesNorth.size();
 
 			for (int i = 0; i < Y_Size; i++)
 			{
-				TempSidesNorth[i] = static_cast<int>((Height * ParamInnerSizeY) / Y_Size); // all set to equal size for now
+				if (SideHorizontal(CurrentSide))
+				{
+					TempSidesNorth[i] = static_cast<int>((Height * ParamInnerSizeY) / (Y_Size)); // all set to equal size for now
+				}
+				else
+				{
+					TempSidesNorth[i] = Height / Y_Size; // all set to equal size for now
+				}
 			}
 
 			TempComplete = true;
+		}
+
+		// Calculating defecits
+		
+		if (TempSidesEast.size() > TempSidesWest.size() ||
+			TempSidesEast.size() < TempSidesWest.size())
+		{
+			int EastMagnitude = 0;
+			int WestMagnitude = 0;
+
+			for (size_t i = 0; i < TempSidesWest.size(); i++)
+			{
+				WestMagnitude += TempSidesWest[i];
+			}
+
+			for (size_t i = 0; i < TempSidesEast.size(); i++)
+			{
+				EastMagnitude += TempSidesEast[i];
+			}
+
+			HorizontalDeficit = abs(static_cast<int>(EastMagnitude - WestMagnitude));
 		}
 
 		int CountWest = 0;
@@ -371,9 +494,9 @@ void MapManager::DrawDefinedRoom()
 		int CountNorth = 0;
 		int CountSouth = 0;
 
-		CurrentDirectionTemp = Direction::EAST;
+		CurrentDirectionTemp = CorrespondingDirection(CurrentSide);
 
-		// Before touching any other sides, we add these to the sides
+		// Adding the sides to the vector to be draw
 		Count = CountRecord;
 		do
 		{
@@ -407,10 +530,16 @@ void MapManager::DrawDefinedRoom()
 		} while (Test != true);
 
 
-		if ((CurrentSide = NextSide(CurrentSide)) == Side::LEFT)
+		if ((CurrentSide = NextSide(CurrentSide)) == Side::COMPL)
 		{
 			SizingComplete = true;
 		}
+		
+		TempSidesEast.clear();
+		TempSidesSouth.clear();
+		TempSidesWest.clear();
+		TempSidesNorth.clear();
+
 
 	}
 	// ------------------------------------------------------------------------------------------
@@ -482,7 +611,7 @@ void MapManager::DrawDefinedRoom()
 		else if (CurrentDirection == Direction::NORTH)
 		{
 			
-
+			/*
 			if (LastSide)
 			{
 				if (TempX > StartX)
@@ -509,6 +638,8 @@ void MapManager::DrawDefinedRoom()
 			{
 				TempY--;
 			}
+			*/
+			TempY--;
 
 		}
 

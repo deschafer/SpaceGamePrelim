@@ -105,14 +105,46 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	Sides.push_back(85);
 
 	std::vector<bool> SideDef;
+	// Top side
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
 	SideDef.push_back(0);
 	SideDef.push_back(0);
 	SideDef.push_back(0);
 	SideDef.push_back(0);
 	SideDef.push_back(1);
+	// Right side
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
 	SideDef.push_back(1);
+	// Bottom side
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
 	SideDef.push_back(1);
-
+	// Last side ending
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
 
 	std::vector<char> Turns;
 	Turns.push_back('R');
@@ -120,12 +152,65 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	Turns.push_back('L');
 	Turns.push_back('R');
 	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
 	Turns.push_back('R');
 	Turns.push_back('R');
-
+	// Right Side
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	// Bottom side
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	// Last side ending
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
 
 	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
-		"Rectangle");
+		"Complex");
+
+	SideDef.clear();
+	Turns.clear();
+
+	SideDef.push_back(1);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+
+
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('R');
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+		"L-Rect");
+
 
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
