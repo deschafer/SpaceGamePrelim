@@ -200,7 +200,6 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	SideDef.push_back(1);
 	SideDef.push_back(1);
 
-
 	Turns.push_back('R');
 	Turns.push_back('R');
 	Turns.push_back('L');
@@ -209,8 +208,31 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	Turns.push_back('R');
 
 	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
-		"L-Rect");
+		"Inv_L_Rect");
 
+	SideDef.clear();
+	Turns.clear();
+
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+		"L_Rect");
 
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well

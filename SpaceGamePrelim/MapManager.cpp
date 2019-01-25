@@ -289,11 +289,12 @@ void MapManager::DrawDefaultRoom()
 //
 void MapManager::DrawDefinedRoom()
 {
-	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("Complex");
+	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("L_Rect");
 
 	float ParamInnerSizeY = .25;
 	float ParamInnerSizeX = .25;
 
+	// only for this test function
 	static bool complete = false;
 	if (complete) return;
 
@@ -306,7 +307,7 @@ void MapManager::DrawDefinedRoom()
 	int MaxWidthX = StartX + Width;
 	int MaxWidthY = StartY;
 	int rng = 0; // 0 = south, 1 = west, 2 = north, 3 = east
-	int count = 0;
+	int DrawCount = 0;
 	int Count = 0;
 	int CountRecord = 0;
 	int TempX = StartX;
@@ -330,24 +331,22 @@ void MapManager::DrawDefinedRoom()
 	map<pair<int, int>, bool> CurrentLocations;
 
 	vector<int> Sides; // size = number of sides, each side has a length.
-	vector<bool> SideDef;
-	vector<char> Turns;
+	vector<bool> SideDef;	// stores the Greater Side Definition from the room def
+	vector<char> Turns;		// Stores the turns from the room def
 
-	vector<int> TempSidesEast;
+	vector<int> TempSidesEast;	// Temporary vectors, used in the first stage
 	vector<int> TempSidesSouth;
 	vector<int> TempSidesWest;
 	vector<int> TempSidesNorth;
 
-	pair<int, int> CurrentPair;
+	pair<int, int> CurrentPair;	// used for adding coordinates
 
+	// Copying vectors
 	for (size_t i = 0; i < Properties->m_GreaterSideDefinition.size(); i++)
 	{
 		SideDef.push_back(Properties->m_GreaterSideDefinition[i]);
 		Turns.push_back(Properties->m_Turns[i]);
 	}
-
-
-
 
 	// Determining the side lengths for each of the 
 	// sides in this defined room.
@@ -377,9 +376,10 @@ void MapManager::DrawDefinedRoom()
 				TempSidesNorth.push_back(0 - (TempSidesWest.size() + TempSidesEast.size())); // placeholder for a side to be set later
 			}
 
+			// Get the new direction
 			CurrentDirectionTemp = Turn(CurrentDirectionTemp, Turns[Count]);
 
-			cout << "1";
+			// Increment a count
 			Count++;
 		} while (Test != true);
 
@@ -403,14 +403,7 @@ void MapManager::DrawDefinedRoom()
 				}
 				else
 				{
-					//if (HorizontalDeficit)
-					//{
-					//	HorizontalDeficit--;
-					//}
-					//else
-					//{
-						TempSidesEast[i] = Width / X_Size - HorizontalDeficit; // all set to equal size for now
-					//}
+					TempSidesEast[i] = Width / X_Size - HorizontalDeficit; // all set to equal size for now
 				}
 			}
 
@@ -425,14 +418,7 @@ void MapManager::DrawDefinedRoom()
 				}
 				else
 				{
-					//if (HorizontalDeficit)
-					//{
-					//	HorizontalDeficit--;
-					//}
-					//else
-					//{
-						TempSidesWest[i] = Width / X_Size - HorizontalDeficit; // all set to equal size for now
-					//}
+					TempSidesWest[i] = Width / X_Size - HorizontalDeficit; // all set to equal size for now
 				}
 			}
 
@@ -446,7 +432,7 @@ void MapManager::DrawDefinedRoom()
 				}
 				else
 				{
-					TempSidesSouth[i] = Height / Y_Size; // all set to equal size for now
+					TempSidesSouth[i] = Height / Y_Size - VerticalDeficit; // all set to equal size for now
 
 				}
 			}
@@ -461,17 +447,22 @@ void MapManager::DrawDefinedRoom()
 				}
 				else
 				{
-					TempSidesNorth[i] = Height / Y_Size; // all set to equal size for now
+					TempSidesNorth[i] = Height / Y_Size - VerticalDeficit; // all set to equal size for now
 				}
 			}
 
 			TempComplete = true;
 		}
 
-		// Calculating defecits
+
+		VerticalDeficit = 0;
+		HorizontalDeficit = 0;
+		// Calculating side-specefic defecits
 		
-		if (TempSidesEast.size() > TempSidesWest.size() ||
-			TempSidesEast.size() < TempSidesWest.size())
+		// Horizontal defecit, used in the verticle sides ONLY
+		if ((TempSidesEast.size() > TempSidesWest.size() ||
+			TempSidesEast.size() < TempSidesWest.size()) &&
+			SideVertical(CurrentSide))
 		{
 			int EastMagnitude = 0;
 			int WestMagnitude = 0;
@@ -485,8 +476,29 @@ void MapManager::DrawDefinedRoom()
 			{
 				EastMagnitude += TempSidesEast[i];
 			}
-
 			HorizontalDeficit = abs(static_cast<int>(EastMagnitude - WestMagnitude));
+		}
+
+		if ((TempSidesNorth.size() > TempSidesSouth.size() ||
+			TempSidesNorth.size() < TempSidesSouth.size()) &&
+			SideHorizontal(CurrentSide))
+		{
+
+			int NorthMagnitude = 0;
+			int SouthMagnitude = 0;
+
+			for (size_t i = 0; i < TempSidesNorth.size(); i++)
+			{
+				NorthMagnitude += TempSidesNorth[i];
+			}
+
+			for (size_t i = 0; i < TempSidesSouth.size(); i++)
+			{
+				SouthMagnitude += TempSidesSouth[i];
+			}
+
+			//VerticalDeficit = 0;
+			VerticalDeficit = abs(static_cast<int>(NorthMagnitude - SouthMagnitude));
 		}
 
 		int CountWest = 0;
@@ -535,27 +547,21 @@ void MapManager::DrawDefinedRoom()
 			SizingComplete = true;
 		}
 		
+		// Clear all temporary storage for cells
 		TempSidesEast.clear();
 		TempSidesSouth.clear();
 		TempSidesWest.clear();
 		TempSidesNorth.clear();
-
-
 	}
+
 	// ------------------------------------------------------------------------------------------
 	// ------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
+	// Now the next step, drawing in the set sides. This goes through the side vector, and draws them 
+	// with their desired length and in the direction indicated by the turns vector.
 	while (!complete)
 	{
-		count++;
+		// keeping a count
+		DrawCount++;
 
 		// Popping the front element
 		if (!Sides.empty() && CurrentLengthQuota <= 0)
@@ -564,6 +570,7 @@ void MapManager::DrawDefinedRoom()
 			Sides.erase(Sides.begin());
 			if (Sides.empty()) LastSide = true;
 		}
+		// Complete case
 		else if(Sides.empty() && CurrentLengthQuota <= 0)
 		{
 			complete = true;
@@ -576,91 +583,42 @@ void MapManager::DrawDefinedRoom()
 			complete = true;
 			break;
 		}
-		else // and the end
-		{
-			// then we can move to the start pos.
-		}
-
 		
+		// Determings the movement based on direction
 		if (CurrentDirection == Direction::EAST)
 		{
-
 			TempX++;
-		
 		}
 		else if (CurrentDirection == Direction::SOUTH)
 		{
-
 			TempY++;
-
 		}
 		else if (CurrentDirection == Direction::WEST)
 		{
-			/*
-			if ((TempX - 1) == StartX)
-			{
-			}
-			else
-			{
-				
-			}
-			*/
 			TempX--;
-
 		}
 		else if (CurrentDirection == Direction::NORTH)
 		{
-			
-			/*
-			if (LastSide)
-			{
-				if (TempX > StartX)
-				{
-					TempX--;
-					CurrentLengthQuota++; // Not counted in quota
-				}
-				else if (TempX < StartX)
-				{
-					TempX++;
-					CurrentLengthQuota++; // Not counted in the quota
-				}
-				else if(TempY > StartY)
-				{
-					TempY--;
-					CurrentLengthQuota++;
-				}
-				else
-				{
-					TempY--;
-				}
-			}
-			else
-			{
-				TempY--;
-			}
-			*/
 			TempY--;
-
 		}
 
 		// Adding the current coordinates to the record
 		CurrentPair.swap(make_pair(TempX, TempY));
 		CurrentLocations[CurrentPair] = true;
 
+		// Adding to the array
 		m_VisibleObjectArray[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
 
-
+		// Decrementing the length
 		CurrentLengthQuota--;
 
+		// Complete case
 		if (CurrentLengthQuota == 0 && !Turns.empty())
 		{
 			CurrentDirection = Turn(CurrentDirection, Turns.front());
 			Turns.erase(Turns.begin());
 		}
-
 	}
-
-
 }
 
 
