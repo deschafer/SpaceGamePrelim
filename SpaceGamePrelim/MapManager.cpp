@@ -243,12 +243,26 @@ void MapManager::DrawGrid()
 
 	}
 
+	//DrawDefaultMapObjects();
+	
+	//DrawDefaultRoom();
+	// Test function only
+	// Drawing a boundary rectangle
+	SDL_Rect cRect;
+	cRect.x = 10 * 32;
+	cRect.y = 6 * 32;
+	cRect.w = 15 * 32;
+	cRect.h = 15 * 32;
+
+
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	// end test
+	SDL_RenderDrawRect(MainApplication::Instance()->GetRenderer(), &cRect);
+
 	SDL_SetRenderDrawColor(renderer, OldR, OldG, OldB, OldA);
 
 
-	//DrawDefaultMapObjects();
 	DrawDefinedRoom();
-	//DrawDefaultRoom();
 
 
 	DrawVisibleCells();
@@ -289,7 +303,7 @@ void MapManager::DrawDefaultRoom()
 //
 void MapManager::DrawDefinedRoom()
 {
-	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("L_Rect");
+	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("Complex"); 
 
 	float ParamInnerSizeY = .25;
 	float ParamInnerSizeX = .25;
@@ -300,8 +314,10 @@ void MapManager::DrawDefinedRoom()
 
 	int StartX = 10;
 	int StartY = 6;
-	int Width = 15;
-	int Height = 15;
+	int Width = 20;
+	int Height = 20;
+	int EffectHeight = Height;
+	int EffectWidth = Width;
 	int MaxHeightX = StartX;
 	int MaxHeightY = StartY + Height;
 	int MaxWidthX = StartX + Width;
@@ -315,6 +331,7 @@ void MapManager::DrawDefinedRoom()
 	int CurrentLengthQuota = 0;
 	int HorizontalDeficit = 0;
 	int VerticalDeficit = 0;
+	int CellCounter = 0;
 
 	bool Test = 0;
 	bool SizingComplete = false;
@@ -392,6 +409,12 @@ void MapManager::DrawDefinedRoom()
 		// Determining an actual size for these sides
 		while (!TempComplete)
 		{
+			//if (CurrentSide != Side::TOP)
+			//{
+				EffectHeight = Height - 1;
+				EffectWidth = Width - 1;
+			//}
+
 			X_Size = TempSidesEast.size();
 
 			// first deal with x positions
@@ -399,11 +422,40 @@ void MapManager::DrawDefinedRoom()
 			{
 				if (SideVertical(CurrentSide))
 				{
-					TempSidesEast[i] = static_cast<int>((Width * ParamInnerSizeX) / (X_Size)); // all set to equal size for now
+					// calculating integer division
+					TempSidesEast[i] = static_cast<int>((EffectWidth * ParamInnerSizeX) / (X_Size)); // all set to equal size for now
 				}
 				else
 				{
-					TempSidesEast[i] = Width / X_Size - HorizontalDeficit; // all set to equal size for now
+
+					TempSidesEast[i] = (EffectWidth) / X_Size - HorizontalDeficit; // all set to equal size for now
+				}
+			}
+
+			// Resetting sizes
+			if (SideHorizontal(CurrentSide))
+			{
+				int EastMag = 0;
+				for (size_t i = 0; i < TempSidesEast.size(); i++)
+				{
+					EastMag += TempSidesEast[i];
+				}
+				EastMag += VerticalDeficit;
+				if (EastMag < EffectWidth)
+				{
+					int difference = EffectWidth - EastMag;
+					int size = TempSidesEast.size();
+					for (int i = 0; i < size && difference > 0; i++)
+					{
+						TempSidesEast[i]++;
+						difference--;
+						if (difference != 0 && i == size)
+							i = 0;
+					}
+				}
+				else if (EastMag > EffectWidth)
+				{
+					int difference = EastMag - EffectWidth;
 				}
 			}
 
@@ -414,13 +466,41 @@ void MapManager::DrawDefinedRoom()
 			{
 				if (SideVertical(CurrentSide))
 				{
-					TempSidesWest[i] = static_cast<int>((Width * ParamInnerSizeX) / (X_Size)); // all set to equal size for now
+					TempSidesWest[i] = static_cast<int>((EffectWidth * ParamInnerSizeX) / (X_Size)); // all set to equal size for now
 				}
 				else
 				{
-					TempSidesWest[i] = Width / X_Size - HorizontalDeficit; // all set to equal size for now
+					TempSidesWest[i] = EffectWidth / X_Size - HorizontalDeficit; // all set to equal size for now
 				}
 			}
+
+			// Resetting sizes
+			if (SideHorizontal(CurrentSide))
+			{
+				int WestMag = 0;
+				for (size_t i = 0; i < TempSidesWest.size(); i++)
+				{
+					WestMag += TempSidesWest[i];
+				}
+				WestMag += VerticalDeficit;
+				if (WestMag < EffectWidth)
+				{
+					int difference = EffectWidth - WestMag;
+					int size = TempSidesWest.size();
+					for (int i = 0; i < size && difference > 0; i++)
+					{
+						TempSidesWest[i]++;
+						difference--;
+						if (difference != 0 && i == size)
+							i = 0;
+					}
+				}
+				else if (WestMag > EffectWidth)
+				{
+					int difference = WestMag - EffectWidth;
+				}
+			}
+
 
 			Y_Size = TempSidesSouth.size();
 
@@ -428,14 +508,46 @@ void MapManager::DrawDefinedRoom()
 			{
 				if (SideHorizontal(CurrentSide))
 				{
-					TempSidesSouth[i] = static_cast<int>((Height * ParamInnerSizeY) / (Y_Size)); // all set to equal size for now
+					TempSidesSouth[i] = static_cast<int>((EffectHeight * ParamInnerSizeY) / (Y_Size)); // all set to equal size for now
 				}
 				else
 				{
-					TempSidesSouth[i] = Height / Y_Size - VerticalDeficit; // all set to equal size for now
-
+					TempSidesSouth[i] = EffectHeight / Y_Size - VerticalDeficit; // all set to equal size for now
 				}
 			}
+
+			
+			// Reset sizes
+			// first get a magnitude
+			if (SideVertical(CurrentSide))
+			{
+				int SouthMag = 0;
+				for (size_t i = 0; i < TempSidesSouth.size(); i++)
+				{
+					SouthMag += TempSidesSouth[i];
+				}
+				SouthMag += VerticalDeficit;
+				if (SouthMag < EffectHeight)
+				{
+					int difference = EffectHeight - SouthMag;
+					int size = TempSidesSouth.size();
+					for (int i = 0; i < size && difference > 0; i++)
+					{
+						TempSidesSouth[i]++;
+						difference--;
+						if (difference != 0 && i == size)
+							i = 0;
+					}
+				}
+				else if (SouthMag > EffectHeight)
+				{
+					int difference = SouthMag - EffectHeight;
+				}
+
+
+			}
+			
+
 
 			Y_Size = TempSidesNorth.size();
 
@@ -443,16 +555,47 @@ void MapManager::DrawDefinedRoom()
 			{
 				if (SideHorizontal(CurrentSide))
 				{
-					TempSidesNorth[i] = static_cast<int>((Height * ParamInnerSizeY) / (Y_Size)); // all set to equal size for now
+					TempSidesNorth[i] = static_cast<int>((EffectHeight * ParamInnerSizeY) / (Y_Size)); // all set to equal size for now
 				}
 				else
 				{
-					TempSidesNorth[i] = Height / Y_Size - VerticalDeficit; // all set to equal size for now
+					TempSidesNorth[i] = EffectHeight / Y_Size - VerticalDeficit; // all set to equal size for now
 				}
 			}
 
+			// Resetting sizes
+			if (SideVertical(CurrentSide))
+			{
+				int NorthMag = 0;
+				for (size_t i = 0; i < TempSidesNorth.size(); i++)
+				{
+					NorthMag += TempSidesNorth[i];
+				}
+				NorthMag += VerticalDeficit;
+				if (NorthMag < EffectHeight)
+				{
+					int difference = EffectHeight - NorthMag;
+					int size = TempSidesNorth.size();
+					for (int i = 0; i < size && difference > 0; i++)
+					{
+						TempSidesNorth[i]++;
+						difference--;
+						if (difference != 0 && i == size)
+							i = 0;
+					}
+				}
+				else if (NorthMag > EffectHeight)
+				{
+					int difference = NorthMag - EffectHeight;
+				}
+			}
+			
+
+
 			TempComplete = true;
 		}
+
+
 
 
 		VerticalDeficit = 0;
@@ -536,7 +679,6 @@ void MapManager::DrawDefinedRoom()
 
 			CurrentDirectionTemp = Turn(CurrentDirectionTemp, Turns[Count]);
 
-			cout << "2";
 			Count++;
 
 		} while (Test != true);

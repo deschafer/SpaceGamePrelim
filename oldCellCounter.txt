@@ -1,0 +1,32 @@
+float EffH = EffectHeight;
+					float Y = Y_Size;
+					float Result = EffH / Y;
+					if ((ceil(Result) == Result)) cout << "integer";
+					else
+					{
+						Result = ceil(Result);
+					}
+
+					while ((Result * Y_Size) > EffectHeight)
+					{
+						Result--;
+					}
+
+					if((i % 2) == 0 && !(Result * Y_Size) > EffectHeight)
+					{
+						Result++;
+					}
+
+
+					CellCounter += Result;
+					if (CellCounter < EffectHeight && i == (Y_Size - 1))
+					{
+						Result += (EffectHeight - CellCounter);
+						if (Result * 32 + StartY > MaxHeightY)
+						{
+							//Result--;
+						}
+					}
+
+					TempSidesSouth[i] = Result; // all set to equal size for now
+					//TempSidesSouth[i] = EffectHeight / Y_Size - VerticalDeficit; // all set to equal size for now
