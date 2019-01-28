@@ -230,9 +230,209 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	Turns.push_back('R');
 
-
 	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
 		"L_Rect");
+
+	SideDef.clear();
+	Turns.clear();
+
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('R');
+
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+		"Rect");
+
+	SideDef.clear();
+	Turns.clear();
+
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+		"Complex_Top");
+
+	SideDef.clear();
+	Turns.clear();
+
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+
+	SideDef.push_back(1);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+		"Complex_Right");
+
+	SideDef.clear();
+	Turns.clear();
+
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+
+
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+		"Complex_Bottom");
+
+	SideDef.clear();
+	Turns.clear();
+
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+
+	SideDef.push_back(1);
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+		"Complex_Left");
+
+	SideDef.clear();
+	Turns.clear();
+
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+
+	SideDef.push_back(1);
+
+	SideDef.push_back(1);
+
+	SideDef.push_back(1);
+
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+		"Stair_Down");
+
+	SideDef.clear();
+	Turns.clear();
+
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	SideDef.push_back(1);
+
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+
+	SideDef.push_back(1);
+
+	SideDef.push_back(1);
+
+	
+
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+		"Stair_Down_Reflected");
 
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well

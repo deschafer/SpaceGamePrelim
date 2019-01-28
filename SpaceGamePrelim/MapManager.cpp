@@ -303,9 +303,9 @@ void MapManager::DrawDefaultRoom()
 //
 void MapManager::DrawDefinedRoom()
 {
-	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("Complex"); 
+	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("Stair_Down_Reflected"); 
 
-	float ParamInnerSizeY = .25;
+	float ParamInnerSizeY = .65;
 	float ParamInnerSizeX = .25;
 
 	// only for this test function
@@ -314,8 +314,8 @@ void MapManager::DrawDefinedRoom()
 
 	int StartX = 10;
 	int StartY = 6;
-	int Width = 20;
-	int Height = 20;
+	int Width = 15;
+	int Height = 15;
 	int EffectHeight = Height;
 	int EffectWidth = Width;
 	int MaxHeightX = StartX;
@@ -619,7 +619,7 @@ void MapManager::DrawDefinedRoom()
 			{
 				EastMagnitude += TempSidesEast[i];
 			}
-			HorizontalDeficit = abs(static_cast<int>(EastMagnitude - WestMagnitude));
+			HorizontalDeficit = abs(static_cast<int>(EastMagnitude - WestMagnitude)) + 1;
 		}
 
 		if ((TempSidesNorth.size() > TempSidesSouth.size() ||
