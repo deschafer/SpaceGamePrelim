@@ -7,7 +7,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "BasicTypes.h"
+#include "..\BasicTypes\BasicTypes.h"
 
 // singleton class structure
 class TextureManager

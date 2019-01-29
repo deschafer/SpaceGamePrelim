@@ -1,311 +1,72 @@
+#include "MapRoom.h"
+#include "..\Map\GenRoomComp.h"
 
-#include "MapManager.h"
-#include "MainApplication.h"
-
-#include <iostream>
-#include <ctime>
-
+#include <vector>
 #include <map>
-
-#define RANDOM 71245
+#include <iostream>
 
 using namespace std;
 
-enum class Direction{EAST, SOUTH, WEST, NORTH};
-enum class Side{TOP, RIGHT, BOTTOM, LEFT, COMPL};
-enum class Event{NONE, CHANGE_DIR, SWITCH};
-
-
-Direction TurnRight(Direction Dir);
-Direction TurnLeft(Direction Dir);
-Direction Turn(Direction Dir, char code);
-Side NextSide(Side side);
-Side CorrespondingSide(Direction Dir);
-Direction CorrespondingDirection(Side side);
-bool SideHorizontal(Side side);
-bool SideVertical(Side side);
-
-Direction TurnRight(Direction Dir)
+MapRoom::MapRoom()
 {
-	int num = static_cast<int>(Dir);
-	num += 1;
-	if (num == 4) num = 0;
-
-	return static_cast<Direction>(num);
 }
 
-Direction TurnLeft(Direction Dir)
+MapRoom::~MapRoom()
 {
-	int num = static_cast<int>(Dir);
-	num -= 1;
-	if (num == -1) num = 3;
-
-	return static_cast<Direction>(num);
 }
 
-Direction Turn(Direction Dir, char code)
+MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 {
-	
-
-	if (code == 'R')
+	// Getting the properties assoc with this room type
+	m_Properties = RoomManager::Instance()->GetTypeDefinition(RoomType);
+	if (m_Properties == nullptr) // Then some error occurred
 	{
-		return TurnRight(Dir);
-	}
-	else if (code == 'L')
-	{
-		return TurnLeft(Dir);
-	}
-	else
+		cout << "Error -- RoomProperties received from GetTypeDef in MapRoom ctor was nullptr\n";
 		abort();
-
-}
-
-Side NextSide(Side side)
-{
-	int num = static_cast<int>(side);
-	num += 1;
-
-	return static_cast<Side>(num);
-}
-
-Side CorrespondingSide(Direction Dir)
-{
-
-	switch (Dir)
-	{
-	case Direction::EAST:
-		return Side::TOP;
-
-	case Direction::SOUTH:
-		return Side::RIGHT;
-
-	case Direction::WEST:
-		return Side::BOTTOM;
-
-	case Direction::NORTH:
-		return Side::LEFT;
-
-	default:
-		break;
 	}
 
-}
+	m_Width = Width;
+	m_Height = Height;
 
-Direction CorrespondingDirection(Side side)
-{
+	// Need to check with the minimum sizes of the maproom here
 
-	switch (side)
+	// Generating the array for this room
+	m_Cells = new MapObject**[m_Width];
+	for (int i = 0; i < m_Width; i++)
 	{
-	case Side::TOP:
-		return Direction::EAST;
-
-	case Side::RIGHT:
-		return Direction::SOUTH;
-
-	case Side::BOTTOM:
-		return Direction::WEST;
-
-	case Side::LEFT:
-		return Direction::NORTH;
-
-	default:
-		break;
+		m_Cells[i] = new MapObject*[m_Height];
 	}
 
-}
-
-bool SideHorizontal(Side side)
-{
-	switch (side)
+	// Initializing all of the cells to nullptr
+	for (int i = 0; i < m_Width; i++)
 	{
-	case Side::TOP:
-		return true;
-		break;
-	case Side::RIGHT:
-		return false;
-		break;
-	case Side::BOTTOM:
-		return true;
-		break;
-	case Side::LEFT:
-		return false;
-		break;
-	case Side::COMPL:
-		throw "incorrect side";
-		break;
-	default:
-		break;
-	}
-
-}
-
-bool SideVertical(Side side)
-{
-	switch (side)
-	{
-	case Side::TOP:
-		return false;
-		break;
-	case Side::RIGHT:
-		return true;
-		break;
-	case Side::BOTTOM:
-		return false;
-		break;
-	case Side::LEFT:
-		return true;
-		break;
-	case Side::COMPL:
-		throw "incorrect side";
-		break;
-	default:
-		break;
-	}
-
-}
-
-
-MapManager* MapManager::m_Instance = nullptr;
-
-MapManager::MapManager() :
-	m_ActiveWndHeight(0),
-	m_ActiveWndWidth(0),
-	m_Init(true)
-{
-	
-	m_RoomManager = RoomManager::Instance();
-}
-
-
-MapManager::~MapManager()
-{
-}
-
-void MapManager::DrawGrid()
-{
-	int CellWidth = 32;
-	int CellHeight = 32;
-	int OldR, OldG, OldB, OldA;
-
-
-	SDL_Renderer* renderer = MainApplication::Instance()->GetRenderer();
-
-	m_ActiveWndHeight = MainApplication::Instance()->GetWndHeight();
-	m_ActiveWndWidth = MainApplication::Instance()->GetWndWidth();
-	
-	m_Rows = m_ActiveWndHeight / CellHeight; // Get a count of columns
-	m_Columns = m_ActiveWndWidth / CellWidth;		// Get a count of rows
-
-	// Definetely have to do something else here
-	if (MainApplication::Instance()->ResolutionChanged())
-	{
-		
-		m_VisibleObjectArray = new MapObject**[m_Columns];
-		for (int i = 0; i < m_Columns; i++)
+		for (int j = 0; j < m_Height; j++)
 		{
-			m_VisibleObjectArray[i] = new MapObject*[m_Rows];
+			m_Cells[i][j] = nullptr;
 		}
 	}
 
-	if (m_Init)
-	{
-		for (int i = 0; i < m_Columns; i++)
-		{
-			for (int j = 0; j < m_Rows; j++)
-			{
-				m_VisibleObjectArray[i][j] = nullptr;
-			}
-		}
-
-		m_Init = false;
-	}
-
-	
-
-	SDL_GetRenderDrawColor(renderer, (Uint8*)&OldR, (Uint8*)&OldG, (Uint8*)&OldB, (Uint8*)&OldA);
-	SDL_SetRenderDrawColor(renderer, 100, 100, 150, SDL_ALPHA_OPAQUE);
-
-
-
-	// Drawing horizontal lines
-	for (int i = 0; i < m_Rows; i++)
-	{
-	
-		SDL_RenderDrawLine(renderer, 0, (i + 1) * CellHeight, m_ActiveWndWidth, (i + 1) * CellHeight);
-
-	}
-
-	// Drawing vertical lines
-	for (int i = 0; i < m_Columns; i++)
-	{
-
-		SDL_RenderDrawLine(renderer, (i + 1) * CellWidth, 0, (i + 1) * CellWidth, m_ActiveWndHeight);
-
-	}
-
-	//DrawDefaultMapObjects();
-	
-	//DrawDefaultRoom();
-	// Test function only
-	// Drawing a boundary rectangle
-	SDL_Rect cRect;
-	cRect.x = 10 * 32;
-	cRect.y = 6 * 32;
-	cRect.w = 15 * 32;
-	cRect.h = 15 * 32;
-
-
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	// end test
-	SDL_RenderDrawRect(MainApplication::Instance()->GetRenderer(), &cRect);
-
-	SDL_SetRenderDrawColor(renderer, OldR, OldG, OldB, OldA);
-
-
-	DrawDefinedRoom();
-
-
-	DrawVisibleCells();
-}
-
-void MapManager::DrawVisibleCells()
-{
-
-	for (int i = 0; i < m_Columns; i++)
-	{
-		for (int j = 0; j < m_Rows; j++)
-		{
-			if (m_VisibleObjectArray[i][j] != nullptr)
-			{
-				m_VisibleObjectArray[i][j]->Draw();
-			}
-		}
-	}
-
-
-}
-
-//
-// This is a TEST function to play with random room generation
-//
-//
-void MapManager::DrawDefaultRoom()
-{
-
 }
 
 
 //
-// DrawDefinedRoom()
-// Preliminary version of the room generation that will be a part of 
-// every room.
+// Generate()
+// Room generation function, generates the room based on the width and height 
+// parameters based off of the room def. of RoomType stored in RoomManager.
+// Stores the cells of this room in its own array.
 //
-//
-void MapManager::DrawDefinedRoom()
+void MapRoom::Generate(std::string RoomType, int Width, int Height)
 {
-	RoomProperties* Properties = m_RoomManager->GetTypeDefinition("Stair_Down_Reflected"); 
 
-	float ParamInnerSizeY = .65;
+	RoomProperties* Properties = RoomManager::Instance()->GetTypeDefinition(RoomType);
+
+	if (Properties == nullptr)
+	{
+		std::cout << "No room def found\n";
+		abort();
+	}
+
+	float ParamInnerSizeY = .25;
 	float ParamInnerSizeX = .25;
 
 	// only for this test function
@@ -314,8 +75,8 @@ void MapManager::DrawDefinedRoom()
 
 	int StartX = 10;
 	int StartY = 6;
-	int Width = 15;
-	int Height = 15;
+	//int Width = 15;
+	//int Height = 15;
 	int EffectHeight = Height;
 	int EffectWidth = Width;
 	int MaxHeightX = StartX;
@@ -358,7 +119,7 @@ void MapManager::DrawDefinedRoom()
 
 	pair<int, int> CurrentPair;	// used for adding coordinates
 
-	// Copying vectors
+								// Copying vectors
 	for (size_t i = 0; i < Properties->m_GreaterSideDefinition.size(); i++)
 	{
 		SideDef.push_back(Properties->m_GreaterSideDefinition[i]);
@@ -411,8 +172,8 @@ void MapManager::DrawDefinedRoom()
 		{
 			//if (CurrentSide != Side::TOP)
 			//{
-				EffectHeight = Height - 1;
-				EffectWidth = Width - 1;
+			EffectHeight = Height - 1;
+			EffectWidth = Width - 1;
 			//}
 
 			X_Size = TempSidesEast.size();
@@ -516,7 +277,7 @@ void MapManager::DrawDefinedRoom()
 				}
 			}
 
-			
+
 			// Reset sizes
 			// first get a magnitude
 			if (SideVertical(CurrentSide))
@@ -546,7 +307,7 @@ void MapManager::DrawDefinedRoom()
 
 
 			}
-			
+
 
 
 			Y_Size = TempSidesNorth.size();
@@ -589,7 +350,7 @@ void MapManager::DrawDefinedRoom()
 					int difference = NorthMag - EffectHeight;
 				}
 			}
-			
+
 
 
 			TempComplete = true;
@@ -601,7 +362,7 @@ void MapManager::DrawDefinedRoom()
 		VerticalDeficit = 0;
 		HorizontalDeficit = 0;
 		// Calculating side-specefic defecits
-		
+
 		// Horizontal defecit, used in the verticle sides ONLY
 		if ((TempSidesEast.size() > TempSidesWest.size() ||
 			TempSidesEast.size() < TempSidesWest.size()) &&
@@ -688,7 +449,7 @@ void MapManager::DrawDefinedRoom()
 		{
 			SizingComplete = true;
 		}
-		
+
 		// Clear all temporary storage for cells
 		TempSidesEast.clear();
 		TempSidesSouth.clear();
@@ -713,7 +474,7 @@ void MapManager::DrawDefinedRoom()
 			if (Sides.empty()) LastSide = true;
 		}
 		// Complete case
-		else if(Sides.empty() && CurrentLengthQuota <= 0)
+		else if (Sides.empty() && CurrentLengthQuota <= 0)
 		{
 			complete = true;
 			break;
@@ -725,7 +486,7 @@ void MapManager::DrawDefinedRoom()
 			complete = true;
 			break;
 		}
-		
+
 		// Determings the movement based on direction
 		if (CurrentDirection == Direction::EAST)
 		{
@@ -749,7 +510,7 @@ void MapManager::DrawDefinedRoom()
 		CurrentLocations[CurrentPair] = true;
 
 		// Adding to the array
-		m_VisibleObjectArray[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
+		//m_VisibleObjectArray[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
 
 		// Decrementing the length
 		CurrentLengthQuota--;
@@ -759,49 +520,6 @@ void MapManager::DrawDefinedRoom()
 		{
 			CurrentDirection = Turn(CurrentDirection, Turns.front());
 			Turns.erase(Turns.begin());
-		}
-	}
-}
-
-
-//
-//
-// This will load the inview map objects
-//
-void MapManager::LoadMapObjects()
-{
-
-	
-
-}
-
-//
-//
-//
-//
-void MapManager::LoadDefaultMapObjects()
-{
-
-
-}
-
-
-void MapManager::DrawDefaultMapObjects()
-{
-
-	for (int i = 0; i < m_Rows; i++)
-	{
-		for (int j = 0; j < m_Columns; j++)
-		{
-
-			TextureManager::Instance()->DrawCurrentFrame("DefaultMap",
-				(j) * 32,
-				(i) * 32,
-				Rect(0, 0, 32, 32),
-				SDL_FLIP_NONE,
-				MainApplication::Instance()->GetRenderer(),
-				1, 0);
-
 		}
 	}
 

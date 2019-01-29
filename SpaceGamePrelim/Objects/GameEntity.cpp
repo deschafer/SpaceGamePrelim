@@ -1,7 +1,7 @@
-#include "GameEntity.h"
-#include "MainApplication.h"
 
-#include "TextureManager.h"
+#include "GameEntity.h"
+#include "..\Frame\MainApplication.h"
+#include "..\TextureCode\TextureManager.h"
 
 
 GameEntity::GameEntity()

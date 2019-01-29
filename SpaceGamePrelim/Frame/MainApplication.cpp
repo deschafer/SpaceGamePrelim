@@ -1,8 +1,5 @@
 
-
-
 #include "MainApplication.h"
-
 
 
 // init static member

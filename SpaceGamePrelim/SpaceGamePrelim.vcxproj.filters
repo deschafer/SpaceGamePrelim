@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
@@ -13,131 +9,134 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{fd64f0c4-810f-4d65-8087-05d32105025b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="Scene\ActiveSceneManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MainApplication.cpp">
+    <ClCompile Include="Scene\TestScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
+    <ClCompile Include="Scene\MenuScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Rect.cpp">
+    <ClCompile Include="Scene\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="InputManager.cpp">
+    <ClCompile Include="Objects\Button.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ActiveSceneManager.cpp">
+    <ClCompile Include="Objects\GameEntity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
+    <ClCompile Include="Objects\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameEntity.cpp">
+    <ClCompile Include="Objects\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextureProperties.cpp">
+    <ClCompile Include="Map\MapCell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
+    <ClCompile Include="Map\MapManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MenuScene.cpp">
+    <ClCompile Include="Map\MapObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene.cpp">
+    <ClCompile Include="Map\MapRoom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
+    <ClCompile Include="Map\RoomManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Button.cpp">
+    <ClCompile Include="Frame\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapObject.cpp">
+    <ClCompile Include="Frame\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapCell.cpp">
+    <ClCompile Include="Frame\MainApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapManager.cpp">
+    <ClCompile Include="BasicTypes\Rect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapRoom.cpp">
+    <ClCompile Include="TextureCode\TextureManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RoomManager.cpp">
+    <ClCompile Include="TextureCode\TextureProperties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MainApplication.h">
+    <ClInclude Include="Scene\ActiveSceneManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
+    <ClInclude Include="Scene\MenuScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rect.h">
+    <ClInclude Include="Scene\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BasicTypes.h">
+    <ClInclude Include="Scene\TestScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InputManager.h">
+    <ClInclude Include="TextureCode\TextureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ActiveSceneManager.h">
+    <ClInclude Include="TextureCode\TextureProperties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
+    <ClInclude Include="Objects\Button.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameEntity.h">
+    <ClInclude Include="Objects\GameEntity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Vector.h">
+    <ClInclude Include="Objects\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextureProperties.h">
+    <ClInclude Include="Objects\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="Map\MapCell.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MenuScene.h">
+    <ClInclude Include="Map\MapCoordinate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h">
+    <ClInclude Include="Map\MapManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="Map\MapObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
+    <ClInclude Include="Map\MapRoom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MapObject.h">
+    <ClInclude Include="Map\RoomManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MapCoordinate.h">
+    <ClInclude Include="Frame\InputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MapCell.h">
+    <ClInclude Include="Frame\MainApplication.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MapManager.h">
+    <ClInclude Include="BasicTypes\BasicTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DefaultMapObject.h">
+    <ClInclude Include="BasicTypes\Rect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MapRoom.h">
+    <ClInclude Include="BasicTypes\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RoomManager.h">
+    <ClInclude Include="Map\GenRoomComp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

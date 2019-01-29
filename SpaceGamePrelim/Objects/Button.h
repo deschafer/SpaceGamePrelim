@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameEntity.h"
-#include "InputManager.h"
+#include "..\Frame\InputManager.h"
 
 class Button : public GameEntity
 {	

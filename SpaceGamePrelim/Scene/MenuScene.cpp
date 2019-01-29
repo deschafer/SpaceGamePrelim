@@ -1,7 +1,7 @@
 #include "MenuScene.h"
-#include "GameEntity.h"
-#include "TextureManager.h"
-#include "MainApplication.h"
+#include "..\Objects\GameEntity.h"
+#include "..\TextureCode\TextureManager.h"
+#include "..\Frame\MainApplication.h"
 
 #include <iostream>
 

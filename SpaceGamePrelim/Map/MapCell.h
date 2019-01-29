@@ -1,8 +1,8 @@
 #pragma once
 
 #include "MapObject.h"
-#include "BasicTypes.h"
-#include "TextureManager.h"
+#include "..\BasicTypes\BasicTypes.h"
+#include "..\TextureCode\TextureManager.h"
 
 #include <string>
 #include <vector>

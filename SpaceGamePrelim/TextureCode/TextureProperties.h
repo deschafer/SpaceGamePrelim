@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "BasicTypes.h"
+#include "..\BasicTypes\BasicTypes.h"
 
 class TextureProperties
 {

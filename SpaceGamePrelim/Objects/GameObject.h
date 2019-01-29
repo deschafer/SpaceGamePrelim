@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BasicTypes.h"
+#include "..\BasicTypes\BasicTypes.h"
 
 // Basic, abstract object class
 class GameObject

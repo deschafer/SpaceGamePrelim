@@ -1,5 +1,5 @@
 #include "ActiveSceneManager.h"
-#include "MainApplication.h"
+#include "..\Frame\MainApplication.h"
 
 ActiveSceneManager* ActiveSceneManager::m_sInstance = nullptr;
 

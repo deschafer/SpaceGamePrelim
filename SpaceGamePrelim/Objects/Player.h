@@ -1,9 +1,9 @@
 #pragma once
 
 #include "GameEntity.h"
-#include "InputManager.h"
-#include "BasicTypes.h"
-#include "TextureProperties.h"
+#include "..\Frame\InputManager.h"
+#include "..\BasicTypes\BasicTypes.h"
+#include "..\TextureCode\TextureManager.h"
 
 class Player : public GameEntity
 {

@@ -3,7 +3,7 @@
 #include <SDL.h>
 #include <vector>
 
-#include "BasicTypes.h"
+#include "..\BasicTypes\BasicTypes.h"
 
 enum class MouseInput { LEFT_MB, MIDDLE_MB, RIGHT_MB};
 

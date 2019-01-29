@@ -5,7 +5,7 @@
 #include <string>
 
 #include "MapObject.h"
-#include "TextureManager.h"
+#include "..\TextureCode\TextureManager.h"
 #include "MapCell.h"
 #include "RoomManager.h"
 

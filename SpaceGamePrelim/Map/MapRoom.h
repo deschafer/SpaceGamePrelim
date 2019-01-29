@@ -19,8 +19,11 @@ private:
 public:
 
 	void Generate(std::string RoomType, int Width, int Height); // Generates this room
+	void Init();
+
 
 	MapRoom();
+	MapRoom(std::string RoomType, int Width, int Height);
 	~MapRoom();
 };
 

@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "GameObject.h"
+#include "..\Objects\GameObject.h"
 
 class Scene
 {

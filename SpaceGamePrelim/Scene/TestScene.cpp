@@ -1,8 +1,8 @@
 #include "TestScene.h"
-#include "GameEntity.h"
-#include "GameObject.h"
-#include "TextureManager.h"
-#include "MainApplication.h"
+#include "..\Objects\GameEntity.h"
+#include "..\Objects\GameObject.h"
+#include "..\TextureCode\TextureManager.h"
+#include "..\Frame\MainApplication.h"
 
 using namespace std;
 

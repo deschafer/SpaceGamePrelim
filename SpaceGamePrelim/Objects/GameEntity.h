@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
-#include "BasicTypes.h"
+#include "..\BasicTypes\BasicTypes.h"
 
 
 #include <string>

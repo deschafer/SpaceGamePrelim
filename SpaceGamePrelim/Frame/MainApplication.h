@@ -7,14 +7,14 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
-#include "TextureManager.h"
-#include "GameEntity.h"
-#include "ActiveSceneManager.h"
-#include "MenuScene.h"
-#include "TestScene.h"
+#include "..\TextureCode\TextureManager.h"
+#include "..\Objects\GameEntity.h"
+#include "..\Scene\ActiveSceneManager.h"
+#include "..\Scene\MenuScene.h"
+#include "..\Scene\TestScene.h"
 #include "InputManager.h"
-#include "MapManager.h"
-#include "RoomManager.h"
+#include "..\Map\MapManager.h"
+#include "..\Map\RoomManager.h"
 
 // Singleton class structure
 class MainApplication

@@ -1,5 +1,5 @@
 #include "MapCell.h"
-#include "MainApplication.h"
+#include "..\Frame\MainApplication.h"
 
 #include <iostream>
 
