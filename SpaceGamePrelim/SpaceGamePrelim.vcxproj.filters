@@ -71,6 +71,9 @@
     <ClCompile Include="TextureCode\TextureProperties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Map\Map.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\ActiveSceneManager.h">
@@ -137,6 +140,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Map\GenRoomComp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\Map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

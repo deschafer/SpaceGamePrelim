@@ -23,6 +23,7 @@
     <ClCompile Include="Frame\InputManager.cpp" />
     <ClCompile Include="Frame\Main.cpp" />
     <ClCompile Include="Frame\MainApplication.cpp" />
+    <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Map\MapCell.cpp" />
     <ClCompile Include="Map\MapManager.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="Frame\InputManager.h" />
     <ClInclude Include="Frame\MainApplication.h" />
     <ClInclude Include="Map\GenRoomComp.h" />
+    <ClInclude Include="Map\Map.h" />
     <ClInclude Include="Map\MapCell.h" />
     <ClInclude Include="Map\MapCoordinate.h" />
     <ClInclude Include="Map\MapManager.h" />

@@ -44,7 +44,7 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 		{
 			m_Cells[i][j] = nullptr;
 		}
-	}
+	} 
 
 }
 
@@ -75,8 +75,6 @@ void MapRoom::Generate(std::string RoomType, int Width, int Height)
 
 	int StartX = 10;
 	int StartY = 6;
-	//int Width = 15;
-	//int Height = 15;
 	int EffectHeight = Height;
 	int EffectWidth = Width;
 	int MaxHeightX = StartX;
@@ -510,7 +508,7 @@ void MapRoom::Generate(std::string RoomType, int Width, int Height)
 		CurrentLocations[CurrentPair] = true;
 
 		// Adding to the array
-		//m_VisibleObjectArray[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
+		m_Cells[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
 
 		// Decrementing the length
 		CurrentLengthQuota--;

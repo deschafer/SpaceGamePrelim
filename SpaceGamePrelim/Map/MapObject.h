@@ -2,7 +2,7 @@
 
 #include "MapCoordinate.h"
 
-enum class MapObjectTypes{CELL_WALL, CELL_INACTIVE, DEFAULT};
+enum class MapObjectTypes{CELL_WALL, CELL_INACTIVE};
 
 class MapObject
 {
