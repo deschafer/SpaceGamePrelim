@@ -24,6 +24,7 @@ public:
 	MapCell::MapCell(TextureProperties* Properties, MapCoordinate Position);
 
 	void Draw();
+	void Draw(MapCoordinate Coords);
 
 
 	virtual ~MapCell();

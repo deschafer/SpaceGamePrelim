@@ -12,10 +12,11 @@ Map::Map()
 // Map()
 // Constructor to be used with this object
 //
-Map::Map(int Width, int Height, string MapType) :
+Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 	m_Width(Width),
 	m_Height(Height),
-	m_MapType(MapType)
+	m_MapType(MapType),
+	m_MapCoordinates(Coords)
 {
 
 
@@ -35,10 +36,33 @@ Map::Map(int Width, int Height, string MapType) :
 		}
 	}
 
+	m_TempRoom = new MapRoom("Rect", 10, 10);
+
 }
 
 Map::~Map()
 {
+}
+
+
+//
+// GetCell()
+// Gets the cell from m_Cells specefied by position
+// X,Y. If not within the bounds of m_Cells,
+// it will return nullptr, so check the return.
+//
+MapObject* Map::GetCell(int X, int Y)
+{
+
+	if (X < m_Width && Y < m_Height)
+	{
+		return m_Cells[X][Y];
+	}
+	else
+	{
+		return nullptr;
+	}
+
 }
 
 
@@ -51,11 +75,20 @@ Map::~Map()
 void Map::Generate()
 {
 
-	// Default for now
 
 	// Generate a single room
-
+	m_TempRoom->Generate();
+	
+	int OffsetX = 10;
+	int OffsetY = 6;
 
 	// Place it somewhere in the cell array
+	for (int i = 0; i < m_TempRoom->GetWidth(); i++)
+	{
+		for (int j = 0; j < m_TempRoom->GetHeight(); j++)
+		{
+			m_Cells[i + OffsetX][j + OffsetY] = m_TempRoom->GetCell(i, j);
+		}
+	}
 
 }

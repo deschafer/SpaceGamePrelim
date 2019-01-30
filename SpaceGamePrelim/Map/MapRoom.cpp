@@ -27,6 +27,7 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 
 	m_Width = Width;
 	m_Height = Height;
+	m_RoomType = RoomType;
 
 	// Need to check with the minimum sizes of the maproom here
 
@@ -48,6 +49,26 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 
 }
 
+//
+// GetCell()
+// Gets the cell from m_Cells specefied by position
+// X,Y. If not within the bounds of m_Cells,
+// it will return nullptr, so check the return.
+//
+MapObject* MapRoom::GetCell(int X, int Y)
+{
+
+	if (X < m_Width && Y < m_Height)
+	{
+		return m_Cells[X][Y];
+	}
+	else
+	{
+		return nullptr;
+	}
+
+}
+
 
 //
 // Generate()
@@ -55,10 +76,10 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 // parameters based off of the room def. of RoomType stored in RoomManager.
 // Stores the cells of this room in its own array.
 //
-void MapRoom::Generate(std::string RoomType, int Width, int Height)
+void MapRoom::Generate()
 {
 
-	RoomProperties* Properties = RoomManager::Instance()->GetTypeDefinition(RoomType);
+	RoomProperties* Properties = RoomManager::Instance()->GetTypeDefinition(m_RoomType);
 
 	if (Properties == nullptr)
 	{
@@ -73,13 +94,13 @@ void MapRoom::Generate(std::string RoomType, int Width, int Height)
 	static bool complete = false;
 	if (complete) return;
 
-	int StartX = 10;
-	int StartY = 6;
-	int EffectHeight = Height;
-	int EffectWidth = Width;
+	int StartX = 0;
+	int StartY = 0;
+	int EffectHeight = m_Height;
+	int EffectWidth = m_Width;
 	int MaxHeightX = StartX;
-	int MaxHeightY = StartY + Height;
-	int MaxWidthX = StartX + Width;
+	int MaxHeightY = StartY + m_Height;
+	int MaxWidthX = StartX + m_Width;
 	int MaxWidthY = StartY;
 	int rng = 0; // 0 = south, 1 = west, 2 = north, 3 = east
 	int DrawCount = 0;
@@ -170,8 +191,8 @@ void MapRoom::Generate(std::string RoomType, int Width, int Height)
 		{
 			//if (CurrentSide != Side::TOP)
 			//{
-			EffectHeight = Height - 1;
-			EffectWidth = Width - 1;
+			EffectHeight = m_Height - 1;
+			EffectWidth = m_Width - 1;
 			//}
 
 			X_Size = TempSidesEast.size();

@@ -8,6 +8,8 @@
 
 #include "MainApplication.h"
 
+#define Debug
+
 using namespace std;
 
 int main(int argc, char* argv[])

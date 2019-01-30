@@ -20,10 +20,12 @@ private:
 
 public:
 
-	void Generate(std::string RoomType, int Width, int Height); // Generates this room
+	void Generate(); // Generates this room
 
 	MapObject* GetCell(int X, int Y);
 	MapObject*** GetCellArray() { return m_Cells; }
+	int GetHeight() { return m_Height; }
+	int GetWidth() { return m_Width; }
 
 
 	MapRoom();

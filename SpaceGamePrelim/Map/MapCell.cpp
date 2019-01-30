@@ -50,6 +50,18 @@ void MapCell::Draw()
 
 }
 
+void MapCell::Draw(MapCoordinate Coords)
+{
+	if (m_TextureIDs.empty())
+	{
+		std::cout << "textures are empty";
+	}
+	TextureManager::Instance()->DrawCurrentFrame(m_TextureIDs.back(), Coords.GetPositionX(),
+		Coords.GetPositionY(), m_Dimensions, SDL_FLIP_NONE, MainApplication::Instance()->GetRenderer(),
+		m_CurrentRow, m_CurrentFrame);
+
+}
+
 
 MapCell::~MapCell()
 {

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <iterator>
 
 RoomManager* RoomManager::s_pInstance = nullptr;
 
@@ -39,4 +40,17 @@ RoomProperties* RoomManager::GetTypeDefinition(std::string RoomID)
 		return nullptr;
 	}
 
+}
+
+RoomProperties* RoomManager::GetRandomTypeDefinition()
+{
+
+	size_t Max = m_RegisteredTypes.size();
+
+	std::map<std::string, RoomProperties*>::iterator Iterator = m_RegisteredTypes.begin();
+
+	std::advance(Iterator, (rand() % m_RegisteredTypes.size()));
+
+	return Iterator->second;
+	
 }

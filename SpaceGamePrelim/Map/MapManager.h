@@ -7,6 +7,7 @@
 #include "MapObject.h"
 #include "..\TextureCode\TextureManager.h"
 #include "MapCell.h"
+#include "Map.h"
 #include "RoomManager.h"
 
 
@@ -20,6 +21,9 @@ private:
 	int m_Rows;
 	int m_Columns;
 
+	int m_CellWidth;
+	int m_CellHeight;
+
 	int m_OffsetX;
 	int m_OffsetY;
 
@@ -28,7 +32,7 @@ private:
 	static MapManager* m_Instance;
 	
 	MapObject*** m_VisibleObjectArray;	// 2D array of pointers to mapobjects visible
-
+	Map* m_ActiveMap;					// Active map pointer
 	RoomManager* m_RoomManager;
 
 	std::vector<MapObject*> m_LoadedMapObjects;
@@ -36,7 +40,6 @@ private:
 	void LoadMapObjects();		// This will load the inview map objects
 
 	void LoadDefaultMapObjects();
-	void DrawDefaultMapObjects();
 
 
 	void DrawDefaultRoom();
