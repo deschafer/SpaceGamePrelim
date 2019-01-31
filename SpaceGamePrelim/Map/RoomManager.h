@@ -68,7 +68,7 @@ public:
 
 	void RegisterRoomType(RoomProperties *Properties, std::string RoomID);
 	RoomProperties* GetTypeDefinition(std::string RoomID);
-	RoomProperties* GetRandomTypeDefinition();
+	RoomProperties* GetRandomTypeDefinition(std::string * roomType);
 
 	
 	~RoomManager();

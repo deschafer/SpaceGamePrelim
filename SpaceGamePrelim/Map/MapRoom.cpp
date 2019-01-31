@@ -49,6 +49,40 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 
 }
 
+MapRoom::MapRoom(int Width, int Height)
+{
+	// Getting the properties assoc with this room type
+	m_Properties = RoomManager::Instance()->GetRandomTypeDefinition(&m_RoomType);
+	if (m_Properties == nullptr) // Then some error occurred
+	{
+		cout << "Error -- RoomProperties received from GetTypeDef in MapRoom ctor was nullptr\n";
+		abort();
+	}
+
+	m_Width = Width;
+	m_Height = Height;
+
+	// Need to check with the minimum sizes of the maproom here
+
+	// Generating the array for this room
+	m_Cells = new MapObject**[m_Width];
+	for (int i = 0; i < m_Width; i++)
+	{
+		m_Cells[i] = new MapObject*[m_Height];
+	}
+
+	// Initializing all of the cells to nullptr
+	for (int i = 0; i < m_Width; i++)
+	{
+		for (int j = 0; j < m_Height; j++)
+		{
+			m_Cells[i][j] = nullptr;
+		}
+	}
+
+}
+
+
 //
 // GetCell()
 // Gets the cell from m_Cells specefied by position
@@ -79,7 +113,7 @@ MapObject* MapRoom::GetCell(int X, int Y)
 void MapRoom::Generate()
 {
 
-	RoomProperties* Properties = RoomManager::Instance()->GetTypeDefinition(m_RoomType);
+	RoomProperties* Properties = m_Properties;
 
 	if (Properties == nullptr)
 	{

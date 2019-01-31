@@ -29,7 +29,8 @@ public:
 
 
 	MapRoom();
-	MapRoom(std::string RoomType, int Width, int Height);
-	~MapRoom();
+	MapRoom(std::string RoomType, int Width, int Height); // Known room
+	MapRoom(int Width, int Height);						  // Random room
+	~MapRoom();	
 };
 

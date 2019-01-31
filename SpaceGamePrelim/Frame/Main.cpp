@@ -5,6 +5,7 @@
 
 #include <SDL.h>
 #include <iostream>
+#include <chrono>
 
 #include "MainApplication.h"
 
@@ -20,10 +21,16 @@ int main(int argc, char* argv[])
 	const int FPS = 60;
 	const int DELAY_TIME = 1000.0f / FPS;
 
-	int seed = 78;
+	// Time seed generation
+	auto now = std::chrono::system_clock::now();
+	auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+	auto value = now_ms.time_since_epoch();
+	long duration = value.count();
 
-	//cin >> seed;
-	srand(seed);
+	std::chrono::milliseconds dur(duration);
+	std::chrono::time_point<std::chrono::system_clock> dt(dur);
+
+	srand(duration);
 
 	MainApplication* Application = MainApplication::Instance();	// Getting the app instance
 
