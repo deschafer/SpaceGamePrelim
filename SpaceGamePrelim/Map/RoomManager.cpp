@@ -21,7 +21,7 @@ void RoomManager::RegisterRoomType(RoomProperties *Properties, std::string RoomI
 
 
 
-#ifdef Debug
+#ifdef _DEBUG
 	std::cout << "New Room Type Registered " << RoomID << std::endl;
 #endif // DEBUG
 }
@@ -36,7 +36,9 @@ RoomProperties* RoomManager::GetTypeDefinition(std::string RoomID)
 	}
 	else
 	{
+#ifndef _DEBUG
 		std::cout << "Requested RoomID " << RoomID << " Not Found\n";
+#endif // DEBUG
 		return nullptr;
 	}
 

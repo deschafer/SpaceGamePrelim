@@ -25,8 +25,8 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 		abort();
 	}
 
-	m_Width = Width;
-	m_Height = Height;
+	m_Width = Width + 10;
+	m_Height = Height + 10;
 	m_RoomType = RoomType;
 
 	// Need to check with the minimum sizes of the maproom here
@@ -65,16 +65,16 @@ MapRoom::MapRoom(int Width, int Height)
 	// Need to check with the minimum sizes of the maproom here
 
 	// Generating the array for this room
-	m_Cells = new MapObject**[m_Width];
-	for (int i = 0; i < m_Width; i++)
+	m_Cells = new MapObject**[100];
+	for (int i = 0; i < 100; i++)
 	{
-		m_Cells[i] = new MapObject*[m_Height];
+		m_Cells[i] = new MapObject*[100];
 	}
 
 	// Initializing all of the cells to nullptr
-	for (int i = 0; i < m_Width; i++)
+	for (int i = 0; i < 100; i++)
 	{
-		for (int j = 0; j < m_Height; j++)
+		for (int j = 0; j < 100; j++)
 		{
 			m_Cells[i][j] = nullptr;
 		}
@@ -129,23 +129,24 @@ void MapRoom::Generate()
 	if (complete) return;
 
 	int StartX = 0;
-	int StartY = 0;
-	int EffectHeight = m_Height;
-	int EffectWidth = m_Width;
+	int StartY = 2;
+	int EffectHeight = 10 - 1 - StartY;
+	int EffectWidth = 10 - 1 - StartX;
 	int MaxHeightX = StartX;
 	int MaxHeightY = StartY + m_Height;
 	int MaxWidthX = StartX + m_Width;
 	int MaxWidthY = StartY;
-	int rng = 0; // 0 = south, 1 = west, 2 = north, 3 = east
 	int DrawCount = 0;
 	int Count = 0;
 	int CountRecord = 0;
 	int TempX = StartX;
 	int TempY = StartY;
 	int CurrentLengthQuota = 0;
-	int HorizontalDeficit = 0;
+	int HorizontalDeficit = 1;
 	int VerticalDeficit = 0;
 	int CellCounter = 0;
+	int BegOffsetX = 0;
+	int BegOffsetY = 0;
 
 	bool Test = 0;
 	bool SizingComplete = false;
@@ -223,11 +224,9 @@ void MapRoom::Generate()
 		// Determining an actual size for these sides
 		while (!TempComplete)
 		{
-			//if (CurrentSide != Side::TOP)
-			//{
-			EffectHeight = m_Height - 1;
-			EffectWidth = m_Width - 1;
-			//}
+
+			
+
 
 			X_Size = TempSidesEast.size();
 
@@ -563,6 +562,7 @@ void MapRoom::Generate()
 		CurrentLocations[CurrentPair] = true;
 
 		// Adding to the array
+		if(TempX >= 0 && TempY >= 0)
 		m_Cells[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
 
 		// Decrementing the length

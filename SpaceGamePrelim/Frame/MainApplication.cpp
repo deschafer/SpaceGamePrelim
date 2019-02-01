@@ -431,6 +431,31 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
 		"Stair_Down_Reflected");
 
+
+	SideDef.clear();
+	Turns.clear();
+
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('R');
+
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+		"Test");
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
 
