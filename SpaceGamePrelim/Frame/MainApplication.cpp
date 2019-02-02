@@ -248,7 +248,19 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	SideDef.clear();
 	Turns.clear();
+	
+	std::vector<int> StaticSides;
 
+	StaticSides.push_back(0);
+	StaticSides.push_back(8);
+	StaticSides.push_back(5);
+	StaticSides.push_back(3);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+
+	
 	Turns.push_back('R');
 	Turns.push_back('L');
 	Turns.push_back('L');
@@ -271,7 +283,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	SideDef.push_back(1);
 	SideDef.push_back(1);
 
-	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, StaticSides, 5, 5),
 		"Complex_Top");
 
 	SideDef.clear();

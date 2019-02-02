@@ -63,7 +63,7 @@ struct RoomProperties
 		m_Extremism(Extreme),
 		m_StaticSidesFlag(true)
 	{
-		if (GreaterSides.size() != Turns.size())
+		if (GreaterSides.size() != Turns.size() || GreaterSides.size() != StaticSides.size())
 		{
 			throw "Sizes of vectors do not match!";
 			abort();
@@ -72,14 +72,11 @@ struct RoomProperties
 		{
 			m_GreaterSideDefinition.push_back(GreaterSides[i]);
 			m_Turns.push_back(Turns[i]);
-		}
-		for (size_t i = 0; i < StaticSides.size(); i++)
-		{
-#ifndef _DEBUG
-			std::cout << "StaticSides Defintion Present\n";
-#endif // !_DEBUG
 			m_StaticSides.push_back(StaticSides[i]);
 		}
+#ifndef _DEBUG
+		std::cout << "StaticSides Defintion Present\n";
+#endif // !_DEBUG
 	}
 
 };

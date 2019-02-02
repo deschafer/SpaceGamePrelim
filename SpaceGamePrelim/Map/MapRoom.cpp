@@ -25,8 +25,8 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 		abort();
 	}
 
-	m_Width = Width + 10;
-	m_Height = Height + 10;
+	m_Width = Width;
+	m_Height = Height;
 	m_RoomType = RoomType;
 
 	// Need to check with the minimum sizes of the maproom here
@@ -65,16 +65,16 @@ MapRoom::MapRoom(int Width, int Height)
 	// Need to check with the minimum sizes of the maproom here
 
 	// Generating the array for this room
-	m_Cells = new MapObject**[100];
-	for (int i = 0; i < 100; i++)
+	m_Cells = new MapObject**[m_Width];
+	for (int i = 0; i < m_Width; i++)
 	{
-		m_Cells[i] = new MapObject*[100];
+		m_Cells[i] = new MapObject*[m_Height];
 	}
 
 	// Initializing all of the cells to nullptr
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < m_Width; i++)
 	{
-		for (int j = 0; j < 100; j++)
+		for (int j = 0; j < m_Height; j++)
 		{
 			m_Cells[i][j] = nullptr;
 		}
@@ -117,21 +117,21 @@ void MapRoom::Generate()
 
 	if (Properties == nullptr)
 	{
+#ifndef _DEBUG
 		std::cout << "No room def found\n";
+#endif // !_DEBUG
 		abort();
 	}
 
 	float ParamInnerSizeY = .25;
 	float ParamInnerSizeX = .25;
 
-	// only for this test function
-	static bool complete = false;
-	if (complete) return;
-
 	int StartX = 0;
-	int StartY = 2;
-	int EffectHeight = 10 - 1 - StartY;
-	int EffectWidth = 10 - 1 - StartX;
+	int StartY = 0;
+	int EffectHeight = m_Height - 1;
+	int EffectWidth = m_Width - 1;
+	//int EffectHeight = 10 - 1 - StartY;
+	//int EffectWidth = 10 - 1 - StartX;
 	int MaxHeightX = StartX;
 	int MaxHeightY = StartY + m_Height;
 	int MaxWidthX = StartX + m_Width;
@@ -142,18 +142,16 @@ void MapRoom::Generate()
 	int TempX = StartX;
 	int TempY = StartY;
 	int CurrentLengthQuota = 0;
-	int HorizontalDeficit = 1;
+	int HorizontalDeficit = 0;
 	int VerticalDeficit = 0;
-	int CellCounter = 0;
 	int BegOffsetX = 0;
 	int BegOffsetY = 0;
 
 	bool Test = 0;
 	bool SizingComplete = false;
-	bool Switch = false;
-	bool SwitchStart = false;
-	bool EventPossible = false;
 	bool LastSide = false;
+	bool StaticSideFlag = false;
+	bool complete = false;
 
 	Event EventType = Event::NONE;
 	Direction CurrentDirection = Direction::EAST;
@@ -162,7 +160,8 @@ void MapRoom::Generate()
 
 	map<pair<int, int>, bool> CurrentLocations;
 
-	vector<int> Sides; // size = number of sides, each side has a length.
+	vector<int> StaticSides;// Used for static side definitions
+	vector<int> Sides;		// size = number of sides, each side has a length.
 	vector<bool> SideDef;	// stores the Greater Side Definition from the room def
 	vector<char> Turns;		// Stores the turns from the room def
 
@@ -171,13 +170,28 @@ void MapRoom::Generate()
 	vector<int> TempSidesWest;
 	vector<int> TempSidesNorth;
 
+	vector<int> TempStaticEast;	// Temporary vectors, used in the first stage for static sides
+	vector<int> TempStaticSouth;
+	vector<int> TempStaticWest;
+	vector<int> TempStaticNorth;
+
 	pair<int, int> CurrentPair;	// used for adding coordinates
 
-								// Copying vectors
+	// Set Static Side flag
+	if (Properties->m_StaticSidesFlag)
+	{
+		StaticSideFlag = true;
+	}
+	// Copying GreaterSide and Turn vectors (same size by def)
 	for (size_t i = 0; i < Properties->m_GreaterSideDefinition.size(); i++)
 	{
 		SideDef.push_back(Properties->m_GreaterSideDefinition[i]);
 		Turns.push_back(Properties->m_Turns[i]);
+	}
+	// Copying static sides
+	for (size_t i = 0; i < Properties->m_StaticSides.size(); i++)
+	{
+		StaticSides.push_back(Properties->m_StaticSides[i]);
 	}
 
 	// Determining the side lengths for each of the 
@@ -215,8 +229,72 @@ void MapRoom::Generate()
 			Count++;
 		} while (Test != true);
 
-		// Then we deal with these sides
 
+		// Deal with static sides here
+		// A mag of static sides
+		// and count for each direction
+		if (StaticSideFlag)
+		{
+			Direction TempDirection = CorrespondingDirection(CurrentSide);
+			int TempCount = CountRecord;
+			int Index = 0;
+			int StaticWestMag = 0;
+			int StaticEastMag = 0;
+			int StaticNorthMag = 0;
+			int StaticSouthMag = 0;
+			do
+			{
+				Test = SideDef[TempCount];
+				// Setting the east temp queue for the static sides
+				if (TempDirection == Direction::EAST && CurrentSide != Side::BOTTOM)
+				{
+
+					TempStaticEast.push_back(StaticSides[Index]);
+					StaticEastMag += StaticSides[Index];
+
+				}
+				// Setting the south temp queue for the static sides
+				else if (TempDirection == Direction::SOUTH && CurrentSide != Side::LEFT)
+				{
+					if (StaticSides[Index] != 0)
+					{
+						TempStaticSouth.push_back(StaticSides[Index]);
+						StaticSouthMag += StaticSides[Index];
+
+					}
+				}
+				// Setting the west temp queue for the static sides
+				else if (TempDirection == Direction::WEST && CurrentSide != Side::TOP)
+				{
+					if (StaticSides[Index] != 0)
+					{
+						TempStaticWest.push_back(StaticSides[Index]);
+						StaticWestMag += StaticSides[Index];
+
+					}
+				}
+				// Setting the north temp queue for the static sides
+				else if (TempDirection == Direction::NORTH && CurrentSide != Side::RIGHT)
+				{
+					if (StaticSides[Index] != 0)
+					{
+						TempStaticNorth.push_back(StaticSides[Index]);
+						StaticNorthMag += StaticSides[Index];
+					}
+				}
+
+				// Get the new direction
+				TempDirection = Turn(TempDirection, Turns[TempCount]);
+
+				// Increment a count
+				TempCount++;
+				Index++;
+			} while (Test != true);
+		}
+
+		
+
+		// Then we deal with these sides
 		bool TempComplete = false;
 		int X_Size = 0;
 		int Y_Size = 0;
@@ -224,9 +302,6 @@ void MapRoom::Generate()
 		// Determining an actual size for these sides
 		while (!TempComplete)
 		{
-
-			
-
 
 			X_Size = TempSidesEast.size();
 
@@ -249,26 +324,64 @@ void MapRoom::Generate()
 			if (SideHorizontal(CurrentSide))
 			{
 				int EastMag = 0;
+				// Getting a magnitude for the total length of the sides generated.
+				// Due to integer division and truncation, the sides may have to be resized so 
+				// that they are guaranteed to fit the defining rectangle.
 				for (size_t i = 0; i < TempSidesEast.size(); i++)
 				{
-					EastMag += TempSidesEast[i];
+					// If a static side is present, it has priority
+					if (i < TempStaticEast.size() && TempStaticEast[i] != 0)
+					{
+						EastMag += TempStaticEast[i];
+					}
+					else
+					{
+						EastMag += TempSidesEast[i];
+					}
 				}
-				EastMag += VerticalDeficit;
+				// Adding a horizontal defecit if it exists
+				EastMag += HorizontalDeficit;
+				// If the magnitude is less than the total width
+				// NOTE: This is most common 
 				if (EastMag < EffectWidth)
 				{
 					int difference = EffectWidth - EastMag;
 					int size = TempSidesEast.size();
 					for (int i = 0; i < size && difference > 0; i++)
 					{
-						TempSidesEast[i]++;
-						difference--;
-						if (difference != 0 && i == size)
+						// Static sides DO NOT get modified
+						if (i < TempStaticEast.size() && TempStaticEast[i] != 0);
+						// Dynamic sides DO get modified
+						else
+						{
+							TempSidesEast[i]++;
+							difference--;
+						}
+						// If this round completed, yet a difference still exists, reset
+						if (difference != 0 && i == size - 1)
 							i = 0;
 					}
 				}
+				// If the magnitude is larger
+				// NOTE: This is most likely caused by a static side definition
 				else if (EastMag > EffectWidth)
 				{
 					int difference = EastMag - EffectWidth;
+					int size = TempSidesEast.size();
+					for (int i = 0; i < size && difference > 0; i++)
+					{
+						// Static sides DO NOT get modified
+						if (i < TempStaticEast.size() && TempStaticEast[i] != 0);
+						// Dynamic sides DO get modified
+						else
+						{
+							TempSidesEast[i]--;
+							difference--;
+						}
+						// If this round completed, yet a difference still exists, reset
+						if (difference != 0 && i == size - 1)
+							i = 0;
+					}
 				}
 			}
 
@@ -293,24 +406,52 @@ void MapRoom::Generate()
 				int WestMag = 0;
 				for (size_t i = 0; i < TempSidesWest.size(); i++)
 				{
-					WestMag += TempSidesWest[i];
+					// If a static side is present, it has priority
+					if (i < TempStaticWest.size() && TempStaticWest[i] != 0)
+					{
+						WestMag += TempStaticWest[i];
+					}
+					else
+					{
+						WestMag += TempSidesWest[i];
+					}
 				}
-				WestMag += VerticalDeficit;
+				WestMag += HorizontalDeficit;
 				if (WestMag < EffectWidth)
 				{
 					int difference = EffectWidth - WestMag;
 					int size = TempSidesWest.size();
 					for (int i = 0; i < size && difference > 0; i++)
 					{
-						TempSidesWest[i]++;
-						difference--;
-						if (difference != 0 && i == size)
+						// Static sides DO NOT get modified
+						if (i < TempStaticWest.size() && TempStaticWest[i] != 0);
+						// Dynamic sides DO get modified
+						else
+						{
+							TempSidesWest[i]++;
+							difference--;
+						}
+						if (difference != 0 && i == size - 1)
 							i = 0;
 					}
 				}
 				else if (WestMag > EffectWidth)
 				{
 					int difference = WestMag - EffectWidth;
+					int size = TempSidesWest.size();
+					for (int i = 0; i < size && difference > 0; i++)
+					{
+						// Static sides DO NOT get modified
+						if (i < TempStaticWest.size() && TempStaticWest[i] != 0);
+						// Dynamic sides DO get modified
+						else
+						{
+							TempSidesWest[i]--;
+							difference--;
+						}
+						if (difference != 0 && i == size - 1)
+							i = 0;
+					}
 				}
 			}
 
@@ -337,7 +478,15 @@ void MapRoom::Generate()
 				int SouthMag = 0;
 				for (size_t i = 0; i < TempSidesSouth.size(); i++)
 				{
-					SouthMag += TempSidesSouth[i];
+					// If a static side is present, it has priority
+					if (i < TempStaticSouth.size() && TempStaticSouth[i] != 0)
+					{
+						SouthMag += TempStaticSouth[i];
+					}
+					else
+					{
+						SouthMag += TempSidesSouth[i];
+					}
 				}
 				SouthMag += VerticalDeficit;
 				if (SouthMag < EffectHeight)
@@ -346,18 +495,36 @@ void MapRoom::Generate()
 					int size = TempSidesSouth.size();
 					for (int i = 0; i < size && difference > 0; i++)
 					{
-						TempSidesSouth[i]++;
-						difference--;
-						if (difference != 0 && i == size)
+						// Static sides DO NOT get modified
+						if (i < TempStaticSouth.size() && TempStaticSouth[i] != 0);
+						// Dynamic sides DO get modified
+						else
+						{
+							TempSidesSouth[i]++;
+							difference--;
+						}
+						if (difference != 0 && i == size - 1)
 							i = 0;
 					}
 				}
 				else if (SouthMag > EffectHeight)
 				{
 					int difference = SouthMag - EffectHeight;
+					int size = TempSidesSouth.size();
+					for (int i = 0; i < size && difference > 0; i++)
+					{
+						// Static sides DO NOT get modified
+						if (i < TempStaticSouth.size() && TempStaticSouth[i] != 0);
+						// Dynamic sides DO get modified
+						else
+						{
+							TempSidesSouth[i]--;
+							difference--;
+						}
+						if (difference != 0 && i == size - 1)
+							i = 0;
+					}
 				}
-
-
 			}
 
 
@@ -382,7 +549,15 @@ void MapRoom::Generate()
 				int NorthMag = 0;
 				for (size_t i = 0; i < TempSidesNorth.size(); i++)
 				{
-					NorthMag += TempSidesNorth[i];
+					// If a static side is present, it has priority
+					if (i < TempStaticNorth.size() && TempStaticNorth[i] != 0)
+					{
+						NorthMag += TempStaticNorth[i];
+					}
+					else
+					{
+						NorthMag += TempSidesNorth[i];
+					}
 				}
 				NorthMag += VerticalDeficit;
 				if (NorthMag < EffectHeight)
@@ -391,15 +566,35 @@ void MapRoom::Generate()
 					int size = TempSidesNorth.size();
 					for (int i = 0; i < size && difference > 0; i++)
 					{
-						TempSidesNorth[i]++;
-						difference--;
-						if (difference != 0 && i == size)
+						// Static sides DO NOT get modified
+						if (i < TempStaticNorth.size() && TempStaticNorth[i] != 0);
+						// Dynamic sides DO get modified
+						else
+						{
+							TempSidesNorth[i]++;
+							difference--;
+						}
+						if (difference != 0 && i == size - 1)
 							i = 0;
 					}
 				}
 				else if (NorthMag > EffectHeight)
 				{
 					int difference = NorthMag - EffectHeight;
+					int size = TempSidesNorth.size();
+					for (int i = 0; i < size && difference > 0; i++)
+					{
+						// Static sides DO NOT get modified
+						if (i < TempStaticNorth.size() && TempStaticNorth[i] != 0);
+						// Dynamic sides DO get modified
+						else
+						{
+							TempSidesNorth[i]++;
+							difference--;
+						}
+						if (difference != 0 && i == size - 1)
+							i = 0;
+					}
 				}
 			}
 
@@ -408,9 +603,7 @@ void MapRoom::Generate()
 			TempComplete = true;
 		}
 
-
-
-
+		// Resetting defecits from last cycle
 		VerticalDeficit = 0;
 		HorizontalDeficit = 0;
 		// Calculating side-specefic defecits
@@ -418,26 +611,44 @@ void MapRoom::Generate()
 		// Horizontal defecit, used in the verticle sides ONLY
 		if ((TempSidesEast.size() > TempSidesWest.size() ||
 			TempSidesEast.size() < TempSidesWest.size()) &&
-			SideVertical(CurrentSide))
+			SideVertical(CurrentSide) || StaticSideFlag)
 		{
 			int EastMagnitude = 0;
 			int WestMagnitude = 0;
 
 			for (size_t i = 0; i < TempSidesWest.size(); i++)
 			{
-				WestMagnitude += TempSidesWest[i];
+				if (StaticSideFlag && (i < TempStaticWest.size()) && TempStaticWest[i] != 0)
+				{
+					WestMagnitude += TempStaticWest[i];
+				}
+				else
+				{
+					WestMagnitude += TempSidesWest[i];
+				}
 			}
 
 			for (size_t i = 0; i < TempSidesEast.size(); i++)
 			{
-				EastMagnitude += TempSidesEast[i];
+				// If a static side is present, use that size over the dynamic side
+				if (StaticSideFlag && (i < TempStaticEast.size()) && TempStaticEast[i] != 0)
+				{
+					EastMagnitude += TempStaticEast[i];
+				}
+				else
+				{
+					EastMagnitude += TempSidesEast[i];
+				}
 			}
 			HorizontalDeficit = abs(static_cast<int>(EastMagnitude - WestMagnitude)) + 1;
 		}
 
+		// If the an overall movement in the y axis was produced in 
+		// either the top or bottom sides, the next side will need to know 
+		// about this.
 		if ((TempSidesNorth.size() > TempSidesSouth.size() ||
 			TempSidesNorth.size() < TempSidesSouth.size()) &&
-			SideHorizontal(CurrentSide))
+			SideHorizontal(CurrentSide) || StaticSideFlag)
 		{
 
 			int NorthMagnitude = 0;
@@ -445,15 +656,30 @@ void MapRoom::Generate()
 
 			for (size_t i = 0; i < TempSidesNorth.size(); i++)
 			{
-				NorthMagnitude += TempSidesNorth[i];
+				
+				if (StaticSideFlag && (i < TempStaticNorth.size()) && TempStaticNorth[i] != 0)
+				{
+					NorthMagnitude += TempStaticNorth[i];
+				}
+				else
+				{
+					NorthMagnitude += TempSidesNorth[i];
+				}
 			}
 
 			for (size_t i = 0; i < TempSidesSouth.size(); i++)
 			{
-				SouthMagnitude += TempSidesSouth[i];
+				// If a static side is present, use that size over the dynamic side
+				if (StaticSideFlag && (i < TempStaticSouth.size()) && TempStaticSouth[i] != 0)
+				{
+					SouthMagnitude += TempStaticSouth[i];
+				}
+				else
+				{
+					SouthMagnitude += TempSidesSouth[i];
+				}
 			}
 
-			//VerticalDeficit = 0;
 			VerticalDeficit = abs(static_cast<int>(NorthMagnitude - SouthMagnitude));
 		}
 
@@ -507,6 +733,11 @@ void MapRoom::Generate()
 		TempSidesSouth.clear();
 		TempSidesWest.clear();
 		TempSidesNorth.clear();
+		TempStaticEast.clear();
+		TempStaticSouth.clear();
+		TempStaticWest.clear();
+		TempStaticNorth.clear();
+
 	}
 
 	// ------------------------------------------------------------------------------------------
@@ -518,8 +749,32 @@ void MapRoom::Generate()
 		// keeping a count
 		DrawCount++;
 
-		// Popping the front element
-		if (!Sides.empty() && CurrentLengthQuota <= 0)
+		// Getting the appropriate side for this definition
+		if (StaticSideFlag && !Sides.empty() && CurrentLengthQuota <= 0)
+		{
+			// Checking that the definition is correct first
+			if (StaticSides.empty() && Sides.size() > 1)
+			{
+#ifndef _DEBUG
+				cout << "Room defined incorrectly -- static sides count incorrect\n";
+#endif // !_DEBUG
+				abort(); // Cannot proceed
+			}
+			
+			if ((CurrentLengthQuota = StaticSides.front()) != 0)
+			{
+			}
+			else
+			{
+				CurrentLengthQuota = Sides.front();
+			}
+			// Still have to remove from other queue
+			StaticSides.erase(StaticSides.begin());
+			Sides.erase(Sides.begin());
+			// If last, set approp.
+			if (Sides.empty()) LastSide = true;
+		}
+		else if (!Sides.empty() && CurrentLengthQuota <= 0)
 		{
 			CurrentLengthQuota = Sides.front();
 			Sides.erase(Sides.begin());
@@ -562,7 +817,7 @@ void MapRoom::Generate()
 		CurrentLocations[CurrentPair] = true;
 
 		// Adding to the array
-		if(TempX >= 0 && TempY >= 0)
+		if(TempX >= 0 && TempY >= 0 && TempX < m_Width && TempY < m_Height)
 		m_Cells[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
 
 		// Decrementing the length
