@@ -286,6 +286,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, StaticSides, 5, 5),
 		"Complex_Top");
 
+	StaticSides.clear();
 	SideDef.clear();
 	Turns.clear();
 
@@ -446,28 +447,182 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	SideDef.clear();
 	Turns.clear();
+	StaticSides.clear();
 
+	StaticSides.push_back(8);
+	StaticSides.push_back(5);
+	StaticSides.push_back(0);
+
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+
+
+	StaticSides.push_back(0);
+
+	StaticSides.push_back(0);
+
+
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+	SideDef.push_back(1);
+
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, StaticSides, 5, 5),
+		"L_Rect_Static");
+
+	SideDef.clear();
+	Turns.clear();
+	StaticSides.clear();
+
+	StaticSides.push_back(5);
+	StaticSides.push_back(3);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(3);
+	StaticSides.push_back(5);
+
+	StaticSides.push_back(5);
+	StaticSides.push_back(3);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(3);
+	StaticSides.push_back(5);
+
+	StaticSides.push_back(5);
+	StaticSides.push_back(3);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(3);
+	StaticSides.push_back(5);
+
+	StaticSides.push_back(5);
+	StaticSides.push_back(3);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(0);
+	StaticSides.push_back(3);
+	StaticSides.push_back(5);
+
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(0);
+	SideDef.push_back(1);
+
+	Turns.push_back('R');
+	Turns.push_back('L');
 	Turns.push_back('L');
 	Turns.push_back('R');
 	Turns.push_back('R');
 	Turns.push_back('L');
-	Turns.push_back('R');
-	Turns.push_back('R');
+	Turns.push_back('L');
 	Turns.push_back('R');
 	Turns.push_back('R');
 
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(1);
-	SideDef.push_back(1);
-	SideDef.push_back(1);
-	SideDef.push_back(1);
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
+	Turns.push_back('L');
+	Turns.push_back('L');
+	Turns.push_back('R');
+	Turns.push_back('R');
 
 
-	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
-		"Test");
+
+
+	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, StaticSides, 5, 5),
+		"Static_Complex");
+
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
 

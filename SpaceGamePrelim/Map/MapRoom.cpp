@@ -5,6 +5,8 @@
 #include <map>
 #include <iostream>
 
+#include <time.h>
+
 using namespace std;
 
 MapRoom::MapRoom()
@@ -59,6 +61,11 @@ MapRoom::MapRoom(int Width, int Height)
 		abort();
 	}
 
+#ifdef _DEBUG
+	cout << "Map " << m_RoomType << " Loaded\n";
+#endif // _DEBUG
+
+
 	m_Width = Width;
 	m_Height = Height;
 
@@ -112,6 +119,9 @@ MapObject* MapRoom::GetCell(int X, int Y)
 //
 void MapRoom::Generate()
 {
+
+	clock_t time1 = (double)clock();            /* get initial time */
+	time1 = time1 / CLOCKS_PER_SEC;
 
 	RoomProperties* Properties = m_Properties;
 
@@ -237,7 +247,7 @@ void MapRoom::Generate()
 		{
 			Direction TempDirection = CorrespondingDirection(CurrentSide);
 			int TempCount = CountRecord;
-			int Index = 0;
+			int Index = TempCount;
 			int StaticWestMag = 0;
 			int StaticEastMag = 0;
 			int StaticNorthMag = 0;
@@ -504,7 +514,7 @@ void MapRoom::Generate()
 							difference--;
 						}
 						if (difference != 0 && i == size - 1)
-							i = 0;
+							i = -1;
 					}
 				}
 				else if (SouthMag > EffectHeight)
@@ -611,7 +621,8 @@ void MapRoom::Generate()
 		// Horizontal defecit, used in the verticle sides ONLY
 		if ((TempSidesEast.size() > TempSidesWest.size() ||
 			TempSidesEast.size() < TempSidesWest.size()) &&
-			SideVertical(CurrentSide) || StaticSideFlag)
+			(SideVertical(CurrentSide) && !StaticSideFlag) ||
+			(SideVertical(CurrentSide) && StaticSideFlag))
 		{
 			int EastMagnitude = 0;
 			int WestMagnitude = 0;
@@ -640,7 +651,7 @@ void MapRoom::Generate()
 					EastMagnitude += TempSidesEast[i];
 				}
 			}
-			HorizontalDeficit = abs(static_cast<int>(EastMagnitude - WestMagnitude)) + 1;
+			HorizontalDeficit = abs(static_cast<int>(EastMagnitude - WestMagnitude));
 		}
 
 		// If the an overall movement in the y axis was produced in 
@@ -648,7 +659,8 @@ void MapRoom::Generate()
 		// about this.
 		if ((TempSidesNorth.size() > TempSidesSouth.size() ||
 			TempSidesNorth.size() < TempSidesSouth.size()) &&
-			SideHorizontal(CurrentSide) || StaticSideFlag)
+			(SideHorizontal(CurrentSide) && !StaticSideFlag) ||
+			(SideHorizontal(CurrentSide) && StaticSideFlag))
 		{
 
 			int NorthMagnitude = 0;
@@ -830,5 +842,9 @@ void MapRoom::Generate()
 			Turns.erase(Turns.begin());
 		}
 	}
+
+	double timedif = (((double)clock()) / CLOCKS_PER_SEC) - time1;
+	cout << "time taken" << timedif << endl;
+
 
 }
