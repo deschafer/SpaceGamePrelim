@@ -17,6 +17,7 @@ private:
 
 	static TextureManager *m_Instance;
 	std::map<std::string, SDL_Texture*> m_TextureContainer;
+	std::map<std::string, TextureProperties*> m_ReducedTextureDefinitions;
 
 public:
 	~TextureManager();
@@ -35,6 +36,7 @@ public:
 	}
 
 	bool load(std::string Pathname, std::string TextureID, SDL_Renderer* pRenderer);
+	void SetReducedTexture(std::string ID, TextureProperties* Properties);
 	void DrawCurrentFrame(std::string TextureID, Rect Dimensions, SDL_RendererFlip Flip, 
 		 SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame = 1);
 	void DrawCurrentFrame(std::string TextureID, int X, int Y, Rect Dim, SDL_RendererFlip Flip,

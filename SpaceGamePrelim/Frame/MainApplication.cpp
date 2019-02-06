@@ -62,7 +62,6 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 				std::cout << "Renderer creation success\n";
 				//SDL_SetRenderDrawColor(g_pRenderer, 105, 165, 200, 255);
 				SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 0, 0);
-
 			}
 			else
 			{
@@ -84,24 +83,120 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	// everything succeeded lets draw the window
 	std::cout << "SDL intiialization was successful" << std::endl;
 
-	TextureContainer->load("Assets/block.png", "DefaultMap", g_pRenderer);
-	TextureContainer->load("Assets/room.png", "Room", g_pRenderer);
+	
+	// intialize joysticks/gamepads if supported
+	// initialize any other game structures here as well
+
+	InitializeRoomDefinitions();
+	InitializeScenes();
+	InitializeTextures();
+
+	return true;
+}
+
+//
+// HandleEvents()
+//
+//
+//
+void MainApplication::HandleEvents()
+{
+	InputManager::Instance()->HandleEvents();
+}
+
+//
+// Update()
+// updates all the current objects here
+// includes map, visible map, player, entities,
+// all objects get updated here
+//
+void MainApplication::Update()
+{
+	// First update the map objects
+	
 
 
-	// Temporary addition of scenes here
-	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene"));
-	//ActiveSceneManager::Instance()->AddScene(new TestScene("test scene", true));
-	//ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene", false));
+	// Then update other objects on top of the map objects
+	try {
+		ActiveSceneManager::Instance()->Update();
+	}
+	catch (...)
+	{
 
+	}
+
+}
+
+//
+// Render()
+//
+//
+//
+void MainApplication::Render()
+{
+	SDL_RenderClear(g_pRenderer);
+
+	// Draw map first
+	// Draw the objects on the map
+	// Then draw the UI elements
+	// Then draw any overlayed menus
+
+	MapManager::Instance()->DrawGrid();
+
+	try {
+		ActiveSceneManager::Instance()->Render();
+	}
+	catch (...)
+	{
+	}
+
+	SDL_RenderPresent(g_pRenderer);
+}
+
+//
+// Clean()
+// Called after main loop has been exited,
+// cleans all SDL framework objects before closing.
+//
+void MainApplication::Clean()
+{
+	std::cout << "Closing..." << std::endl;
+
+	// Clean window
+	SDL_DestroyWindow(g_pWindow);
+	// Clean renderer
+	SDL_DestroyRenderer(g_pRenderer);
+	// Finally, closing application
+	SDL_Quit();
+}
+
+//
+//
+//
+//
+bool MainApplication::ResolutionChanged()
+{
+
+	if (m_ResolutionChanged)
+	{
+		m_ResolutionChanged = false;
+		return true;
+	}
+	else return false;
+}
+
+//
+// InitializeRoomDefinitions()
+// Current version has hard-coded room definitions
+// Future version will parse in the definitions from
+// a file and load them into the game.
+//
+bool MainApplication::InitializeRoomDefinitions()
+{
 	std::vector<int> Sides;
-	Sides.push_back(rand() % 10 + 10);
-	Sides.push_back(rand() % 10 + 10);
-	Sides.push_back(5);
-	Sides.push_back(5);
-	Sides.push_back(8);
-	Sides.push_back(85);
-
 	std::vector<bool> SideDef;
+	std::vector<char> Turns;
+
 	// Top side
 	SideDef.push_back(0);
 	SideDef.push_back(0);
@@ -143,7 +238,6 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	SideDef.push_back(0);
 	SideDef.push_back(1);
 
-	std::vector<char> Turns;
 	Turns.push_back('R');
 	Turns.push_back('L');
 	Turns.push_back('L');
@@ -248,7 +342,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	SideDef.clear();
 	Turns.clear();
-	
+
 	std::vector<int> StaticSides;
 
 	StaticSides.push_back(0);
@@ -260,7 +354,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	StaticSides.push_back(0);
 	StaticSides.push_back(0);
 
-	
+
 	Turns.push_back('R');
 	Turns.push_back('L');
 	Turns.push_back('L');
@@ -438,7 +532,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	SideDef.push_back(1);
 
-	
+
 
 
 	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
@@ -618,107 +712,39 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	Turns.push_back('R');
 
 
-
-
 	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, StaticSides, 5, 5),
 		"Static_Complex");
-
-	// intialize joysticks/gamepads if supported
-	// initialize any other game structures here as well
-
 
 
 	return true;
 }
 
 //
-// HandleEvents()
+// InitializeTextures()
+// All base textures are loaded into the game here
 //
-//
-//
-void MainApplication::HandleEvents()
+bool MainApplication::InitializeTextures()
 {
-	InputManager::Instance()->HandleEvents();
-}
 
-//
-// Update()
-// updates all the current objects here
-// includes map, visible map, player, entities,
-// all objects get updated here
-//
-void MainApplication::Update()
-{
-	// First update the map objects
-	
-
-
-	// Then update other objects on top of the map objects
-	try {
-		ActiveSceneManager::Instance()->Update();
-	}
-	catch (...)
+	if (!TextureContainer->load("Assets/room.png", "Room", g_pRenderer))
 	{
-
+		return false;
 	}
 
+	return true;
 }
 
 //
-// Render()
+// InitializeScenes()
+// Initial menu scenes will be added here
 //
-//
-//
-void MainApplication::Render()
-{
-	SDL_RenderClear(g_pRenderer);
-
-	// Draw map first
-	// Draw the objects on the map
-	// Then draw the UI elements
-	// Then draw any overlayed menus
-
-	MapManager::Instance()->DrawGrid();
-
-	try {
-		ActiveSceneManager::Instance()->Render();
-	}
-	catch (...)
-	{
-
-	}
-
-	SDL_RenderPresent(g_pRenderer);
-}
-
-//
-// Clean()
-// Called after main loop has been exited,
-// cleans all SDL framework objects before closing.
-//
-void MainApplication::Clean()
-{
-	std::cout << "Closing..." << std::endl;
-
-	// Clean window
-	SDL_DestroyWindow(g_pWindow);
-	// Clean renderer
-	SDL_DestroyRenderer(g_pRenderer);
-	// Finally, closing application
-	SDL_Quit();
-}
-
-//
-//
-//
-//
-bool MainApplication::ResolutionChanged()
+bool MainApplication::InitializeScenes()
 {
 
-	if (m_ResolutionChanged)
-	{
-		m_ResolutionChanged = false;
-		return true;
-	}
-	else return false;
+	// Temporary addition of scenes here
+	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene"));
+	//ActiveSceneManager::Instance()->AddScene(new TestScene("test scene", true));
+	//ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene", false));
+
+	return true;
 }
