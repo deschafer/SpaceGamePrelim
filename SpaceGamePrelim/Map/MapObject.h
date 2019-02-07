@@ -13,7 +13,6 @@ protected:
 
 public:
 
-	virtual void Draw() = 0;
 	virtual void Draw(MapCoordinate Coords) = 0;
 
 	MapObject();

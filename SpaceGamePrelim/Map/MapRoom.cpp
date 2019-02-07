@@ -136,6 +136,10 @@ void MapRoom::Generate()
 	float ParamInnerSizeY = .25;
 	float ParamInnerSizeX = .25;
 
+	vector<string> tempStr;
+
+	tempStr.push_back("Wall");
+
 	int StartX = 0;
 	int StartY = 0;
 	int EffectHeight = m_Height - 1;
@@ -829,8 +833,13 @@ void MapRoom::Generate()
 		CurrentLocations[CurrentPair] = true;
 
 		// Adding to the array
-		if(TempX >= 0 && TempY >= 0 && TempX < m_Width && TempY < m_Height)
-		m_Cells[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
+		if (TempX >= 0 && TempY >= 0 && TempX < m_Width && TempY < m_Height)
+		{
+			//m_Cells[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
+
+			m_Cells[TempX][TempY] = new MapCell(tempStr, MapCoordinate(TempX * 32, TempY * 32));
+
+		}
 
 		// Decrementing the length
 		CurrentLengthQuota--;

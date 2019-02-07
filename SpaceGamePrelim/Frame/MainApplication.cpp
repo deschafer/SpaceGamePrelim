@@ -728,8 +728,11 @@ bool MainApplication::InitializeTextures()
 
 	if (!TextureContainer->load("Assets/room.png", "Room", g_pRenderer))
 	{
+
 		return false;
 	}
+
+	TextureContainer->SetReducedTexture("Wall", new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1));
 
 	return true;
 }

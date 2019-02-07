@@ -41,9 +41,31 @@ bool TextureManager::load(std::string Pathname, std::string TextureID, SDL_Rende
 		m_TextureContainer[TextureID] = Texture;
 	}
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	cout << "New texture " << TextureID << " loaded successfully." << endl;
 #endif // DEBUG
+}
+
+//
+// SetReducedTexture()
+// Sets a reduced texture -- a small section of a loaded in
+// texture or sprite sheet that corresponds to a single
+// meaningful section of that texture.
+//
+void TextureManager::SetReducedTexture(std::string ID, TextureProperties* Properties)
+{
+
+	if (!Properties)
+	{
+#ifdef _DEBUG
+		cout << "Properties passed was nullptr" << endl;
+#endif // DEBUG
+	}
+	else
+	{
+		m_ReducedTextureDefinitions[ID] = Properties;
+	}
+
 }
 
 //
@@ -73,7 +95,6 @@ void TextureManager::DrawCurrentFrame(std::string TextureID, Rect Dim, SDL_Rende
 void TextureManager::DrawCurrentFrame(std::string TextureID, int X, int Y, Rect Dim, SDL_RendererFlip Flip,
 	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
 {
-
 	// Local vars
 	SDL_Rect SourceRect;
 	SDL_Rect DestRect;
@@ -88,6 +109,69 @@ void TextureManager::DrawCurrentFrame(std::string TextureID, int X, int Y, Rect 
 
 	SDL_RenderCopyEx(pRenderer, m_TextureContainer[TextureID], &SourceRect,
 		&DestRect, 0, 0, Flip);
+}
+
+void TextureManager::DrawCurrentFrame(int X, int Y, std::string RedTxtID, SDL_RendererFlip Flip,
+	SDL_Renderer *pRenderer, int CurrentFrame)
+{
+
+	TextureProperties* Properties = m_ReducedTextureDefinitions[RedTxtID];
+	if (!Properties)
+	{
+#ifdef _DEBUG
+		cout << "No reduced texture formatted for this ID " << RedTxtID << endl;
+#endif // DEBUG
+		return;
+	}
+
+	Rect Dim = Properties->GetDimensions();
+	SDL_Rect SourceRect;
+	SDL_Rect DestRect;
+
+	// Setting information to draw this frame correctly
+	SourceRect.x = Dim.Width() * CurrentFrame;
+	SourceRect.y = Dim.Height() * (Properties->GetCurrentRow() - 1);
+	SourceRect.w = DestRect.w = Dim.Width();
+	SourceRect.h = DestRect.h = Dim.Height();
+	DestRect.x = X;
+	DestRect.y = Y;
+
+	SDL_RenderCopyEx(pRenderer, m_TextureContainer[Properties->GetTextureID()], &SourceRect,
+		&DestRect, 0, 0, Flip);
+
+}
+
+//
+// DrawStaticFrame() 
+// A simplified function for drawing textures that stay in a static state
+// and do not flip, changed position in the sprite sheet, and have
+// a reduced texture definition.
+//
+void TextureManager::DrawStaticFrame(int X, int Y, std::string RedTxtID, SDL_Renderer *pRenderer)
+{
+	TextureProperties* Properties = m_ReducedTextureDefinitions[RedTxtID];
+	if (!Properties)
+	{
+#ifdef _DEBUG
+		cout << "No reduced texture formatted for this ID " << RedTxtID << endl;
+#endif // DEBUG
+		return;
+	}
+
+	Rect Dim = Properties->GetDimensions();
+	SDL_Rect SourceRect;
+	SDL_Rect DestRect;
+
+	// Setting information to draw this frame correctly
+	SourceRect.x = Dim.Width();
+	SourceRect.y = Dim.Height() * (Properties->GetCurrentRow() - 1);
+	SourceRect.w = DestRect.w = Dim.Width();
+	SourceRect.h = DestRect.h = Dim.Height();
+	DestRect.x = X;
+	DestRect.y = Y;
+
+	SDL_RenderCopyEx(pRenderer, m_TextureContainer[Properties->GetTextureID()], &SourceRect,
+		&DestRect, 0, 0, SDL_FLIP_NONE);
 }
 
 //
