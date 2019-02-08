@@ -30,7 +30,7 @@ public:
 	MapCell::MapCell(TextureProperties* Properties, MapCoordinate Position);
 	MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position);
 
-	void Draw(MapCoordinate Coords);
+	virtual void Draw(MapCoordinate Coords);
 
 	void DrawStatic(MapCoordinate Coords);
 

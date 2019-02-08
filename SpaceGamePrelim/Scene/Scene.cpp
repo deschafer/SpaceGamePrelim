@@ -14,7 +14,7 @@ Scene::~Scene()
 void Scene::Update()
 {
 
-	for (int i = 0; i < m_Objects.size(); i++)
+	for (size_t i = 0; i < m_Objects.size(); i++)
 	{
 		m_Objects[i]->Update();
 	}
@@ -22,7 +22,7 @@ void Scene::Update()
 }
 void Scene::Render()
 {
-	for (int i = 0; i < m_Objects.size(); i++)
+	for (size_t i = 0; i < m_Objects.size(); i++)
 	{
 		m_Objects[i]->Draw();
 	}

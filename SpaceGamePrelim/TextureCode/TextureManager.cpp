@@ -13,6 +13,10 @@ TextureManager::~TextureManager()
 }
 
 //
+// NOTE: Rect class that's a part of TextureProperties is for the SOURCE rectangle, not the destination
+//
+
+//
 // load()
 // Loads specefied asset and saves a handle to it into this object
 //
@@ -163,8 +167,8 @@ void TextureManager::DrawStaticFrame(int X, int Y, std::string RedTxtID, SDL_Ren
 	SDL_Rect DestRect;
 
 	// Setting information to draw this frame correctly
-	SourceRect.x = Dim.Width();
-	SourceRect.y = Dim.Height() * (Properties->GetCurrentRow() - 1);
+	SourceRect.x = Dim.TopLeftX();
+	SourceRect.y = Dim.TopLeftY();
 	SourceRect.w = DestRect.w = Dim.Width();
 	SourceRect.h = DestRect.h = Dim.Height();
 	DestRect.x = X;

@@ -9,6 +9,7 @@
 
 #include "..\BasicTypes\BasicTypes.h"
 
+
 // singleton class structure
 class TextureManager
 {

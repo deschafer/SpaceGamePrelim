@@ -28,6 +28,7 @@
     <ClCompile Include="Map\MapManager.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
     <ClCompile Include="Map\MapRoom.cpp" />
+    <ClCompile Include="Map\MapWall.cpp" />
     <ClCompile Include="Map\RoomManager.cpp" />
     <ClCompile Include="Objects\Button.cpp" />
     <ClCompile Include="Objects\GameEntity.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="Map\MapManager.h" />
     <ClInclude Include="Map\MapObject.h" />
     <ClInclude Include="Map\MapRoom.h" />
+    <ClInclude Include="Map\MapWall.h" />
     <ClInclude Include="Map\RoomManager.h" />
     <ClInclude Include="Objects\Button.h" />
     <ClInclude Include="Objects\GameEntity.h" />

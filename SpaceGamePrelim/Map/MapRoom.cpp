@@ -1,5 +1,6 @@
 #include "MapRoom.h"
-#include "..\Map\GenRoomComp.h"
+#include "GenRoomComp.h"
+#include "MapWall.h"
 
 #include <vector>
 #include <map>
@@ -120,8 +121,8 @@ MapObject* MapRoom::GetCell(int X, int Y)
 void MapRoom::Generate()
 {
 
-	clock_t time1 = (double)clock();            /* get initial time */
-	time1 = time1 / CLOCKS_PER_SEC;
+	clock_t time1 = clock();            /* get initial time */
+	time1 = (time1 / CLOCKS_PER_SEC);
 
 	RoomProperties* Properties = m_Properties;
 
@@ -360,8 +361,8 @@ void MapRoom::Generate()
 				if (EastMag < EffectWidth)
 				{
 					int difference = EffectWidth - EastMag;
-					int size = TempSidesEast.size();
-					for (int i = 0; i < size && difference > 0; i++)
+					size_t size = TempSidesEast.size();
+					for (size_t i = 0; i < size && difference > 0; i++)
 					{
 						// Static sides DO NOT get modified
 						if (i < TempStaticEast.size() && TempStaticEast[i] != 0);
@@ -381,8 +382,8 @@ void MapRoom::Generate()
 				else if (EastMag > EffectWidth)
 				{
 					int difference = EastMag - EffectWidth;
-					int size = TempSidesEast.size();
-					for (int i = 0; i < size && difference > 0; i++)
+					size_t size = TempSidesEast.size();
+					for (size_t i = 0; i < size && difference > 0; i++)
 					{
 						// Static sides DO NOT get modified
 						if (i < TempStaticEast.size() && TempStaticEast[i] != 0);
@@ -434,8 +435,8 @@ void MapRoom::Generate()
 				if (WestMag < EffectWidth)
 				{
 					int difference = EffectWidth - WestMag;
-					int size = TempSidesWest.size();
-					for (int i = 0; i < size && difference > 0; i++)
+					size_t size = TempSidesWest.size();
+					for (size_t i = 0; i < size && difference > 0; i++)
 					{
 						// Static sides DO NOT get modified
 						if (i < TempStaticWest.size() && TempStaticWest[i] != 0);
@@ -452,8 +453,8 @@ void MapRoom::Generate()
 				else if (WestMag > EffectWidth)
 				{
 					int difference = WestMag - EffectWidth;
-					int size = TempSidesWest.size();
-					for (int i = 0; i < size && difference > 0; i++)
+					size_t size = TempSidesWest.size();
+					for (size_t i = 0; i < size && difference > 0; i++)
 					{
 						// Static sides DO NOT get modified
 						if (i < TempStaticWest.size() && TempStaticWest[i] != 0);
@@ -506,8 +507,8 @@ void MapRoom::Generate()
 				if (SouthMag < EffectHeight)
 				{
 					int difference = EffectHeight - SouthMag;
-					int size = TempSidesSouth.size();
-					for (int i = 0; i < size && difference > 0; i++)
+					size_t size = TempSidesSouth.size();
+					for (size_t i = 0; i < size && difference > 0; i++)
 					{
 						// Static sides DO NOT get modified
 						if (i < TempStaticSouth.size() && TempStaticSouth[i] != 0);
@@ -524,8 +525,8 @@ void MapRoom::Generate()
 				else if (SouthMag > EffectHeight)
 				{
 					int difference = SouthMag - EffectHeight;
-					int size = TempSidesSouth.size();
-					for (int i = 0; i < size && difference > 0; i++)
+					size_t size = TempSidesSouth.size();
+					for (size_t i = 0; i < size && difference > 0; i++)
 					{
 						// Static sides DO NOT get modified
 						if (i < TempStaticSouth.size() && TempStaticSouth[i] != 0);
@@ -577,8 +578,8 @@ void MapRoom::Generate()
 				if (NorthMag < EffectHeight)
 				{
 					int difference = EffectHeight - NorthMag;
-					int size = TempSidesNorth.size();
-					for (int i = 0; i < size && difference > 0; i++)
+					size_t size = TempSidesNorth.size();
+					for (size_t i = 0; i < size && difference > 0; i++)
 					{
 						// Static sides DO NOT get modified
 						if (i < TempStaticNorth.size() && TempStaticNorth[i] != 0);
@@ -595,8 +596,8 @@ void MapRoom::Generate()
 				else if (NorthMag > EffectHeight)
 				{
 					int difference = NorthMag - EffectHeight;
-					int size = TempSidesNorth.size();
-					for (int i = 0; i < size && difference > 0; i++)
+					size_t size = TempSidesNorth.size();
+					for (size_t i = 0; i < size && difference > 0; i++)
 					{
 						// Static sides DO NOT get modified
 						if (i < TempStaticNorth.size() && TempStaticNorth[i] != 0);
@@ -756,12 +757,20 @@ void MapRoom::Generate()
 
 	}
 
+	CurrentSide = Side::TOP;
+
 	// ------------------------------------------------------------------------------------------
 	// ------------------------------------------------------------------------------------------
 	// Now the next step, drawing in the set sides. This goes through the side vector, and draws them 
 	// with their desired length and in the direction indicated by the turns vector.
 	while (!complete)
 	{
+		// Keeping track of the current side
+		if ((SideDef.size() > DrawCount) && (SideDef[DrawCount] == 1))
+		{
+			CurrentSide = NextSide(CurrentSide);
+		}
+	
 		// keeping a count
 		DrawCount++;
 
@@ -771,7 +780,7 @@ void MapRoom::Generate()
 			// Checking that the definition is correct first
 			if (StaticSides.empty() && Sides.size() > 1)
 			{
-#ifndef _DEBUG
+#ifdef _DEBUG
 				cout << "Room defined incorrectly -- static sides count incorrect\n";
 #endif // !_DEBUG
 				abort(); // Cannot proceed
@@ -835,9 +844,27 @@ void MapRoom::Generate()
 		// Adding to the array
 		if (TempX >= 0 && TempY >= 0 && TempX < m_Width && TempY < m_Height)
 		{
-			//m_Cells[TempX][TempY] = new MapCell(new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1), MapCoordinate(TempX * 32, TempY * 32));
+			/*
+			switch (CurrentSide)
+			{
+			case Side::TOP:
+				tempStr.push_back("Wall");
+				break;
+			case Side::RIGHT:
+				tempStr.push_back("Wall_Side_Right");
+				break;
+			case Side::BOTTOM:
+				tempStr.push_back("Wall");
+				break;
+			case Side::LEFT:
+				tempStr.push_back("Wall_Side_Left");
+				break;
+			}
+			*/
 
-			m_Cells[TempX][TempY] = new MapCell(tempStr, MapCoordinate(TempX * 32, TempY * 32));
+			tempStr.push_back("Wall");
+
+			m_Cells[TempX][TempY] = new MapWall(tempStr, MapCoordinate(TempX * 32, TempY * 32));
 
 		}
 
@@ -850,6 +877,8 @@ void MapRoom::Generate()
 			CurrentDirection = Turn(CurrentDirection, Turns.front());
 			Turns.erase(Turns.begin());
 		}
+
+		tempStr.clear();
 	}
 
 	double timedif = (((double)clock()) / CLOCKS_PER_SEC) - time1;

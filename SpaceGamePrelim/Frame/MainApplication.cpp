@@ -726,13 +726,16 @@ bool MainApplication::InitializeRoomDefinitions()
 bool MainApplication::InitializeTextures()
 {
 
-	if (!TextureContainer->load("Assets/room.png", "Room", g_pRenderer))
+	if (!TextureContainer->load("Assets/room2.png", "Room", g_pRenderer))
 	{
 
 		return false;
 	}
 
-	TextureContainer->SetReducedTexture("Wall", new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall", new TextureProperties(Rect(32, 0, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall_Side_Left", new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall_Side_Right", new TextureProperties(Rect(160, 0, 32, 32), "Room", 1, 0, 0, 1));
+
 
 	return true;
 }

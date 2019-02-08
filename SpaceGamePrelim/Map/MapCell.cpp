@@ -69,6 +69,7 @@ void MapCell::Draw(MapCoordinate Coords)
 		if (m_TextureIDs.empty())
 		{
 			std::cout << "textures are empty";
+			return;
 		}
 		TextureManager::Instance()->DrawCurrentFrame(
 			m_TextureIDs.back(), 

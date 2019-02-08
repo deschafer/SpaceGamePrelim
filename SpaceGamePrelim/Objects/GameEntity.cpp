@@ -76,9 +76,15 @@ void GameEntity::Draw()
 {
 	SDL_Renderer* Temp = MainApplication::Instance()->GetRenderer();
 	
-	TextureManager::Instance()->DrawCurrentFrame(m_TextureID, m_Position.getX(), 
-		m_Position.getY(), m_Dimensions, SDL_FLIP_NONE, MainApplication::Instance()->GetRenderer(), 
-		m_CurrentRow, m_CurrentFrame);
+	TextureManager::Instance()->DrawCurrentFrame(
+		m_TextureID, 
+		static_cast<int>(round(m_Position.getX())), 
+		static_cast<int>(round(m_Position.getY())), 
+		m_Dimensions, 
+		SDL_FLIP_NONE, 
+		MainApplication::Instance()->GetRenderer(), 
+		m_CurrentRow, 
+		m_CurrentFrame);
 }
 
 //

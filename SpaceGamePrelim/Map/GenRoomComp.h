@@ -77,9 +77,6 @@ Side CorrespondingSide(Direction Dir)
 
 	case Direction::NORTH:
 		return Side::LEFT;
-
-	default:
-		break;
 	}
 
 }
@@ -101,7 +98,9 @@ Direction CorrespondingDirection(Side side)
 	case Side::LEFT:
 		return Direction::NORTH;
 
-	default:
+	case Side::COMPL:
+		throw "incorrect side";
+		return Direction::EAST;
 		break;
 	}
 
@@ -125,8 +124,7 @@ bool SideHorizontal(Side side)
 		break;
 	case Side::COMPL:
 		throw "incorrect side";
-		break;
-	default:
+		return false;
 		break;
 	}
 
@@ -150,8 +148,7 @@ bool SideVertical(Side side)
 		break;
 	case Side::COMPL:
 		throw "incorrect side";
-		break;
-	default:
+		return false;
 		break;
 	}
 
