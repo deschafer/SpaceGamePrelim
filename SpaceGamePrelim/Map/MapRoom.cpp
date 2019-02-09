@@ -1,6 +1,7 @@
 #include "MapRoom.h"
 #include "GenRoomComp.h"
 #include "MapWall.h"
+#include "MapManager.h"
 
 #include <vector>
 #include <map>
@@ -10,14 +11,22 @@
 
 using namespace std;
 
-MapRoom::MapRoom()
-{
-}
+// Helper functions for the MapRoom::Generate()
+vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, bool LastBlock, Direction NextDirection);
+void SetFloorTiles(MapObject*** &Cells, int XMax, int YMax);
+void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax);
 
+MapRoom::MapRoom()
+{}
 MapRoom::~MapRoom()
 {
+	//TODO: Implement proper destruction here
 }
 
+//
+// MapRoom()
+// CTOR that should be used to create a MapRoom with a known type
+//
 MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 {
 	// Getting the properties assoc with this room type
@@ -32,7 +41,7 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 	m_Height = Height;
 	m_RoomType = RoomType;
 
-	// Need to check with the minimum sizes of the maproom here
+	// TODO: Need to check with the minimum sizes of the maproom here
 
 	// Generating the array for this room
 	m_Cells = new MapObject**[m_Width];
@@ -49,9 +58,13 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 			m_Cells[i][j] = nullptr;
 		}
 	} 
-
 }
 
+//
+// MapRoom()
+// CTOR that should be used to create a MapRoom with an unknown type
+// NOTE: May not be staying in final version due to min room size complications
+//
 MapRoom::MapRoom(int Width, int Height)
 {
 	// Getting the properties assoc with this room type
@@ -65,7 +78,6 @@ MapRoom::MapRoom(int Width, int Height)
 #ifdef _DEBUG
 	cout << "Map " << m_RoomType << " Loaded\n";
 #endif // _DEBUG
-
 
 	m_Width = Width;
 	m_Height = Height;
@@ -87,9 +99,7 @@ MapRoom::MapRoom(int Width, int Height)
 			m_Cells[i][j] = nullptr;
 		}
 	}
-
 }
-
 
 //
 // GetCell()
@@ -99,7 +109,6 @@ MapRoom::MapRoom(int Width, int Height)
 //
 MapObject* MapRoom::GetCell(int X, int Y)
 {
-
 	if (X < m_Width && Y < m_Height)
 	{
 		return m_Cells[X][Y];
@@ -108,24 +117,32 @@ MapObject* MapRoom::GetCell(int X, int Y)
 	{
 		return nullptr;
 	}
-
 }
-
 
 //
 // Generate()
 // Room generation function, generates the room based on the width and height 
 // parameters based off of the room def. of RoomType stored in RoomManager.
 // Stores the cells of this room in its own array.
+// 
+// The algorithm starts at the top, works to the east, folowing the definition, and.
+// goes cell by cell, constructing the room. It goes east(Top)->south(Right)->west(Bottom)->north(Left). 
+// Each of these greater sides have smaller, specefic sides that are defined by the room definition.
 //
 void MapRoom::Generate()
 {
-
-	clock_t time1 = clock();            /* get initial time */
+	// Preformance testing only
+	static int enter = 0;
+	// This label is just for preformance testing only, and will not be in the final version
+top:
+	// Preformance testing only
+	enter++;
+	clock_t time1 = clock();   
 	time1 = (time1 / CLOCKS_PER_SEC);
 
 	RoomProperties* Properties = m_Properties;
 
+	// Check if the definition was found prior to generating
 	if (Properties == nullptr)
 	{
 #ifndef _DEBUG
@@ -134,57 +151,61 @@ void MapRoom::Generate()
 		abort();
 	}
 
+	// These are test values, will be a part of the room definition
 	float ParamInnerSizeY = .25;
 	float ParamInnerSizeX = .25;
 
-	vector<string> tempStr;
 
-	tempStr.push_back("Wall");
+	// Numerics
+	int CellWidth = MapManager::Instance()->GetCellWidth();
+	int CellHeight = MapManager::Instance()->GetCellHeight();
+	int StartX = 0;							// Starting Offset
+	int StartY = 0;							// Starting Offset
+	int EffectHeight = m_Height - 1;		// Actual height used in the alg
+	int EffectWidth = m_Width - 1;			// Actual width used in the alg
+	int MaxHeightX = StartX;				// Max values
+	int MaxHeightY = StartY + m_Height;		// ..
+	int MaxWidthX = StartX + m_Width;		// ..
+	int MaxWidthY = StartY;					// ..
+	int DrawCount = 0;						// A count of drawn/created cells in the second stage
+	int Count = 0;							// A genertic count to keep track of pos. in SideDef
+	int CountRecord = 0;					// A record of the count at the top of the cycle
+	int TempX = StartX;						// Used to contain current XPos of drawn cell
+	int TempY = StartY;						// Used to contain current YPos of drawn cell
+	int CurrentLengthQuota = 0;				// # of cells needed to be drawn
+	int HorizontalDeficit = 0;				// Offset left over from last side, it decreases the effective dimensions
+	int VerticalDeficit = 0;				// Offset left over from last side, it decreases the effective dimensions
 
-	int StartX = 0;
-	int StartY = 0;
-	int EffectHeight = m_Height - 1;
-	int EffectWidth = m_Width - 1;
-	//int EffectHeight = 10 - 1 - StartY;
-	//int EffectWidth = 10 - 1 - StartX;
-	int MaxHeightX = StartX;
-	int MaxHeightY = StartY + m_Height;
-	int MaxWidthX = StartX + m_Width;
-	int MaxWidthY = StartY;
-	int DrawCount = 0;
-	int Count = 0;
-	int CountRecord = 0;
-	int TempX = StartX;
-	int TempY = StartY;
-	int CurrentLengthQuota = 0;
-	int HorizontalDeficit = 0;
-	int VerticalDeficit = 0;
-	int BegOffsetX = 0;
-	int BegOffsetY = 0;
-
-	bool Test = 0;
+	// Flags
+	bool Test = 0;				
 	bool SizingComplete = false;
-	bool LastSide = false;
-	bool StaticSideFlag = false;
-	bool complete = false;
+	bool LastSide = false;					
+	bool StaticSideFlag = false;			// Indicates usage of static sides
+	bool complete = false;					// generic, used througout
 
-	Event EventType = Event::NONE;
-	Direction CurrentDirection = Direction::EAST;
-	Direction CurrentDirectionTemp;
-	Side CurrentSide = Side::TOP;
+	// Generating-stage helper variables
+	Direction CurrentDirection = Direction::EAST;	// Current direction used in stage 1 and stage 2
+	Direction CurrentDirectionTemp;					// Used to store the correspong direction for a side, stage 1
+	Side CurrentSide = Side::TOP;					// Current side, set at the start, the top
 
+	// Stores a map of all locations based on their coordinates
 	map<pair<int, int>, bool> CurrentLocations;
 
+	vector<string> tempStr;	// Vector used to tempoarily store string sofr texture layers of cells
+
+	// Room Def. Vectors
 	vector<int> StaticSides;// Used for static side definitions
 	vector<int> Sides;		// size = number of sides, each side has a length.
 	vector<bool> SideDef;	// stores the Greater Side Definition from the room def
 	vector<char> Turns;		// Stores the turns from the room def
 
+	// Room gen. Vectors
 	vector<int> TempSidesEast;	// Temporary vectors, used in the first stage
 	vector<int> TempSidesSouth;
 	vector<int> TempSidesWest;
 	vector<int> TempSidesNorth;
 
+	// Static Side Vectors
 	vector<int> TempStaticEast;	// Temporary vectors, used in the first stage for static sides
 	vector<int> TempStaticSouth;
 	vector<int> TempStaticWest;
@@ -211,14 +232,17 @@ void MapRoom::Generate()
 
 	// Determining the side lengths for each of the 
 	// sides in this defined room.
+	// Start STAGE 1
 	while (!SizingComplete)
 	{
 		CurrentDirectionTemp = CorrespondingDirection(CurrentSide);
 		CountRecord = Count;
 
-		// Adding empty sides to the record
+		// Adding empty sides to the record, these serve as a place holder that
+		// will be dealt with later.
 		do
 		{
+			// Testing if this side is significant
 			Test = SideDef[Count];
 			if (CurrentDirectionTemp == Direction::EAST && CurrentSide != Side::BOTTOM)
 			{
@@ -239,7 +263,6 @@ void MapRoom::Generate()
 
 			// Get the new direction
 			CurrentDirectionTemp = Turn(CurrentDirectionTemp, Turns[Count]);
-
 			// Increment a count
 			Count++;
 		} while (Test != true);
@@ -263,10 +286,8 @@ void MapRoom::Generate()
 				// Setting the east temp queue for the static sides
 				if (TempDirection == Direction::EAST && CurrentSide != Side::BOTTOM)
 				{
-
 					TempStaticEast.push_back(StaticSides[Index]);
 					StaticEastMag += StaticSides[Index];
-
 				}
 				// Setting the south temp queue for the static sides
 				else if (TempDirection == Direction::SOUTH && CurrentSide != Side::LEFT)
@@ -275,7 +296,6 @@ void MapRoom::Generate()
 					{
 						TempStaticSouth.push_back(StaticSides[Index]);
 						StaticSouthMag += StaticSides[Index];
-
 					}
 				}
 				// Setting the west temp queue for the static sides
@@ -285,7 +305,6 @@ void MapRoom::Generate()
 					{
 						TempStaticWest.push_back(StaticSides[Index]);
 						StaticWestMag += StaticSides[Index];
-
 					}
 				}
 				// Setting the north temp queue for the static sides
@@ -300,7 +319,6 @@ void MapRoom::Generate()
 
 				// Get the new direction
 				TempDirection = Turn(TempDirection, Turns[TempCount]);
-
 				// Increment a count
 				TempCount++;
 				Index++;
@@ -308,8 +326,7 @@ void MapRoom::Generate()
 		}
 
 		
-
-		// Then we deal with these sides
+		// Then we deal with the empty, placeholder sides
 		bool TempComplete = false;
 		int X_Size = 0;
 		int Y_Size = 0;
@@ -317,7 +334,6 @@ void MapRoom::Generate()
 		// Determining an actual size for these sides
 		while (!TempComplete)
 		{
-
 			X_Size = TempSidesEast.size();
 
 			// first deal with x positions
@@ -330,7 +346,6 @@ void MapRoom::Generate()
 				}
 				else
 				{
-
 					TempSidesEast[i] = (EffectWidth) / X_Size - HorizontalDeficit; // all set to equal size for now
 				}
 			}
@@ -707,10 +722,12 @@ void MapRoom::Generate()
 
 		CurrentDirectionTemp = CorrespondingDirection(CurrentSide);
 
-		// Adding the sides to the vector to be draw
+		// Adding the sides to the vector to be drawn in a the same
+		// order that they were initially set at the beginning
 		Count = CountRecord;
 		do
 		{
+			// Test if side is significant
 			Test = SideDef[Count];
 			if (CurrentDirectionTemp == Direction::EAST && CurrentSide != Side::BOTTOM)
 			{
@@ -733,13 +750,13 @@ void MapRoom::Generate()
 				CountNorth++;
 			}
 
+			// Gets new direction, increments
 			CurrentDirectionTemp = Turn(CurrentDirectionTemp, Turns[Count]);
-
 			Count++;
 
 		} while (Test != true);
 
-
+		// Testing if the next side is the complete side
 		if ((CurrentSide = NextSide(CurrentSide)) == Side::COMPL)
 		{
 			SizingComplete = true;
@@ -754,42 +771,36 @@ void MapRoom::Generate()
 		TempStaticSouth.clear();
 		TempStaticWest.clear();
 		TempStaticNorth.clear();
-
 	}
 
 	CurrentSide = Side::TOP;
-
+	int SideCount = 0;
+	// STAGE 1 END
 	// ------------------------------------------------------------------------------------------
 	// ------------------------------------------------------------------------------------------
+	// STAGE 2 START
 	// Now the next step, drawing in the set sides. This goes through the side vector, and draws them 
 	// with their desired length and in the direction indicated by the turns vector.
 	while (!complete)
 	{
-		// Keeping track of the current side
-		if ((SideDef.size() > DrawCount) && (SideDef[DrawCount] == 1))
-		{
-			CurrentSide = NextSide(CurrentSide);
-		}
-	
-		// keeping a count
+		// keeping a count of drawn cells
 		DrawCount++;
 
 		// Getting the appropriate side for this definition
+		// If static sides, and not finished, and the done drawing this spec side
 		if (StaticSideFlag && !Sides.empty() && CurrentLengthQuota <= 0)
 		{
 			// Checking that the definition is correct first
 			if (StaticSides.empty() && Sides.size() > 1)
 			{
-#ifdef _DEBUG
+			#ifdef _DEBUG
 				cout << "Room defined incorrectly -- static sides count incorrect\n";
-#endif // !_DEBUG
+			#endif // !_DEBUG
 				abort(); // Cannot proceed
 			}
-			
-			if ((CurrentLengthQuota = StaticSides.front()) != 0)
-			{
-			}
-			else
+
+			// If the static sides is empty, get from the other sides
+			if ((CurrentLengthQuota = StaticSides.front()) == 0)
 			{
 				CurrentLengthQuota = Sides.front();
 			}
@@ -799,6 +810,7 @@ void MapRoom::Generate()
 			// If last, set approp.
 			if (Sides.empty()) LastSide = true;
 		}
+		// If no static sides, then get the next side when ready
 		else if (!Sides.empty() && CurrentLengthQuota <= 0)
 		{
 			CurrentLengthQuota = Sides.front();
@@ -819,7 +831,7 @@ void MapRoom::Generate()
 			break;
 		}
 
-		// Determings the movement based on direction
+		// Determines the movement based on direction
 		if (CurrentDirection == Direction::EAST)
 		{
 			TempX++;
@@ -844,28 +856,15 @@ void MapRoom::Generate()
 		// Adding to the array
 		if (TempX >= 0 && TempY >= 0 && TempX < m_Width && TempY < m_Height)
 		{
-			/*
-			switch (CurrentSide)
-			{
-			case Side::TOP:
-				tempStr.push_back("Wall");
-				break;
-			case Side::RIGHT:
-				tempStr.push_back("Wall_Side_Right");
-				break;
-			case Side::BOTTOM:
-				tempStr.push_back("Wall");
-				break;
-			case Side::LEFT:
-				tempStr.push_back("Wall_Side_Left");
-				break;
-			}
-			*/
+			// Getting the correct texture
+			tempStr = FindCorrectTile(
+				CurrentSide, 
+				CurrentDirection,
+				(CurrentLengthQuota == 1),
+				Turn(CurrentDirection, Turns.front()));
 
-			tempStr.push_back("Wall");
-
+			// Finally, creating a new map cell representing the outer walls of this room
 			m_Cells[TempX][TempY] = new MapWall(tempStr, MapCoordinate(TempX * 32, TempY * 32));
-
 		}
 
 		// Decrementing the length
@@ -877,12 +876,155 @@ void MapRoom::Generate()
 			CurrentDirection = Turn(CurrentDirection, Turns.front());
 			Turns.erase(Turns.begin());
 		}
-
+		// Keeping track of the current side
+		if (CurrentLengthQuota == 0)
+		{
+			SideCount++;
+			if ((SideDef.size() > SideCount) && (SideDef[SideCount] == 1))
+			{
+				CurrentSide = NextSide(CurrentSide);
+			}
+		}
+		// Clear the textures for the last cell
 		tempStr.clear();
 	}
 
+	// Sets the floor tiles, a recursive function
+	SetFloorTiles(m_Cells, m_Width, m_Height);
+
+	// Preformance based -- not in final version
 	double timedif = (((double)clock()) / CLOCKS_PER_SEC) - time1;
 	cout << "time taken" << timedif << endl;
 
+	//if (enter < 500) goto top;
+}
 
+//
+// FindCorrectTile()
+// Finds the next correct tile that appropriately fits the context of the wall
+//
+vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, bool LastBlock, Direction NextDirection)
+{
+	vector<string> Strings; // Temp vector for the textures for this cell
+
+	// If this is the last block for this specefic side, then 
+	// we need to prepare for the transition
+	if (LastBlock)
+	{
+		if (CurrentDirection == Direction::EAST && NextDirection == Direction::SOUTH)
+		{
+			Strings.push_back("Wall_Side_Left");
+		}
+		else if (CurrentDirection == Direction::SOUTH && NextDirection == Direction::WEST)
+		{
+			Strings.push_back("Wall_Corner_Right");
+		}
+		else if (CurrentDirection == Direction::WEST && NextDirection == Direction::NORTH)
+		{
+			Strings.push_back("Wall_Corner_Left");
+		}
+		else if (CurrentDirection == Direction::WEST && NextDirection == Direction::SOUTH)
+		{
+			Strings.push_back("Wall_Bottom");
+			Strings.push_back("Wall_Side_Left");
+			Strings.push_back("Wall_Corner_Right");
+		}
+		else if (CurrentDirection == Direction::NORTH && NextDirection == Direction::EAST)
+		{
+			Strings.push_back("Wall_Side_Right");
+		}
+		else if (CurrentDirection == Direction::NORTH && NextDirection == Direction::WEST)
+		{
+			Strings.push_back("Wall_Bottom");
+			Strings.push_back("Wall_Side_Right");
+			Strings.push_back("Wall_Corner_Left");
+		}
+		else
+		{
+			Strings.push_back("Wall");
+		}
+	}
+	// For a normal block in a side
+	else
+	{
+		if (CurrentDirection == Direction::SOUTH)
+		{
+			Strings.push_back("Wall_Side_Left");
+		}
+		else if (CurrentDirection == Direction::NORTH)
+		{
+			Strings.push_back("Wall_Side_Right");
+		}
+		else if (CurrentDirection == Direction::WEST)
+		{
+			Strings.push_back("Wall_Bottom");
+		}
+		else
+		{
+			Strings.push_back("Wall");
+		}
+	}
+
+	// Returns textures
+	return Strings;
+}
+
+
+//
+// SetFloorTiles()
+// Wrapper around recursive alg to mark all floor tiles
+//
+void SetFloorTiles(MapObject*** &Cells, int XMax, int YMax)
+{
+
+	MarkFloorTile(Cells, 1, 1, XMax, YMax);
+
+}
+
+//
+// MarkFloorTile()
+// A simple recursive search that marks all cells within the walls as floors
+//
+void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax)
+{
+	// Only need the height and width once
+	static int Width = MapManager::Instance()->GetCellWidth();
+	static int Height = MapManager::Instance()->GetCellHeight();
+
+	vector<string> Strings;
+
+	// IF current is nullptr, and not already made a wall
+	if (Cells[X][Y] == nullptr)
+	{
+		Strings.push_back("Floor");
+		Cells[X][Y] = new MapCell(Strings, MapCoordinate(X * Width, Y * Height));
+	}
+	// One cell to the east
+	if ((X + 1) < XMax &&
+		Y < YMax &&
+		Cells[X + 1][Y] == nullptr)
+	{
+		MarkFloorTile(Cells, X + 1, Y, XMax, YMax);
+	}
+	// One cell to the South
+	if (X < XMax &&
+		(Y + 1) < YMax &&
+		Cells[X][Y + 1] == nullptr)
+	{
+		MarkFloorTile(Cells, X, Y + 1, XMax, YMax);
+	}
+	// One cell to the north
+	if (X < XMax &&
+		(Y - 1) > 0 &&
+		Cells[X][Y - 1] == nullptr)
+	{
+		MarkFloorTile(Cells, X, Y - 1, XMax, YMax);
+	}
+	// One cell to the west
+	if ((X - 1) >= 0 &&
+		(Y) < YMax &&
+		Cells[X - 1][Y] == nullptr)
+	{
+		MarkFloorTile(Cells, X - 1, Y, XMax, YMax);
+	}
 }

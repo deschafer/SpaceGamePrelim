@@ -7,10 +7,8 @@
 
 #include <map>
 
-#define RANDOM 71245
 
 using namespace std;
-
 
 MapManager* MapManager::m_Instance = nullptr;
 
@@ -45,6 +43,8 @@ MapManager::MapManager() :
 		}
 	}
 
+	m_Instance = this;
+
 	m_ActiveMap->Generate();
 
 }
@@ -54,9 +54,13 @@ MapManager::~MapManager()
 {
 }
 
+//
+// DrawGrid()
+// This is a temporary function, its status is currently being reevaluated
+//
 void MapManager::DrawGrid()
 {
-
+	/*
 	int OldR, OldG, OldB, OldA;
 	SDL_Renderer* renderer = MainApplication::Instance()->GetRenderer();
 
@@ -93,39 +97,35 @@ void MapManager::DrawGrid()
 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	// end test
-	SDL_RenderDrawRect(MainApplication::Instance()->GetRenderer(), &cRect);
+//	SDL_RenderDrawRect(MainApplication::Instance()->GetRenderer(), &cRect);
 
 	SDL_SetRenderDrawColor(renderer, OldR, OldG, OldB, OldA);
-
+	*/
 
 	DrawDefinedRoom();
 	DrawVisibleCells();
 }
 
+//
+// DrawVisibleCells()
+// Draws all of the visible cells onto the screen
+// part of update loop
+//
 void MapManager::DrawVisibleCells()
 {
 	for (int i = 0; i < m_Columns; i++)
 	{
 		for (int j = 0; j < m_Rows; j++)
 		{
-
+			// Gets the new cell
 			m_VisibleObjectArray[i][j] = m_ActiveMap->GetCell(i, j);
-
-		}
-	}
-
-	for (int i = 0; i < m_Columns; i++)
-	{
-		for (int j = 0; j < m_Rows; j++)
-		{
+			// Then draws it
 			if (m_VisibleObjectArray[i][j] != nullptr)
 			{
 				m_VisibleObjectArray[i][j]->Draw(MapCoordinate(i * m_CellWidth, j * m_CellHeight));
 			}
 		}
 	}
-
-
 }
 
 //

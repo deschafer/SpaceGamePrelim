@@ -46,6 +46,7 @@ private:
 	void DrawDefinedRoom();
 	void DrawVisibleCells();
 
+	MapManager();
 
 public:
 
@@ -61,7 +62,10 @@ public:
 
 	void DrawGrid();
 
-	MapManager();
+	int GetCellWidth() { return m_CellWidth; }
+	int GetCellHeight() { return m_CellHeight; }
+
+	
 	~MapManager();
 };
 

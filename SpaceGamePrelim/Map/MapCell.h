@@ -14,15 +14,12 @@ protected:
 	std::vector<std::string> m_TextureIDs;	// Holds, in stack order, the textures used for this cell
 	std::vector<std::string>* m_RedTextureIDs;
 
+	bool m_UsingRedTextures;
 
 	// Texture Properties
 	Rect m_Dimensions;
 	int m_CurrentFrame;
 	int m_CurrentRow;
-
-	bool m_UsingRedTextures;
-
-
 
 public:
 	MapCell();
@@ -31,10 +28,7 @@ public:
 	MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position);
 
 	virtual void Draw(MapCoordinate Coords);
-
 	void DrawStatic(MapCoordinate Coords);
-
-
 
 	virtual ~MapCell();
 };

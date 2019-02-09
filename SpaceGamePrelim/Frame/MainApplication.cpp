@@ -733,8 +733,13 @@ bool MainApplication::InitializeTextures()
 	}
 
 	TextureContainer->SetReducedTexture("Wall", new TextureProperties(Rect(32, 0, 32, 32), "Room", 1, 0, 0, 1));
-	TextureContainer->SetReducedTexture("Wall_Side_Left", new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1));
-	TextureContainer->SetReducedTexture("Wall_Side_Right", new TextureProperties(Rect(160, 0, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall_Side_Right", new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall_Side_Left", new TextureProperties(Rect(160, 0, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall_Bottom", new TextureProperties(Rect(64, 128, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall_Corner_Right", new TextureProperties(Rect(160, 128, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall_Corner_Left", new TextureProperties(Rect(0, 128, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Floor", new TextureProperties(Rect(64, 32, 32, 32), "Room", 1, 0, 0, 1));
+
 
 
 	return true;

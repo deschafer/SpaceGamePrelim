@@ -37,8 +37,8 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 	}
 
 	//m_TempRoom = new MapRoom("Complex", 15, 20);	// Named room
-	//m_TempRoom = new MapRoom("L_Rect_Static", 20, 20);	// Named room
-	m_TempRoom = new MapRoom((rand() % 10) + 10, (rand() % 10) + 10);			// Random room
+	m_TempRoom = new MapRoom("L_Rect_Static", 13, 15);	// Named room
+	//m_TempRoom = new MapRoom((rand() % 10) + 15, (rand() % 10) + 15);			// Random room
 
 
 }
