@@ -23,4 +23,4 @@ The Room Generation is the most complicated part of this project so far. Essenti
 Below are some images of the newest, still preliminary, version of the room generation.
 
 
-![alt text](https://raw.githubusercontent.com/deschafer/SpaceGamePrelim/master/Presentation/room1.png")
+!(https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
