@@ -21,3 +21,6 @@ Added a variety of improvements from the first initial version. Some of the chan
 The Room Generation is the most complicated part of this project so far. Essentially, it generates a room based off a user-defined room definition. This definition, stored in Map/RoomManager.h RoomProperties, contains the information needed to contruct a complex or simple shape. This definition is then used by the generation algorithm to use as a model for its generated version. The algorithm is stored in /Map/MapRoom MapRoom::Generate().
 
 Below are some images of the newest, still preliminary, version of the room generation.
+
+
+![alt text](https://raw.githubusercontent.com/deschafer/SpaceGamePrelim/master/Presentation/room1.png")
