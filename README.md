@@ -24,3 +24,9 @@ Below are some images of the newest, still preliminary, version of the room gene
 
 
 ![alt-text](https://raw.githubusercontent.com/deschafer/SpaceGamePrelim/master/Presentation/room1.png "Room 1")
+
+![alt-text](https://raw.githubusercontent.com/deschafer/SpaceGamePrelim/master/Presentation/room2.jpg "Room 2")
+
+![alt-text](https://raw.githubusercontent.com/deschafer/SpaceGamePrelim/master/Presentation/room3.jpg "Room 2")
+
+![alt-text](https://raw.githubusercontent.com/deschafer/SpaceGamePrelim/master/Presentation/room4.jpg "Room 2")
