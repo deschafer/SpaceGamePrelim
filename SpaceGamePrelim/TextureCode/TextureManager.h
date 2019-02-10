@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 #include <string>
 #include <iostream>
 
@@ -19,6 +20,8 @@ private:
 	static TextureManager *m_Instance;
 	std::map<std::string, SDL_Texture*> m_TextureContainer;
 	std::map<std::string, TextureProperties*> m_ReducedTextureDefinitions;
+
+	std::map<std::string, std::vector<std::string>> m_TextureGroups;
 
 public:
 	~TextureManager();
@@ -46,6 +49,10 @@ public:
 		SDL_Renderer *pRenderer, int CurrentFrame = 1);
 	void DrawStaticFrame(int X, int Y, std::string RedTxtID, SDL_Renderer *pRenderer);
 	int RemoveTexture(std::string TextureID);
+
+	void AddTextureGroup(std::string GroupID, std::vector<std::string> ReducedTextures);
+
+	std::string GetReducedFromTextureGrp(std::string TextureGroupID);
 
 	TextureProperties* GetRoomProperties(std::string ReducedTextureID) { return m_ReducedTextureDefinitions[ReducedTextureID]; }
 };

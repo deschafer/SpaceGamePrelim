@@ -1,5 +1,7 @@
 #include "TextureManager.h"
 
+#include <random>
+
 using namespace std;
 
 TextureManager* TextureManager::m_Instance = nullptr;
@@ -187,4 +189,33 @@ int TextureManager::RemoveTexture(std::string TextureID)
 	m_TextureContainer.erase(TextureID);
 
 	return 0;
+}
+
+//
+// AddTextureGroup()
+// Adds a list of reduced textures to an associated texture group
+//
+void TextureManager::AddTextureGroup(std::string GroupID, vector<std::string> ReducedTextures)
+{
+
+	for (size_t i = 0; i < ReducedTextures.size(); i++)
+	{
+		m_TextureGroups[GroupID].push_back(ReducedTextures[i]);
+	}
+
+}
+
+//
+// GetReducedFromTextureGrp()
+// Returns a random texture from the texture group, and returns its reduced text. ID
+//
+std::string TextureManager::GetReducedFromTextureGrp(std::string TextureGroupID)
+{
+
+	int Number = m_TextureGroups[TextureGroupID].size();
+	if (Number == 0) return 0;
+	int Random = rand() % Number;
+
+	return m_TextureGroups[TextureGroupID][Random];
+	
 }

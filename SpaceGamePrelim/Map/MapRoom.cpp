@@ -2,14 +2,16 @@
 #include "GenRoomComp.h"
 #include "MapWall.h"
 #include "MapManager.h"
+#include "MapInactive.h"
 
 #include <vector>
 #include <map>
 #include <iostream>
+#include <chrono>
 
-#include <time.h>
 
 using namespace std;
+using namespace std::chrono;
 
 // Helper functions for the MapRoom::Generate()
 vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, bool LastBlock, Direction NextDirection);
@@ -131,14 +133,14 @@ MapObject* MapRoom::GetCell(int X, int Y)
 //
 void MapRoom::Generate()
 {
+	
 	// Preformance testing only
 	static int enter = 0;
 	// This label is just for preformance testing only, and will not be in the final version
 top:
 	// Preformance testing only
 	enter++;
-	clock_t time1 = clock();   
-	time1 = (time1 / CLOCKS_PER_SEC);
+	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
 	RoomProperties* Properties = m_Properties;
 
@@ -893,8 +895,9 @@ top:
 	SetFloorTiles(m_Cells, m_Width, m_Height);
 
 	// Preformance based -- not in final version
-	double timedif = (((double)clock()) / CLOCKS_PER_SEC) - time1;
-	cout << "time taken" << timedif << endl;
+	high_resolution_clock::time_point t2 = high_resolution_clock::now();
+	auto duration = duration_cast<milliseconds>(t2 - t1).count();
+	cout << duration;
 
 	//if (enter < 500) goto top;
 }
@@ -961,7 +964,7 @@ vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, boo
 		}
 		else
 		{
-			Strings.push_back("Wall");
+			Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp("Wall_Top"));
 		}
 	}
 
@@ -996,8 +999,8 @@ void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax)
 	// IF current is nullptr, and not already made a wall
 	if (Cells[X][Y] == nullptr)
 	{
-		Strings.push_back("Floor");
-		Cells[X][Y] = new MapCell(Strings, MapCoordinate(X * Width, Y * Height));
+		Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp("Floors"));
+		Cells[X][Y] = new MapInactive(Strings, MapCoordinate(X * Width, Y * Height));
 	}
 	// One cell to the east
 	if ((X + 1) < XMax &&

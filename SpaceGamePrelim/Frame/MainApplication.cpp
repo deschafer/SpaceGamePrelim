@@ -733,14 +733,45 @@ bool MainApplication::InitializeTextures()
 	}
 
 	TextureContainer->SetReducedTexture("Wall", new TextureProperties(Rect(32, 0, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall_Top_1", new TextureProperties(Rect(32, 0, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall_Top_2", new TextureProperties(Rect(64, 0, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Wall_Top_3", new TextureProperties(Rect(128, 0, 32, 32), "Room", 1, 0, 0, 1));
 	TextureContainer->SetReducedTexture("Wall_Side_Right", new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1));
 	TextureContainer->SetReducedTexture("Wall_Side_Left", new TextureProperties(Rect(160, 0, 32, 32), "Room", 1, 0, 0, 1));
 	TextureContainer->SetReducedTexture("Wall_Bottom", new TextureProperties(Rect(64, 128, 32, 32), "Room", 1, 0, 0, 1));
 	TextureContainer->SetReducedTexture("Wall_Corner_Right", new TextureProperties(Rect(160, 128, 32, 32), "Room", 1, 0, 0, 1));
 	TextureContainer->SetReducedTexture("Wall_Corner_Left", new TextureProperties(Rect(0, 128, 32, 32), "Room", 1, 0, 0, 1));
-	TextureContainer->SetReducedTexture("Floor", new TextureProperties(Rect(64, 32, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Floor_1", new TextureProperties(Rect(64, 36, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Floor_2", new TextureProperties(Rect(64, 64, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Floor_3", new TextureProperties(Rect(96, 64, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Floor_4", new TextureProperties(Rect(96, 36, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Floor_5", new TextureProperties(Rect(126, 64, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Floor_6", new TextureProperties(Rect(126, 36, 32, 32), "Room", 1, 0, 0, 1));
+	TextureContainer->SetReducedTexture("Floor_7", new TextureProperties(Rect(126, 92, 32, 32), "Room", 1, 0, 0, 1));
 
 
+
+	// Adding a floor tiles texture group
+	std::vector<std::string> TextureGroup;
+	TextureGroup.push_back("Floor_1");
+	TextureGroup.push_back("Floor_2");
+	TextureGroup.push_back("Floor_3");
+	TextureGroup.push_back("Floor_4");
+	TextureGroup.push_back("Floor_5");
+	TextureGroup.push_back("Floor_6");
+	TextureGroup.push_back("Floor_7");
+
+	TextureContainer->AddTextureGroup("Floors", TextureGroup);
+	TextureGroup.clear();
+
+	// Adding a floor tiles texture group
+	TextureGroup.push_back("Wall_Top_1");
+	TextureGroup.push_back("Wall_Top_2");
+	TextureGroup.push_back("Wall_Top_3");
+
+
+	TextureContainer->AddTextureGroup("Wall_Top", TextureGroup);
+	TextureGroup.clear();
 
 	return true;
 }
