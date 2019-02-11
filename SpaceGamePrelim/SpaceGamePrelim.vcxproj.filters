@@ -80,6 +80,21 @@
     <ClCompile Include="Map\MapInactive.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Parsing\InitFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Parsing\TinyXML\tinystr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Parsing\TinyXML\tinyxml.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Parsing\TinyXML\tinyxmlerror.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Parsing\TinyXML\tinyxmlparser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\ActiveSceneManager.h">
@@ -155,6 +170,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Map\MapInactive.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Parsing\InitFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Parsing\TinyXML\tinystr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Parsing\TinyXML\tinyxml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

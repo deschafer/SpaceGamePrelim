@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<ROOM>
+  
+  <DEF name="Rect" >
+    <Turns>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+    </GSideDef>
+  </DEF>
+  <DEF name="Rect2" >
+    <Turns>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+    </GSideDef>
+  </DEF>
+
+
+</ROOM>

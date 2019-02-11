@@ -1,6 +1,6 @@
 
 #include "MainApplication.h"
-
+#include "..\Parsing\InitFactory.h"
 
 // init static member
 MainApplication* MainApplication::m_Instance = nullptr;
@@ -87,6 +87,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
 
+	InitFactory::Instance()->LoadRoomDefinitions("Map/Room.xml");
 	InitializeRoomDefinitions();
 	InitializeScenes();
 	InitializeTextures();
