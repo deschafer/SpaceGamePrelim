@@ -22,7 +22,7 @@ TextureManager::~TextureManager()
 // load()
 // Loads specefied asset and saves a handle to it into this object
 //
-bool TextureManager::load(std::string Pathname, std::string TextureID, SDL_Renderer* pRenderer)
+bool TextureManager::SetTexture(std::string Pathname, std::string TextureID, SDL_Renderer* pRenderer)
 {
 	// Creating and verifying the surface
 	SDL_Surface* TempSurface = IMG_Load(Pathname.c_str());

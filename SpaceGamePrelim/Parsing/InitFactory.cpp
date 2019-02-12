@@ -1,10 +1,15 @@
+
 #include "InitFactory.h"
 #include "..\Parsing\TinyXML\tinyxml.h"
 #include "..\Map\RoomManager.h"
+#include "..\BasicTypes\BasicTypes.h"
+#include "..\TextureCode\TextureManager.h"
+#include "..\Frame\MainApplication.h"
 
 #include <iostream>
 #include <vector>
 
+#include <string.h>
 
 
 InitFactory* InitFactory::m_Instance = nullptr;
@@ -13,7 +18,6 @@ InitFactory* InitFactory::m_Instance = nullptr;
 InitFactory::InitFactory()
 {
 }
-
 
 InitFactory::~InitFactory()
 {
@@ -156,11 +160,88 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 }
 
 //
-//
-//
+// LoadTextures()
+// Loads in both reduced textures and textures from a given xml file
 //
 bool InitFactory::LoadTextures(std::string File)
 {
+
+	TiXmlDocument Document;
+
+	// Load the input file
+	if (!Document.LoadFile(File.c_str()))
+	{
+		std::cout << Document.ErrorDesc() << std::endl;
+		return false;
+	}
+
+	// Gets the root element
+	TiXmlElement* Root = Document.RootElement();
+
+	if (Root == nullptr)
+	{
+		std::cout << "Root nullptr" << std::endl;
+		return false;
+	}
+
+	// declare the states root node
+	TiXmlElement* NextChildNode = nullptr;
+	std::string temp;
+	std::string ReducedTextureName;
+	std::string TextureName;
+	std::string TexturePath;
+	Rect SourceDimensions;
+
+	// Parsing the file
+	for (TiXmlElement* Current = Root->FirstChildElement();
+		Current != nullptr;
+		Current = NextChildNode->NextSiblingElement())
+	{
+		// Looking for the start of a texture definition
+		if ((Current != nullptr &&
+			(temp = Current->Value()) == "TEXTURE"))
+		{
+			NextChildNode = Current;
+
+			// Getting the definition name
+			TextureName = Current->Attribute("name");
+			TexturePath = Current->Attribute("path");
+
+			// Add the new texture
+			TextureManager::Instance()->SetTexture(
+				TexturePath, 
+				TextureName, 
+				MainApplication::Instance()->GetRenderer());
+
+		}
+		// Looking for the start of a reduced texture definition
+		else if ((Current != nullptr &&
+			(temp = Current->Value()) == "RED_TEXTURE"))
+		{
+			NextChildNode = Current;
+
+			// Getting the definition name
+			ReducedTextureName = Current->Attribute("name");
+			TextureName = Current->Attribute("assoc_name");
+
+			// Getting the dimensions
+			temp = Current->Attribute("x");
+			int X = std::stoi(temp);
+			temp = Current->Attribute("y");
+			int Y = std::stoi(temp);
+			temp = Current->Attribute("width");
+			int Width = std::stoi(temp);
+			temp = Current->Attribute("height");
+			int Height = std::stoi(temp);
+
+			SourceDimensions = Rect(X, Y, Width, Height);
+
+			// Adds the new reduced texture
+			TextureManager::Instance()->SetReducedTexture(
+				ReducedTextureName, 
+				new TextureProperties(SourceDimensions, TextureName, 1, 0, 0, 1));
+		}
+	}
 
 	return true;
 }

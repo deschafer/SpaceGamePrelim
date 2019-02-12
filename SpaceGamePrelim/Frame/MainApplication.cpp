@@ -87,7 +87,8 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
 
-	InitFactory::Instance()->LoadRoomDefinitions("Map/Room.xml");
+	InitFactory::Instance()->LoadRoomDefinitions("XML/Map/Room.xml");
+	InitFactory::Instance()->LoadTextures("XML/Textures/Textures.xml");
 	InitializeRoomDefinitions();
 	InitializeScenes();
 	InitializeTextures();
@@ -647,16 +648,7 @@ bool MainApplication::InitializeRoomDefinitions()
 bool MainApplication::InitializeTextures()
 {
 
-	if (!TextureContainer->load("Assets/room2.png", "Room", g_pRenderer))
-	{
 
-		return false;
-	}
-
-	TextureContainer->SetReducedTexture("Wall", new TextureProperties(Rect(32, 0, 32, 32), "Room", 1, 0, 0, 1));
-	TextureContainer->SetReducedTexture("Wall_Top_1", new TextureProperties(Rect(32, 0, 32, 32), "Room", 1, 0, 0, 1));
-	TextureContainer->SetReducedTexture("Wall_Top_2", new TextureProperties(Rect(64, 0, 32, 32), "Room", 1, 0, 0, 1));
-	TextureContainer->SetReducedTexture("Wall_Top_3", new TextureProperties(Rect(128, 0, 32, 32), "Room", 1, 0, 0, 1));
 	TextureContainer->SetReducedTexture("Wall_Side_Right", new TextureProperties(Rect(0, 0, 32, 32), "Room", 1, 0, 0, 1));
 	TextureContainer->SetReducedTexture("Wall_Side_Left", new TextureProperties(Rect(160, 0, 32, 32), "Room", 1, 0, 0, 1));
 	TextureContainer->SetReducedTexture("Wall_Bottom", new TextureProperties(Rect(64, 128, 32, 32), "Room", 1, 0, 0, 1));

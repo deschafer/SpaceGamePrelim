@@ -39,7 +39,7 @@ public:
 		}
 	}
 
-	bool load(std::string Pathname, std::string TextureID, SDL_Renderer* pRenderer);
+	bool SetTexture(std::string Pathname, std::string TextureID, SDL_Renderer* pRenderer);
 	void SetReducedTexture(std::string ID, TextureProperties* Properties);
 	void DrawCurrentFrame(std::string TextureID, Rect Dimensions, SDL_RendererFlip Flip, 
 		 SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame = 1);

@@ -29,7 +29,7 @@ bool TestScene::Enter()
 		"Source", 1, 3, 60, 1), Vector(100, 100),
 		Vector(.5, 0), Vector(0, 0));
 
-	TextureManager::Instance()->load("Assets/arc2.png", "Source",
+	TextureManager::Instance()->SetTexture("Assets/arc2.png", "Source",
 		MainApplication::Instance()->GetRenderer());
 
 	Scene::m_Objects.push_back(Temp);
@@ -38,7 +38,7 @@ bool TestScene::Enter()
 		"tank", 1, 3, 60, 1), Vector(200, 100),
 		Vector(0, 0), Vector(0, 0));
 
-	TextureManager::Instance()->load("Assets/tankbrigade.png", "tank",
+	TextureManager::Instance()->SetTexture("Assets/tankbrigade.png", "tank",
 		MainApplication::Instance()->GetRenderer());
 
 	Scene::m_Objects.push_back(Temp);

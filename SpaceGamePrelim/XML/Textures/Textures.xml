@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<TEXTURES>
+
+  <TEXTURE name="Room" path="Assets/room2.png"/>
+  
+  <RED_TEXTURE name="Wall" assoc_name="Room" x="32" y="0" width="32" height="32" />
+
+  <RED_TEXTURE name="Wall_Top_1" assoc_name="Room" x="32" y="0" width="32" height="32" />
+  <RED_TEXTURE name="Wall_Top_2" assoc_name="Room" x="64" y="0" width="32" height="32" />
+  <RED_TEXTURE name="Wall_Top_3" assoc_name="Room" x="128" y="0" width="32" height="32" />
+
+
+
+</TEXTURES>

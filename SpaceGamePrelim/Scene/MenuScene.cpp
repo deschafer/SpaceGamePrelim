@@ -26,7 +26,7 @@ bool MenuScene::Enter()
 {
 	
 
-	TextureManager::Instance()->load("Assets/expl2.png", "Explosion", 
+	TextureManager::Instance()->SetTexture("Assets/expl2.png", "Explosion", 
 		MainApplication::Instance()->GetRenderer());
 
 	GameEntity *Temp = new Button(new TextureProperties(Rect(0, 0, 32, 31),
