@@ -15,20 +15,108 @@
       <G g="1"/>
     </GSideDef>
   </DEF>
-  <DEF name="Rect2" >
+  <DEF name="Complex" >
     <Turns>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <G g="1"/>
+
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <G g="1"/>
+
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <G g="1"/>
+
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <S g="0"/>
+      <G g="1"/>
+    </GSideDef>
+  </DEF>
+
+  <DEF name="Inv_L_Rect" >
+    <Turns>
+      <T t="R"/>
+      <T t="L"/>
       <T t="R"/>
       <T t="R"/>
       <T t="R"/>
       <T t="R"/>
     </Turns>
     <GSideDef>
+      <S g="0"/>
+      <S g="0"/>
       <G g="1"/>
       <G g="1"/>
       <G g="1"/>
       <G g="1"/>
     </GSideDef>
   </DEF>
-
 
 </ROOM>

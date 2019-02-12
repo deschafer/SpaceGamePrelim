@@ -198,89 +198,6 @@ bool MainApplication::InitializeRoomDefinitions()
 	std::vector<bool> SideDef;
 	std::vector<char> Turns;
 
-	// Top side
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(1);
-	// Right side
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(1);
-	// Bottom side
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(1);
-	// Last side ending
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(0);
-	SideDef.push_back(1);
-
-	Turns.push_back('R');
-	Turns.push_back('L');
-	Turns.push_back('L');
-	Turns.push_back('R');
-	Turns.push_back('R');
-	Turns.push_back('L');
-	Turns.push_back('L');
-	Turns.push_back('R');
-	Turns.push_back('R');
-	// Right Side
-	Turns.push_back('R');
-	Turns.push_back('L');
-	Turns.push_back('L');
-	Turns.push_back('R');
-	Turns.push_back('R');
-	Turns.push_back('L');
-	Turns.push_back('L');
-	Turns.push_back('R');
-	Turns.push_back('R');
-	// Bottom side
-	Turns.push_back('R');
-	Turns.push_back('L');
-	Turns.push_back('L');
-	Turns.push_back('R');
-	Turns.push_back('R');
-	Turns.push_back('L');
-	Turns.push_back('L');
-	Turns.push_back('R');
-	Turns.push_back('R');
-	// Last side ending
-	Turns.push_back('R');
-	Turns.push_back('L');
-	Turns.push_back('L');
-	Turns.push_back('R');
-	Turns.push_back('R');
-	Turns.push_back('L');
-	Turns.push_back('L');
-	Turns.push_back('R');
-	Turns.push_back('R');
-
-	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
-		"Complex");
 
 	SideDef.clear();
 	Turns.clear();
@@ -328,6 +245,8 @@ bool MainApplication::InitializeRoomDefinitions()
 	SideDef.clear();
 	Turns.clear();
 
+	/*
+
 	Turns.push_back('R');
 	Turns.push_back('R');
 	Turns.push_back('R');
@@ -341,6 +260,7 @@ bool MainApplication::InitializeRoomDefinitions()
 	RoomManager::Instance()->RegisterRoomType(new RoomProperties(SideDef, Turns, 5, 5),
 		"Rect");
 
+	*/
 	SideDef.clear();
 	Turns.clear();
 
