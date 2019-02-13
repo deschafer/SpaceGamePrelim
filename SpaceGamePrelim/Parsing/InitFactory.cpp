@@ -241,6 +241,34 @@ bool InitFactory::LoadTextures(std::string File)
 				ReducedTextureName, 
 				new TextureProperties(SourceDimensions, TextureName, 1, 0, 0, 1));
 		}
+		// Looking for the start of a texture group
+		else if ((Current != nullptr &&
+			(temp = Current->Value()) == "TEXTURE_GROUP"))
+		{
+
+			NextChildNode = Current;
+
+			std::vector<std::string> ParsedGroup;		// Storage for the textures of this group
+			std::string GroupName = Current->Attribute("name");
+
+			// Getting each group name
+			for (TiXmlElement* NextNode = Current->FirstChildElement();
+				NextNode != nullptr;
+				NextNode = NextNode->NextSiblingElement())
+			{
+				if (NextNode != nullptr)
+				{
+					// Getting the name of this texture
+					std::string Name = NextNode->Attribute("name");
+					if (!Name.empty())
+					{
+						ParsedGroup.push_back(Name);
+					}
+				}
+			}
+			// Finally adding to the manager
+			TextureManager::Instance()->AddTextureGroup(GroupName, ParsedGroup);
+		}
 	}
 
 	return true;

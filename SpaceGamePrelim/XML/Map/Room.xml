@@ -58,44 +58,63 @@
       <T t="R"/>
     </Turns>
     <GSideDef>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
       <G g="1"/>
 
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
       <G g="1"/>
 
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
       <G g="1"/>
 
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
-      <S g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+    </GSideDef>
+  </DEF>
+
+  <DEF name="L_Rect" >
+    <Turns>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="1"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      <G g="1"/>
       <G g="1"/>
     </GSideDef>
   </DEF>
@@ -110,8 +129,8 @@
       <T t="R"/>
     </Turns>
     <GSideDef>
-      <S g="0"/>
-      <S g="0"/>
+      <G g="0"/>
+      <G g="0"/>F
       <G g="1"/>
       <G g="1"/>
       <G g="1"/>
@@ -119,4 +138,356 @@
     </GSideDef>
   </DEF>
 
+  <DEF name="Complex_Top" >
+    <Turns>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+    </GSideDef>
+    <StaticSides>
+      <S s="0"/>
+      <S s="8"/>
+      <S s="5"/>
+      <S s="3"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+    </StaticSides>
+  </DEF>
+
+  <DEF name="Complex_Right" >
+    <Turns>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="1"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+    </GSideDef>
+    <StaticSides>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="3"/>
+      <S s="0"/>
+      <S s="2"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+    </StaticSides>
+  </DEF>
+
+  <DEF name="Complex_Bottom" >
+    <Turns>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      <G g="1"/>
+    </GSideDef>
+    <StaticSides>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="5"/>
+      <S s="0"/>
+      <S s="3"/>
+      <S s="0"/>
+      <S s="0"/>
+    </StaticSides>
+  </DEF>
+
+  <DEF name="Complex_Left" >
+    <Turns>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+    </GSideDef>
+    <StaticSides>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="3"/>
+      <S s="2"/>
+      <S s="5"/>
+      <S s="2"/>
+      <S s="0"/>
+    </StaticSides>
+  </DEF>
+
+  <DEF name="Stair_Down" >
+    <Turns>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+    </GSideDef>
+  </DEF>
+
+  <DEF name="Stair_Down_Reflected" >
+    <Turns>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="1"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+    </GSideDef>
+  </DEF>
+
+  <DEF name="L_Rect_Static" >
+    <Turns>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+    </GSideDef>
+    <StaticSides>
+      <S s="8"/>
+      <S s="5"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+    </StaticSides>
+  </DEF>
+
+  <DEF name="Static_Complex" >
+    <Turns>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+    </GSideDef>
+    <StaticSides>
+      <S s="5"/>
+      <S s="3"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="3"/>
+      <S s="5"/>
+      <S s="5"/>
+      <S s="3"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="3"/>
+      <S s="5"/>
+      <S s="5"/>
+      <S s="3"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="3"/>
+      <S s="5"/>
+      <S s="5"/>
+      <S s="3"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="0"/>
+      <S s="3"/>
+      <S s="5"/>
+    </StaticSides>
+  </DEF>
+  
 </ROOM>

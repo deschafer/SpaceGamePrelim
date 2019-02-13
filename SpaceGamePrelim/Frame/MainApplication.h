@@ -59,8 +59,6 @@ public:
 	bool Initialize(const char * WindowTitle, int TopLeftXPos, int TopLeftYPos,
 		int WndWidth, int WndHeight, bool Fullscreen, bool WndCentered = true);
 	
-	bool InitializeRoomDefinitions();
-	bool InitializeTextures();
 	bool InitializeScenes();
 
 	void HandleEvents();
