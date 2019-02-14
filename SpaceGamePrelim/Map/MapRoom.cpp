@@ -178,11 +178,16 @@ top:
 	int HorizontalDeficit = 0;				// Offset left over from last side, it decreases the effective dimensions
 	int VerticalDeficit = 0;				// Offset left over from last side, it decreases the effective dimensions
 
+	const int MinRandSize = 2;
+
 	// Flags
 	bool Test = 0;				
 	bool SizingComplete = false;
 	bool LastSide = false;					
 	bool StaticSideFlag = false;			// Indicates usage of static sides
+	bool DynamicRandomFlag = false;
+	bool StaticRandomHorizontal = false;
+	bool StaticRandomVertical = false;
 	bool complete = false;					// generic, used througout
 
 	// Generating-stage helper variables
@@ -219,6 +224,15 @@ top:
 	if (Properties->m_StaticSidesFlag)
 	{
 		StaticSideFlag = true;
+	}
+	else if (Properties->m_DynamicRandomFlag)
+	{
+		DynamicRandomFlag = true;
+		// Copying static sides
+		for (size_t i = 0; i < Properties->m_GreaterSideDefinition.size(); i++)
+		{
+			StaticSides.push_back(0);
+		}
 	}
 	// Copying GreaterSide and Turn vectors (same size by def)
 	for (size_t i = 0; i < Properties->m_GreaterSideDefinition.size(); i++)
@@ -325,6 +339,99 @@ top:
 				TempCount++;
 				Index++;
 			} while (Test != true);
+		}
+		else if (DynamicRandomFlag)
+		{
+
+			Direction TempDirection = CorrespondingDirection(CurrentSide);
+			int TempCount = CountRecord;
+			int Index = TempCount;
+			int StaticWestMag = 0;
+			int StaticEastMag = 0;
+			int StaticNorthMag = 0;
+			int StaticSouthMag = 0;
+
+			int Space = EffectWidth;
+
+			int HorizontalMagnitude = (TempSidesEast.size() + TempSidesWest.size()) - 1;
+
+			if ((HorizontalMagnitude > 0) &&
+				(SideVertical(CurrentSide)))
+			{
+
+				int InwardMovement = 0;
+
+				do
+				{
+					Test = SideDef[TempCount];
+
+					// Setting the east temp queue for the static sides
+					if (TempDirection == Direction::EAST && CurrentSide != Side::BOTTOM)
+					{
+						int random = (rand() % Space/2) + 1;
+						
+
+						if (CurrentSide == Side::LEFT)
+						{
+							StaticSides[Index] += random;
+							TempStaticEast.push_back(StaticSides[Index]);
+							InwardMovement += random;
+							Space -= random;
+						}
+						else
+						{
+							random = (rand() % InwardMovement) + 1;
+
+							StaticSides[Index] += random;
+							TempStaticEast.push_back(StaticSides[Index]);
+							InwardMovement -= random;
+							Space += random;
+						}
+					}
+					// Setting the west temp queue for the static sides
+					else if (TempDirection == Direction::WEST && CurrentSide != Side::TOP)
+					{
+
+						int random = (rand() % Space/2) + 1;
+
+						if (CurrentSide == Side::RIGHT)
+						{
+							StaticSides[Index] += random;
+							TempStaticWest.push_back(StaticSides[Index]);
+							InwardMovement += random;
+							Space -= random;
+
+						}
+						else
+						{
+							random = (rand() % InwardMovement) + 1;
+							StaticSides[Index] += random;
+							TempStaticWest.push_back(StaticSides[Index]);
+							InwardMovement -= random;
+							Space += random;
+
+						}
+
+					}
+					// Get the new direction
+					TempDirection = Turn(TempDirection, Turns[TempCount]);
+					// Increment a count
+					TempCount++;
+					Index++;
+				} while (Test != true);
+
+				// Add one random
+				if (CurrentSide == Side::RIGHT)
+				{
+					TempSidesSouth.push_back(3);
+				}
+				else
+				{
+					TempSidesNorth.push_back(3);
+				}
+
+				StaticSideFlag = true;
+			}
 		}
 
 		

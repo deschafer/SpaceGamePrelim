@@ -15,7 +15,7 @@
       <G g="1"/>
     </GSideDef>
   </DEF>
-  <DEF name="Complex" >
+  <DEF name="Complex" minwidth="15" minheight="15">
     <Turns>
       <T t="R"/>
       <T t="L"/>
@@ -171,7 +171,7 @@
     </StaticSides>
   </DEF>
 
-  <DEF name="Complex_Right" >
+  <DEF name="Complex_Right" minwidth ="20" minheight="20">
     <Turns>
       <T t="R"/>
       <T t="R"/>
@@ -192,6 +192,7 @@
       <G g="1"/>
       <G g="1"/>
     </GSideDef>
+    <!--
     <StaticSides>
       <S s="0"/>
       <S s="0"/>
@@ -202,6 +203,7 @@
       <S s="0"/>
       <S s="0"/>
     </StaticSides>
+    -->
   </DEF>
 
   <DEF name="Complex_Bottom" >
@@ -270,7 +272,7 @@
     </StaticSides>
   </DEF>
 
-  <DEF name="Stair_Down" >
+  <DEF name="Stair_Down" minwidth ="20" minheight="20">
     <Turns>
       <T t="R"/>
       <T t="L"/>
@@ -301,7 +303,7 @@
     </GSideDef>
   </DEF>
 
-  <DEF name="Stair_Down_Reflected" >
+  <DEF name="Stair_Down_Reflected" minwidth ="12" minheight="10">
     <Turns>
       <T t="R"/>
       <T t="R"/>
@@ -367,7 +369,7 @@
     </StaticSides>
   </DEF>
 
-  <DEF name="Static_Complex" >
+  <DEF name="Static_Complex" minwidth="20" minheight="20" >
     <Turns>
       <T t="R"/>
       <T t="L"/>

@@ -57,6 +57,8 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 	TiXmlElement* NextChildNode = nullptr;
 	std::string temp;
 	std::string DefName;
+	std::string MinWidth;
+	std::string MinHeight;
 
 	// Parsing the file
 	for (TiXmlElement* Current = Root->FirstChildElement();
@@ -69,8 +71,20 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 		{
 			NextChildNode = Current;
 
+			MinWidth.clear();
+			MinHeight.clear();
+			
 			// Getting the definition name
 			DefName = Current->Attribute("name");
+			if (Current->Attribute("minwidth"))
+			{
+				 MinWidth = Current->Attribute("minwidth");
+			}
+			if (Current->Attribute("minheight"))
+			{
+				MinHeight = Current->Attribute("minheight");
+			}
+
 
 			// Getting the definitions turns
 			Current = Current->FirstChildElement();
@@ -140,12 +154,47 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 			// If no static sides
 			if (ParsedStaticSides.empty())
 			{
-				RoomManager::Instance()->RegisterRoomType(new RoomProperties(ParsedGSides, ParsedTurns, 0, 0), DefName);
+				// If min sizes are present
+				if (MinHeight.empty() || MinWidth.empty())
+				{
+					RoomManager::Instance()->RegisterRoomType(new RoomProperties(ParsedGSides, ParsedTurns, 0, 0), DefName);
+				}
+				else
+				{
+					RoomManager::Instance()->RegisterRoomType(
+						new RoomProperties(
+							ParsedGSides,
+							ParsedTurns, 0, 0,
+							std::pair<int, int>(
+								std::stoi(MinWidth),
+								std::stoi(MinHeight))
+						),
+						DefName);
+				}
 			}
 			// if static sides
 			else
 			{
-				RoomManager::Instance()->RegisterRoomType(new RoomProperties(ParsedGSides, ParsedTurns, ParsedStaticSides, 0, 0), DefName);
+				// If min sizes are present
+				if (MinHeight.empty() || MinWidth.empty())
+				{
+					RoomManager::Instance()->RegisterRoomType(new RoomProperties(ParsedGSides, ParsedTurns, ParsedStaticSides, 0, 0), DefName);
+				}
+				else
+				{
+					RoomManager::Instance()->RegisterRoomType(
+						new RoomProperties(
+							ParsedGSides,
+							ParsedTurns, 
+							ParsedStaticSides,
+							0, 0,
+							std::pair<int, int>(
+								std::stoi(MinWidth),
+								std::stoi(MinHeight))
+						),
+						DefName);
+				}
+
 			}
 
 			// Clearing the parsed contents from this definition

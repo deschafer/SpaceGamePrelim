@@ -36,7 +36,12 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 		}
 	}
 
-	m_TempRoom = new MapRoom("Static_Complex", 20, 20);	// Named room
+	string temp = "L_Rect";
+
+	RoomProperties * Current = RoomManager::Instance()->GetTypeDefinition(temp);
+
+
+	m_TempRoom = new MapRoom(temp, Current->m_MinWidth, Current->m_MinHeight);	// Named room
 	//m_TempRoom = new MapRoom((rand() % 10) + 15, (rand() % 10) + 15);			// Random room
 
 
