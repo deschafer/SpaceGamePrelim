@@ -44,7 +44,7 @@ RoomProperties* RoomManager::GetTypeDefinition(std::string RoomID)
 
 }
 
-RoomProperties* RoomManager::GetRandomTypeDefinition(std::string * RoomType)
+RoomProperties* RoomManager::GetRandomTypeDefinition(std::string &RoomType)
 {
 
 	size_t Max = m_RegisteredTypes.size();
@@ -53,7 +53,7 @@ RoomProperties* RoomManager::GetRandomTypeDefinition(std::string * RoomType)
 
 	std::advance(Iterator, (rand() % m_RegisteredTypes.size()));
 
-	*RoomType = Iterator->first;
+	RoomType = Iterator->first;
 
 	return Iterator->second;
 	

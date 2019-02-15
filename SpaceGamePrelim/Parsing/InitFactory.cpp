@@ -31,6 +31,8 @@ InitFactory::~InitFactory()
 //
 bool InitFactory::LoadRoomDefinitions(std::string File)
 {
+	const float DefaultVariance = 0.5;
+
 	std::vector<bool> ParsedGSides;
 	std::vector<char> ParsedTurns;
 	std::vector<int> ParsedStaticSides;
@@ -59,6 +61,11 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 	std::string DefName;
 	std::string MinWidth;
 	std::string MinHeight;
+	std::string VarianceStr;
+	std::string DynStr;
+
+	float Variance;
+	bool DynamicSides;
 
 	// Parsing the file
 	for (TiXmlElement* Current = Root->FirstChildElement();
@@ -73,7 +80,9 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 
 			MinWidth.clear();
 			MinHeight.clear();
-			
+			VarianceStr.clear();
+			DynStr.clear();
+
 			// Getting the definition name
 			DefName = Current->Attribute("name");
 			if (Current->Attribute("minwidth"))
@@ -84,7 +93,14 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 			{
 				MinHeight = Current->Attribute("minheight");
 			}
-
+			if (Current->Attribute("variance"))
+			{
+				VarianceStr = Current->Attribute("variance");
+			}
+			if (Current->Attribute("dynamic"))
+			{
+				DynStr = Current->Attribute("dynamic");
+			}
 
 			// Getting the definitions turns
 			Current = Current->FirstChildElement();
@@ -151,20 +167,48 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 				}
 			}
 
+			// Getting the variance
+			if (VarianceStr.empty())
+			{
+				Variance = DefaultVariance;
+			}
+			else
+			{
+				Variance = std::stof(VarianceStr);
+			}
+			// Getting if dynamic sides should be used
+			if (DynStr.empty())
+			{
+				DynamicSides = true;
+			}
+			else
+			{
+				DynamicSides = std::stoi(DynStr);
+			}
+
 			// If no static sides
 			if (ParsedStaticSides.empty())
 			{
 				// If min sizes are present
 				if (MinHeight.empty() || MinWidth.empty())
 				{
-					RoomManager::Instance()->RegisterRoomType(new RoomProperties(ParsedGSides, ParsedTurns, 0, 0), DefName);
+					RoomManager::Instance()->RegisterRoomType(
+						new RoomProperties(
+							ParsedGSides, 
+							ParsedTurns, 
+							Variance, 
+							DynamicSides
+						), 
+						DefName);
 				}
 				else
 				{
 					RoomManager::Instance()->RegisterRoomType(
 						new RoomProperties(
 							ParsedGSides,
-							ParsedTurns, 0, 0,
+							ParsedTurns, 
+							Variance, 
+							DynamicSides,
 							std::pair<int, int>(
 								std::stoi(MinWidth),
 								std::stoi(MinHeight))
@@ -178,7 +222,14 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 				// If min sizes are present
 				if (MinHeight.empty() || MinWidth.empty())
 				{
-					RoomManager::Instance()->RegisterRoomType(new RoomProperties(ParsedGSides, ParsedTurns, ParsedStaticSides, 0, 0), DefName);
+					RoomManager::Instance()->RegisterRoomType(
+						new RoomProperties(
+							ParsedGSides, 
+							ParsedTurns, 
+							ParsedStaticSides, 
+							Variance 
+						), 
+						DefName);
 				}
 				else
 				{
@@ -187,7 +238,7 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 							ParsedGSides,
 							ParsedTurns, 
 							ParsedStaticSides,
-							0, 0,
+							Variance, 
 							std::pair<int, int>(
 								std::stoi(MinWidth),
 								std::stoi(MinHeight))

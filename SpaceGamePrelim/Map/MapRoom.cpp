@@ -70,7 +70,7 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height)
 MapRoom::MapRoom(int Width, int Height)
 {
 	// Getting the properties assoc with this room type
-	m_Properties = RoomManager::Instance()->GetRandomTypeDefinition(&m_RoomType);
+	m_Properties = RoomManager::Instance()->GetRandomTypeDefinition(m_RoomType);
 	if (m_Properties == nullptr) // Then some error occurred
 	{
 		cout << "Error -- RoomProperties received from GetTypeDef in MapRoom ctor was nullptr\n";
@@ -157,6 +157,7 @@ top:
 	float ParamInnerSizeY = .25;
 	float ParamInnerSizeX = .25;
 
+	float Variance;
 
 	// Numerics
 	int CellWidth = MapManager::Instance()->GetCellWidth();
@@ -245,6 +246,8 @@ top:
 	{
 		StaticSides.push_back(Properties->m_StaticSides[i]);
 	}
+
+	Variance = Properties->m_Variation;
 
 	// Determining the side lengths for each of the 
 	// sides in this defined room.
@@ -340,37 +343,38 @@ top:
 				Index++;
 			} while (Test != true);
 		}
+		// Start of dynamic generation for sides
 		else if (DynamicRandomFlag)
 		{
 
-			Direction TempDirection = CorrespondingDirection(CurrentSide);
-			int TempCount = CountRecord;
-			int Index = TempCount;
-			int StaticWestMag = 0;
-			int StaticEastMag = 0;
-			int StaticNorthMag = 0;
-			int StaticSouthMag = 0;
+			Direction TempDirection = CorrespondingDirection(CurrentSide);	
+			int TempCount = CountRecord;	// Beginning count for looking at the temp vectors
+			int Index = TempCount;			// ..
 
-			int Space = EffectWidth;
+			int Space = ((EffectWidth * Variance) == 0) ? 1 : EffectWidth * Variance;
 
 			int HorizontalMagnitude = (TempSidesEast.size() + TempSidesWest.size()) - 1;
+			int VerticalMagnitude = (TempSidesNorth.size() + TempSidesSouth.size()) - 1;
 
+			// If the current side is a horizontal side, then the following will add variety to its up/down 
+			// side lengths
 			if ((HorizontalMagnitude > 0) &&
 				(SideVertical(CurrentSide)))
 			{
-
-				int InwardMovement = 0;
+				int InwardMovement = 0; // Keep track of movement so we stay within the bounds
 
 				do
 				{
-					Test = SideDef[TempCount];
+					Test = SideDef[TempCount];	// Get the next GSideDef
 
 					// Setting the east temp queue for the static sides
 					if (TempDirection == Direction::EAST && CurrentSide != Side::BOTTOM)
 					{
-						int random = (rand() % Space/2) + 1;
+						// Calc a random integer
+						int random = (rand() % ((Space == 0) ? 1 : Space) / 2) + 1;
 						
-
+						// If this direction moves inwards,
+						// make note of this
 						if (CurrentSide == Side::LEFT)
 						{
 							StaticSides[Index] += random;
@@ -380,6 +384,7 @@ top:
 						}
 						else
 						{
+							// Otherwise generate based on movement
 							random = (rand() % InwardMovement) + 1;
 
 							StaticSides[Index] += random;
@@ -392,8 +397,10 @@ top:
 					else if (TempDirection == Direction::WEST && CurrentSide != Side::TOP)
 					{
 
-						int random = (rand() % Space/2) + 1;
+						int random = (rand() % ((Space == 0) ? 1 : Space) / 2) + 1;
 
+						// If this direction moves inwards,
+						// make note of this
 						if (CurrentSide == Side::RIGHT)
 						{
 							StaticSides[Index] += random;
@@ -411,7 +418,74 @@ top:
 							Space += random;
 
 						}
+					}
+					// Get the new direction
+					TempDirection = Turn(TempDirection, Turns[TempCount]);
+					// Increment a count
+					TempCount++;
+					Index++;
 
+				} while (Test != true);
+				// We have made static sides, so set it true
+				StaticSideFlag = true;
+			}
+			// If the current side is a verticle side, then the following will add variety to its left/right 
+			// side lengths
+			else if ((VerticalMagnitude > 0) &&
+				(SideHorizontal(CurrentSide)))
+			{
+				int InwardMovement = 0;	// Keeps track of movement inwards to keep within bounds
+
+				do
+				{
+					Test = SideDef[TempCount];
+
+					// Setting the east temp queue for the static sides
+					if (TempDirection == Direction::NORTH && CurrentSide != Side::RIGHT)
+					{
+						int random = (rand() % ((Space == 0) ? 1 : Space) / 2) + 1;
+
+						// If this movement is inwards
+						if (CurrentSide == Side::BOTTOM)
+						{
+							StaticSides[Index] += random;
+							TempStaticNorth.push_back(StaticSides[Index]);
+							InwardMovement += random;
+							Space -= random;
+						}
+						else
+						{
+							random = (rand() % InwardMovement) + 1;
+
+							StaticSides[Index] += random;
+							TempStaticNorth.push_back(StaticSides[Index]);
+							InwardMovement -= random;
+							Space += random;
+						}
+					}
+					// Setting the west temp queue for the static sides
+					else if (TempDirection == Direction::SOUTH && CurrentSide != Side::LEFT)
+					{
+
+						int random = (rand() % ((Space == 0) ? 1: Space) / 2) + 1;
+
+						// If this movement is inwards
+						if (CurrentSide == Side::TOP)
+						{
+							StaticSides[Index] += random;
+							TempStaticSouth.push_back(StaticSides[Index]);
+							InwardMovement += random;
+							Space -= random;
+
+						}
+						else
+						{
+							random = (rand() % InwardMovement) + 1;
+							StaticSides[Index] += random;
+							TempStaticSouth.push_back(StaticSides[Index]);
+							InwardMovement -= random;
+							Space += random;
+						}
 					}
 					// Get the new direction
 					TempDirection = Turn(TempDirection, Turns[TempCount]);
@@ -420,20 +494,9 @@ top:
 					Index++;
 				} while (Test != true);
 
-				// Add one random
-				if (CurrentSide == Side::RIGHT)
-				{
-					TempSidesSouth.push_back(3);
-				}
-				else
-				{
-					TempSidesNorth.push_back(3);
-				}
-
 				StaticSideFlag = true;
 			}
 		}
-
 		
 		// Then we deal with the empty, placeholder sides
 		bool TempComplete = false;

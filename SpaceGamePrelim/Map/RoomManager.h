@@ -31,21 +31,19 @@ struct RoomProperties
 	
 	int m_MinWidth;			// Minimum User-set recommended width for this room
 	int m_MinHeight;		// Minimum User-set recommended height for this room
-	int m_Variation;		// Parameter denoting the level of variation in the Generated rooms
-	int m_Extremism;		// Higher number forces more extreme versions of rooms
+	float m_Variation;		// Parameter denoting the level of variation in the Generated rooms (0 - 1)
 	bool m_StaticSidesFlag;	// Indicates that static sides are a part of this def
 	bool m_DynamicRandomFlag;	// Indicates that the static sides are to be generated programatically
 
 	// CTOR of RoomProperties w/o static sides
 	RoomProperties(std::vector<bool> GreaterSides, std::vector<char> Turns,
-		int Variation, int Extreme,
+		float Variation, bool DynamicRandomFlag, 
 		std::pair<int, int> WidthHeigth = std::pair<int, int>(8, 8)) :
 		m_Variation(Variation),
-		m_Extremism(Extreme),
 		m_StaticSidesFlag(false),
 		m_MinWidth(WidthHeigth.first),
 		m_MinHeight(WidthHeigth.second),
-		m_DynamicRandomFlag(true)
+		m_DynamicRandomFlag(DynamicRandomFlag)
 	{
 		if (GreaterSides.size() != Turns.size())
 		{
@@ -61,10 +59,9 @@ struct RoomProperties
 
 	// CTOR of RoomProperties w/ static sides
 	RoomProperties(std::vector<bool> GreaterSides, std::vector<char> Turns, 
-		std::vector<int> StaticSides, int Variation, int Extreme,
+		std::vector<int> StaticSides, float Variation,
 		std::pair<int, int> WidthHeigth = std::pair<int, int>(8, 8)) :
 		m_Variation(Variation),
-		m_Extremism(Extreme),
 		m_StaticSidesFlag(true),
 		m_MinWidth(WidthHeigth.first),
 		m_MinHeight(WidthHeigth.second),
@@ -114,7 +111,7 @@ public:
 
 	void RegisterRoomType(RoomProperties *Properties, std::string RoomID);
 	RoomProperties* GetTypeDefinition(std::string RoomID);
-	RoomProperties* GetRandomTypeDefinition(std::string * roomType);
+	RoomProperties* GetRandomTypeDefinition(std::string  &roomType);
 	
 	~RoomManager();
 };

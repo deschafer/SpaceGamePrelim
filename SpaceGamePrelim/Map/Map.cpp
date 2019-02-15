@@ -2,6 +2,10 @@
 #include "Map.h"
 #include "MapRoom.h"
 
+static const int WidthRandomRate = 5;
+static const int HeightRandomRate = 5;
+
+
 using namespace std;
 
 Map::Map()
@@ -18,7 +22,7 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 	m_MapType(MapType),
 	m_MapCoordinates(Coords)
 {
-
+	
 
 	// Generating the array for this map
 	m_Cells = new MapObject**[m_Width];
@@ -36,14 +40,16 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 		}
 	}
 
-	string temp = "L_Rect";
+	string temp = "Complex_Left_Right";
 
 	RoomProperties * Current = RoomManager::Instance()->GetTypeDefinition(temp);
+	//RoomProperties * Current = RoomManager::Instance()->GetRandomTypeDefinition(temp);
 
-
-	m_TempRoom = new MapRoom(temp, Current->m_MinWidth, Current->m_MinHeight);	// Named room
-	//m_TempRoom = new MapRoom((rand() % 10) + 15, (rand() % 10) + 15);			// Random room
-
+	// Create a new room object
+	m_TempRoom = new MapRoom(
+		temp, 
+		Current->m_MinWidth + rand() % WidthRandomRate, 
+		Current->m_MinHeight + rand() % HeightRandomRate);	
 
 }
 

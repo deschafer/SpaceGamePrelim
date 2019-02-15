@@ -15,7 +15,7 @@
       <G g="1"/>
     </GSideDef>
   </DEF>
-  <DEF name="Complex" minwidth="15" minheight="15">
+  <DEF name="Complex" minwidth="15" minheight="15" dynamic="1">
     <Turns>
       <T t="R"/>
       <T t="L"/>
@@ -138,7 +138,7 @@
     </GSideDef>
   </DEF>
 
-  <DEF name="Complex_Top" >
+  <DEF name="Complex_Top"  minwidth="12" minheight="12"  >
     <Turns>
       <T t="R"/>
       <T t="L"/>
@@ -159,6 +159,7 @@
       <G g="1"/>
       <G g="1"/>
     </GSideDef>
+    <!--
     <StaticSides>
       <S s="0"/>
       <S s="8"/>
@@ -169,9 +170,10 @@
       <S s="0"/>
       <S s="0"/>
     </StaticSides>
+    -->
   </DEF>
 
-  <DEF name="Complex_Right" minwidth ="20" minheight="20">
+  <DEF name="Complex_Right" minwidth ="12" minheight="12">
     <Turns>
       <T t="R"/>
       <T t="R"/>
@@ -206,7 +208,7 @@
     -->
   </DEF>
 
-  <DEF name="Complex_Bottom" >
+  <DEF name="Complex_Bottom" minheight="10" minwidth="10">
     <Turns>
       <T t="R"/>
       <T t="R"/>
@@ -239,7 +241,7 @@
     </StaticSides>
   </DEF>
 
-  <DEF name="Complex_Left" >
+  <DEF name="Complex_Left" minheight="12" minwidth="10">
     <Turns>
       <T t="R"/>
       <T t="R"/>
@@ -330,7 +332,7 @@
     </GSideDef>
   </DEF>
 
-  <DEF name="L_Rect_Static" >
+  <DEF name="L_Rect_Static"  minwidth="15" minheight="15" >
     <Turns>
       <T t="R"/>
       <T t="L"/>
@@ -369,6 +371,37 @@
     </StaticSides>
   </DEF>
 
+  <DEF name="Complex_Left_Right"  minwidth="10" minheight="18" variance="0.4" >
+    <Turns>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      <G g="1"/>
+      <G g="1"/>
+    </GSideDef>
+  </DEF>
+    
   <DEF name="Static_Complex" minwidth="20" minheight="20" >
     <Turns>
       <T t="R"/>
