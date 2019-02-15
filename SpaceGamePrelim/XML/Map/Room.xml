@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ROOM>
   
-  <DEF name="Rect" >
+  <DEF name="Rect" minwidth="4" minheight="4" >
     <Turns>
       <T t="R"/>
       <T t="R"/>
@@ -15,7 +15,7 @@
       <G g="1"/>
     </GSideDef>
   </DEF>
-  <DEF name="Complex" minwidth="15" minheight="15" dynamic="1">
+  <DEF name="Complex" minwidth="12" minheight="12" dynamic="0">
     <Turns>
       <T t="R"/>
       <T t="L"/>
@@ -138,7 +138,7 @@
     </GSideDef>
   </DEF>
 
-  <DEF name="Complex_Top"  minwidth="12" minheight="12"  >
+  <DEF name="Complex_Top"  minwidth="10" minheight="8"  >
     <Turns>
       <T t="R"/>
       <T t="L"/>
@@ -173,7 +173,7 @@
     -->
   </DEF>
 
-  <DEF name="Complex_Right" minwidth ="12" minheight="12">
+  <DEF name="Complex_Right" minwidth ="10" minheight="10">
     <Turns>
       <T t="R"/>
       <T t="R"/>
@@ -208,7 +208,7 @@
     -->
   </DEF>
 
-  <DEF name="Complex_Bottom" minheight="10" minwidth="10">
+  <DEF name="Complex_Bottom" minheight="9" minwidth="7">
     <Turns>
       <T t="R"/>
       <T t="R"/>
@@ -241,7 +241,7 @@
     </StaticSides>
   </DEF>
 
-  <DEF name="Complex_Left" minheight="12" minwidth="10">
+  <DEF name="Complex_Left" minheight="7" minwidth="7" variance="0.9">
     <Turns>
       <T t="R"/>
       <T t="R"/>
@@ -262,22 +262,10 @@
       <G g="0"/>
       <G g="1"/>
     </GSideDef>
-    <StaticSides>
-      <S s="0"/>
-      <S s="0"/>
-      <S s="0"/>
-      <S s="3"/>
-      <S s="2"/>
-      <S s="5"/>
-      <S s="2"/>
-      <S s="0"/>
-    </StaticSides>
   </DEF>
 
-  <DEF name="Stair_Down" minwidth ="20" minheight="20">
+  <DEF name="Stair_Down" minwidth ="12" minheight="12">
     <Turns>
-      <T t="R"/>
-      <T t="L"/>
       <T t="R"/>
       <T t="L"/>
       <T t="R"/>
@@ -290,8 +278,6 @@
       <T t="R"/>
     </Turns>
     <GSideDef>
-      <G g="0"/>
-      <G g="0"/>
       <G g="0"/>
       <G g="0"/>
       <G g="0"/>
@@ -332,7 +318,7 @@
     </GSideDef>
   </DEF>
 
-  <DEF name="L_Rect_Static"  minwidth="15" minheight="15" >
+  <DEF name="L_Rect_Static"  minwidth="8" minheight="11" >
     <Turns>
       <T t="R"/>
       <T t="L"/>
@@ -357,6 +343,7 @@
       <G g="1"/>
       <G g="1"/>
     </GSideDef>
+    <!--
     <StaticSides>
       <S s="8"/>
       <S s="5"/>
@@ -369,9 +356,10 @@
       <S s="0"/>
       <S s="0"/>
     </StaticSides>
+    -->
   </DEF>
 
-  <DEF name="Complex_Left_Right"  minwidth="10" minheight="18" variance="0.4" >
+  <DEF name="Complex_Left_Right"  minwidth="7" minheight="12" variance="0.4" >
     <Turns>
       <T t="R"/>
       <T t="L"/>
@@ -402,7 +390,7 @@
     </GSideDef>
   </DEF>
     
-  <DEF name="Static_Complex" minwidth="20" minheight="20" >
+  <DEF name="Static_Complex" minwidth="22" minheight="22" >
     <Turns>
       <T t="R"/>
       <T t="L"/>

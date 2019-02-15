@@ -171,3 +171,13 @@ void MapManager::LoadDefaultMapObjects()
 
 }
 
+//
+// ResetMap()
+// Redraws the current map, currently 
+// used as a test function only
+//
+void MapManager::ResetMap()
+{
+	m_ActiveMap = new Map("Default", 100, 100, MapCoordinate(0, 0));
+	m_ActiveMap->Generate();
+}

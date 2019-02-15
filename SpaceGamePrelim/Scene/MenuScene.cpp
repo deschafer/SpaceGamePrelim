@@ -2,6 +2,7 @@
 #include "..\Objects\GameEntity.h"
 #include "..\TextureCode\TextureManager.h"
 #include "..\Frame\MainApplication.h"
+#include "..\Map\MapManager.h"
 
 #include <iostream>
 
@@ -62,4 +63,5 @@ void MenuScene::Render()
 void MenuScene::s_ButtonHandler()
 {
 	cout << "Menu button has been clicked\n";
+	MapManager::Instance()->ResetMap();
 }

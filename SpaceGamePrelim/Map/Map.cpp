@@ -40,10 +40,10 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 		}
 	}
 
-	string temp = "Complex_Left_Right";
+	string temp = "Complex_Left";
 
-	RoomProperties * Current = RoomManager::Instance()->GetTypeDefinition(temp);
-	//RoomProperties * Current = RoomManager::Instance()->GetRandomTypeDefinition(temp);
+	//RoomProperties * Current = RoomManager::Instance()->GetTypeDefinition(temp);
+	RoomProperties * Current = RoomManager::Instance()->GetRandomTypeDefinition(temp);
 
 	// Create a new room object
 	m_TempRoom = new MapRoom(

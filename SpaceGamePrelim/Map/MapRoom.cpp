@@ -15,8 +15,19 @@ using namespace std::chrono;
 
 // Helper functions for the MapRoom::Generate()
 vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, bool LastBlock, Direction NextDirection);
-void SetFloorTiles(MapObject*** &Cells, int XMax, int YMax);
+void SetFloorTiles(MapObject*** &Cells, int StartX, int StartY, int XMax, int YMax);
 void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax);
+void Reflect(MapObject*** &Cells, int Width, int Height);
+
+const string WallCornerRight = "Wall_Corner_Right";
+const string WallCornerLeft = "Wall_Corner_Left";
+const string WallSideRight = "Wall_Side_Right";
+const string WallSideLeft = "Wall_Side_Left";
+const string WallBottom = "Wall_Bottom";
+const string Default = "Wall";
+const string WallTopGroup = "Wall_Top";
+const string FloorGroup = "Floors";
+
 
 MapRoom::MapRoom()
 {}
@@ -992,6 +1003,28 @@ top:
 		// Complete case
 		else if (Sides.empty() && CurrentLengthQuota <= 0)
 		{
+			// If the ending cell is not at the beginning X Location
+			if (TempX > 0)
+			{
+				// Set the new start point
+				StartX = TempX;
+				int Start = 0;
+				// Iterate through all the x cells in the first row until we 
+				// reach where the last printed cell is located
+				for (MapObject* Current; Start < (TempX); Start++)
+				{
+					Current = m_Cells[Start][0];
+
+					if(Current != nullptr) delete Current;
+					m_Cells[Start][0] = nullptr;
+				}
+				
+				// Finally, finish by setting the appropriate texture here
+				tempStr.push_back(WallSideRight);
+
+				m_Cells[Start][0] = new MapWall(tempStr, MapCoordinate(TempX * 32, TempY * 32));
+			}
+
 			complete = true;
 			break;
 		}
@@ -1061,8 +1094,10 @@ top:
 		tempStr.clear();
 	}
 
+	//Reflect(m_Cells, m_Width, m_Height);
+
 	// Sets the floor tiles, a recursive function
-	SetFloorTiles(m_Cells, m_Width, m_Height);
+	SetFloorTiles(m_Cells, StartX, StartY, m_Width, m_Height);
 
 	// Preformance based -- not in final version
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
@@ -1086,35 +1121,35 @@ vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, boo
 	{
 		if (CurrentDirection == Direction::EAST && NextDirection == Direction::SOUTH)
 		{
-			Strings.push_back("Wall_Side_Left");
+			Strings.push_back(WallSideLeft);
 		}
 		else if (CurrentDirection == Direction::SOUTH && NextDirection == Direction::WEST)
 		{
-			Strings.push_back("Wall_Corner_Right");
+			Strings.push_back(WallCornerRight);
 		}
 		else if (CurrentDirection == Direction::WEST && NextDirection == Direction::NORTH)
 		{
-			Strings.push_back("Wall_Corner_Left");
+			Strings.push_back(WallCornerLeft);
 		}
 		else if (CurrentDirection == Direction::WEST && NextDirection == Direction::SOUTH)
 		{
-			Strings.push_back("Wall_Bottom");
-			Strings.push_back("Wall_Side_Left");
-			Strings.push_back("Wall_Corner_Right");
+			Strings.push_back(WallBottom);
+			Strings.push_back(WallSideLeft);
+			Strings.push_back(WallCornerRight);
 		}
 		else if (CurrentDirection == Direction::NORTH && NextDirection == Direction::EAST)
 		{
-			Strings.push_back("Wall_Side_Right");
+			Strings.push_back(WallSideRight);
 		}
 		else if (CurrentDirection == Direction::NORTH && NextDirection == Direction::WEST)
 		{
-			Strings.push_back("Wall_Bottom");
-			Strings.push_back("Wall_Side_Right");
-			Strings.push_back("Wall_Corner_Left");
+			Strings.push_back(WallBottom);
+			Strings.push_back(WallSideRight);
+			Strings.push_back(WallCornerLeft);
 		}
 		else
 		{
-			Strings.push_back("Wall");
+			Strings.push_back(Default);
 		}
 	}
 	// For a normal block in a side
@@ -1122,19 +1157,19 @@ vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, boo
 	{
 		if (CurrentDirection == Direction::SOUTH)
 		{
-			Strings.push_back("Wall_Side_Left");
+			Strings.push_back(WallSideLeft);
 		}
 		else if (CurrentDirection == Direction::NORTH)
 		{
-			Strings.push_back("Wall_Side_Right");
+			Strings.push_back(WallSideRight);
 		}
 		else if (CurrentDirection == Direction::WEST)
 		{
-			Strings.push_back("Wall_Bottom");
+			Strings.push_back(WallBottom);
 		}
 		else
 		{
-			Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp("Wall_Top"));
+			Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
 		}
 	}
 
@@ -1147,10 +1182,10 @@ vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, boo
 // SetFloorTiles()
 // Wrapper around recursive alg to mark all floor tiles
 //
-void SetFloorTiles(MapObject*** &Cells, int XMax, int YMax)
+void SetFloorTiles(MapObject*** &Cells, int StartX, int StartY, int XMax, int YMax)
 {
 
-	MarkFloorTile(Cells, 1, 1, XMax, YMax);
+	MarkFloorTile(Cells, StartX + 1, StartY + 1, XMax, YMax);
 
 }
 
@@ -1169,7 +1204,7 @@ void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax)
 	// IF current is nullptr, and not already made a wall
 	if (Cells[X][Y] == nullptr)
 	{
-		Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp("Floors"));
+		Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(FloorGroup));
 		Cells[X][Y] = new MapInactive(Strings, MapCoordinate(X * Width, Y * Height));
 	}
 	// One cell to the east
@@ -1200,4 +1235,33 @@ void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax)
 	{
 		MarkFloorTile(Cells, X - 1, Y, XMax, YMax);
 	}
+}
+
+//
+//
+//
+//
+void Reflect(MapObject*** &Cells, int Width, int Height)
+{
+	MapObject* temp;
+	
+	MapObject** Temporary = new MapObject*[Width];
+
+	for (size_t y = 0; y < Height; y++)
+	{
+
+		for (size_t i = 0; i < Width; i++)
+		{
+			Temporary[i] = Cells[i][y];
+		}
+
+		for (size_t xBeg = 0, xEnd = (Width - 1); (xBeg < Width) && (xEnd > 0); xBeg++, xEnd--)
+		{
+			temp = Cells[xBeg][y];
+			Cells[xBeg][y] = Temporary[xEnd];
+
+		}
+	}
+
+
 }

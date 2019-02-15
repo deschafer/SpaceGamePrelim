@@ -65,6 +65,8 @@ public:
 	int GetCellWidth() { return m_CellWidth; }
 	int GetCellHeight() { return m_CellHeight; }
 
+
+	void ResetMap();
 	
 	~MapManager();
 };
