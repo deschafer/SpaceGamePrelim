@@ -17,7 +17,9 @@ MapCell::MapCell() :
 // MapCell()
 // For a MapCell using traditional textures
 //
-MapCell::MapCell(std::vector<std::string> TextureIDs, TextureProperties* Properties, MapCoordinate Position)
+MapCell::MapCell(std::vector<std::string> TextureIDs, TextureProperties* Properties, 
+	MapCoordinate Position, Cell CellType) : 
+	m_CellType(CellType)
 {
 	MapCell();
 
@@ -36,7 +38,8 @@ MapCell::MapCell(std::vector<std::string> TextureIDs, TextureProperties* Propert
 // MapCell()
 // For a MapCell using a single texture
 //
-MapCell::MapCell(TextureProperties* Properties, MapCoordinate Position)
+MapCell::MapCell(TextureProperties* Properties, MapCoordinate Position, Cell CellType) : 
+	m_CellType(CellType)
 {
 	MapCell();
 
@@ -52,7 +55,9 @@ MapCell::MapCell(TextureProperties* Properties, MapCoordinate Position)
 // MapCell()
 // For a map cell using one or more reduced textures
 //
-MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position)
+MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
+	Cell CellType) : 
+	m_CellType(CellType)
 {
 	MapCell();
 
@@ -60,6 +65,10 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position)
 	m_UsingRedTextures = true;
 
 	MapObject::m_Position = Position;
+}
+
+MapCell::~MapCell()
+{
 }
 
 //
@@ -118,7 +127,16 @@ void MapCell::DrawStatic(MapCoordinate Coords)
 
 }
 
-
-MapCell::~MapCell()
+//
+// ChangeRedTextures()
+// Changes the textures associated with this MapCell
+//
+void MapCell::ChangeRedTextures(std::vector<std::string> NewTextures)
 {
+	m_RedTextureIDs->clear();
+
+	for (size_t i = 0; i < NewTextures.size(); i++)
+	{
+		m_RedTextureIDs->push_back(NewTextures[i]);
+	}
 }

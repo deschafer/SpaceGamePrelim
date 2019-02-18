@@ -14,10 +14,12 @@ using namespace std;
 using namespace std::chrono;
 
 // Helper functions for the MapRoom::Generate()
-vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, bool LastBlock, Direction NextDirection);
+vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, bool LastBlock, 
+	Direction NextDirection, Cell &CellType);
 void SetFloorTiles(MapObject*** &Cells, int StartX, int StartY, int XMax, int YMax);
 void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax);
 void Reflect(MapObject*** &Cells, int Width, int Height);
+vector<string> ReflectTile(MapObject* Tile);
 
 const string WallCornerRight = "Wall_Corner_Right";
 const string WallCornerLeft = "Wall_Corner_Left";
@@ -164,9 +166,10 @@ top:
 		abort();
 	}
 
-	// These are test values, will be a part of the room definition
-	float ParamInnerSizeY = .25;
-	float ParamInnerSizeX = .25;
+	// These indicate how extreme a room's length of inner sides will appear,
+	// definition dependent
+	float ParamInnerSizeY = Properties->m_InnerSizeX;
+	float ParamInnerSizeX = Properties->m_InnerSizeY;
 
 	float Variance;
 
@@ -206,6 +209,7 @@ top:
 	Direction CurrentDirection = Direction::EAST;	// Current direction used in stage 1 and stage 2
 	Direction CurrentDirectionTemp;					// Used to store the correspong direction for a side, stage 1
 	Side CurrentSide = Side::TOP;					// Current side, set at the start, the top
+	Cell CellType;
 
 	// Stores a map of all locations based on their coordinates
 	map<pair<int, int>, bool> CurrentLocations;
@@ -978,7 +982,7 @@ top:
 			{
 			#ifdef _DEBUG
 				cout << "Room defined incorrectly -- static sides count incorrect\n";
-			#endif // !_DEBUG
+			#endif // _DEBUG
 				abort(); // Cannot proceed
 			}
 
@@ -1022,7 +1026,7 @@ top:
 				// Finally, finish by setting the appropriate texture here
 				tempStr.push_back(WallSideRight);
 
-				m_Cells[Start][0] = new MapWall(tempStr, MapCoordinate(TempX * 32, TempY * 32));
+				m_Cells[Start][0] = new MapWall(tempStr, MapCoordinate(TempX * 32, TempY * 32), Cell::Wall_Right);
 			}
 
 			complete = true;
@@ -1066,10 +1070,11 @@ top:
 				CurrentSide, 
 				CurrentDirection,
 				(CurrentLengthQuota == 1),
-				Turn(CurrentDirection, Turns.front()));
+				Turn(CurrentDirection, Turns.front()),
+				CellType);
 
 			// Finally, creating a new map cell representing the outer walls of this room
-			m_Cells[TempX][TempY] = new MapWall(tempStr, MapCoordinate(TempX * 32, TempY * 32));
+			m_Cells[TempX][TempY] = new MapWall(tempStr, MapCoordinate(TempX * 32, TempY * 32), CellType);
 		}
 
 		// Decrementing the length
@@ -1094,7 +1099,20 @@ top:
 		tempStr.clear();
 	}
 
-	//Reflect(m_Cells, m_Width, m_Height);
+	if ((rand() % 2) == 0)
+	{
+		
+		Reflect(m_Cells, m_Width, m_Height);
+
+		for (int i = 0; i < m_Width; i++)
+		{
+			if (m_Cells[i][0] != nullptr)
+			{
+				StartX = i;
+				break;
+			}
+		}
+	}
 
 	// Sets the floor tiles, a recursive function
 	SetFloorTiles(m_Cells, StartX, StartY, m_Width, m_Height);
@@ -1111,7 +1129,8 @@ top:
 // FindCorrectTile()
 // Finds the next correct tile that appropriately fits the context of the wall
 //
-vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, bool LastBlock, Direction NextDirection)
+vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, bool LastBlock, 
+	Direction NextDirection, Cell& CellType)
 {
 	vector<string> Strings; // Temp vector for the textures for this cell
 
@@ -1121,34 +1140,41 @@ vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, boo
 	{
 		if (CurrentDirection == Direction::EAST && NextDirection == Direction::SOUTH)
 		{
+			CellType = Cell::Wall_Left;
 			Strings.push_back(WallSideLeft);
 		}
 		else if (CurrentDirection == Direction::SOUTH && NextDirection == Direction::WEST)
 		{
+			CellType = Cell::Wall_Corner_Right;
 			Strings.push_back(WallCornerRight);
 		}
 		else if (CurrentDirection == Direction::WEST && NextDirection == Direction::NORTH)
 		{
+			CellType = Cell::Wall_Corner_Left;
 			Strings.push_back(WallCornerLeft);
 		}
 		else if (CurrentDirection == Direction::WEST && NextDirection == Direction::SOUTH)
 		{
+			CellType = Cell::Wall_Corner_Right_Bottom;
 			Strings.push_back(WallBottom);
 			Strings.push_back(WallSideLeft);
 			Strings.push_back(WallCornerRight);
 		}
 		else if (CurrentDirection == Direction::NORTH && NextDirection == Direction::EAST)
 		{
+			CellType = Cell::Wall_Right;
 			Strings.push_back(WallSideRight);
 		}
 		else if (CurrentDirection == Direction::NORTH && NextDirection == Direction::WEST)
 		{
+			CellType = Cell::Wall_Corner_Left_Bottom;
 			Strings.push_back(WallBottom);
 			Strings.push_back(WallSideRight);
 			Strings.push_back(WallCornerLeft);
 		}
 		else
 		{
+			CellType = Cell::Default;
 			Strings.push_back(Default);
 		}
 	}
@@ -1157,18 +1183,22 @@ vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, boo
 	{
 		if (CurrentDirection == Direction::SOUTH)
 		{
+			CellType = Cell::Wall_Left;
 			Strings.push_back(WallSideLeft);
 		}
 		else if (CurrentDirection == Direction::NORTH)
 		{
+			CellType = Cell::Wall_Right;
 			Strings.push_back(WallSideRight);
 		}
 		else if (CurrentDirection == Direction::WEST)
 		{
+			CellType = Cell::Wall_Bottom;
 			Strings.push_back(WallBottom);
 		}
 		else
 		{
+			CellType = Cell::Wall_Top;
 			Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
 		}
 	}
@@ -1205,7 +1235,7 @@ void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax)
 	if (Cells[X][Y] == nullptr)
 	{
 		Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(FloorGroup));
-		Cells[X][Y] = new MapInactive(Strings, MapCoordinate(X * Width, Y * Height));
+		Cells[X][Y] = new MapInactive(Strings, MapCoordinate(X * Width, Y * Height), Cell::Floor);
 	}
 	// One cell to the east
 	if ((X + 1) < XMax &&
@@ -1238,7 +1268,7 @@ void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax)
 }
 
 //
-//
+// Reflect()
 //
 //
 void Reflect(MapObject*** &Cells, int Width, int Height)
@@ -1255,13 +1285,83 @@ void Reflect(MapObject*** &Cells, int Width, int Height)
 			Temporary[i] = Cells[i][y];
 		}
 
-		for (size_t xBeg = 0, xEnd = (Width - 1); (xBeg < Width) && (xEnd > 0); xBeg++, xEnd--)
+		for (size_t xBeg = 0, xEnd = (Width - 1); (xBeg < Width) && (xEnd >= 0); xBeg++, xEnd--)
 		{
 			temp = Cells[xBeg][y];
 			Cells[xBeg][y] = Temporary[xEnd];
 
+			if (Cells[xBeg][y] != nullptr)
+			{
+				vector<string> NewTextures = ReflectTile(Cells[xBeg][y]);
+			}
 		}
 	}
 
 
+}
+
+
+//
+// ReflectTile()
+// Responsible for reflecting the textures of this MapCellobject
+//
+vector<string> ReflectTile(MapObject* Tile)
+{
+
+	MapCell* CellTile = dynamic_cast<MapCell*>(Tile);
+
+	vector<string> *Textures = CellTile->ReturnRedTextures();
+	Cell CellType = CellTile->GetCellType();
+	
+	switch (CellType)
+	{
+	case Cell::Floor:
+		break;
+	case Cell::Wall_Top:
+		break;
+	case Cell::Wall_Bottom:
+		break;
+	case Cell::Wall_Left:
+		Textures->clear();
+		Textures->push_back(WallSideRight);
+		CellType = Cell::Wall_Right;
+		break;
+	case Cell::Wall_Right:
+		Textures->clear();
+		Textures->push_back(WallSideLeft);
+		CellType = Cell::Wall_Left;
+		break;
+	case Cell::Wall_Corner_Left:
+		Textures->clear();
+		Textures->push_back(WallCornerRight);
+		CellType = Cell::Wall_Corner_Right;
+		break;
+	case Cell::Wall_Corner_Right:
+		Textures->clear();
+		Textures->push_back(WallCornerLeft);
+		CellType = Cell::Wall_Corner_Left;
+		break;
+	case Cell::Wall_Corner_Left_Bottom:
+		Textures->clear();
+		Textures->push_back(WallBottom);
+		Textures->push_back(WallSideLeft);
+		Textures->push_back(WallCornerRight);
+		CellType = Cell::Wall_Corner_Right_Bottom;
+		break;
+	case Cell::Wall_Corner_Right_Bottom:
+		Textures->clear();
+		Textures->push_back(WallBottom);
+		Textures->push_back(WallSideRight);
+		Textures->push_back(WallCornerLeft);
+		CellType = Cell::Wall_Corner_Left_Bottom;
+		break;
+	case Cell::Default:
+		break;
+	default:
+		break;
+	}
+
+	CellTile->ChangeRedTextures(*Textures);
+
+	return* Textures;
 }

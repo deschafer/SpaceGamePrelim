@@ -4,9 +4,14 @@
 #include <string>
 #include <iterator>
 
+static const float DefaultInnerX = 0.25;
+static const float DefaultInnerY = 0.25;
+
 RoomManager* RoomManager::s_pInstance = nullptr;
 
-RoomManager::RoomManager()
+RoomManager::RoomManager() :
+	m_DefaultInnerX(DefaultInnerX),
+	m_DefaultInnerY(DefaultInnerY)
 {
 }
 

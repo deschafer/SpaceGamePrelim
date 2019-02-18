@@ -20,6 +20,7 @@
 // GreaterSideDef.size() must equal Turns.Size() for a complete definition
 //
 
+
 //
 // This struct defines a room for MapRoom::Generate().
 //
@@ -35,15 +36,20 @@ struct RoomProperties
 	bool m_StaticSidesFlag;	// Indicates that static sides are a part of this def
 	bool m_DynamicRandomFlag;	// Indicates that the static sides are to be generated programatically
 
+	float m_InnerSizeY;		// Indicates the maximum size for movement inside the shape on the indicated axis
+	float m_InnerSizeX;		// ..
+
 	// CTOR of RoomProperties w/o static sides
 	RoomProperties(std::vector<bool> GreaterSides, std::vector<char> Turns,
-		float Variation, bool DynamicRandomFlag, 
+		float Variation, float InnerX, float InnerY, bool DynamicRandomFlag,
 		std::pair<int, int> WidthHeigth = std::pair<int, int>(8, 8)) :
 		m_Variation(Variation),
 		m_StaticSidesFlag(false),
 		m_MinWidth(WidthHeigth.first),
 		m_MinHeight(WidthHeigth.second),
-		m_DynamicRandomFlag(DynamicRandomFlag)
+		m_DynamicRandomFlag(DynamicRandomFlag),
+		m_InnerSizeX(InnerX),
+		m_InnerSizeY(InnerY)
 	{
 		if (GreaterSides.size() != Turns.size())
 		{
@@ -58,14 +64,16 @@ struct RoomProperties
 	}
 
 	// CTOR of RoomProperties w/ static sides
-	RoomProperties(std::vector<bool> GreaterSides, std::vector<char> Turns, 
-		std::vector<int> StaticSides, float Variation,
+	RoomProperties(std::vector<bool> GreaterSides, std::vector<char> Turns,
+		std::vector<int> StaticSides, float Variation, float InnerX, float InnerY,
 		std::pair<int, int> WidthHeigth = std::pair<int, int>(8, 8)) :
 		m_Variation(Variation),
 		m_StaticSidesFlag(true),
 		m_MinWidth(WidthHeigth.first),
 		m_MinHeight(WidthHeigth.second),
-		m_DynamicRandomFlag(false)
+		m_DynamicRandomFlag(false),
+		m_InnerSizeX(InnerX),
+		m_InnerSizeY(InnerY)
 	{
 		if (GreaterSides.size() != Turns.size() || GreaterSides.size() != StaticSides.size())
 		{
@@ -78,14 +86,14 @@ struct RoomProperties
 			m_Turns.push_back(Turns[i]);
 			m_StaticSides.push_back(StaticSides[i]);
 		}
-#ifndef _DEBUG
+	#ifdef _DEBUG
 		std::cout << "StaticSides Defintion Present\n";
-#endif // !_DEBUG
+	#endif // _DEBUG
 
-		
 	}
 
 };
+
 
 // Singleton class structure
 class RoomManager
@@ -96,6 +104,10 @@ private:
 	std::map<std::string, RoomProperties*> m_RegisteredTypes;	// Contains the registered room definitions
 
 	static RoomManager* s_pInstance;
+
+	// Default params for some rooms
+	const float m_DefaultInnerX;
+	const float m_DefaultInnerY;
 
 public:
 
@@ -108,6 +120,10 @@ public:
 		}
 		else return s_pInstance;
 	}
+
+	float GetDefaultInnerX() { return m_DefaultInnerX; }
+	float GetDefaultInnerY() { return m_DefaultInnerY; }
+
 
 	void RegisterRoomType(RoomProperties *Properties, std::string RoomID);
 	RoomProperties* GetTypeDefinition(std::string RoomID);

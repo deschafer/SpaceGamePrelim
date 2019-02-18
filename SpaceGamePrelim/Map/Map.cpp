@@ -51,6 +51,11 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 		Current->m_MinWidth + rand() % WidthRandomRate, 
 		Current->m_MinHeight + rand() % HeightRandomRate);	
 
+	//m_TempRoom = new MapRoom(
+	//	temp,
+	//	15,
+	//	15);
+
 }
 
 Map::~Map()

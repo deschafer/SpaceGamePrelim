@@ -8,9 +8,10 @@ public:
 	MapWall();
 	~MapWall();
 
-	MapWall(std::vector<std::string> TextureIDs, TextureProperties* Properties, MapCoordinate Position);
-	MapWall(TextureProperties* Properties, MapCoordinate Position);
-	MapWall(std::vector<std::string> RedTextureIDs, MapCoordinate Position);
+	MapWall(std::vector<std::string> TextureIDs, TextureProperties* Properties, 
+		MapCoordinate Position, Cell MapCell);
+	MapWall(TextureProperties* Properties, MapCoordinate Position, Cell MapCell);
+	MapWall(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell MapCell);
 
 	virtual void Draw(MapCoordinate Coords);
 

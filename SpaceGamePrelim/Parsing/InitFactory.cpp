@@ -63,7 +63,11 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 	std::string MinHeight;
 	std::string VarianceStr;
 	std::string DynStr;
+	std::string InnerXStr;
+	std::string InnerYStr;
 
+	float InnerY;
+	float InnerX;
 	float Variance;
 	bool DynamicSides;
 
@@ -82,6 +86,9 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 			MinHeight.clear();
 			VarianceStr.clear();
 			DynStr.clear();
+			InnerXStr.clear();
+			InnerYStr.clear();
+
 
 			// Getting the definition name
 			DefName = Current->Attribute("name");
@@ -100,6 +107,14 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 			if (Current->Attribute("dynamic"))
 			{
 				DynStr = Current->Attribute("dynamic");
+			}
+			if (Current->Attribute("innerX"))
+			{
+				InnerXStr = Current->Attribute("innerX");
+			}
+			if (Current->Attribute("innerY"))
+			{
+				InnerYStr = Current->Attribute("innerY");
 			}
 
 			// Getting the definitions turns
@@ -185,6 +200,23 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 			{
 				DynamicSides = std::stoi(DynStr);
 			}
+			// Checking the status of innerX and innerY params
+			if (InnerXStr.empty())
+			{
+				InnerX = RoomManager::Instance()->GetDefaultInnerX();
+			}
+			else
+			{
+				InnerX = std::stof(InnerXStr);
+			}
+			if (InnerYStr.empty())
+			{
+				InnerY = RoomManager::Instance()->GetDefaultInnerY();
+			}
+			else
+			{
+				InnerY = std::stof(InnerYStr);
+			}
 
 			// If no static sides
 			if (ParsedStaticSides.empty())
@@ -197,6 +229,8 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 							ParsedGSides, 
 							ParsedTurns, 
 							Variance, 
+							InnerX,
+							InnerY,
 							DynamicSides
 						), 
 						DefName);
@@ -208,6 +242,8 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 							ParsedGSides,
 							ParsedTurns, 
 							Variance, 
+							InnerX,
+							InnerY,
 							DynamicSides,
 							std::pair<int, int>(
 								std::stoi(MinWidth),
@@ -227,7 +263,9 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 							ParsedGSides, 
 							ParsedTurns, 
 							ParsedStaticSides, 
-							Variance 
+							Variance,
+							InnerX,
+							InnerY
 						), 
 						DefName);
 				}
@@ -239,6 +277,8 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 							ParsedTurns, 
 							ParsedStaticSides,
 							Variance, 
+							InnerX,
+							InnerY,
 							std::pair<int, int>(
 								std::stoi(MinWidth),
 								std::stoi(MinHeight))
