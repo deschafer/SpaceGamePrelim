@@ -31,7 +31,7 @@ Enhanced and added several new components to further expand the framework. These
 * Added the concept of reduced textures
 * Added the concept of texture groups
 
-*Below are some image of the current room generation
+*Below are some images of the current room generation
 
 ![alt-text](https://raw.githubusercontent.com/deschafer/SpaceGamePrelim/master/Presentation/room1.jpg "Room 1")
 
