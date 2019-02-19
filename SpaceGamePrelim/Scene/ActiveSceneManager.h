@@ -6,6 +6,12 @@
 
 #include "Scene.h"
 
+enum class SceneType
+{
+	MENU,
+	GAME
+};
+
 // Singleton class structure
 class ActiveSceneManager
 {

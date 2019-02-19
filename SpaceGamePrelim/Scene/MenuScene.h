@@ -11,8 +11,10 @@ private:
 
 public:
 	MenuScene();
-	MenuScene(std::string SceneID, bool Paused = 0);
+	MenuScene::MenuScene(std::string SceneID, bool Paused, bool Mapped);
 	virtual ~MenuScene();
+
+
 
 	virtual bool Enter();
 	virtual void Exit();

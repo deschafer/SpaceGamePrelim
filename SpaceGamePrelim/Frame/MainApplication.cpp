@@ -141,7 +141,7 @@ void MainApplication::Render()
 	// Then draw the UI elements
 	// Then draw any overlayed menus
 
-	MapManager::Instance()->DrawGrid();
+	//MapManager::Instance()->DrawGrid();
 
 	try {
 		ActiveSceneManager::Instance()->Render();
@@ -193,7 +193,7 @@ bool MainApplication::InitializeScenes()
 {
 
 	// Temporary addition of scenes here
-	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene"));
+	ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene", false, true));
 	//ActiveSceneManager::Instance()->AddScene(new TestScene("test scene", true));
 	//ActiveSceneManager::Instance()->AddScene(new MenuScene("menu scene", false));
 

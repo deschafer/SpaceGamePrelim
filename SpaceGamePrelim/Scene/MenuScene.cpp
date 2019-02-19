@@ -12,10 +12,9 @@ MenuScene::MenuScene()
 {
 }
 
-MenuScene::MenuScene(std::string SceneID, bool Paused)
+MenuScene::MenuScene(std::string SceneID, bool Paused, bool Mapped) : 
+	Scene(Paused, Mapped)
 {
-	Scene::m_SceneID = SceneID;
-	Scene::m_PauseScreen = Paused;
 }
 
 

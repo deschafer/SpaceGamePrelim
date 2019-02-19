@@ -55,6 +55,17 @@ MapManager::~MapManager()
 }
 
 //
+//
+//
+//
+void MapManager::Draw()
+{
+
+
+	DrawVisibleCells();
+}
+
+//
 // DrawGrid()
 // This is a temporary function, its status is currently being reevaluated
 //

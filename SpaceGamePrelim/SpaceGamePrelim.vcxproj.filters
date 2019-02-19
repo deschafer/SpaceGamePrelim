@@ -95,6 +95,9 @@
     <ClCompile Include="Parsing\TinyXML\tinyxmlparser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Parsing\SceneFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\ActiveSceneManager.h">
@@ -179,6 +182,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Parsing\TinyXML\tinyxml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\BaseCreator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Parsing\SceneFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

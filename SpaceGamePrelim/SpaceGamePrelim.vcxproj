@@ -36,6 +36,7 @@
     <ClCompile Include="Objects\GameObject.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
     <ClCompile Include="Parsing\InitFactory.cpp" />
+    <ClCompile Include="Parsing\SceneFactory.cpp" />
     <ClCompile Include="Parsing\TinyXML\tinystr.cpp" />
     <ClCompile Include="Parsing\TinyXML\tinyxml.cpp" />
     <ClCompile Include="Parsing\TinyXML\tinyxmlerror.cpp" />
@@ -63,11 +64,13 @@
     <ClInclude Include="Map\MapRoom.h" />
     <ClInclude Include="Map\MapWall.h" />
     <ClInclude Include="Map\RoomManager.h" />
+    <ClInclude Include="Objects\BaseCreator.h" />
     <ClInclude Include="Objects\Button.h" />
     <ClInclude Include="Objects\GameEntity.h" />
     <ClInclude Include="Objects\GameObject.h" />
     <ClInclude Include="Objects\Player.h" />
     <ClInclude Include="Parsing\InitFactory.h" />
+    <ClInclude Include="Parsing\SceneFactory.h" />
     <ClInclude Include="Parsing\TinyXML\tinystr.h" />
     <ClInclude Include="Parsing\TinyXML\tinyxml.h" />
     <ClInclude Include="Scene\ActiveSceneManager.h" />

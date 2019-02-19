@@ -4,7 +4,9 @@
 #include "..\TextureCode\TextureManager.h"
 
 
-GameEntity::GameEntity()
+GameEntity::GameEntity() :
+	m_UsingReducedTextures(false),
+	m_ReducedTextureID(nullptr)
 {
 }
 
@@ -13,7 +15,8 @@ GameEntity::~GameEntity()
 }
 
 GameEntity::GameEntity(TextureProperties* Properties,
-	Vector InitPosition, Vector InitVelocity, Vector InitAccel)
+	Vector InitPosition, Vector InitVelocity, Vector InitAccel) :
+	GameEntity()
 {
 	m_Acceleration = InitAccel;
 	m_Velocity = InitVelocity;
@@ -27,7 +30,8 @@ GameEntity::GameEntity(TextureProperties* Properties,
 	m_CurrentRow = Properties->GetCurrentRow();
 }
 
-GameEntity::GameEntity(TextureProperties* Properties, Vector InitPosition)
+GameEntity::GameEntity(TextureProperties* Properties, Vector InitPosition) : 
+	GameEntity()
 {
 	m_Dimensions = Properties->GetDimensions();
 	m_TextureID = Properties->GetTextureID();

@@ -120,33 +120,18 @@ int ActiveSceneManager::Purge()
 //
 void ActiveSceneManager::Update()
 {
-
-	bool DoNotUpdate = false;
-
-	/*
-	if(m_ActiveScene != nullptr)
-		m_ActiveScene->Update();
-	else
-	{
-		throw "ActiveScene was nullptr";
-	}
-	*/
-
-	if (m_ActiveScene != nullptr && m_ActiveScene->IsPauseScreen())
-	{
-		DoNotUpdate = true;
-	}
-	
+	bool Update = true;
 
 	// Iterate through all the scenes under the active scene
 	// located at the rear of the vector
-	if (!m_OpenScenes.empty() && !DoNotUpdate)
+
+	// Only update until a non paused screen
+	for (size_t i = 0; i < m_OpenScenes.size() && Update; i++)
 	{
-		for (size_t i = 0; i < m_OpenScenes.size() - 1; i++)
-		{
-			m_OpenScenes[i]->Update();
-		}
+		m_OpenScenes[i]->Update();
+		if (m_OpenScenes[i]->IsPauseScreen()) Update = false;
 	}
+
 
 	if (m_ActiveScene != nullptr) m_ActiveScene->Update();
 	else

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameEntity.h"
+#include "BaseCreator.h"
 #include "..\Frame\InputManager.h"
 
 class Button : public GameEntity
@@ -23,5 +24,16 @@ public:
 
 
 	~Button();
+};
+
+class ButtonCreator : public BaseCreator
+{
+public:
+
+	virtual GameObject* CreateObject() override
+	{
+		return new Button;
+	}
+
 };
 

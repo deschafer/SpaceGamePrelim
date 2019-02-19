@@ -61,6 +61,7 @@ public:
 	}
 
 	void DrawGrid();
+	void Draw();
 
 	int GetCellWidth() { return m_CellWidth; }
 	int GetCellHeight() { return m_CellHeight; }

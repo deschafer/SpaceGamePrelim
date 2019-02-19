@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<SCENE name ="Test" paused="0" mapped="1">
+  <OBJECTS>
+    
+    <OBJECT  dimX="2" dimY="2" dimW="2" dimH="2" txtID="room" animSpeed="0" numFrames="0"
+             velX="0" velY="0" accelX="0" accelY="0" posX="" posY=""/>
+    
+    <OBJECT  dimX="2" dimY="2" dimW="2" dimH="2" txtID="room" animSpeed="0" numFrames="0"
+             velX="0" velY="0" accelX="0" accelY="0" posX="" posY=""/>
+  
+  </OBJECTS>
+</SCENE>

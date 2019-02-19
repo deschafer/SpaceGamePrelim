@@ -13,7 +13,7 @@ public:
 	virtual ~GameEntity();
 	GameEntity(TextureProperties* Properties, 
 		Vector InitPosition, Vector InitVelocity, Vector InitAccel);
-	GameEntity::GameEntity(TextureProperties* Properties, Vector InitPosition);
+	GameEntity(TextureProperties* Properties, Vector InitPosition);
 
 
 	virtual bool Load(TextureProperties* Properties);
@@ -37,8 +37,10 @@ protected:
 	int m_AnimationSpeed;
 	int m_CurrentRow;
 
+	bool m_UsingReducedTextures;
 	Callback m_Callback;
 
 	std::string m_TextureID;
+	std::string *m_ReducedTextureID;
 };
 
