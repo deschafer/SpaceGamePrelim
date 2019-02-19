@@ -20,10 +20,20 @@ Added a variety of improvements from the first initial version. Some of the chan
 
 The Room Generation is the most complicated part of this project so far. Essentially, it generates a room based off a user-defined room definition. This definition, stored in Map/RoomManager.h RoomProperties, contains the information needed to contruct a complex or simple shape. This definition is then used by the generation algorithm to use as a model for its generated version. The algorithm is stored in /Map/MapRoom MapRoom::Generate().
 
-Below are some images of the newest, still preliminary, version of the room generation.
+**UPDATE 2/17/2019**
 
+Enhanced and added several new components to further expand the framework. These include the following:
+* Added several parameters that alter the appearance of a defined room to RoomProperties
+* Added min height and width params for each room definition in RoomProperties
+* Added support for dynamic inner sides in select defined rooms
+* Added support for reflection of generated room types
+* Added xml parsing with the tinyXML library for both textures and room definitions. These are now stored in a file and loaded into the program with the InitFactory class
+* Added the concept of reduced textures
+* Added the concept of texture groups
 
-![alt-text](https://raw.githubusercontent.com/deschafer/SpaceGamePrelim/master/Presentation/room1.png "Room 1")
+*Below are some images of the current room generation*
+
+![alt-text](https://raw.githubusercontent.com/deschafer/SpaceGamePrelim/master/Presentation/room1.jpg "Room 1")
 
 ![alt-text](https://raw.githubusercontent.com/deschafer/SpaceGamePrelim/master/Presentation/room2.jpg "Room 2")
 
