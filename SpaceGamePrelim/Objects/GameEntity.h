@@ -11,12 +11,34 @@ class GameEntity : public GameObject
 public:
 	GameEntity();
 	virtual ~GameEntity();
+
 	GameEntity(TextureProperties* Properties, 
-		Vector InitPosition, Vector InitVelocity, Vector InitAccel);
-	GameEntity(TextureProperties* Properties, Vector InitPosition);
+		Vector InitPosition, 
+		Vector InitVelocity, 
+		Vector InitAccel);
+	GameEntity(TextureProperties* Properties, 
+		Vector InitPosition);
 
+	// New constructors
+	GameEntity(TextureProperties* Properties, 
+		std::string TypeID, 
+		std::string SpecTypeID,
+		Vector InitPosition, 
+		Vector InitVelocity, 
+		Vector InitAccel);
+	GameEntity(TextureProperties* Properties, 
+		std::string TypeID,
+		std::string SpecTypeID,
+		Vector InitPosition);
 
-	virtual bool Load(TextureProperties* Properties);
+	virtual bool Load(
+		TextureProperties* Properties,
+		std::string TypeID,
+		std::string SpecTypeID,
+		Vector InitVelocity,
+		Vector InitAccel,
+		Vector InitPosition,
+		Callback Handler);
 	virtual void Update();
 	virtual void Draw();
 	virtual void Delete();
@@ -42,5 +64,7 @@ protected:
 
 	std::string m_TextureID;
 	std::string *m_ReducedTextureID;
+	std::string m_TypeID;
+	std::string m_SpecTypeID;
 };
 

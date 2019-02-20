@@ -3,6 +3,7 @@
 #include "..\TextureCode\TextureManager.h"
 #include "..\Frame\MainApplication.h"
 #include "..\Map\MapManager.h"
+#include "..\Parsing\SceneFactory.h"
 
 #include <iostream>
 
@@ -24,17 +25,17 @@ MenuScene::~MenuScene()
 
 bool MenuScene::Enter()
 {
-	
-
-	TextureManager::Instance()->SetTexture("Assets/expl2.png", "Explosion", 
-		MainApplication::Instance()->GetRenderer());
-
-	GameEntity *Temp = new Button(new TextureProperties(Rect(0, 0, 32, 31),
-		"Explosion", 1, 3, 1, 1), Vector(100, 100),
-		Vector(0, 0), Vector(0, 0), s_ButtonHandler);
+	// Registering the types assoc with this scene
+	SceneFactory::Instance()->RegisterNewObject("Button", new ButtonCreator());
 
 
-	m_Objects.push_back(Temp);
+	//GameEntity *Temp = new Button(new TextureProperties(Rect(0, 0, 32, 31),
+	//	"Explosion", 1, 3, 1, 1), Vector(100, 100),
+	//	Vector(0, 0), Vector(0, 0), s_ButtonHandler);
+
+	SceneFactory::Instance()->LoadNewScene("XML/Scenes/Test.xml", this);
+
+	//m_Objects.push_back(Temp);
 
 	cout << "Entering a menuscene\n";
 	return true;

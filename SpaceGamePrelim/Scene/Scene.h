@@ -27,6 +27,13 @@ public:
 	std::string GetSceneID() { return m_SceneID; }
 	bool IsPauseScreen() { return m_PauseScreen; }
 	bool IsMappedScreend() { return m_MappedScreen; }
+	void SetGameObjects(std::vector<GameObject*> Objects) {
+		m_Objects.clear();
+		for (size_t i = 0; i < Objects.size(); i++)
+			m_Objects.push_back(Objects[i]);
+	}
+
+	Callback GetCallback(std::string HandlerID) { return m_Handlers[HandlerID]; }
 
 	virtual bool Enter() = 0;
 	virtual void Exit() = 0;

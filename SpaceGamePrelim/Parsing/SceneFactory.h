@@ -28,7 +28,8 @@ public:
 	}
 
 	void RegisterNewObject(std::string TypeID, BaseCreator* ObjectCreator);
-	bool LoadNewScene(std::string Filename);
+	bool LoadNewScene(std::string Filename, Scene* LoadingScene);
+
 
 	~SceneFactory();
 };

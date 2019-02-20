@@ -18,7 +18,6 @@ public:
 	Button(TextureProperties* Properties, Vector InitPosition, 
 		Vector InitVelocity, Vector InitAccel, Callback callBack);
 
-	//virtual bool Load(TextureProperties* Properties);
 	virtual void Update() override;
 
 
@@ -29,6 +28,9 @@ public:
 class ButtonCreator : public BaseCreator
 {
 public:
+
+	ButtonCreator() {}
+	virtual ~ButtonCreator() {}
 
 	virtual GameObject* CreateObject() override
 	{

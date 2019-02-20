@@ -1,6 +1,9 @@
 
 #include "MainApplication.h"
 #include "..\Parsing\InitFactory.h"
+#include "..\Parsing\SceneFactory.h"
+
+#include "..\Objects\Button.h"
 
 // init static member
 MainApplication* MainApplication::m_Instance = nullptr;
@@ -89,6 +92,8 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	InitFactory::Instance()->LoadRoomDefinitions("XML/Map/Room.xml");
 	InitFactory::Instance()->LoadTextures("XML/Textures/Textures.xml");
+
+
 	InitializeScenes();
 
 	return true;

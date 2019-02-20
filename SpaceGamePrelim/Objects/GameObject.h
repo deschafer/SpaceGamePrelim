@@ -9,16 +9,22 @@ protected:
 
 	virtual ~GameObject();
 
-	//GameObject(loader class goes here);
-
 public:
 
-	virtual bool Load(TextureProperties *Properties) = 0;
+	virtual bool Load(
+		TextureProperties *Properties,
+		std::string TypeID,
+		std::string SpecTypeID,
+		Vector Velocity,
+		Vector Accel,
+		Vector Position,
+		Callback Handler) = 0;
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 	virtual void Delete() = 0;
 
 	GameObject();
+
 
 };
 

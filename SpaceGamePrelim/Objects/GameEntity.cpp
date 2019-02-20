@@ -50,8 +50,34 @@ GameEntity::GameEntity(TextureProperties* Properties, Vector InitPosition) :
 // Loads this Game object's corresponding texture in the
 // the texturemanager object.
 //
-bool GameEntity::Load(TextureProperties* Properties)
+bool GameEntity::Load(
+	TextureProperties* Properties,
+	std::string TypeID,
+	std::string SpecTypeID,
+	Vector InitVelocity,
+	Vector InitAccel,
+	Vector InitPosition,
+	Callback Handler)
 {
+
+	m_Position = InitPosition;
+	m_Velocity = InitVelocity;
+	m_Acceleration = InitAccel;
+	m_SpecTypeID = SpecTypeID;
+	m_TypeID = TypeID;
+
+	m_Dimensions = Properties->GetDimensions();
+
+	// more work here
+	m_CurrentFrame = 1;
+	m_CurrentRow = 1;
+
+	m_AnimationSpeed = Properties->GetAnimationSpeed();
+	m_NumberFrames = Properties->GetNumberFrames();
+	m_TextureID = Properties->GetTextureID();
+
+	m_Callback = Handler;
+
 	return true;
 }
 

@@ -5,14 +5,12 @@
 class BaseCreator
 {
 protected:
-	BaseCreator()
-	{
-	}
+	
+	BaseCreator() {}
+
 public:
 	
-
 	virtual GameObject* CreateObject() = 0;
-	virtual ~BaseCreator() = 0;
 };
 
 
