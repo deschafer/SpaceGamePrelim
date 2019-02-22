@@ -25,23 +25,7 @@ TestScene::TestScene(std::string SceneID, bool Paused)
 
 bool TestScene::Enter()
 {
-	GameEntity *Temp = new GameEntity(new TextureProperties(Rect(0, 0, 100, 100),
-		"Source", 1, 3, 60, 1), Vector(100, 100),
-		Vector(.5, 0), Vector(0, 0));
 
-	TextureManager::Instance()->SetTexture("Assets/arc2.png", "Source",
-		MainApplication::Instance()->GetRenderer());
-
-	Scene::m_Objects.push_back(Temp);
-
-	Temp = new Player(new TextureProperties(Rect(-220, -200, 100, 100),
-		"tank", 1, 3, 60, 1), Vector(200, 100),
-		Vector(0, 0), Vector(0, 0));
-
-	TextureManager::Instance()->SetTexture("Assets/tankbrigade.png", "tank",
-		MainApplication::Instance()->GetRenderer());
-
-	Scene::m_Objects.push_back(Temp);
 
 	cout << "Entering a testscene\n";
 	return true;

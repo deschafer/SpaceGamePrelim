@@ -379,7 +379,7 @@ bool InitFactory::LoadTextures(std::string File)
 			// Adds the new reduced texture
 			TextureManager::Instance()->SetReducedTexture(
 				ReducedTextureName, 
-				new TextureProperties(SourceDimensions, TextureName, 1, 0, 0, 1));
+				new TextureProperties(SourceDimensions, TextureName, 0, 0));
 		}
 		// Looking for the start of a texture group
 		else if ((Current != nullptr &&

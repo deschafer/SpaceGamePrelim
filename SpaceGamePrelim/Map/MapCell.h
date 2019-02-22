@@ -28,6 +28,7 @@ protected:
 	std::vector<std::string> m_TextureIDs;	// Holds, in stack order, the textures used for this cell
 	std::vector<std::string>* m_RedTextureIDs;
 	bool m_UsingRedTextures;
+	bool m_Animated;
 
 	Cell m_CellType;
 
@@ -35,16 +36,26 @@ protected:
 	Rect m_Dimensions;
 	int m_CurrentFrame;
 	int m_CurrentRow;
+	int m_AnimationSpeed;
+	int m_NumberFrames;
 
 
 public:
 	MapCell();
-	MapCell::MapCell(std::vector<std::string> TextureIDs, TextureProperties* Properties, MapCoordinate Position, Cell CellType);
-	MapCell::MapCell(TextureProperties* Properties, MapCoordinate Position, Cell CellType);
-	MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell CellType);
+	MapCell::MapCell(std::vector<std::string> RedTextureIDs, 
+		MapCoordinate Position, 
+		Cell CellType);
+
+	MapCell::MapCell(std::vector<std::string> RedTextureIDs, 
+		std::vector<TextureProperties*> Properties, 
+		MapCoordinate Position, 
+		Cell CellType);
+
 
 	virtual void Draw(MapCoordinate Coords);
 	void DrawStatic(MapCoordinate Coords);
+	virtual void Update();
+
 
 	void ChangeRedTextures(std::vector<std::string> NewTextures);
 	std::vector<std::string>* ReturnRedTextures() { return m_RedTextureIDs; }

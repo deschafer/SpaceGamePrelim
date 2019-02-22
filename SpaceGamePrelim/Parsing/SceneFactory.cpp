@@ -184,10 +184,8 @@ bool SceneFactory::LoadNewScene(std::string Filename, Scene* LoadingScene)
 						DimH
 					),
 					TxtID,
-					1,
 					NumFrames,
-					AnimSpeed,
-					1),
+					AnimSpeed),
 					TypeID,
 					SpecID,
 					Vector(VelX, VelY),

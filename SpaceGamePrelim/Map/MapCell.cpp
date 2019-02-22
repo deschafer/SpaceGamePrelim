@@ -9,46 +9,9 @@
 // intialization
 MapCell::MapCell() : 
 	m_UsingRedTextures(false),
+	m_Animated(false),
 	m_RedTextureIDs(nullptr)
 {
-}
-
-//
-// MapCell()
-// For a MapCell using traditional textures
-//
-MapCell::MapCell(std::vector<std::string> TextureIDs, TextureProperties* Properties, 
-	MapCoordinate Position, Cell CellType) : 
-	m_CellType(CellType)
-{
-	MapCell();
-
-	for (size_t i = 0; i < TextureIDs.size(); i++)
-	{
-		m_TextureIDs.push_back(TextureIDs.back());
-		TextureIDs.pop_back();
-	}
-
-	m_CurrentFrame = Properties->GetCurrentFrame();
-	m_CurrentRow = Properties->GetCurrentRow();
-	m_Dimensions = Properties->GetDimensions();
-}
-
-//
-// MapCell()
-// For a MapCell using a single texture
-//
-MapCell::MapCell(TextureProperties* Properties, MapCoordinate Position, Cell CellType) : 
-	m_CellType(CellType)
-{
-	MapCell();
-
-	m_TextureIDs.push_back(Properties->GetTextureID());
-	m_CurrentFrame = Properties->GetCurrentFrame();
-	m_CurrentRow = Properties->GetCurrentRow();
-	m_Dimensions = Properties->GetDimensions();
-
-	MapObject::m_Position = Position;
 }
 
 //
@@ -65,6 +28,15 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	m_UsingRedTextures = true;
 
 	MapObject::m_Position = Position;
+}
+
+MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties, MapCoordinate Position,
+	Cell CellType) : 
+	m_CellType(CellType)
+{
+
+
+
 }
 
 MapCell::~MapCell()
@@ -139,4 +111,10 @@ void MapCell::ChangeRedTextures(std::vector<std::string> NewTextures)
 	{
 		m_RedTextureIDs->push_back(NewTextures[i]);
 	}
+}
+
+void MapCell::Update()
+{
+
+	m_CurrentFrame = int(((SDL_GetTicks() / m_AnimationSpeed) % m_NumberFrames));
 }

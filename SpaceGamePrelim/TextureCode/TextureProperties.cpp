@@ -11,23 +11,19 @@ TextureProperties::~TextureProperties()
 {
 }
 
-TextureProperties::TextureProperties(Rect Dimensions, std::string TextureID, int CurrentFrame,
-	int NumberFrames, int AnimationSpeed, int CurrentRow) : 
+TextureProperties::TextureProperties(Rect Dimensions, std::string TextureID,
+	int NumberFrames, int AnimationSpeed) : 
 	m_Dimensions(Dimensions), 
 	m_TextureID(TextureID),
-	m_CurrentFrame(CurrentFrame), 
 	m_NumberFrames(NumberFrames), 
-	m_AnimationSpeed(AnimationSpeed), 
-	m_CurrentRow(CurrentRow)
+	m_AnimationSpeed(AnimationSpeed)
 {
 }
 
 TextureProperties::TextureProperties(Rect Dimensions, std::string TextureID) :
 	m_Dimensions(Dimensions),
 	m_TextureID(TextureID),
-	m_CurrentFrame(1),
 	m_NumberFrames(1),
-	m_AnimationSpeed(0),
-	m_CurrentRow(1)
+	m_AnimationSpeed(0)
 {
 }

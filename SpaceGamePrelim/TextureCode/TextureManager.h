@@ -46,7 +46,7 @@ public:
 	void DrawCurrentFrame(std::string TextureID, int X, int Y, Rect Dim, SDL_RendererFlip Flip,
 		SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame = 1);
 	void DrawCurrentFrame(int X, int Y, std::string RedTxtID, SDL_RendererFlip Flip, 
-		SDL_Renderer *pRenderer, int CurrentFrame = 1);
+		SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame = 1);
 	void DrawStaticFrame(int X, int Y, std::string RedTxtID, SDL_Renderer *pRenderer);
 	int RemoveTexture(std::string TextureID);
 

@@ -9,6 +9,8 @@
 
 using namespace std;
 
+const string ButtonHandlerStr = "ButtonHandler";
+
 MenuScene::MenuScene()
 {
 }
@@ -16,6 +18,7 @@ MenuScene::MenuScene()
 MenuScene::MenuScene(std::string SceneID, bool Paused, bool Mapped) : 
 	Scene(Paused, Mapped)
 {
+	m_Handlers[ButtonHandlerStr] = s_ButtonHandler;
 }
 
 

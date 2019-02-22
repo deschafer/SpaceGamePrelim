@@ -118,7 +118,7 @@ void TextureManager::DrawCurrentFrame(std::string TextureID, int X, int Y, Rect 
 }
 
 void TextureManager::DrawCurrentFrame(int X, int Y, std::string RedTxtID, SDL_RendererFlip Flip,
-	SDL_Renderer *pRenderer, int CurrentFrame)
+	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
 {
 
 	TextureProperties* Properties = m_ReducedTextureDefinitions[RedTxtID];
@@ -136,7 +136,7 @@ void TextureManager::DrawCurrentFrame(int X, int Y, std::string RedTxtID, SDL_Re
 
 	// Setting information to draw this frame correctly
 	SourceRect.x = Dim.Width() * CurrentFrame;
-	SourceRect.y = Dim.Height() * (Properties->GetCurrentRow() - 1);
+	SourceRect.y = Dim.Height() * (CurrentRow - 1);
 	SourceRect.w = DestRect.w = Dim.Width();
 	SourceRect.h = DestRect.h = Dim.Height();
 	DestRect.x = X;

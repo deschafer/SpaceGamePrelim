@@ -6,7 +6,9 @@
 
 GameEntity::GameEntity() :
 	m_UsingReducedTextures(false),
-	m_ReducedTextureID(nullptr)
+	m_ReducedTextureID(nullptr),
+	m_CurrentFrame(1),
+	m_CurrentRow(1)
 {
 }
 
@@ -24,10 +26,8 @@ GameEntity::GameEntity(TextureProperties* Properties,
 
 	m_Dimensions = Properties->GetDimensions();
 	m_TextureID = Properties->GetTextureID();
-	m_CurrentFrame = Properties->GetCurrentFrame();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
 	m_NumberFrames = Properties->GetNumberFrames();
-	m_CurrentRow = Properties->GetCurrentRow();
 }
 
 GameEntity::GameEntity(TextureProperties* Properties, Vector InitPosition) : 
@@ -35,9 +35,7 @@ GameEntity::GameEntity(TextureProperties* Properties, Vector InitPosition) :
 {
 	m_Dimensions = Properties->GetDimensions();
 	m_TextureID = Properties->GetTextureID();
-	m_CurrentFrame = Properties->GetCurrentFrame();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
-	m_CurrentRow = Properties->GetCurrentRow();
 	m_NumberFrames = Properties->GetNumberFrames();
 
 	m_Acceleration = Vector(0, 0);
@@ -68,7 +66,6 @@ bool GameEntity::Load(
 
 	m_Dimensions = Properties->GetDimensions();
 
-	// more work here
 	m_CurrentFrame = 1;
 	m_CurrentRow = 1;
 

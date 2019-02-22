@@ -16,6 +16,7 @@ protected:
 public:
 
 	virtual void Draw(MapCoordinate Coords) = 0;
+	virtual void Update() = 0;
 
 	MapObject();
 	virtual	~MapObject();
