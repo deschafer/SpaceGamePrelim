@@ -3,10 +3,7 @@
 
 class MapInactive : public MapCell
 {
-
 public:
-
-
 	MapInactive();
 	virtual ~MapInactive();
 

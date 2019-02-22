@@ -1,6 +1,8 @@
 #include "Scene.h"
 #include "../Map/MapManager.h"
 
+#include "..\Map\MapCell.h"
+
 
 Scene::Scene()
 {
@@ -18,6 +20,11 @@ Scene::~Scene()
 
 void Scene::Update()
 {
+	if (m_MappedScreen)
+	{
+		MapManager::Instance()->Update();
+
+	}
 
 	for (size_t i = 0; i < m_Objects.size(); i++)
 	{
@@ -30,6 +37,7 @@ void Scene::Render()
 	if (m_MappedScreen)
 	{
 		MapManager::Instance()->Draw();
+		
 	}
 
 	for (size_t i = 0; i < m_Objects.size(); i++)

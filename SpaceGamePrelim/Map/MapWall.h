@@ -14,7 +14,5 @@ public:
 	MapWall(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell MapCell);
 
 	virtual void Draw(MapCoordinate Coords);
-
-
 };
 

@@ -7,6 +7,10 @@
 
 #include <map>
 
+const int CellWidthSrc = 32;
+const int CellHeightSrc = 32;
+const int MapSizeW = 100;
+const int MapSizeH = 100;
 
 using namespace std;
 
@@ -15,10 +19,10 @@ MapManager* MapManager::m_Instance = nullptr;
 MapManager::MapManager() :
 	m_ActiveWndHeight(0),
 	m_ActiveWndWidth(0),
-	m_CellHeight(32),
-	m_CellWidth(32),
+	m_CellHeight(CellWidthSrc),
+	m_CellWidth(CellHeightSrc),
 	m_Init(true),
-	m_ActiveMap(new Map("Default", 100, 100, MapCoordinate(0, 0)))
+	m_ActiveMap(new Map("Default", MapSizeW, MapSizeH, MapCoordinate(0, 0)))
 {
 	
 	m_RoomManager = RoomManager::Instance();
@@ -44,25 +48,48 @@ MapManager::MapManager() :
 	}
 
 	m_Instance = this;
-
 	m_ActiveMap->Generate();
-
 }
-
 
 MapManager::~MapManager()
 {
 }
 
 //
+// Draw()
+// Draws all of the visible cells onto the screen
+// part of update loop
 //
-//
-//
+
 void MapManager::Draw()
 {
+	for (int i = 0; i < m_Columns; i++)
+	{
+		for (int j = 0; j < m_Rows; j++)
+		{
+			if (m_VisibleObjectArray[i][j] != nullptr)
+			{
+				m_VisibleObjectArray[i][j]->Draw(MapCoordinate(i * m_CellWidth, j * m_CellHeight));
+			}
+		}
+	}
+}
 
-
-	DrawVisibleCells();
+void MapManager::Update()
+{
+	for (int i = 0; i < m_Columns; i++)
+	{
+		for (int j = 0; j < m_Rows; j++)
+		{
+			// Gets the new cell
+			m_VisibleObjectArray[i][j] = m_ActiveMap->GetCell(i, j);
+			// Then draws it
+			if (m_VisibleObjectArray[i][j] != nullptr)
+			{
+				m_VisibleObjectArray[i][j]->Update();
+			}
+		}
+	}
 }
 
 //
@@ -71,11 +98,9 @@ void MapManager::Draw()
 //
 void MapManager::DrawGrid()
 {
-	/*
+	
 	int OldR, OldG, OldB, OldA;
 	SDL_Renderer* renderer = MainApplication::Instance()->GetRenderer();
-
-
 
 	// Setting line color
 	SDL_GetRenderDrawColor(renderer, (Uint8*)&OldR, (Uint8*)&OldG, (Uint8*)&OldB, (Uint8*)&OldA);
@@ -105,60 +130,11 @@ void MapManager::DrawGrid()
 	cRect.w = 15 * m_CellWidth;
 	cRect.h = 15 * m_CellHeight;
 
-
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	// end test
-//	SDL_RenderDrawRect(MainApplication::Instance()->GetRenderer(), &cRect);
-
+	SDL_RenderDrawRect(MainApplication::Instance()->GetRenderer(), &cRect);
 	SDL_SetRenderDrawColor(renderer, OldR, OldG, OldB, OldA);
-	*/
-
-	DrawDefinedRoom();
-	DrawVisibleCells();
 }
 
-//
-// DrawVisibleCells()
-// Draws all of the visible cells onto the screen
-// part of update loop
-//
-void MapManager::DrawVisibleCells()
-{
-	for (int i = 0; i < m_Columns; i++)
-	{
-		for (int j = 0; j < m_Rows; j++)
-		{
-			// Gets the new cell
-			m_VisibleObjectArray[i][j] = m_ActiveMap->GetCell(i, j);
-			// Then draws it
-			if (m_VisibleObjectArray[i][j] != nullptr)
-			{
-				m_VisibleObjectArray[i][j]->Draw(MapCoordinate(i * m_CellWidth, j * m_CellHeight));
-			}
-		}
-	}
-}
-
-//
-// This is a TEST function to play with random room generation
-//
-//
-void MapManager::DrawDefaultRoom()
-{
-
-}
-
-
-//
-// DrawDefinedRoom()
-// Preliminary version of the room generation that will be a part of 
-// every room.
-//
-//
-void MapManager::DrawDefinedRoom()
-{
-	
-}
 
 
 //

@@ -25,19 +25,16 @@ class MapCell : public MapObject
 {
 protected:
 
-	std::vector<std::string> m_TextureIDs;	// Holds, in stack order, the textures used for this cell
 	std::vector<std::string>* m_RedTextureIDs;
-	bool m_UsingRedTextures;
 	bool m_Animated;
 
-	Cell m_CellType;
+	Cell m_CellType;		// Type of this cell object
 
-	// Texture Properties
-	Rect m_Dimensions;
-	int m_CurrentFrame;
-	int m_CurrentRow;
-	int m_AnimationSpeed;
-	int m_NumberFrames;
+	// Texture Properties -- have to be list to support multiple textures
+	std::vector<int> m_CurrentFrame;
+	std::vector<int> m_CurrentRow;
+	std::vector<int> m_AnimationSpeed;
+	std::vector<int> m_NumberFrames;
 
 
 public:

@@ -11,7 +11,6 @@
 #include "..\Objects\GameEntity.h"
 #include "..\Scene\ActiveSceneManager.h"
 #include "..\Scene\MenuScene.h"
-#include "..\Scene\TestScene.h"
 #include "InputManager.h"
 #include "..\Map\MapManager.h"
 #include "..\Map\RoomManager.h"

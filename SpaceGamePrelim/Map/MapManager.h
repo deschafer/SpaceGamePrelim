@@ -17,13 +17,10 @@ class MapManager
 private:
 	int m_ActiveWndWidth;
 	int m_ActiveWndHeight;
-
 	int m_Rows;
 	int m_Columns;
-
 	int m_CellWidth;
 	int m_CellHeight;
-
 	int m_OffsetX;
 	int m_OffsetY;
 
@@ -34,17 +31,10 @@ private:
 	MapObject*** m_VisibleObjectArray;	// 2D array of pointers to mapobjects visible
 	Map* m_ActiveMap;					// Active map pointer
 	RoomManager* m_RoomManager;
-
 	std::vector<MapObject*> m_LoadedMapObjects;
 
 	void LoadMapObjects();		// This will load the inview map objects
-
 	void LoadDefaultMapObjects();
-
-
-	void DrawDefaultRoom();
-	void DrawDefinedRoom();
-	void DrawVisibleCells();
 
 	MapManager();
 
@@ -62,10 +52,10 @@ public:
 
 	void DrawGrid();
 	void Draw();
+	void Update();
 
 	int GetCellWidth() { return m_CellWidth; }
 	int GetCellHeight() { return m_CellHeight; }
-
 
 	void ResetMap();
 	

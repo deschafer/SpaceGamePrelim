@@ -17,9 +17,6 @@
     <ClCompile Include="Scene\ActiveSceneManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\TestScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\MenuScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -107,9 +104,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scene\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\TestScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextureCode\TextureManager.h">

@@ -6,6 +6,8 @@
 
 #include "..\Objects\GameObject.h"
 
+class MapCell;
+
 class Scene
 {
 protected:

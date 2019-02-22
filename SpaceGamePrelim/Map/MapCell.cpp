@@ -8,7 +8,6 @@
 // Default CTOR, used by all CTORs for some common
 // intialization
 MapCell::MapCell() : 
-	m_UsingRedTextures(false),
 	m_Animated(false),
 	m_RedTextureIDs(nullptr)
 {
@@ -16,7 +15,8 @@ MapCell::MapCell() :
 
 //
 // MapCell()
-// For a map cell using one or more reduced textures
+// For a map cell using one or more reduced textures that do not have assoc properties
+// (Are not animated)
 //
 MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	Cell CellType) : 
@@ -25,17 +25,34 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	MapCell();
 
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
-	m_UsingRedTextures = true;
-
 	MapObject::m_Position = Position;
 }
 
+//
+// MapCell()
+// For a MapCell that has animated textures with assoc properties
+//
 MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties, MapCoordinate Position,
 	Cell CellType) : 
-	m_CellType(CellType)
+	m_CellType(CellType),
+	m_Animated(true)
 {
 
+	TextureProperties* CurrentProp;
 
+	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
+	MapObject::m_Position = Position;
+
+	// For each of the properties, save them to the approp pos
+	for (size_t i = 0; i < Properties.size(); i++)
+	{
+		CurrentProp = Properties[i];
+		m_AnimationSpeed.push_back(CurrentProp->GetAnimationSpeed());
+		m_NumberFrames.push_back(CurrentProp->GetNumberFrames());
+
+		m_CurrentFrame.push_back(1);
+		m_CurrentRow.push_back(1);
+	}
 
 }
 
@@ -50,28 +67,39 @@ MapCell::~MapCell()
 //
 void MapCell::Draw(MapCoordinate Coords)
 {
-	if (m_UsingRedTextures)
+	if (!m_Animated)
 	{
 		DrawStatic(Coords);
 	}
 	else
 	{
-		if (m_TextureIDs.empty())
+		// Drawing each texture with its respective properties
+		for (size_t i = 0; i < m_RedTextureIDs->size(); i++)
 		{
-			std::cout << "textures are empty";
-			return;
+			TextureManager::Instance()->DrawCurrentFrame(
+				Coords.GetPositionX(),
+				Coords.GetPositionY(),
+				m_RedTextureIDs->at(i),
+				SDL_FLIP_NONE,
+				MainApplication::Instance()->GetRenderer(),
+				m_CurrentRow[i],
+				m_CurrentFrame[i]
+			);
 		}
+		
+	}
+}
 
-		// TODO: Implement multiple texture layer drawing
-
-		TextureManager::Instance()->DrawCurrentFrame(
-			m_TextureIDs.back(), 
-			Coords.GetPositionX(),
-			Coords.GetPositionY(), 
-			m_Dimensions, 
-			SDL_FLIP_NONE, 
-			MainApplication::Instance()->GetRenderer(),
-			m_CurrentRow, m_CurrentFrame);
+// 
+// Update()
+// Updates animated textures with assoc properties
+//
+void MapCell::Update()
+{
+	// Only updates animated textures
+	for (size_t i = 0; i < m_CurrentFrame.size(); i++)
+	{
+		m_CurrentFrame[i] = int(((SDL_GetTicks() / m_AnimationSpeed[i]) % m_NumberFrames[i]));
 	}
 }
 
@@ -113,8 +141,3 @@ void MapCell::ChangeRedTextures(std::vector<std::string> NewTextures)
 	}
 }
 
-void MapCell::Update()
-{
-
-	m_CurrentFrame = int(((SDL_GetTicks() / m_AnimationSpeed) % m_NumberFrames));
-}
