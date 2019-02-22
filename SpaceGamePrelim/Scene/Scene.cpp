@@ -8,9 +8,8 @@ Scene::Scene()
 {
 }
 
-Scene::Scene(bool Paused, bool Mapped) :
-	m_PauseScreen(Paused),
-	m_MappedScreen(Mapped)
+Scene::Scene(bool Paused) :
+	m_PauseScreen(Paused)
 {
 }
 
@@ -20,11 +19,6 @@ Scene::~Scene()
 
 void Scene::Update()
 {
-	if (m_MappedScreen)
-	{
-		MapManager::Instance()->Update();
-
-	}
 
 	for (size_t i = 0; i < m_Objects.size(); i++)
 	{
@@ -34,11 +28,6 @@ void Scene::Update()
 }
 void Scene::Render()
 {
-	if (m_MappedScreen)
-	{
-		MapManager::Instance()->Draw();
-		
-	}
 
 	for (size_t i = 0; i < m_Objects.size(); i++)
 	{

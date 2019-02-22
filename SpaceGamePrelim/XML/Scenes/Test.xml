@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<SCENE name ="Test" paused="0" mapped="1">
+<SCENE name ="Test" paused="0">
   <OBJECTS>
     
     <OBJECT  typeID="Button" 

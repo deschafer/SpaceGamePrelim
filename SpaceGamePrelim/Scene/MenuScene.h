@@ -11,7 +11,7 @@ private:
 
 public:
 	MenuScene();
-	MenuScene::MenuScene(std::string SceneID, bool Paused, bool Mapped);
+	MenuScene::MenuScene(std::string SceneID, bool Paused);
 	virtual ~MenuScene();
 
 
@@ -21,8 +21,6 @@ public:
 
 	virtual void Update() override;
 	virtual void Render() override;
-
-	static void s_ButtonHandler();
 
 };
 

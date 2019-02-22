@@ -9,16 +9,14 @@
 
 using namespace std;
 
-const string ButtonHandlerStr = "ButtonHandler";
-
 MenuScene::MenuScene()
 {
 }
 
-MenuScene::MenuScene(std::string SceneID, bool Paused, bool Mapped) : 
-	Scene(Paused, Mapped)
+MenuScene::MenuScene(std::string SceneID, bool Paused) : 
+	Scene(Paused)
 {
-	m_Handlers[ButtonHandlerStr] = s_ButtonHandler;
+	Scene::m_SceneID = SceneID;
 }
 
 
@@ -28,17 +26,7 @@ MenuScene::~MenuScene()
 
 bool MenuScene::Enter()
 {
-	// Registering the types assoc with this scene
-	SceneFactory::Instance()->RegisterNewObject("Button", new ButtonCreator());
 
-
-	//GameEntity *Temp = new Button(new TextureProperties(Rect(0, 0, 32, 31),
-	//	"Explosion", 1, 3, 1, 1), Vector(100, 100),
-	//	Vector(0, 0), Vector(0, 0), s_ButtonHandler);
-
-	SceneFactory::Instance()->LoadNewScene("XML/Scenes/Test.xml", this);
-
-	//m_Objects.push_back(Temp);
 
 	cout << "Entering a menuscene\n";
 	return true;
@@ -52,19 +40,12 @@ void MenuScene::Exit()
 
 void MenuScene::Update()
 {
-
 	Scene::Update();
-
 }
+
 void MenuScene::Render()
 {
-
 	Scene::Render();
-
 }
 
-void MenuScene::s_ButtonHandler()
-{
-	cout << "Menu button has been clicked\n";
-	MapManager::Instance()->ResetMap();
-}
+

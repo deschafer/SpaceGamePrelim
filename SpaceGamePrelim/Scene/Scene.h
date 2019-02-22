@@ -18,17 +18,14 @@ protected:
 	
 	bool m_PauseScreen;	// Indicates that all other scenes in the 
 						// background should be paused when this scene is active.
-	bool m_MappedScreen;// Indicates if this screen contains the in use map from MapManager
-
 
 	Scene();
-	Scene(bool Paused, bool Mapped);
+	Scene(bool Paused);
 
 public:
 
 	std::string GetSceneID() { return m_SceneID; }
 	bool IsPauseScreen() { return m_PauseScreen; }
-	bool IsMappedScreend() { return m_MappedScreen; }
 	void SetGameObjects(std::vector<GameObject*> Objects) {
 		m_Objects.clear();
 		for (size_t i = 0; i < Objects.size(); i++)

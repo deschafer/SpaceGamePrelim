@@ -36,18 +36,17 @@ protected:
 	std::vector<int> m_AnimationSpeed;
 	std::vector<int> m_NumberFrames;
 
+	MapCell();
+	MapCell::MapCell(std::vector<std::string> RedTextureIDs,
+		MapCoordinate Position,
+		Cell CellType);
+
+	MapCell::MapCell(std::vector<std::string> RedTextureIDs,
+		std::vector<TextureProperties*> Properties,
+		MapCoordinate Position,
+		Cell CellType);
 
 public:
-	MapCell();
-	MapCell::MapCell(std::vector<std::string> RedTextureIDs, 
-		MapCoordinate Position, 
-		Cell CellType);
-
-	MapCell::MapCell(std::vector<std::string> RedTextureIDs, 
-		std::vector<TextureProperties*> Properties, 
-		MapCoordinate Position, 
-		Cell CellType);
-
 
 	virtual void Draw(MapCoordinate Coords);
 	void DrawStatic(MapCoordinate Coords);
