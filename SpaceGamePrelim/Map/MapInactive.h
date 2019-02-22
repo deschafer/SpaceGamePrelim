@@ -7,7 +7,8 @@ public:
 	MapInactive();
 	virtual ~MapInactive();
 
-	MapInactive(std::vector<std::string> TextureIDs, TextureProperties* Properties, MapCoordinate Position, Cell CellType);
+	MapInactive(std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties,
+		MapCoordinate Position, Cell CellType);
 	MapInactive(TextureProperties* Properties, MapCoordinate Position, Cell CellType);
 	MapInactive(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell CellType);
 

@@ -98,6 +98,7 @@
     <ClCompile Include="Scene\GameScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\MapScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\ActiveSceneManager.h">
@@ -188,6 +189,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scene\GameScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\MapScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

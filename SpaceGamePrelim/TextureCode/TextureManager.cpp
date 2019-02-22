@@ -74,49 +74,6 @@ void TextureManager::SetReducedTexture(std::string ID, TextureProperties* Proper
 
 }
 
-//
-// DrawCurrentFrame()
-// Draws the current frame for a given object associated with an textureIF
-//
-void TextureManager::DrawCurrentFrame(std::string TextureID, Rect Dim, SDL_RendererFlip Flip, 
-	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
-{
-
-	// Local vars
-	SDL_Rect SourceRect;
-	SDL_Rect DestRect;
-
-	// Setting information to draw this frame correctly
-	SourceRect.x = Dim.Width() * CurrentFrame;
-	SourceRect.y = Dim.Height() * (CurrentRow - 1);
-	SourceRect.w = DestRect.w = Dim.Width();
-	SourceRect.h = DestRect.h = Dim.Height();
-	DestRect.x = Dim.TopLeftX();
-	DestRect.y = Dim.TopLeftY();
-
-	SDL_RenderCopyEx(pRenderer, m_TextureContainer[TextureID], &SourceRect,
-		&DestRect, 0, 0, Flip);
-}
-
-void TextureManager::DrawCurrentFrame(std::string TextureID, int X, int Y, Rect Dim, SDL_RendererFlip Flip,
-	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
-{
-	// Local vars
-	SDL_Rect SourceRect;
-	SDL_Rect DestRect;
-
-	// Setting information to draw this frame correctly
-	SourceRect.x = Dim.Width() * CurrentFrame;
-	SourceRect.y = Dim.Height() * (CurrentRow - 1);
-	SourceRect.w = DestRect.w = Dim.Width();
-	SourceRect.h = DestRect.h = Dim.Height();
-	DestRect.x = X;
-	DestRect.y = Y;
-
-	SDL_RenderCopyEx(pRenderer, m_TextureContainer[TextureID], &SourceRect,
-		&DestRect, 0, 0, Flip);
-}
-
 void TextureManager::DrawCurrentFrame(int X, int Y, std::string RedTxtID, SDL_RendererFlip Flip,
 	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
 {

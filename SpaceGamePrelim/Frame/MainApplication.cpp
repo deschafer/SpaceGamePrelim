@@ -2,7 +2,7 @@
 #include "MainApplication.h"
 #include "..\Parsing\InitFactory.h"
 #include "..\Parsing\SceneFactory.h"
-#include "..\Scene\GameScene.h"
+#include "..\Scene\MapScene.h"
 #include "..\Objects\Button.h"
 
 // init static member
@@ -197,7 +197,7 @@ bool MainApplication::InitializeScenes()
 {
 
 	// Temporary addition of scenes here
-	ActiveSceneManager::Instance()->AddScene(new GameScene("Game Scene", false));
+	ActiveSceneManager::Instance()->AddScene(new MapScene("Game Scene", false));
 
 	return true;
 }

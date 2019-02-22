@@ -5,8 +5,6 @@
 
 
 GameEntity::GameEntity() :
-	m_UsingReducedTextures(false),
-	m_ReducedTextureID(nullptr),
 	m_CurrentFrame(1),
 	m_CurrentRow(1)
 {
@@ -16,25 +14,39 @@ GameEntity::~GameEntity()
 {
 }
 
-GameEntity::GameEntity(TextureProperties* Properties,
-	Vector InitPosition, Vector InitVelocity, Vector InitAccel) :
-	GameEntity()
+GameEntity::GameEntity(std::string ReducedTexture,
+	TextureProperties* Properties,
+	std::string TypeID,
+	std::string SpecTypeID,
+	Vector InitPosition,
+	Vector InitVelocity,
+	Vector InitAccel) :
+	GameEntity() 
+
 {
 	m_Acceleration = InitAccel;
 	m_Velocity = InitVelocity;
 	m_Position = InitPosition;
 
+	m_SpecTypeID = SpecTypeID;
+	m_TypeID = TypeID;
+
+	m_ReducedTextureID = ReducedTexture;
 	m_Dimensions = Properties->GetDimensions();
-	m_TextureID = Properties->GetTextureID();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
 	m_NumberFrames = Properties->GetNumberFrames();
 }
 
-GameEntity::GameEntity(TextureProperties* Properties, Vector InitPosition) : 
+GameEntity::GameEntity(std::string ReducedTexture,
+	TextureProperties* Properties,
+	std::string TypeID,
+	std::string SpecTypeID,
+	Vector InitPosition) :
 	GameEntity()
 {
+
+	m_ReducedTextureID = ReducedTexture;
 	m_Dimensions = Properties->GetDimensions();
-	m_TextureID = Properties->GetTextureID();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
 	m_NumberFrames = Properties->GetNumberFrames();
 
@@ -64,14 +76,13 @@ bool GameEntity::Load(
 	m_SpecTypeID = SpecTypeID;
 	m_TypeID = TypeID;
 
-	m_Dimensions = Properties->GetDimensions();
-
 	m_CurrentFrame = 1;
 	m_CurrentRow = 1;
 
+	m_Dimensions = Properties->GetDimensions();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
 	m_NumberFrames = Properties->GetNumberFrames();
-	m_TextureID = Properties->GetTextureID();
+	m_ReducedTextureID = Properties->GetTextureID();
 
 	m_Callback = Handler;
 
@@ -104,11 +115,10 @@ void GameEntity::Draw()
 	SDL_Renderer* Temp = MainApplication::Instance()->GetRenderer();
 	
 	TextureManager::Instance()->DrawCurrentFrame(
-		m_TextureID, 
 		static_cast<int>(round(m_Position.getX())), 
-		static_cast<int>(round(m_Position.getY())), 
-		m_Dimensions, 
-		SDL_FLIP_NONE, 
+		static_cast<int>(round(m_Position.getY())),
+		m_ReducedTextureID,
+		SDL_FLIP_NONE,
 		MainApplication::Instance()->GetRenderer(), 
 		m_CurrentRow, 
 		m_CurrentFrame);

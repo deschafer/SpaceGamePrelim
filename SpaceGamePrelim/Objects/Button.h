@@ -15,8 +15,14 @@ private:
 
 public:
 	Button();
-	Button(TextureProperties* Properties, Vector InitPosition, 
-		Vector InitVelocity, Vector InitAccel, Callback callBack);
+	Button(std::string RedTexture,
+		TextureProperties* Prop,
+		std::string TypeID,
+		std::string SpecID,
+		Vector InitPosition,
+		Vector InitVelocity,
+		Vector InitAccel,
+		Callback callBack);
 
 	virtual void Update() override;
 

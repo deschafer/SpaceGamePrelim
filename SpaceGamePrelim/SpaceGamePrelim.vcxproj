@@ -43,6 +43,7 @@
     <ClCompile Include="Parsing\TinyXML\tinyxmlparser.cpp" />
     <ClCompile Include="Scene\ActiveSceneManager.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
+    <ClCompile Include="Scene\MapScene.cpp" />
     <ClCompile Include="Scene\MenuScene.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="TextureCode\TextureManager.cpp" />
@@ -75,6 +76,7 @@
     <ClInclude Include="Parsing\TinyXML\tinyxml.h" />
     <ClInclude Include="Scene\ActiveSceneManager.h" />
     <ClInclude Include="Scene\GameScene.h" />
+    <ClInclude Include="Scene\MapScene.h" />
     <ClInclude Include="Scene\MenuScene.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="TextureCode\TextureManager.h" />

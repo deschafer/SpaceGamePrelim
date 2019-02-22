@@ -11,9 +11,15 @@ m_Clicked(false)
 {
 }
 
-Button::Button(TextureProperties* Properties, Vector InitPosition,
-	Vector InitVelocity, Vector InitAccel, Callback callBack) :
-	GameEntity(Properties, InitPosition, InitVelocity, InitAccel),
+Button::Button(std::string RedTexture, 
+	TextureProperties* Prop,
+	std::string TypeID, 
+	std::string SpecID, 
+	Vector InitPosition,
+	Vector InitVelocity, 
+	Vector InitAccel, 
+	Callback callBack) :
+	GameEntity(RedTexture, Prop, TypeID, SpecID, InitPosition, InitVelocity, InitAccel),
 	m_Released(false),
 	m_Clicked(false)
 {

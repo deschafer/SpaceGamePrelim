@@ -10,26 +10,21 @@ class GameEntity : public GameObject
 {
 public:
 	GameEntity();
-	virtual ~GameEntity();
-
-	GameEntity(TextureProperties* Properties, 
-		Vector InitPosition, 
-		Vector InitVelocity, 
-		Vector InitAccel);
-	GameEntity(TextureProperties* Properties, 
-		Vector InitPosition);
-
-	// New constructors
-	GameEntity(TextureProperties* Properties, 
+	GameEntity(std::string ReducedTexture,
+		TextureProperties* Prop,
 		std::string TypeID, 
 		std::string SpecTypeID,
 		Vector InitPosition, 
 		Vector InitVelocity, 
 		Vector InitAccel);
-	GameEntity(TextureProperties* Properties, 
+	GameEntity(std::string ReducedTexture,
+		TextureProperties* Prop,
 		std::string TypeID,
 		std::string SpecTypeID,
 		Vector InitPosition);
+
+	virtual ~GameEntity();
+
 
 	virtual bool Load(
 		TextureProperties* Properties,
@@ -59,11 +54,9 @@ protected:
 	int m_AnimationSpeed;
 	int m_CurrentRow;
 
-	bool m_UsingReducedTextures;
 	Callback m_Callback;
 
-	std::string m_TextureID;
-	std::string *m_ReducedTextureID;
+	std::string m_ReducedTextureID;
 	std::string m_TypeID;
 	std::string m_SpecTypeID;
 };

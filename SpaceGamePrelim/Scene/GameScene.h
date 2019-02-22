@@ -4,18 +4,18 @@
 // GameScenes always have a map associated with it
 class GameScene : public Scene
 {
-public:
+protected:
+	GameScene::GameScene(std::string SceneID, bool Paused);
 	GameScene();
+
+public:
 	virtual ~GameScene();
 
-	GameScene::GameScene(std::string SceneID, bool Paused);
 
-
-	virtual bool Enter();
-	virtual void Exit();
+	virtual bool Enter() = 0;
+	virtual void Exit() = 0;
 
 	virtual void Update() override;
 	virtual void Render() override;
 
-	static void s_ButtonHandler();
 };

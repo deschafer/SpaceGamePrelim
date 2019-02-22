@@ -6,18 +6,16 @@
 
 class MenuScene : public Scene
 {
-private:
-
-
-public:
+protected:
 	MenuScene();
 	MenuScene::MenuScene(std::string SceneID, bool Paused);
+
+public:
+	
 	virtual ~MenuScene();
 
-
-
-	virtual bool Enter();
-	virtual void Exit();
+	virtual bool Enter() = 0;
+	virtual void Exit() = 0;
 
 	virtual void Update() override;
 	virtual void Render() override;

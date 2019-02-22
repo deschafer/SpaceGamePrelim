@@ -10,6 +10,13 @@ MapInactive::~MapInactive()
 {
 }
 
+MapInactive::MapInactive(std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties,
+	MapCoordinate Position, Cell CellType) :
+	MapCell(RedTextureIDs, Properties, Position, CellType)
+{
+	MapInactive();
+}
+
 MapInactive::MapInactive(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell CellType) :
 	MapCell(RedTextureIDs, Position, CellType)
 {

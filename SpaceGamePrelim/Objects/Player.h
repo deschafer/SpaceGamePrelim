@@ -9,7 +9,7 @@ class Player : public GameEntity
 {
 public:
 
-	Player(TextureProperties* Properties,
+	Player(std::string RedTexture, TextureProperties* Prop, std::string TypeID, std::string SpecID,
 		Vector InitPosition, Vector InitVelocity, Vector InitAccel);
 
 	virtual void Update() override;
