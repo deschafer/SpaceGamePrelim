@@ -18,6 +18,24 @@
              posX="100" 
              posY="100" 
              handlerID="ButtonHandler" />
+    <!--
+    <OBJECT  typeID="Player" 
+             specID="Player" 
+             dimX="0" 
+             dimY="0" 
+             dimW="32" 
+             dimH="31" 
+             txtID="Explosion" 
+             animSpeed="100" 
+             numFrames="3" 
+             velX="0" 
+             velY="0" 
+             accelX="0" 
+             accelY="0" 
+             posX="500" 
+             posY="500" 
+             handlerID="" />
+             -->
     
   
   </OBJECTS>

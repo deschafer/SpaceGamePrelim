@@ -21,8 +21,10 @@ private:
 	int m_Columns;
 	int m_CellWidth;
 	int m_CellHeight;
-	int m_OffsetX;
-	int m_OffsetY;
+	int m_OffsetX;		
+	int m_OffsetY;		
+	int m_ActOffsetX;
+	int m_ActOffsetY;
 
 	bool m_Init;
 

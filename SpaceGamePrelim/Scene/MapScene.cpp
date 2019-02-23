@@ -1,6 +1,7 @@
 #include "MapScene.h"
 #include "../Parsing/SceneFactory.h"
 #include "../Objects/Button.h"
+#include "../Objects/Player.h"
 #include "../Map/MapManager.h"
 
 #include <iostream>
@@ -32,8 +33,13 @@ bool MapScene::Enter()
 {
 	// Registering the types assoc with this scene
 	SceneFactory::Instance()->RegisterNewObject("Button", new ButtonCreator());
+	//SceneFactory::Instance()->RegisterNewObject("Player", new PlayerCreator());
+
+	
 
 	SceneFactory::Instance()->LoadNewScene("XML/Scenes/Test.xml", this);
+
+
 
 #ifdef _DEBUG
 	std::cout << "Entering a gamescene\n";

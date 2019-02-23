@@ -11,7 +11,9 @@ RoomManager* RoomManager::s_pInstance = nullptr;
 
 RoomManager::RoomManager() :
 	m_DefaultInnerX(DefaultInnerX),
-	m_DefaultInnerY(DefaultInnerY)
+	m_DefaultInnerY(DefaultInnerY),
+	m_AbsMinH(0),
+	m_AbsMinW(0)
 {
 }
 
@@ -23,8 +25,16 @@ void RoomManager::RegisterRoomType(RoomProperties *Properties, std::string RoomI
 {
 
 	m_RegisteredTypes[RoomID] = Properties;
+	if (Properties->m_MinWidth > m_AbsMinW)
+	{
+		m_AbsMinW = Properties->m_MinWidth;
+	}
+	if (Properties->m_MinHeight > m_AbsMinH)
+	{
+		m_AbsMinH = Properties->m_MinHeight;
+	}
 
-
+	m_RandomTypes.push_back(Properties);
 
 #ifdef _DEBUG
 	std::cout << "New Room Type Registered " << RoomID << std::endl;
@@ -62,4 +72,27 @@ RoomProperties* RoomManager::GetRandomTypeDefinition(std::string &RoomType)
 
 	return Iterator->second;
 	
+}
+
+
+RoomProperties* RoomManager::GetRandomTypeThatFits(std::string  &roomType, int MaxWidth, int MaxHeight)
+{
+	int InitIndex = rand() % m_RandomTypes.size();
+
+	for(size_t i = InitIndex, mag = 0; mag < m_RandomTypes.size(); i++, mag++)
+	{ 
+	
+		if (i >= m_RandomTypes.size()) i = 0;
+
+		if (m_RandomTypes[i]->m_MinWidth <= MaxWidth &&
+			m_RandomTypes[i]->m_MinHeight <= MaxHeight)
+		{
+			return m_RandomTypes[i];
+		}
+
+
+	}
+
+	// No room fits inside the size
+	return nullptr;
 }

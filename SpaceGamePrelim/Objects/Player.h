@@ -4,6 +4,7 @@
 #include "..\Frame\InputManager.h"
 #include "..\BasicTypes\BasicTypes.h"
 #include "..\TextureCode\TextureManager.h"
+#include "BaseCreator.h"
 
 class Player : public GameEntity
 {
@@ -18,3 +19,16 @@ public:
 	~Player();
 };
 
+class PlayerCreator : public BaseCreator
+{
+public:
+
+	PlayerCreator() {}
+	virtual ~PlayerCreator() {}
+
+	virtual GameObject* CreateObject() override
+	{
+		return new Player;
+	}
+
+};

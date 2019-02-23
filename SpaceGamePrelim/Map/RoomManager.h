@@ -102,12 +102,16 @@ private:
 	RoomManager();
 
 	std::map<std::string, RoomProperties*> m_RegisteredTypes;	// Contains the registered room definitions
+	std::vector<RoomProperties*> m_RandomTypes;
 
-	static RoomManager* s_pInstance;
+	static RoomManager* s_pInstance; 
 
 	// Default params for some rooms
 	const float m_DefaultInnerX;
 	const float m_DefaultInnerY;
+
+	int m_AbsMinW;
+	int m_AbsMinH;
 
 public:
 
@@ -121,13 +125,19 @@ public:
 		else return s_pInstance;
 	}
 
-	float GetDefaultInnerX() { return m_DefaultInnerX; }
-	float GetDefaultInnerY() { return m_DefaultInnerY; }
+	float GetDefaultInnerX() const { return m_DefaultInnerX; }
+	float GetDefaultInnerY() const { return m_DefaultInnerY; }
+
+	int GetAbsoluteMinWidth() const { return m_AbsMinW; }
+	int GetAbsoluteMinHeight() const { return m_AbsMinH; }
+
 
 
 	void RegisterRoomType(RoomProperties *Properties, std::string RoomID);
 	RoomProperties* GetTypeDefinition(std::string RoomID);
 	RoomProperties* GetRandomTypeDefinition(std::string  &roomType);
+	RoomProperties* GetRandomTypeThatFits(std::string  &roomType, int MaxWidth, int MaxHeight);
+
 	
 	~RoomManager();
 };

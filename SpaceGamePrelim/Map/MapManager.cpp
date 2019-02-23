@@ -11,6 +11,7 @@ const int CellWidthSrc = 32;
 const int CellHeightSrc = 32;
 const int MapSizeW = 100;
 const int MapSizeH = 100;
+const int MapMovementModulo = 4;
 
 using namespace std;
 
@@ -22,6 +23,10 @@ MapManager::MapManager() :
 	m_CellHeight(CellWidthSrc),
 	m_CellWidth(CellHeightSrc),
 	m_Init(true),
+	m_OffsetX(0),
+	m_OffsetY(0),
+	m_ActOffsetX(0),
+	m_ActOffsetY(0),
 	m_ActiveMap(new Map("Default", MapSizeW, MapSizeH, MapCoordinate(0, 0)))
 {
 	
@@ -30,8 +35,8 @@ MapManager::MapManager() :
 	m_ActiveWndWidth = MainApplication::Instance()->GetWndWidth();
 
 	// Getting a count of rows and columns
-	m_Rows = m_ActiveWndHeight / m_CellHeight;		// Get a count of columns
-	m_Columns = m_ActiveWndWidth / m_CellWidth;		// Get a count of rows
+	m_Rows = MapSizeH;		// Get a count of columns
+	m_Columns = MapSizeW;		// Get a count of rows
 
 	m_VisibleObjectArray = new MapObject**[m_Columns];
 	for (int i = 0; i < m_Columns; i++)
@@ -69,7 +74,7 @@ void MapManager::Draw()
 		{
 			if (m_VisibleObjectArray[i][j] != nullptr)
 			{
-				m_VisibleObjectArray[i][j]->Draw(MapCoordinate(i * m_CellWidth, j * m_CellHeight));
+				m_VisibleObjectArray[i][j]->Draw(MapCoordinate((i) * m_CellWidth, (j) * m_CellHeight));
 			}
 		}
 	}
@@ -77,12 +82,76 @@ void MapManager::Draw()
 
 void MapManager::Update()
 {
-	for (int i = 0; i < m_Columns; i++)
+	static int Up = true;
+	static int Down = true;
+	static int Left = true;
+	static int Right = true;
+
+	// Checks for user input
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_DOWN) && !Down)
 	{
-		for (int j = 0; j < m_Rows; j++)
+		if (m_OffsetY - 1 >= 0 && !m_ActOffsetY) m_OffsetY--;
+		else if (m_ActOffsetY != MapSizeH) m_ActOffsetY++;
+		Up++;
+	}
+	else ++Up %= MapMovementModulo;
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_UP) && !Up)
+	{
+		if (m_OffsetY + 1 < m_Rows && !m_ActOffsetY) m_OffsetY++;
+		else if (m_ActOffsetY) m_ActOffsetY--;
+		Down++;
+	}
+	else ++Down %= MapMovementModulo;
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_LEFT) && !Left)
+	{
+		if (m_OffsetX - 1 >= 0 && !m_ActOffsetX) m_OffsetX--;
+		else if(m_ActOffsetX != MapSizeW) m_ActOffsetX++;
+		Left++;
+	}
+	else ++Left %= MapMovementModulo;
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_RIGHT) && !Right)
+	{
+		if (m_OffsetX + 1 < m_Columns && !m_ActOffsetX) m_OffsetX++;
+		else if (m_ActOffsetX) m_ActOffsetX--;
+		Right++;
+	}
+	else ++Right %= MapMovementModulo;
+
+	// Getting the new cells for the offset
+	// If there is an X offset
+	if (m_OffsetX != 0)
+	{
+		// Get all of the cells that are missing
+		// Since this is preliminary, it just sets these to nullptr.
+		for (size_t i = 0; i < m_OffsetX; i++)
+		{
+			for (size_t j = 0; j < m_Columns; j++)
+			{
+				m_VisibleObjectArray[i][j] = nullptr;
+			}
+		}
+	}
+	// If there is an Y offset
+	if (m_OffsetY != 0)
+	{
+		// Get all of the cells that are missing
+		// Since this is preliminary, it just sets these to nullptr.
+		for (size_t j = 0; j < m_OffsetY; j++)
+		{
+			for (size_t i = 0; i < m_Rows; i++)
+			{
+				m_VisibleObjectArray[i][j] = nullptr;
+			}
+		}
+	}
+
+	// Get all of our active map cells
+	for (int i = m_OffsetX, MapI = 0; i < m_Columns; i++, MapI++)
+	{
+		for (int j = m_OffsetY, MapJ = 0; j < m_Rows; j++, MapJ++)
 		{
 			// Gets the new cell
-			m_VisibleObjectArray[i][j] = m_ActiveMap->GetCell(i, j);
+			m_VisibleObjectArray[i][j] = m_ActiveMap->GetCell(m_ActOffsetX + MapI, m_ActOffsetY + MapJ);
 			// Then draws it
 			if (m_VisibleObjectArray[i][j] != nullptr)
 			{
@@ -90,6 +159,8 @@ void MapManager::Update()
 			}
 		}
 	}
+
+	
 }
 
 //

@@ -5,6 +5,10 @@
 static const int WidthRandomRate = 5;
 static const int HeightRandomRate = 5;
 
+static const int MaxRoomHeight = 20;
+static const int MaxRoomWidth = 20;
+
+static const int RoomSizeVolatility = 10;
 
 using namespace std;
 
@@ -22,39 +26,21 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 	m_MapType(MapType),
 	m_MapCoordinates(Coords)
 {
-	
-
 	// Generating the array for this map
-	m_Cells = new MapObject**[m_Width];
-	for (int i = 0; i < m_Width; i++)
+	m_Cells = new MapObject**[m_Height];
+	for (int i = 0; i < m_Height; i++)
 	{
-		m_Cells[i] = new MapObject*[m_Height];
+		m_Cells[i] = new MapObject*[m_Width];
 	}
 
 	// Initializing all of the cells to nullptr
-	for (int i = 0; i < m_Width; i++)
+	for (int i = 0; i < m_Height; i++)
 	{
-		for (int j = 0; j < m_Height; j++)
+		for (int j = 0; j < m_Width; j++)
 		{
 			m_Cells[i][j] = nullptr;
 		}
 	}
-
-	string temp = "Complex_Left";
-
-	//RoomProperties * Current = RoomManager::Instance()->GetTypeDefinition(temp);
-	RoomProperties * Current = RoomManager::Instance()->GetRandomTypeDefinition(temp);
-
-	// Create a new room object
-	m_TempRoom = new MapRoom(
-		temp, 
-		Current->m_MinWidth + rand() % WidthRandomRate, 
-		Current->m_MinHeight + rand() % HeightRandomRate);	
-
-	//m_TempRoom = new MapRoom(
-	//	temp,
-	//	15,
-	//	15);
 
 }
 
@@ -72,7 +58,7 @@ Map::~Map()
 MapObject* Map::GetCell(int X, int Y)
 {
 
-	if (X < m_Width && Y < m_Height)
+	if (X < m_Width && X >= 0 && Y < m_Height && Y >= 0)
 	{
 		return m_Cells[X][Y];
 	}
@@ -92,23 +78,67 @@ MapObject* Map::GetCell(int X, int Y)
 //
 void Map::Generate()
 {
+	std::map<std::pair<int,int>, bool> CellLocations;
 
+	GenerateRoom(0, 0, MapCoordinate(0, 0), CellLocations);
+}
+//
+//
+//
+//
+void Map::GenerateRoom(int OffsetX, int OffsetY, MapCoordinate Coord, std::map<std::pair<int, int>, bool> &CellLocations)
+{
 
-	// Generate a single room
-
-	m_TempRoom->Generate();
+	int MaxWidth;
+	int MaxHeight;
+	bool Break = false;
 	
-	
-	int OffsetX = 10;
-	int OffsetY = 6;
+
+	// Check available space
+	for (size_t i = OffsetX, OrigI = 0; i < m_Width && OrigI < MaxRoomWidth; i++)
+	{
+		for (size_t j = OffsetY, OrigJ = 0; j < m_Height && OrigJ < MaxRoomHeight; j++)
+		{
+			if (CellLocations[std::pair<int, int>(i, j)] == true)
+			{
+				Break = true;
+				break;
+			}
+			else
+				MaxHeight++;
+		}
+		if (Break) break;
+		MaxWidth++;
+	}
+
+
+	std::string RoomType;
+
+	RoomProperties* Properties = RoomManager::Instance()->GetRandomTypeDefinition(RoomType);
+	int Width = Properties->m_MinWidth + (rand() % RoomSizeVolatility);
+	int Height = Properties->m_MinHeight + (rand() % RoomSizeVolatility);
+
+
+	m_Rooms[pair<int, int>(Coord.GetPositionX(), Coord.GetPositionY())] = new MapRoom(RoomType, Width, Height);
+	m_Rooms[pair<int, int>(Coord.GetPositionX(), Coord.GetPositionY())]->Generate();
+
 
 	// Place it somewhere in the cell array
-	for (int i = 0; i < m_TempRoom->GetWidth(); i++)
+	for (int i = OffsetX, MapI = 0; 
+		MapI < m_Rooms[pair<int, int>(Coord.GetPositionX(), Coord.GetPositionY())]->GetWidth() && 
+		i < m_Width; 
+		i++, MapI++)
 	{
-		for (int j = 0; j < m_TempRoom->GetHeight(); j++)
+		for (int j = OffsetY, MapJ = 0; 
+			MapJ < m_Rooms[pair<int, int>(Coord.GetPositionX(), Coord.GetPositionY())]->GetHeight() && 
+			j < m_Height; 
+			j++, MapJ++)
 		{
-			m_Cells[i + OffsetX][j + OffsetY] = m_TempRoom->GetCell(i, j);
+			m_Cells[i][j] = m_Rooms[pair<int, int>(Coord.GetPositionX(), Coord.GetPositionY())]->GetCell(MapI, MapJ);
 		}
 	}
+
+	if (OffsetY + Height < m_Height)
+		GenerateRoom(OffsetX, OffsetY + Height, MapCoordinate(Coord.GetPositionX(), Coord.GetPositionY() + 1));
 
 }

@@ -389,8 +389,8 @@
       <G g="1"/>
     </GSideDef>
   </DEF>
-    
-  <DEF name="Static_Complex" minwidth="22" minheight="22" >
+    <!--
+    <DEF name="Static_Complex" minwidth="22" minheight="22" >
     <Turns>
       <T t="R"/>
       <T t="L"/>
@@ -512,5 +512,6 @@
       <S s="5"/>
     </StaticSides>
   </DEF>
+  -->
   
 </ROOM>

@@ -2,7 +2,9 @@
 
 #include "MapObject.h"
 #include "MapRoom.h"
+
 #include <string>
+#include <map>
 
 class Map
 {
@@ -15,11 +17,14 @@ private:
 	MapCoordinate m_MapCoordinates;	// Coordinates of the map in comparison to other maps	
 
 	MapObject*** m_Cells;	// Cells of this map
-	MapRoom* m_TempRoom;				// Temp room ptr 
+	std::map<std::pair<int, int>, MapRoom*> m_Rooms;
+
+	void GenerateRoom(int OffsetX, int OffsetY, MapCoordinate Coord, std::map<std::pair<int,int>,bool> &CellLocations);
 
 public:
 
 	void Generate();
+	
 
 	MapObject* GetCell(int X, int Y);
 	MapObject*** GetCellArray() { return m_Cells; }
