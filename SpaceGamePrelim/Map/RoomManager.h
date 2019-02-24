@@ -20,6 +20,24 @@
 // GreaterSideDef.size() must equal Turns.Size() for a complete definition
 //
 
+enum class Columns { WIDTH1 = 6, WIDTH2 = 8, WIDTH3 = 10, WIDTH4 = 12, WIDTH5 = 14, SIZE = 5};
+
+
+/*
+struct Columns
+{
+	std::vector<int> m_Columns;
+
+	Columns();
+
+	int GetColumn(int Index) { return m_Columns.at(Index); }
+	int GetRandomColumn(int Index)	// Index marks the largest possible, all smaller work
+	{
+
+	}
+
+};
+*/
 
 //
 // This struct defines a room for MapRoom::Generate().
@@ -102,7 +120,7 @@ private:
 	RoomManager();
 
 	std::map<std::string, RoomProperties*> m_RegisteredTypes;	// Contains the registered room definitions
-	std::vector<RoomProperties*> m_RandomTypes;
+	std::map<Columns, std::vector<std::pair<RoomProperties*,std::string>>> m_WidthGroups;
 
 	static RoomManager* s_pInstance; 
 

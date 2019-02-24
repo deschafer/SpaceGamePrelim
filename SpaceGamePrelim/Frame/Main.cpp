@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 	Uint32 frameStart = 0,
 		frameTime = 0;
 
-	const int FPS = 60;
+	const int FPS = 120;
 	const int DELAY_TIME = 1000.0f / FPS;
 
 	// Time seed generation

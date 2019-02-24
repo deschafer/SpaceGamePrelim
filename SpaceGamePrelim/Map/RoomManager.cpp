@@ -34,7 +34,34 @@ void RoomManager::RegisterRoomType(RoomProperties *Properties, std::string RoomI
 		m_AbsMinH = Properties->m_MinHeight;
 	}
 
-	m_RandomTypes.push_back(Properties);
+	if (Properties->m_MinWidth <= (int)Columns::WIDTH1)
+	{
+		m_WidthGroups[Columns::WIDTH1].push_back(std::pair<RoomProperties*, std::string>(Properties, RoomID));
+
+	}
+	else if (Properties->m_MinWidth >= (int)Columns::WIDTH2 &&
+		Properties->m_MinWidth < (int)Columns::WIDTH3)
+	{
+		m_WidthGroups[Columns::WIDTH2].push_back(std::pair<RoomProperties*, std::string>(Properties, RoomID));
+
+
+	}
+	else if (Properties->m_MinWidth >= (int)Columns::WIDTH3 &&
+		Properties->m_MinWidth < (int)Columns::WIDTH4)
+	{
+		m_WidthGroups[Columns::WIDTH3].push_back(std::pair<RoomProperties*, std::string>(Properties, RoomID));
+
+
+	}
+	else if (Properties->m_MinWidth >= (int)Columns::WIDTH4 &&
+		Properties->m_MinWidth < (int)Columns::WIDTH5)
+	{
+		m_WidthGroups[Columns::WIDTH4].push_back(std::pair<RoomProperties*, std::string>(Properties, RoomID));
+	}
+	else
+	{
+		m_WidthGroups[Columns::WIDTH5].push_back(std::pair<RoomProperties*, std::string>(Properties, RoomID));
+	}
 
 #ifdef _DEBUG
 	std::cout << "New Room Type Registered " << RoomID << std::endl;
@@ -74,25 +101,54 @@ RoomProperties* RoomManager::GetRandomTypeDefinition(std::string &RoomType)
 	
 }
 
-
+//
+// GetRandomTypeThatFits()
+// Returns a random room with the sizes that fits the params
+//
 RoomProperties* RoomManager::GetRandomTypeThatFits(std::string  &roomType, int MaxWidth, int MaxHeight)
 {
-	int InitIndex = rand() % m_RandomTypes.size();
+	std::vector<Columns> Set;
+	Set.push_back(Columns::WIDTH1);
+	Set.push_back(Columns::WIDTH2);
+	Set.push_back(Columns::WIDTH3);
+	Set.push_back(Columns::WIDTH4);
+	Set.push_back(Columns::WIDTH5);
 
-	for(size_t i = InitIndex, mag = 0; mag < m_RandomTypes.size(); i++, mag++)
-	{ 
-	
-		if (i >= m_RandomTypes.size()) i = 0;
+	int SetMax = 0;
 
-		if (m_RandomTypes[i]->m_MinWidth <= MaxWidth &&
-			m_RandomTypes[i]->m_MinHeight <= MaxHeight)
+
+	if (MaxWidth <= (int)Columns::WIDTH1) SetMax = 1;
+	else if (MaxWidth >= (int)Columns::WIDTH2 &&
+		MaxWidth < (int)Columns::WIDTH3) SetMax = 2;
+	else if (MaxWidth >= (int)Columns::WIDTH3 &&
+		MaxWidth < (int)Columns::WIDTH4) SetMax = 3;
+	else if (MaxWidth >= (int)Columns::WIDTH4 &&
+		MaxWidth < (int)Columns::WIDTH5) SetMax = 4;
+	else SetMax = 5;
+
+	int SetIndex = rand() % SetMax;
+	Columns CurrentCol = Set[SetIndex];
+
+	for (size_t SetNumber = 0; SetNumber < SetMax; SetNumber++)
+	{
+		if (!m_WidthGroups[CurrentCol].empty())
 		{
-			return m_RandomTypes[i];
+			size_t Index = rand() % m_WidthGroups[CurrentCol].size();
+			for (size_t Mag = 0; Mag < m_WidthGroups[CurrentCol].size(); Mag++, Index++)
+			{
+				if (Index >= m_WidthGroups[CurrentCol].size()) Index = 0;
+
+				if (m_WidthGroups[CurrentCol][Index].first->m_MinWidth <= MaxWidth &&
+					m_WidthGroups[CurrentCol][Index].first->m_MinHeight <= MaxHeight)
+				{
+					roomType = m_WidthGroups[CurrentCol][Index].second;
+					return m_WidthGroups[CurrentCol][Index].first;
+				}
+			}
 		}
-
-
+		CurrentCol = Set[++SetIndex %= SetMax];
 	}
 
-	// No room fits inside the size
+
 	return nullptr;
 }

@@ -25,6 +25,8 @@ private:
 	int m_OffsetY;		
 	int m_ActOffsetX;
 	int m_ActOffsetY;
+	int m_PixelOffsetY;
+	int m_PixelOffsetX;
 
 	bool m_Init;
 

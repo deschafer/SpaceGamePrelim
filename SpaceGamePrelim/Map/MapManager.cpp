@@ -7,11 +7,11 @@
 
 #include <map>
 
-const int CellWidthSrc = 32;
-const int CellHeightSrc = 32;
-const int MapSizeW = 100;
-const int MapSizeH = 100;
-const int MapMovementModulo = 4;
+static const int CellWidthSrc = 32;
+static const int CellHeightSrc = 32;
+static const int MapSizeW = 100;
+static const int MapSizeH = 100;
+static const int MapMovementModulo = 1;
 
 using namespace std;
 
@@ -27,6 +27,7 @@ MapManager::MapManager() :
 	m_OffsetY(0),
 	m_ActOffsetX(0),
 	m_ActOffsetY(0),
+	m_PixelOffsetY(0),
 	m_ActiveMap(new Map("Default", MapSizeW, MapSizeH, MapCoordinate(0, 0)))
 {
 	
@@ -68,16 +69,33 @@ MapManager::~MapManager()
 
 void MapManager::Draw()
 {
+	static int LastPixelX = m_PixelOffsetX;
+	static int LastPixelY = m_PixelOffsetY;
+	bool Change = false;
+
+	if (LastPixelX != m_PixelOffsetX)
+	{
+		LastPixelX = m_PixelOffsetX;
+		Change = true;
+	}
+	if (LastPixelY != m_PixelOffsetY)
+	{
+		LastPixelY = m_PixelOffsetY;
+		Change = true;
+	}
+
+
 	for (int i = 0; i < m_Columns; i++)
 	{
 		for (int j = 0; j < m_Rows; j++)
 		{
 			if (m_VisibleObjectArray[i][j] != nullptr)
 			{
-				m_VisibleObjectArray[i][j]->Draw(MapCoordinate((i) * m_CellWidth, (j) * m_CellHeight));
+				m_VisibleObjectArray[i][j]->Draw(MapCoordinate((i)* m_CellWidth + m_PixelOffsetX, (j)* m_CellHeight + m_PixelOffsetY));
 			}
 		}
 	}
+
 }
 
 void MapManager::Update()
@@ -88,34 +106,49 @@ void MapManager::Update()
 	static int Right = true;
 
 	// Checks for user input
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_DOWN) && !Down)
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_DOWN))// && !Down)
 	{
-		if (m_OffsetY - 1 >= 0 && !m_ActOffsetY) m_OffsetY--;
-		else if (m_ActOffsetY != MapSizeH) m_ActOffsetY++;
+
+		//if (m_OffsetY - 1 >= 0 && !m_ActOffsetY) m_OffsetY--;
+		//else if (m_ActOffsetY != MapSizeH) m_ActOffsetY++;
+		m_PixelOffsetY -= 8;
+
 		Up++;
 	}
-	else ++Up %= MapMovementModulo;
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_UP) && !Up)
+	//else ++Up %= MapMovementModulo;
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_UP))// && !Up)
 	{
-		if (m_OffsetY + 1 < m_Rows && !m_ActOffsetY) m_OffsetY++;
-		else if (m_ActOffsetY) m_ActOffsetY--;
+		
+
+		//if (m_OffsetY + 1 < m_Rows && !m_ActOffsetY) m_OffsetY++;
+		//else if (m_ActOffsetY) m_ActOffsetY--;
+
+
+		m_PixelOffsetY += 8;
+
 		Down++;
 	}
-	else ++Down %= MapMovementModulo;
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_LEFT) && !Left)
+	//else ++Down %= MapMovementModulo;
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_LEFT))// && !Left)
 	{
-		if (m_OffsetX - 1 >= 0 && !m_ActOffsetX) m_OffsetX--;
-		else if(m_ActOffsetX != MapSizeW) m_ActOffsetX++;
-		Left++;
+		//if (m_OffsetX - 1 >= 0 && !m_ActOffsetX) m_OffsetX--;
+		//else if(m_ActOffsetX != MapSizeW) m_ActOffsetX++;
+		//Left++;
+
+		m_PixelOffsetX += 8;
+
 	}
-	else ++Left %= MapMovementModulo;
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_RIGHT) && !Right)
+	//else ++Left %= MapMovementModulo;
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_RIGHT))// && !Right)
 	{
-		if (m_OffsetX + 1 < m_Columns && !m_ActOffsetX) m_OffsetX++;
-		else if (m_ActOffsetX) m_ActOffsetX--;
-		Right++;
+	//	if (m_OffsetX + 1 < m_Columns && !m_ActOffsetX) m_OffsetX++;
+	//	else if (m_ActOffsetX) m_ActOffsetX--;
+	//	Right++;
+
+		m_PixelOffsetX -= 8;
+
 	}
-	else ++Right %= MapMovementModulo;
+	//else ++Right %= MapMovementModulo;
 
 	// Getting the new cells for the offset
 	// If there is an X offset

@@ -1117,10 +1117,7 @@ top:
 	// Sets the floor tiles, a recursive function
 	SetFloorTiles(m_Cells, StartX, StartY, m_Width, m_Height);
 
-	// Preformance based -- not in final version
-	high_resolution_clock::time_point t2 = high_resolution_clock::now();
-	auto duration = duration_cast<milliseconds>(t2 - t1).count();
-	cout << duration;
+	
 
 	//if (enter < 500) goto top;
 }
@@ -1296,8 +1293,6 @@ void Reflect(MapObject*** &Cells, int Width, int Height)
 			}
 		}
 	}
-
-
 }
 
 

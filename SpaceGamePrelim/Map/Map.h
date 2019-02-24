@@ -19,7 +19,7 @@ private:
 	MapObject*** m_Cells;	// Cells of this map
 	std::map<std::pair<int, int>, MapRoom*> m_Rooms;
 
-	void GenerateRoom(int OffsetX, int OffsetY, MapCoordinate Coord, std::map<std::pair<int,int>,bool> &CellLocations);
+	void GenerateRoom(int OffsetX, int OffsetY, int ColumnWidth, MapCoordinate Coord, std::map<std::pair<int,int>,bool> &CellLocations);
 
 public:
 

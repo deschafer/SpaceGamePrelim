@@ -25,6 +25,7 @@ TextureManager::~TextureManager()
 bool TextureManager::SetTexture(std::string Pathname, std::string TextureID, SDL_Renderer* pRenderer)
 {
 	// Creating and verifying the surface
+	
 	SDL_Surface* TempSurface = IMG_Load(Pathname.c_str());
 	if (TempSurface == nullptr)
 	{
@@ -73,7 +74,6 @@ void TextureManager::SetReducedTexture(std::string ID, TextureProperties* Proper
 	}
 
 }
-
 void TextureManager::DrawCurrentFrame(int X, int Y, std::string RedTxtID, SDL_RendererFlip Flip,
 	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
 {
