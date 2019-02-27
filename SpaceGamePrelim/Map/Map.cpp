@@ -80,8 +80,6 @@ MapObject* Map::GetCell(int X, int Y)
 
 }
 
-
-
 //
 // Generate()
 // Generates this map objects -- may take longer 
@@ -93,32 +91,32 @@ void Map::Generate()
 
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
 
-	std::map<std::pair<int,int>, bool> CellLocations;
-
-	while (Width + 14 < m_Width)
+	// Generating each column of rooms
+	while (Width + MaxRoomWidth < m_Width)
 	{
-		GenerateRoom(Width, 0, 14, MapCoordinate(0, 0), CellLocations);
-		Width += 14;
+		GenerateRoom(Width, 0, MaxRoomWidth, MapCoordinate(0, 0));
+		Width += MaxRoomWidth;
 	}
 
 	// Preformance based -- not in final version
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 	auto duration = duration_cast<milliseconds>(t2 - t1).count();
-	cout << duration;
+	cout << duration << endl;
 }
-//
-//
-//
-//
-void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coord, std::map<std::pair<int, int>, bool> &CellLocations)
-{
 
-	Rect* RoomRegion;
+//
+// GenerateRoom()
+// Recursive function repsonsible for generating a single room within its boundaries
+// Generate rooms column-wise, so it only moves downwards.
+//
+void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coord)
+{			
 	RoomProperties* Properties;
 	string RoomType;
 	int RoomWidth = MinRoomWidth + rand() % RoomWidthDiff;
 	int RoomHeight = 0;
 	MapRoom* Room;
+	int xOffset;
 
 	// We need to get a room height, first check if there is a boundary within 20 cells
 	for (size_t i = OffsetY, Count = 0; i < m_Height && Count < MaxRoomHeight; i++, Count++)
@@ -126,19 +124,22 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coo
 		RoomHeight++;
 	}
 
-
+	// Checking the vertical space to fit this room
+	// within this map
 	if (RoomHeight != MaxRoomHeight)
 	{
-		RoomRegion = new Rect(0, 0, RoomWidth, RoomHeight);
-
 		Properties = RoomManager::Instance()->GetRandomTypeThatFits(RoomType, RoomWidth, RoomHeight);
 
 		if (Properties == nullptr)
 		{
-			cout << "no room!!" << endl;
+		#ifdef _DEBUG
+			//cout << "No Room for this Room To be Placed" << endl;
+		#endif // _DEBUG
+			// Do not generate a room
+			return;
 		}
-		return;
-
+		// Adding random variation to the size
+		if(RoomHeight > 8) RoomHeight -= rand() % RoomSizeVolatility;
 	}
 	else
 	{
@@ -146,23 +147,35 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coo
 		
 		if (Properties == nullptr)
 		{
-			cout << "no room!!" << endl;
+		#ifdef _DEBUG
+			//cout << "No Room for this Room To be Placed" << endl;
+		#endif // _DEBUG
 		}
-
-		RoomHeight = Properties->m_MinHeight + rand() % 5;
+		else
+		{
+			RoomHeight = Properties->m_MinHeight + rand() % 5;
+		}
 	}
 
-
+	// Creating the new room
 	Room = new MapRoom(RoomType, RoomWidth, RoomHeight);
 	Room->Generate();
+	
+	// Adding a offset within the column so all the rooms
+	// do not start at the same x position
+	if (RoomWidth < MaxRoomWidth)
+	{
+		int Difference = MaxRoomWidth - RoomWidth;
 
-	// Now since the space has been allocated, lets place the object in the array
+		xOffset = rand() % Difference;
+	}
 
-	for (size_t IndexX = OffsetX, MagX = 0;
-		MagX < MaxWidth;
+	// Now since the space has been allocated, and the room has been 
+	// generated, let's place the object in the array
+	for (size_t IndexX = OffsetX + xOffset, MagX = 0;
+		MagX < RoomWidth;
 		MagX++, IndexX++)
 	{
-
 		for (size_t IndexY = OffsetY, MagY = 0;
 			MagY < RoomHeight;
 			MagY++, IndexY++)
@@ -171,7 +184,6 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coo
 		}
 	}
 
-	
-	GenerateRoom(OffsetX, OffsetY + RoomHeight, MaxWidth, MapCoordinate(Coord.GetPositionX(), Coord.GetPositionY() + 1), CellLocations);
-
+	// Generating the next room below this one
+	GenerateRoom(OffsetX, OffsetY + RoomHeight, MaxWidth, MapCoordinate(Coord.GetPositionX(), Coord.GetPositionY() + 1));
 }

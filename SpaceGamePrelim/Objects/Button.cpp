@@ -53,7 +53,6 @@ void Button::Update()
 		}
 		else if (m_Clicked)
 		{
-			cout << "yep";
 			m_Callback();
 			m_Released = false;
 			m_Clicked = false;

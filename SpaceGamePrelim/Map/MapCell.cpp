@@ -1,7 +1,6 @@
 #include "MapCell.h"
 #include "..\Frame\MainApplication.h"
 
-#include "..\TextureCode\FastTextures.h"
 
 #include <iostream>
 
@@ -96,7 +95,6 @@ void MapCell::Draw(MapCoordinate Coords)
 		// Drawing each texture with its respective properties
 		for (size_t i = 0; i < m_RedTextureIDs->size(); i++)
 		{
-			
 			TextureManager::Instance()->DrawCurrentFrame(
 				Coords.GetPositionX(),
 				Coords.GetPositionY(),
@@ -106,9 +104,7 @@ void MapCell::Draw(MapCoordinate Coords)
 				m_CurrentRow[i],
 				m_CurrentFrame[i]
 			);
-		
 		}
-		
 	}
 }
 
@@ -145,9 +141,7 @@ void MapCell::DrawStatic(MapCoordinate Coords)
 			Coords.GetPositionY(),
 			m_RedTextureIndex[i],
 			MainApplication::Instance()->GetRenderer());
-		
 	}
-
 }
 
 //

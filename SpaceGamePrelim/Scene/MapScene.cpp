@@ -83,6 +83,5 @@ void MapScene::Render()
 
 void MapScene::s_ButtonHandler()
 {
-	std::cout << "Menu button has been clicked\n";
 	MapManager::Instance()->ResetMap();
 }

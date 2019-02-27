@@ -76,9 +76,9 @@ void MapManager::Draw()
 		{
 			if (m_VisibleObjectArray[i][j] != nullptr)
 			{
-				if (((i* m_CellWidth + m_PixelOffsetX) >= 0) && ((i* m_CellWidth + m_PixelOffsetX) < 1920))
+				if ((((i + 1)* m_CellWidth + m_PixelOffsetX) >= 0) && ((i* m_CellWidth + m_PixelOffsetX) < m_Rows * m_CellWidth))
 				{
-					if (((j* m_CellHeight + m_PixelOffsetY) >= 0) && ((j* m_CellHeight + m_PixelOffsetY) < 1920))
+					if ((((j + 1)* m_CellHeight + m_PixelOffsetY) >= 0) && ((j* m_CellHeight + m_PixelOffsetY) < m_Columns * m_CellHeight))
 					{
 
 						m_VisibleObjectArray[i][j]->Draw(MapCoordinate((i)* m_CellWidth + m_PixelOffsetX, (j)* m_CellHeight + m_PixelOffsetY));

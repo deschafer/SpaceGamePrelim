@@ -211,9 +211,6 @@ top:
 	Side CurrentSide = Side::TOP;					// Current side, set at the start, the top
 	Cell CellType;
 
-	// Stores a map of all locations based on their coordinates
-	map<pair<int, int>, bool> CurrentLocations;
-
 	vector<string> tempStr;	// Vector used to tempoarily store string sofr texture layers of cells
 
 	// Room Def. Vectors
@@ -1060,7 +1057,6 @@ top:
 
 		// Adding the current coordinates to the record
 		CurrentPair.swap(make_pair(TempX, TempY));
-		CurrentLocations[CurrentPair] = true;
 
 		// Adding to the array
 		if (TempX >= 0 && TempY >= 0 && TempX < m_Width && TempY < m_Height)
@@ -1117,9 +1113,12 @@ top:
 	// Sets the floor tiles, a recursive function
 	SetFloorTiles(m_Cells, StartX, StartY, m_Width, m_Height);
 
-	
-
-	//if (enter < 500) goto top;
+	// Cleaning all memory
+	StaticSides.clear();
+	Sides.clear();	
+	SideDef.clear();
+	Turns.clear();
+	tempStr.clear();
 }
 
 //
