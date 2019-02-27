@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
 	Uint32 frameStart = 0,
 		frameTime = 0;
 
-	const int FPS = 120;
+	const int FPS = 60;
 	const int DELAY_TIME = 1000.0f / FPS;
 
 	// Time seed generation
@@ -33,8 +33,8 @@ int main(int argc, char* argv[])
 	srand(duration);
 
 	MainApplication* Application = MainApplication::Instance();	// Getting the app instance
-
-	if (Application->Initialize("SpaceGamePrelim", 100, 100, 1408, 896, false))
+	// 1408 x 896
+	if (Application->Initialize("SpaceGamePrelim", 100, 100, 1400, 900, false))
 	{
 
 		// Main event loop 

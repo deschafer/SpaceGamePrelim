@@ -22,7 +22,3 @@ MapWall::MapWall(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	MapWall();
 }
 
-void MapWall::Draw(MapCoordinate Coords) 
-{
-	MapCell::Draw(Coords);
-}

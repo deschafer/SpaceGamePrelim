@@ -98,7 +98,9 @@
     <ClCompile Include="Scene\GameScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\MapScene.cpp" />
+    <ClCompile Include="Scene\MapScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scene\ActiveSceneManager.h">

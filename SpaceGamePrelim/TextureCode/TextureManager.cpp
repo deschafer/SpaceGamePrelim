@@ -45,7 +45,8 @@ bool TextureManager::SetTexture(std::string Pathname, std::string TextureID, SDL
 	else
 	{
 		// Saving a handle to the texture that was just loaded
-		m_TextureContainer[TextureID] = Texture;
+		m_SourceTextures.push_back(Texture);
+		m_TextureContainer[TextureID] = m_SourceTextures.size() - 1;
 	}
 
 #ifdef _DEBUG
@@ -70,19 +71,20 @@ void TextureManager::SetReducedTexture(std::string ID, TextureProperties* Proper
 	}
 	else
 	{
-		m_ReducedTextureDefinitions[ID] = Properties;
+		m_RedTextures.push_back(Properties);
+		m_ReducedTextureDefinitions[ID] = m_RedTextures.size() - 1;
 	}
 
 }
-void TextureManager::DrawCurrentFrame(int X, int Y, std::string RedTxtID, SDL_RendererFlip Flip,
+void TextureManager::DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFlip Flip,
 	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
 {
-
-	TextureProperties* Properties = m_ReducedTextureDefinitions[RedTxtID];
+	
+	TextureProperties* Properties = m_RedTextures[RedIndex];
 	if (!Properties)
 	{
 #ifdef _DEBUG
-		cout << "No reduced texture formatted for this ID " << RedTxtID << endl;
+		cout << "No reduced texture formatted for this ID " << RedIndex << endl;
 #endif // DEBUG
 		return;
 	}
@@ -98,8 +100,8 @@ void TextureManager::DrawCurrentFrame(int X, int Y, std::string RedTxtID, SDL_Re
 	SourceRect.h = DestRect.h = Dim.Height();
 	DestRect.x = X;
 	DestRect.y = Y;
-
-	SDL_RenderCopyEx(pRenderer, m_TextureContainer[Properties->GetTextureID()], &SourceRect,
+	
+	SDL_RenderCopyEx(pRenderer, m_SourceTextures[Properties->GetTextureIndex()], &SourceRect,
 		&DestRect, 0, 0, Flip);
 
 }
@@ -110,13 +112,15 @@ void TextureManager::DrawCurrentFrame(int X, int Y, std::string RedTxtID, SDL_Re
 // and do not flip, changed position in the sprite sheet, and have
 // a reduced texture definition.
 //
-void TextureManager::DrawStaticFrame(int X, int Y, std::string RedTxtID, SDL_Renderer *pRenderer)
+void TextureManager::DrawStaticFrame(int X, int Y, int RedIndex, SDL_Renderer *pRenderer)
 {
-	TextureProperties* Properties = m_ReducedTextureDefinitions[RedTxtID];
+	//static TextureProperties* Properties = new TextureProperties(Rect(32, 0, 32, 32), "Room");
+	TextureProperties* Properties = m_RedTextures[RedIndex];
+	
 	if (!Properties)
 	{
 #ifdef _DEBUG
-		cout << "No reduced texture formatted for this ID " << RedTxtID << endl;
+		cout << "No reduced texture formatted for this ID " << RedIndex << endl;
 #endif // DEBUG
 		return;
 	}
@@ -132,9 +136,31 @@ void TextureManager::DrawStaticFrame(int X, int Y, std::string RedTxtID, SDL_Ren
 	SourceRect.h = DestRect.h = Dim.Height();
 	DestRect.x = X;
 	DestRect.y = Y;
-
-	SDL_RenderCopyEx(pRenderer, m_TextureContainer[Properties->GetTextureID()], &SourceRect,
+	
+	SDL_RenderCopyEx(pRenderer, m_SourceTextures[Properties->GetTextureIndex()], &SourceRect,
 		&DestRect, 0, 0, SDL_FLIP_NONE);
+		
+}
+
+void TextureManager::FastDrawFrame(int X, int Y, TextureProperties* Properties, SDL_Texture* Texture, SDL_Renderer* Renderer)
+{
+
+	Rect Dim = Properties->GetDimensions();
+	SDL_Rect SourceRect;
+	SDL_Rect DestRect;
+
+
+	// Setting information to draw this frame correctly
+	SourceRect.x = Dim.TopLeftX();
+	SourceRect.y = Dim.TopLeftY();
+	SourceRect.w = DestRect.w = Dim.Width();
+	SourceRect.h = DestRect.h = Dim.Height();
+	DestRect.x = X;
+	DestRect.y = Y;
+
+	SDL_RenderCopyEx(Renderer, Texture, &SourceRect,
+		&DestRect, 0, 0, SDL_FLIP_NONE);
+
 }
 
 //

@@ -23,7 +23,3 @@ MapInactive::MapInactive(std::vector<std::string> RedTextureIDs, MapCoordinate P
 	MapInactive();
 }
 
-void MapInactive::Draw(MapCoordinate Coords)
-{
-	MapCell::Draw(Coords);
-}

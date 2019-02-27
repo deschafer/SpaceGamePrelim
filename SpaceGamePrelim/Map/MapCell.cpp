@@ -1,6 +1,8 @@
 #include "MapCell.h"
 #include "..\Frame\MainApplication.h"
 
+#include "..\TextureCode\FastTextures.h"
+
 #include <iostream>
 
 // MapCell CTORs
@@ -25,6 +27,15 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	MapCell();
 
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
+
+	TextureManager* Manager = TextureManager::Instance();
+	// Getting the proper indices for each of the textures 
+	// associated with this object
+	for (size_t i = 0; i < m_RedTextureIDs->size(); i++)
+	{
+		m_RedTextureIndex.push_back(Manager->GetRedTextureIndex((*m_RedTextureIDs)[i]));
+	}
+
 	MapObject::m_Position = Position;
 }
 
@@ -41,6 +52,15 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProp
 	TextureProperties* CurrentProp;
 
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
+
+	TextureManager* Manager = TextureManager::Instance();
+	// Getting the proper indices for each of the textures 
+	// associated with this object
+	for (size_t i = 0; i < m_RedTextureIDs->size(); i++)
+	{
+		m_RedTextureIndex.push_back(Manager->GetRedTextureIndex((*m_RedTextureIDs)[i]));
+	}
+
 	MapObject::m_Position = Position;
 
 	// For each of the properties, save them to the approp pos
@@ -76,15 +96,17 @@ void MapCell::Draw(MapCoordinate Coords)
 		// Drawing each texture with its respective properties
 		for (size_t i = 0; i < m_RedTextureIDs->size(); i++)
 		{
+			
 			TextureManager::Instance()->DrawCurrentFrame(
 				Coords.GetPositionX(),
 				Coords.GetPositionY(),
-				m_RedTextureIDs->at(i),
+				m_RedTextureIndex[i],
 				SDL_FLIP_NONE,
 				MainApplication::Instance()->GetRenderer(),
 				m_CurrentRow[i],
 				m_CurrentFrame[i]
 			);
+		
 		}
 		
 	}
@@ -109,6 +131,7 @@ void MapCell::Update()
 //
 void MapCell::DrawStatic(MapCoordinate Coords)
 {
+	static TextureManager* Instance = TextureManager::Instance();
 
 	if (m_RedTextureIDs->empty())
 	{
@@ -117,12 +140,12 @@ void MapCell::DrawStatic(MapCoordinate Coords)
 	// Draws each of the textures in the vector
 	for (size_t i = 0; i < m_RedTextureIDs->size(); i++)
 	{
-
-		TextureManager::Instance()->DrawStaticFrame(
+		Instance->DrawStaticFrame(
 			Coords.GetPositionX(),
 			Coords.GetPositionY(),
-			m_RedTextureIDs->at(i),
+			m_RedTextureIndex[i],
 			MainApplication::Instance()->GetRenderer());
+		
 	}
 
 }
@@ -134,10 +157,14 @@ void MapCell::DrawStatic(MapCoordinate Coords)
 void MapCell::ChangeRedTextures(std::vector<std::string> NewTextures)
 {
 	m_RedTextureIDs->clear();
+	m_RedTextureIndex.clear();
+
+	TextureManager* Manager = TextureManager::Instance();
 
 	for (size_t i = 0; i < NewTextures.size(); i++)
 	{
 		m_RedTextureIDs->push_back(NewTextures[i]);
+		m_RedTextureIndex.push_back(Manager->GetRedTextureIndex(NewTextures[i]));
 	}
 }
 

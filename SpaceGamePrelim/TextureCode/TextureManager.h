@@ -1,6 +1,6 @@
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -18,10 +18,15 @@ private:
 	TextureManager();
 
 	static TextureManager *m_Instance;
-	std::map<std::string, SDL_Texture*> m_TextureContainer;
-	std::map<std::string, TextureProperties*> m_ReducedTextureDefinitions;
 
-	std::map<std::string, std::vector<std::string>> m_TextureGroups;
+	std::unordered_map<std::string, int> m_TextureContainer;
+	std::unordered_map<std::string, int> m_ReducedTextureDefinitions;
+
+	std::unordered_map<std::string, std::vector<std::string>> m_TextureGroups;
+
+	// Source Vectors
+	std::vector<SDL_Texture*> m_SourceTextures;		
+	std::vector<TextureProperties*> m_RedTextures;
 
 public:
 	~TextureManager();
@@ -43,13 +48,16 @@ public:
 	int RemoveTexture(std::string TextureID);
 	void SetReducedTexture(std::string ID, TextureProperties* Properties);
 
-	void DrawCurrentFrame(int X, int Y, std::string RedTxtID, SDL_RendererFlip Flip, 
+	void DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFlip Flip, 
 		SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame = 1);
-	void DrawStaticFrame(int X, int Y, std::string RedTxtID, SDL_Renderer *pRenderer);
-
+	void DrawStaticFrame(int X, int Y, int RedIndex, SDL_Renderer *pRenderer);
+	void FastDrawFrame(int X, int Y, TextureProperties* Properties, SDL_Texture* Texture, SDL_Renderer* Renderer);
 
 	void AddTextureGroup(std::string GroupID, std::vector<std::string> ReducedTextures);
 	std::string GetReducedFromTextureGrp(std::string TextureGroupID);
-	TextureProperties* GetRoomProperties(std::string ReducedTextureID) { return m_ReducedTextureDefinitions[ReducedTextureID]; }
+	TextureProperties* GetRoomProperties(int RedID) { return m_RedTextures[RedID]; }
+
+	int GetRedTextureIndex(std::string ID) { return m_ReducedTextureDefinitions[ID]; }
+	int GetSourceTextureIndex(std::string SourceID) { return m_TextureContainer[SourceID]; }
 };
 

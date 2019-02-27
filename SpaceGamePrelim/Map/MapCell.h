@@ -36,6 +36,9 @@ protected:
 	std::vector<int> m_AnimationSpeed;
 	std::vector<int> m_NumberFrames;
 
+	std::vector<int> m_RedTextureIndex;	// Indices for access of textures
+
+
 	MapCell();
 	MapCell::MapCell(std::vector<std::string> RedTextureIDs,
 		MapCoordinate Position,

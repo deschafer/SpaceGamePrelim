@@ -12,6 +12,5 @@ public:
 	MapInactive(TextureProperties* Properties, MapCoordinate Position, Cell CellType);
 	MapInactive(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell CellType);
 
-	virtual void Draw(MapCoordinate Coords);
 };
 

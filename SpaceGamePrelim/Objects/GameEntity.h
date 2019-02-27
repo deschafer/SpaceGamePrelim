@@ -56,6 +56,7 @@ protected:
 
 	Callback m_Callback;
 
+	int m_RedTextureIndex;
 	std::string m_ReducedTextureID;
 	std::string m_TypeID;
 	std::string m_SpecTypeID;

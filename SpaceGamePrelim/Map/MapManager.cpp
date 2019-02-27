@@ -69,21 +69,6 @@ MapManager::~MapManager()
 
 void MapManager::Draw()
 {
-	static int LastPixelX = m_PixelOffsetX;
-	static int LastPixelY = m_PixelOffsetY;
-	bool Change = false;
-
-	if (LastPixelX != m_PixelOffsetX)
-	{
-		LastPixelX = m_PixelOffsetX;
-		Change = true;
-	}
-	if (LastPixelY != m_PixelOffsetY)
-	{
-		LastPixelY = m_PixelOffsetY;
-		Change = true;
-	}
-
 
 	for (int i = 0; i < m_Columns; i++)
 	{
@@ -91,7 +76,14 @@ void MapManager::Draw()
 		{
 			if (m_VisibleObjectArray[i][j] != nullptr)
 			{
-				m_VisibleObjectArray[i][j]->Draw(MapCoordinate((i)* m_CellWidth + m_PixelOffsetX, (j)* m_CellHeight + m_PixelOffsetY));
+				if (((i* m_CellWidth + m_PixelOffsetX) >= 0) && ((i* m_CellWidth + m_PixelOffsetX) < 1920))
+				{
+					if (((j* m_CellHeight + m_PixelOffsetY) >= 0) && ((j* m_CellHeight + m_PixelOffsetY) < 1920))
+					{
+
+						m_VisibleObjectArray[i][j]->Draw(MapCoordinate((i)* m_CellWidth + m_PixelOffsetX, (j)* m_CellHeight + m_PixelOffsetY));
+					}
+				}
 			}
 		}
 	}

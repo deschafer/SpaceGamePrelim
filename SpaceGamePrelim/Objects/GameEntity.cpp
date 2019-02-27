@@ -35,6 +35,8 @@ GameEntity::GameEntity(std::string ReducedTexture,
 	m_Dimensions = Properties->GetDimensions();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
 	m_NumberFrames = Properties->GetNumberFrames();
+
+	m_RedTextureIndex = TextureManager::Instance()->GetRedTextureIndex(m_ReducedTextureID);
 }
 
 GameEntity::GameEntity(std::string ReducedTexture,
@@ -49,6 +51,8 @@ GameEntity::GameEntity(std::string ReducedTexture,
 	m_Dimensions = Properties->GetDimensions();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
 	m_NumberFrames = Properties->GetNumberFrames();
+
+	m_RedTextureIndex = TextureManager::Instance()->GetRedTextureIndex(m_ReducedTextureID);
 
 	m_Acceleration = Vector(0, 0);
 	m_Velocity = Vector(0, 0);
@@ -84,6 +88,8 @@ bool GameEntity::Load(
 	m_NumberFrames = Properties->GetNumberFrames();
 	m_ReducedTextureID = Properties->GetTextureID();
 
+	m_RedTextureIndex = TextureManager::Instance()->GetRedTextureIndex(m_ReducedTextureID);
+
 	m_Callback = Handler;
 
 	return true;
@@ -117,7 +123,7 @@ void GameEntity::Draw()
 	TextureManager::Instance()->DrawCurrentFrame(
 		static_cast<int>(round(m_Position.getX())), 
 		static_cast<int>(round(m_Position.getY())),
-		m_ReducedTextureID,
+		m_RedTextureIndex,
 		SDL_FLIP_NONE,
 		MainApplication::Instance()->GetRenderer(), 
 		m_CurrentRow, 
