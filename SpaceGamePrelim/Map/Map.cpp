@@ -1,6 +1,9 @@
 
 #include "Map.h"
 #include "MapRoom.h"
+#include "MapWall.h"
+
+#include "..\Frame\MainApplication.h"
 
 #include <chrono>
 
@@ -88,20 +91,29 @@ MapObject* Map::GetCell(int X, int Y)
 void Map::Generate()
 {
 	int Width = 0;
+	int Index = 0;
 
+#ifdef _DEBUG
 	high_resolution_clock::time_point t1 = high_resolution_clock::now();
+#endif // DEBUG
 
 	// Generating each column of rooms
 	while (Width + MaxRoomWidth < m_Width)
 	{
-		GenerateRoom(Width, 0, MaxRoomWidth, MapCoordinate(0, 0));
+		m_Rooms.push_back(vector<MapRoom*>());	// Adds a new vector to store the rooms in this col.
+		m_ColumnOffsetsX.push_back(vector<int>());
+		m_ColumnOffsetsY.push_back(vector<int>());
+		GenerateRoom(Width, 0, MaxRoomWidth, Index);
 		Width += MaxRoomWidth;
+		Index++;
 	}
 
+#ifdef _DEBUG
 	// Preformance based -- not in final version
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
 	auto duration = duration_cast<milliseconds>(t2 - t1).count();
 	cout << duration << endl;
+#endif // _DEBUG
 }
 
 //
@@ -109,7 +121,7 @@ void Map::Generate()
 // Recursive function repsonsible for generating a single room within its boundaries
 // Generate rooms column-wise, so it only moves downwards.
 //
-void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coord)
+void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 {			
 	RoomProperties* Properties;
 	string RoomType;
@@ -132,9 +144,6 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coo
 
 		if (Properties == nullptr)
 		{
-		#ifdef _DEBUG
-			//cout << "No Room for this Room To be Placed" << endl;
-		#endif // _DEBUG
 			// Do not generate a room
 			return;
 		}
@@ -148,8 +157,9 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coo
 		if (Properties == nullptr)
 		{
 		#ifdef _DEBUG
-			//cout << "No Room for this Room To be Placed" << endl;
+			cout << "No Room received for " << RoomType << endl;
 		#endif // _DEBUG
+			return;
 		}
 		else
 		{
@@ -160,7 +170,10 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coo
 	// Creating the new room
 	Room = new MapRoom(RoomType, RoomWidth, RoomHeight);
 	Room->Generate();
-	
+
+	// Add new rooms to the storage vector
+	m_Rooms[ColNumber].push_back(Room);
+
 	// Adding a offset within the column so all the rooms
 	// do not start at the same x position
 	if (RoomWidth < MaxRoomWidth)
@@ -168,6 +181,31 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coo
 		int Difference = MaxRoomWidth - RoomWidth;
 
 		xOffset = rand() % Difference;
+	}
+
+	// Adding this rooms column offset to simplify corridor gen later on
+	m_ColumnOffsetsX[ColNumber].push_back(xOffset);
+	m_ColumnOffsetsY[ColNumber].push_back(OffsetY);
+
+	int Size = 0;
+	// Generate a path to above room if possible
+	if ((Size = m_Rooms[ColNumber].size() - 2) >= 0)
+	{
+		// There is a room above us, so we need to find a suitable location for a corridor.
+		MapRoom* RoomAbove = m_Rooms[ColNumber][Size];
+
+		int AboveWidth = RoomAbove->GetWidth();
+		int AboveOffsetX = m_ColumnOffsetsX[ColNumber][Size];
+		int CenterPointY = m_ColumnOffsetsY[ColNumber][Size] + RoomAbove->GetHeight();
+
+		// Get the center point of the room above for reference
+		int CenterPointX = AboveOffsetX + AboveWidth / 2 + OffsetX;
+		
+		vector<string> temp;
+		temp.push_back("Floor_1");
+
+		m_Cells[CenterPointX][CenterPointY] = new MapWall(temp, MapCoordinate(CenterPointX, CenterPointY), Cell::Floor);
+
 	}
 
 	// Now since the space has been allocated, and the room has been 
@@ -185,5 +223,16 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, MapCoordinate Coo
 	}
 
 	// Generating the next room below this one
-	GenerateRoom(OffsetX, OffsetY + RoomHeight, MaxWidth, MapCoordinate(Coord.GetPositionX(), Coord.GetPositionY() + 1));
+	GenerateRoom(OffsetX, OffsetY + RoomHeight, MaxWidth, ColNumber);
+}
+
+//
+// GenerateCorridorBetween()
+// Attempts to draw a corridor between the two points given
+//
+bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End)
+{
+
+
+	return false;
 }
