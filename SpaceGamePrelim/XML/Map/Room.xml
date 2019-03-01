@@ -208,7 +208,7 @@
     -->
   </DEF>
 
-  <DEF name="Complex_Bottom" minheight="9" minwidth="7">
+  <DEF name="Complex_Bottom" minheight="9" minwidth="7" innerX="0.9" innerY="0.9">
     <Turns>
       <T t="R"/>
       <T t="R"/>
@@ -229,6 +229,7 @@
       <G g="1"/>
       <G g="1"/>
     </GSideDef>
+    <!--
     <StaticSides>
       <S s="0"/>
       <S s="0"/>
@@ -239,6 +240,7 @@
       <S s="0"/>
       <S s="0"/>
     </StaticSides>
+    -->
   </DEF>
 
   <DEF name="Complex_Left" minheight="7" minwidth="7" variance="0.9">

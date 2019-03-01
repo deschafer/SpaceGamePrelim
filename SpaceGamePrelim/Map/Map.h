@@ -33,7 +33,6 @@ public:
 
 	void Generate();
 	
-
 	MapObject* GetCell(int X, int Y);
 	MapObject*** GetCellArray() { return m_Cells; }
 	int GetHeight() { return m_Height; }

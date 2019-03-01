@@ -26,7 +26,7 @@ public:
 	MapObject*** GetCellArray() { return m_Cells; }
 	int GetHeight() { return m_Height; }
 	int GetWidth() { return m_Width; }
-
+	std::string GetRoomType() { return m_RoomType; }
 
 	MapRoom();
 	MapRoom(std::string RoomType, int Width, int Height); // Known room
