@@ -2,10 +2,13 @@
 #include "Map.h"
 #include "MapRoom.h"
 #include "MapWall.h"
+//#include "GenRoomComp.h"
 
 #include "..\Frame\MainApplication.h"
 
 #include <chrono>
+
+enum class Side { TOP, RIGHT, BOTTOM, LEFT, COMPL };
 
 static const int WidthRandomRate = 5;
 static const int HeightRandomRate = 5;
@@ -21,6 +24,9 @@ static const int ColumnWidth2 = 8;
 static const int ColumnWidth3 = 10;
 static const int ColumnWidth4 = 12;
 static const int ColumnWidth5 = 14;
+static const int ColumnSeparatorMax = 2;
+static const int ColumnSeparatorMin = 1;
+
 
 
 using namespace std;
@@ -207,41 +213,62 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 		}
 	}
 
+	SetUpCorridor(ColNumber, OffsetX, xOffset);
+
+	// Generating the next room below this one
+	GenerateRoom(OffsetX, OffsetY + RoomHeight + rand() % ColumnSeparatorMax + ColumnSeparatorMin, MaxWidth, ColNumber);
+}
+
+//
+//
+//
+//
+void Map::SetUpCorridor(int ColumnNumber, int ColumnOffsetX, int RoomOffsetX)
+{
+	int Size = 0;
+
 	// Generate a path to above room if possible
-	if ((Size = m_Rooms[ColNumber].size() - 2) >= 0)
+	if ((Size = m_Rooms[ColumnNumber].size() - 2) >= 0)
 	{
 		// There is a room above us, so we need to find a suitable location for a corridor.
-		MapRoom* RoomAbove = m_Rooms[ColNumber][Size];
+		MapRoom* RoomAbove = m_Rooms[ColumnNumber][Size];
 
 		int AboveWidth = RoomAbove->GetWidth();
-		int AboveOffsetX = m_ColumnOffsetsX[ColNumber][Size];
-		int CenterPointY = m_ColumnOffsetsY[ColNumber][Size] + RoomAbove->GetHeight();
+		int AboveOffsetX = m_ColumnOffsetsX[ColumnNumber][Size];
+		int CenterPointY = m_ColumnOffsetsY[ColumnNumber][Size] + RoomAbove->GetHeight();
 
 		int AxisOffsetY = 0;
 		// Get the center point of the room above for reference
-		int CenterPointX = AboveOffsetX + AboveWidth / 2 + OffsetX;
+		int CenterPointX = AboveOffsetX + AboveWidth / 2 + ColumnOffsetX;
 
 		vector<string> temp;
 		temp.push_back("Explosion");
 
-		if (RoomAbove->GetRoomType() == "Complex_Bottom")
+		if (RoomAbove->GetRoomType() == "Stair_Down")
 		{
 			cout << "bottom" << endl;
 		}
 
+		/*
 		// Gets the actual bottom of the above room
 		for (MapObject* Curr = RoomAbove->GetCell(AboveWidth / 2, RoomAbove->GetHeight() - 1);
 			Curr == nullptr && AxisOffsetY < RoomAbove->GetHeight();
 			Curr = RoomAbove->GetCell(AboveWidth / 2, RoomAbove->GetHeight() - ++AxisOffsetY))
 		{
 		}
+		*/
+		MapCoordinate EndingLocation;
+		//Ask the above room for a facing side if possible
+		pair<MapCoordinate, MapCoordinate>* GetLocation = RoomAbove->GetFacingFromSide(Side::BOTTOM);
+		if (GetLocation)
+			EndingLocation = MapCoordinate(GetLocation->first.GetPositionX(), GetLocation->first.GetPositionY());
 
-		m_Cells[CenterPointX][CenterPointY - AxisOffsetY] = new MapWall(temp, MapCoordinate(CenterPointX, CenterPointY - AxisOffsetY), Cell::Floor);
+		m_Cells[EndingLocation.GetPositionX() + ColumnOffsetX + AboveOffsetX][EndingLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size]] = new MapWall(temp, MapCoordinate(CenterPointX, CenterPointY - AxisOffsetY), Cell::Floor);
+
+		//m_Cells[CenterPointX][CenterPointY - ((AxisOffsetY) ? AxisOffsetY : ++AxisOffsetY)] = new MapWall(temp, MapCoordinate(CenterPointX, CenterPointY - AxisOffsetY), Cell::Floor);
 
 	}
 
-	// Generating the next room below this one
-	GenerateRoom(OffsetX, OffsetY + RoomHeight, MaxWidth, ColNumber);
 }
 
 //

@@ -1,14 +1,15 @@
 #include "MapRoom.h"
-#include "GenRoomComp.h"
 #include "MapWall.h"
 #include "MapManager.h"
 #include "MapInactive.h"
+#include "GenRoomComp.h"
 
 #include <vector>
 #include <map>
 #include <iostream>
 #include <chrono>
 
+#define NO_REFLECT
 
 using namespace std;
 using namespace std::chrono;
@@ -21,14 +22,16 @@ void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax);
 void Reflect(MapObject*** &Cells, int Width, int Height);
 vector<string> ReflectTile(MapObject* Tile);
 
-const string WallCornerRight = "Wall_Corner_Right";
-const string WallCornerLeft = "Wall_Corner_Left";
-const string WallSideRight = "Wall_Side_Right";
-const string WallSideLeft = "Wall_Side_Left";
-const string WallBottom = "Wall_Bottom";
-const string Default = "Wall";
-const string WallTopGroup = "Wall_Top";
-const string FloorGroup = "Floors";
+const static string WallCornerRight = "Wall_Corner_Right";
+const static string WallCornerLeft = "Wall_Corner_Left";
+const static string WallSideRight = "Wall_Side_Right";
+const static string WallSideLeft = "Wall_Side_Left";
+const static string WallBottom = "Wall_Bottom";
+const static string Default = "Wall";
+const static string WallTopGroup = "Wall_Top";
+const static string FloorGroup = "Floors";
+
+const static int MinCandidateSideLength = 2;
 
 
 MapRoom::MapRoom()
@@ -42,7 +45,9 @@ MapRoom::~MapRoom()
 // MapRoom()
 // CTOR that should be used to create a MapRoom with a known type
 //
-MapRoom::MapRoom(std::string RoomType, int Width, int Height)
+MapRoom::MapRoom(std::string RoomType, int Width, int Height) :
+	m_CellWidth(MapManager::Instance()->GetCellWidth()),
+	m_CellHeight(MapManager::Instance()->GetCellHeight())
 {
 	// Getting the properties assoc with this room type
 	m_Properties = RoomManager::Instance()->GetTypeDefinition(RoomType);
@@ -958,17 +963,28 @@ top:
 	}
 
 	CurrentSide = Side::TOP;
-	int SideCount = 0;
+	int SideCount = -1;
 	// STAGE 1 END
 	// ------------------------------------------------------------------------------------------
 	// ------------------------------------------------------------------------------------------
 	// STAGE 2 START
 	// Now the next step, drawing in the set sides. This goes through the side vector, and draws them 
 	// with their desired length and in the direction indicated by the turns vector.
+
+	int CurrentSideLength;
+	MapCoordinate CandidateStart;
+	MapCoordinate CandidateEnd;
+
 	while (!complete)
 	{
 		// keeping a count of drawn cells
 		DrawCount++;
+
+		// Get a new start point 
+		if (CurrentLengthQuota == 0)
+		{
+			CandidateStart = MapCoordinate(TempX, TempY);
+		}
 
 		// Getting the appropriate side for this definition
 		// If static sides, and not finished, and the done drawing this spec side
@@ -1023,7 +1039,7 @@ top:
 				// Finally, finish by setting the appropriate texture here
 				tempStr.push_back(WallSideRight);
 
-				m_Cells[Start][0] = new MapWall(tempStr, MapCoordinate(TempX * 32, TempY * 32), Cell::Wall_Right);
+				m_Cells[Start][0] = new MapWall(tempStr, MapCoordinate(TempX, TempY), Cell::Wall_Right);
 			}
 
 			complete = true;
@@ -1070,7 +1086,7 @@ top:
 				CellType);
 
 			// Finally, creating a new map cell representing the outer walls of this room
-			m_Cells[TempX][TempY] = new MapWall(tempStr, MapCoordinate(TempX * 32, TempY * 32), CellType);
+			m_Cells[TempX][TempY] = new MapWall(tempStr, MapCoordinate(TempX, TempY), CellType);
 		}
 
 		// Decrementing the length
@@ -1079,27 +1095,47 @@ top:
 		// Complete case
 		if (CurrentLengthQuota == 0 && !Turns.empty())
 		{
+			
 			CurrentDirection = Turn(CurrentDirection, Turns.front());
 			Turns.erase(Turns.begin());
+
 		}
 		// Keeping track of the current side
 		if (CurrentLengthQuota == 0)
 		{
+
+			// First adding this completed side to a candidate if it
+			// is a facing side
+			CandidateEnd = MapCoordinate(TempX, TempY);
+
+			AddCandidate(CurrentSide, CandidateStart, CandidateEnd);
+
+			if (m_RoomType == "Stair_Down")
+			{
+				cout << "bottom" << endl;
+			}
+
 			SideCount++;
+			// Greater Side Definition
 			if ((SideDef.size() > SideCount) && (SideDef[SideCount] == 1))
 			{
 				CurrentSide = NextSide(CurrentSide);
 			}
+
 		}
 		// Clear the textures for the last cell
 		tempStr.clear();
 	}
+	
 
+#ifndef NO_REFLECT
+	// Reflection of the current room
 	if ((rand() % 2) == 0)
 	{
-		
+		// Reflects the room
 		Reflect(m_Cells, m_Width, m_Height);
 
+		// Setting a new start position
 		for (int i = 0; i < m_Width; i++)
 		{
 			if (m_Cells[i][0] != nullptr)
@@ -1109,6 +1145,7 @@ top:
 			}
 		}
 	}
+#endif // !NO_REFLECT
 
 	// Sets the floor tiles, a recursive function
 	SetFloorTiles(m_Cells, StartX, StartY, m_Width, m_Height);
@@ -1358,4 +1395,92 @@ vector<string> ReflectTile(MapObject* Tile)
 	CellTile->ChangeRedTextures(*Textures);
 
 	return* Textures;
+}
+
+//
+// AddCandidate()
+// This function checks if the side defined by the points given is of
+// a certain length, and if so adds it to its corresponding side
+//
+void MapRoom::AddCandidate(Side CurrentSide, MapCoordinate Start, MapCoordinate End)
+{
+
+
+	switch (CurrentSide)
+	{
+	case Side::TOP:
+
+		// If this side is of a certain length
+		if (End.GetPositionX() - Start.GetPositionX() >= MinCandidateSideLength)
+		{
+			m_TopFacingCandiates.push_back(pair<MapCoordinate, MapCoordinate>(Start, End));
+		}
+
+		break;
+	case Side::RIGHT:
+
+		// If this side is of a certain length
+		if (End.GetPositionY() - Start.GetPositionY() >= MinCandidateSideLength)
+		{
+			m_RightFacingCandiates.push_back(pair<MapCoordinate, MapCoordinate>(Start, End));
+		}
+
+		break;
+	case Side::BOTTOM:
+
+		// If this side is of a certain length
+		if (Start.GetPositionX() - End.GetPositionX() >= MinCandidateSideLength)
+		{
+			m_BottomFacingCandiates.push_back(pair<MapCoordinate, MapCoordinate>(Start, End));
+		}
+
+		break;
+	case Side::LEFT:
+
+		// If this side is of a certain length
+		if (Start.GetPositionY() - End.GetPositionY() >= MinCandidateSideLength)
+		{
+			m_LeftFacingCandiates.push_back(pair<MapCoordinate, MapCoordinate>(Start, End));
+		}
+
+		break;
+	default:
+		break;
+	}
+
+
+
+}
+
+//
+//
+//
+//
+std::pair<MapCoordinate, MapCoordinate>* MapRoom::GetFacingFromSide(Side side)
+{
+
+	switch (side)
+	{
+	case Side::TOP:
+		if(!m_TopFacingCandiates.empty())
+			return &m_TopFacingCandiates[rand() % m_TopFacingCandiates.size()];
+		break;
+	case Side::RIGHT:
+		if (!m_RightFacingCandiates.empty())
+			return &m_RightFacingCandiates[rand() % m_RightFacingCandiates.size()];
+		break;
+	case Side::BOTTOM:
+		if (!m_BottomFacingCandiates.empty())
+			return &m_BottomFacingCandiates[rand() % m_BottomFacingCandiates.size()];
+		break;
+	case Side::LEFT:
+		if (!m_LeftFacingCandiates.empty())
+			return &m_LeftFacingCandiates[rand() % m_LeftFacingCandiates.size()];
+		break;
+	default:
+		break;
+	}
+
+	return nullptr;
+
 }

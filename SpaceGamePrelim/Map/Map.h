@@ -27,7 +27,7 @@ private:
 	void GenerateRoom(int OffsetX, int OffsetY, int ColumnWidth, int Index);
 
 	bool GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End);
-
+	void SetUpCorridor(int ColumnNumber, int OffsetX, int RoomOffsetX);
 
 public:
 

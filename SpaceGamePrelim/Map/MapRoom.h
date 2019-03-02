@@ -5,6 +5,8 @@
 
 #include <string>
 
+enum class Side;
+
 class MapRoom
 {
 private:
@@ -15,9 +17,19 @@ private:
 
 	std::string m_RoomType;
 
+	// Contains a beginning point and an ending point
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> m_TopFacingCandiates;		// Candidates are sides that are suitable for a corridor
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> m_RightFacingCandiates;	// Candidates are sides that are suitable for a corridor
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> m_BottomFacingCandiates;	// Candidates are sides that are suitable for a corridor
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> m_LeftFacingCandiates;		// Candidates are sides that are suitable for a corridor
+
+	int m_CellWidth;
+	int m_CellHeight;
+
 	int m_Width;
 	int m_Height;
 
+	void AddCandidate(Side CurrentSide, MapCoordinate Start, MapCoordinate End);
 public:
 
 	void Generate(); // Generates this room
@@ -27,6 +39,8 @@ public:
 	int GetHeight() { return m_Height; }
 	int GetWidth() { return m_Width; }
 	std::string GetRoomType() { return m_RoomType; }
+
+	std::pair<MapCoordinate, MapCoordinate>* GetFacingFromSide(Side side);
 
 	MapRoom();
 	MapRoom(std::string RoomType, int Width, int Height); // Known room
