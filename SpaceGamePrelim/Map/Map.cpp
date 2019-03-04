@@ -2,6 +2,7 @@
 #include "Map.h"
 #include "MapRoom.h"
 #include "MapWall.h"
+#include "MapInactive.h"
 //#include "GenRoomComp.h"
 
 #include "..\Frame\MainApplication.h"
@@ -220,8 +221,8 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 }
 
 //
-//
-//
+// SetUpCorridor()
+// Finds suitable starting cells for the corridor to be created.
 //
 void Map::SetUpCorridor(int ColumnNumber, int ColumnOffsetX, int RoomOffsetX)
 {
@@ -232,43 +233,121 @@ void Map::SetUpCorridor(int ColumnNumber, int ColumnOffsetX, int RoomOffsetX)
 	{
 		// There is a room above us, so we need to find a suitable location for a corridor.
 		MapRoom* RoomAbove = m_Rooms[ColumnNumber][Size];
-
-		int AboveWidth = RoomAbove->GetWidth();
-		int AboveOffsetX = m_ColumnOffsetsX[ColumnNumber][Size];
-		int CenterPointY = m_ColumnOffsetsY[ColumnNumber][Size] + RoomAbove->GetHeight();
-
-		int AxisOffsetY = 0;
-		// Get the center point of the room above for reference
-		int CenterPointX = AboveOffsetX + AboveWidth / 2 + ColumnOffsetX;
+		MapCoordinate CurrLocation;
+		MapCoordinate AboveLocation;
+		pair<MapCoordinate, MapCoordinate>* GetLocationBeg;
+		pair<MapCoordinate, MapCoordinate>* GetLocationEnd;
 
 		vector<string> temp;
-		temp.push_back("Explosion");
+		int AboveWidth = RoomAbove->GetWidth();
+		int AboveOffsetX = m_ColumnOffsetsX[ColumnNumber][Size];
+		int CurrentOffsetX = m_ColumnOffsetsX[ColumnNumber][Size + 1];
+		int CenterPointY = m_ColumnOffsetsY[ColumnNumber][Size] + RoomAbove->GetHeight();
+		int AxisOffsetY = 0;
+		int CenterPointX = AboveOffsetX + AboveWidth / 2 + ColumnOffsetX;
+		int ThisRoomOffsetY = 0;
+		int AboveDifference = 0;
+		int CurrDifference = 0;
+		int ShorterXLoc = 0;
+		bool CurrentIsShorter = false;
+
+		// Adding a test texture to obeserve the location
+		temp.push_back("Test");
 
 		if (RoomAbove->GetRoomType() == "Stair_Down")
 		{
 			cout << "bottom" << endl;
 		}
 
-		/*
-		// Gets the actual bottom of the above room
-		for (MapObject* Curr = RoomAbove->GetCell(AboveWidth / 2, RoomAbove->GetHeight() - 1);
-			Curr == nullptr && AxisOffsetY < RoomAbove->GetHeight();
-			Curr = RoomAbove->GetCell(AboveWidth / 2, RoomAbove->GetHeight() - ++AxisOffsetY))
+		// Ask the room above for a suitable side to set as a beginning tile for the end point
+		// for this corridor.
+		// Get a wall from the indicated side
+		GetLocationBeg = RoomAbove->GetFacingFromSide(Side::BOTTOM);
+		// Do the same for the current room on the top side
+		GetLocationEnd = m_Rooms[ColumnNumber][Size + 1]->GetFacingFromSide(Side::TOP);
+
+		// Next find the smallest side
+		// If this wall with min size exists
+		if (GetLocationBeg)
 		{
+			AboveDifference = (GetLocationBeg->first.GetPositionX() - GetLocationBeg->second.GetPositionX());
 		}
-		*/
-		MapCoordinate EndingLocation;
-		//Ask the above room for a facing side if possible
-		pair<MapCoordinate, MapCoordinate>* GetLocation = RoomAbove->GetFacingFromSide(Side::BOTTOM);
-		if (GetLocation)
-			EndingLocation = MapCoordinate(GetLocation->first.GetPositionX(), GetLocation->first.GetPositionY());
+		else return;
+		if (GetLocationEnd)
+		{
+			CurrDifference = (GetLocationEnd->first.GetPositionX() - GetLocationEnd->second.GetPositionX());
+		}
+		else return;
 
-		m_Cells[EndingLocation.GetPositionX() + ColumnOffsetX + AboveOffsetX][EndingLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size]] = new MapWall(temp, MapCoordinate(CenterPointX, CenterPointY - AxisOffsetY), Cell::Floor);
+		// Handle the shorter side first
+		if (abs(CurrDifference) > abs(AboveDifference))
+		{
+			AboveLocation = MapCoordinate(GetLocationBeg->first.GetPositionX() - AboveDifference / 2 + AboveOffsetX, GetLocationBeg->first.GetPositionY());
+			ShorterXLoc = AboveLocation.GetPositionX(); // Saving this x pos with respect to column offset
+		}
+		else 
+		{
+			CurrLocation = MapCoordinate(GetLocationEnd->first.GetPositionX() - CurrDifference / 2 + CurrentOffsetX, GetLocationEnd->first.GetPositionY());
+			ShorterXLoc = CurrLocation.GetPositionX(); // Saving this x pos with respect to column offset
+			CurrentIsShorter = true;
+		}
 
-		//m_Cells[CenterPointX][CenterPointY - ((AxisOffsetY) ? AxisOffsetY : ++AxisOffsetY)] = new MapWall(temp, MapCoordinate(CenterPointX, CenterPointY - AxisOffsetY), Cell::Floor);
+		// Then we need to process the room above
+		if (CurrentIsShorter)
+		{
+			// Standardize the coordinates so we can compare them
+			int XPos1 = GetLocationBeg->first.GetPositionX() + AboveOffsetX;
+			int XPos2 = GetLocationBeg->second.GetPositionX() + AboveOffsetX;
 
+
+			// If the x coord of the shorter is within the range of this side
+			// if so, that is the new point
+			if ((XPos1 < ShorterXLoc && ShorterXLoc < XPos2) ||
+				(XPos1 > ShorterXLoc && ShorterXLoc > XPos2))
+			{
+				AboveLocation = MapCoordinate(ShorterXLoc, GetLocationBeg->first.GetPositionY());
+			}
+			else AboveLocation = MapCoordinate(GetLocationBeg->first.GetPositionX() - AboveDifference / 2 + AboveOffsetX, GetLocationBeg->first.GetPositionY());
+			
+		}
+		// Then we need to process the room below
+		else
+		{
+			int XPos1 = GetLocationEnd->first.GetPositionX() + CurrentOffsetX;
+			int XPos2 = GetLocationEnd->second.GetPositionX() + CurrentOffsetX;
+
+			// If the x coord of the shorter is within the range of this side
+			// if so, that is the new point
+			if ((XPos1 < ShorterXLoc && ShorterXLoc < XPos2) ||
+				(XPos1 > ShorterXLoc && ShorterXLoc > XPos2))
+			{
+				CurrLocation = MapCoordinate(ShorterXLoc, GetLocationEnd->first.GetPositionY());
+			}
+			else CurrLocation = MapCoordinate(GetLocationEnd->first.GetPositionX() - CurrDifference / 2 + CurrentOffsetX, GetLocationEnd->first.GetPositionY());
+		}
+
+		// Finally adding to the cell array so we can see these tiles
+		m_Cells[AboveLocation.GetPositionX() + ColumnOffsetX][AboveLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size]] =
+			new MapWall(temp, MapCoordinate(AboveLocation.GetPositionX() + ColumnOffsetX, AboveLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size]), Cell::Floor);
+
+
+		// Adding a different test texture
+		temp.clear();
+		temp.push_back("Test2");
+
+		m_Cells[CurrLocation.GetPositionX() + ColumnOffsetX][CurrLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size + 1]] =
+			new MapWall(temp, MapCoordinate(CurrLocation.GetPositionX() + ColumnOffsetX, CurrLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size + 1]), Cell::Floor);
+
+		GenerateCorridorBetween(
+			MapCoordinate(
+				AboveLocation.GetPositionX() + ColumnOffsetX, 
+				AboveLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size]), 
+			MapCoordinate(
+				CurrLocation.GetPositionX() + ColumnOffsetX, 
+				CurrLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size + 1]
+			)
+		);
 	}
-
 }
 
 //
@@ -277,6 +356,49 @@ void Map::SetUpCorridor(int ColumnNumber, int ColumnOffsetX, int RoomOffsetX)
 //
 bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End)
 {
+
+	int CurrentX = Begin.GetPositionX();
+	int CurrentY = Begin.GetPositionY();
+	int DistanceX = abs(Begin.GetPositionX() - End.GetPositionX());
+	int DistanceY = abs(Begin.GetPositionY() - End.GetPositionY());
+	int MidPointY = CurrentY + DistanceY / 2;
+	
+	vector<string> Textures;
+	Textures.push_back("Test2");
+
+
+
+	// Until we reach our end destination
+	while (CurrentY != End.GetPositionY())
+	{
+		
+		if (CurrentY == MidPointY && 
+			(Begin.GetPositionX() != End.GetPositionX()) &&
+			DistanceX)
+		{
+			if (Begin.GetPositionX() < End.GetPositionX())
+			{
+
+				CurrentX++;
+				DistanceX--;
+			}
+			else
+			{
+
+				CurrentX--;
+				DistanceX--;
+			}
+		}
+		else
+		{
+			CurrentY++;
+
+		}
+
+		m_Cells[CurrentX][CurrentY] = 
+			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
+
+	}
 
 
 	return false;

@@ -9,7 +9,7 @@
 #include <iostream>
 #include <chrono>
 
-#define NO_REFLECT
+//#define NO_REFLECT
 
 using namespace std;
 using namespace std::chrono;
@@ -20,6 +20,11 @@ vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, boo
 void SetFloorTiles(MapObject*** &Cells, int StartX, int StartY, int XMax, int YMax);
 void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax);
 void Reflect(MapObject*** &Cells, int Width, int Height);
+void ReflectCandidates( int Width, int Height,
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> &TopFacingCandiates,
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> &RightFacingCandiates,
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> &BottomFacingCandiates,
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> &LeftFacingCandiates);
 vector<string> ReflectTile(MapObject* Tile);
 
 const static string WallCornerRight = "Wall_Corner_Right";
@@ -1026,16 +1031,25 @@ top:
 				// Set the new start point
 				StartX = TempX;
 				int Start = 0;
+				int Distance = 0;
 				// Iterate through all the x cells in the first row until we 
 				// reach where the last printed cell is located
-				for (MapObject* Current; Start < (TempX); Start++)
+				for (MapObject* Current; Start < (TempX); Start++, Distance++)
 				{
 					Current = m_Cells[Start][0];
-
+					
 					if(Current != nullptr) delete Current;
 					m_Cells[Start][0] = nullptr;
 				}
 				
+				for (size_t i = 0; i < m_TopFacingCandiates.size(); i++)
+				{
+					if (m_TopFacingCandiates[i].first.GetPositionX() < Distance)
+					{
+						m_TopFacingCandiates[i].first = MapCoordinate(Distance, m_TopFacingCandiates[i].first.GetPositionY());
+					}
+				}
+
 				// Finally, finish by setting the appropriate texture here
 				tempStr.push_back(WallSideRight);
 
@@ -1144,6 +1158,8 @@ top:
 				break;
 			}
 		}
+
+		ReflectCandidates(m_Width, m_Height, m_TopFacingCandiates, m_RightFacingCandiates, m_BottomFacingCandiates, m_LeftFacingCandiates);
 	}
 #endif // !NO_REFLECT
 
@@ -1395,6 +1411,82 @@ vector<string> ReflectTile(MapObject* Tile)
 	CellTile->ChangeRedTextures(*Textures);
 
 	return* Textures;
+}
+
+//
+//
+//
+//
+void ReflectCandidates(
+	int Width, int Height,
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> &TopFacingCandiates,
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> &RightFacingCandiates,
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> &BottomFacingCandiates,
+	std::vector<std::pair<MapCoordinate, MapCoordinate>> &LeftFacingCandiates)
+{
+	int DistanceFirst = 0;
+	int DistanceSecond = 0;
+	int YPosition = 0;
+	Width--;
+
+	pair<MapCoordinate, MapCoordinate> *NewPair;
+
+	for (size_t i = 0; i < TopFacingCandiates.size(); i++)
+	{
+
+		DistanceFirst = TopFacingCandiates[i].first.GetPositionX();
+		DistanceSecond = TopFacingCandiates[i].second.GetPositionX();
+		YPosition = TopFacingCandiates[i].first.GetPositionY();
+
+		NewPair = new std::pair<MapCoordinate, MapCoordinate>(
+			MapCoordinate(Width - DistanceFirst, YPosition), 
+			MapCoordinate(Width - DistanceSecond, YPosition));
+
+		TopFacingCandiates[i] = *NewPair;
+
+	}
+
+	for (size_t i = 0; i < RightFacingCandiates.size(); i++)
+	{
+
+		DistanceFirst = RightFacingCandiates[i].first.GetPositionX();
+		DistanceSecond = RightFacingCandiates[i].second.GetPositionX();
+		YPosition = RightFacingCandiates[i].first.GetPositionY();
+
+		NewPair = new std::pair<MapCoordinate, MapCoordinate>(
+			MapCoordinate(Width - DistanceFirst, YPosition),
+			MapCoordinate(Width - DistanceSecond, YPosition));
+
+		RightFacingCandiates[i] = *NewPair;
+
+	}
+
+	for (size_t i = 0; i < BottomFacingCandiates.size(); i++)
+	{
+		DistanceFirst = BottomFacingCandiates[i].first.GetPositionX();
+		DistanceSecond = BottomFacingCandiates[i].second.GetPositionX();
+		YPosition = BottomFacingCandiates[i].first.GetPositionY();
+
+		NewPair = new std::pair<MapCoordinate, MapCoordinate>(
+			MapCoordinate(Width - DistanceFirst, YPosition),
+			MapCoordinate(Width - DistanceSecond, YPosition));
+
+		BottomFacingCandiates[i] = *NewPair;
+	}
+
+	for (size_t i = 0; i < LeftFacingCandiates.size(); i++)
+	{
+		DistanceFirst = LeftFacingCandiates[i].first.GetPositionX();
+		DistanceSecond = LeftFacingCandiates[i].second.GetPositionX();
+		YPosition = LeftFacingCandiates[i].first.GetPositionY();
+
+		NewPair = new std::pair<MapCoordinate, MapCoordinate>(
+			MapCoordinate(Width - DistanceFirst, YPosition),
+			MapCoordinate(Width - DistanceSecond, YPosition));
+
+		LeftFacingCandiates[i] = *NewPair;
+	}
+
 }
 
 //

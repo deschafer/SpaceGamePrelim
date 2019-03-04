@@ -4,7 +4,12 @@
   <!-- Start of a source texture -->
   <TEXTURE name="Room" path="Assets/room2.png"/>
   <TEXTURE name="Explosion" path="Assets/expl2.png"/>
+  <TEXTURE name="Test" path="Assets/test.png"/>
+  <TEXTURE name="Test2" path="Assets/test2.png"/>
+
   <!-- Start of a reduced texture -->
+  <RED_TEXTURE name="Test" assoc_name="Test" x="0" y="0" width="32" height="32" />
+  <RED_TEXTURE name="Test2" assoc_name="Test2" x="0" y="0" width="32" height="32" />
   <RED_TEXTURE name="Explosion" assoc_name="Explosion" x="0" y="0" width="32" height="32" />
   <RED_TEXTURE name="Wall" assoc_name="Room" x="32" y="0" width="32" height="32" />
   <RED_TEXTURE name="Wall_Top_1" assoc_name="Room" x="32" y="0" width="32" height="32" />
