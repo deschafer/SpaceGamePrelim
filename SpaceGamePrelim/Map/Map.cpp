@@ -356,50 +356,81 @@ void Map::SetUpCorridor(int ColumnNumber, int ColumnOffsetX, int RoomOffsetX)
 //
 bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End)
 {
+	enum class Movement {LEFT, RIGHT};
 
 	int CurrentX = Begin.GetPositionX();
 	int CurrentY = Begin.GetPositionY();
 	int DistanceX = abs(Begin.GetPositionX() - End.GetPositionX());
 	int DistanceY = abs(Begin.GetPositionY() - End.GetPositionY());
 	int MidPointY = CurrentY + DistanceY / 2;
-	
+	Movement Direction;
+	bool Try = false;
+
+
+	if (End.GetPositionX() > Begin.GetPositionX()) Direction = Movement::RIGHT;
+	else Direction = Movement::LEFT;
+
 	vector<string> Textures;
 	Textures.push_back("Test2");
 
-
+	// Adjusting the x transition 
+	// so that not conflicts occur
+	while (m_Cells[CurrentX][MidPointY] != nullptr)
+	{
+		MidPointY--;
+	}
 
 	// Until we reach our end destination
 	while (CurrentY != End.GetPositionY())
 	{
-		
-		if (CurrentY == MidPointY && 
+		// If we need to move x-wise
+		if ((CurrentY == MidPointY && 
 			(Begin.GetPositionX() != End.GetPositionX()) &&
-			DistanceX)
+			DistanceX) || Try)
 		{
-			if (Begin.GetPositionX() < End.GetPositionX())
-			{
+			bool Taken = false;
+			Try = true;
 
+			// Verifying that the area is clear for the corridor
+			for (size_t i = 0, Pos = CurrentX; i < DistanceX; i++)
+			{
+				if (Direction == Movement::LEFT) Pos--;
+				else Pos++;
+				if (m_Cells[Pos][CurrentY] != nullptr)
+				{
+					Taken = true;
+					break;
+				}
+			}
+			
+			// If the area is taken, then increment y and try next time
+			if (Taken)
+			{
+				CurrentY++;
+			}
+			// Otherwise move in correct x pos
+			else if (Begin.GetPositionX() < End.GetPositionX())
+			{
 				CurrentX++;
 				DistanceX--;
 			}
 			else
 			{
-
 				CurrentX--;
 				DistanceX--;
 			}
+			if (!DistanceX) Try = false;
 		}
+		// Increment Y be default
 		else
 		{
 			CurrentY++;
-
 		}
 
+		// Adding the corridor to the array
 		m_Cells[CurrentX][CurrentY] = 
 			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
 
 	}
-
-
 	return false;
 }
