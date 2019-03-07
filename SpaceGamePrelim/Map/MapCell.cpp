@@ -93,7 +93,7 @@ void MapCell::Draw(MapCoordinate Coords)
 	else
 	{
 		// Drawing each texture with its respective properties
-		for (size_t i = 0; i < m_RedTextureIDs->size(); i++)
+		for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
 		{
 			TextureManager::Instance()->DrawCurrentFrame(
 				Coords.GetPositionX(),
@@ -134,7 +134,7 @@ void MapCell::DrawStatic(MapCoordinate Coords)
 		std::cout << "textures are empty";
 	}
 	// Draws each of the textures in the vector
-	for (size_t i = 0; i < m_RedTextureIDs->size(); i++)
+	for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
 	{
 		Instance->DrawStaticFrame(
 			Coords.GetPositionX(),

@@ -7,6 +7,8 @@
 #include <Windows.h>
 #include <map>
 
+enum class Movement;
+
 class Map
 {
 private:
@@ -28,6 +30,11 @@ private:
 
 	bool GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End);
 	void SetUpCorridor(int ColumnNumber, int OffsetX, int RoomOffsetX);
+	void CheckCell(MapCoordinate CellPosition, 
+		std::vector<std::string> Textures, 
+		Cell CellType, 
+		std::vector<MapCoordinate>& TextureCoords, 
+		bool Right);
 
 public:
 

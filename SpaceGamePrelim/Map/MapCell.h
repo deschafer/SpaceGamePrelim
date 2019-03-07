@@ -39,7 +39,6 @@ protected:
 	std::vector<int> m_RedTextureIndex;	// Indices for access of textures
 
 
-	MapCell();
 	MapCell::MapCell(std::vector<std::string> RedTextureIDs,
 		MapCoordinate Position,
 		Cell CellType);
@@ -51,12 +50,15 @@ protected:
 
 public:
 
+	MapCell();
+
 	virtual void Draw(MapCoordinate Coords);
 	void DrawStatic(MapCoordinate Coords);
 	virtual void Update();
 
 
 	void ChangeRedTextures(std::vector<std::string> NewTextures);
+	void AddRedTexture(std::string RedTextureID) { m_RedTextureIndex.push_back(TextureManager::Instance()->GetRedTextureIndex(RedTextureID)); m_RedTextureIDs->push_back(RedTextureID); }
 	std::vector<std::string>* ReturnRedTextures() { return m_RedTextureIDs; }
 
 	Cell GetCellType() { return m_CellType; }

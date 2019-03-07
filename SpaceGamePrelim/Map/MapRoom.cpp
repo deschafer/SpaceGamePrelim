@@ -1124,11 +1124,6 @@ top:
 
 			AddCandidate(CurrentSide, CandidateStart, CandidateEnd);
 
-			if (m_RoomType == "Stair_Down")
-			{
-				cout << "bottom" << endl;
-			}
-
 			SideCount++;
 			// Greater Side Definition
 			if ((SideDef.size() > SideCount) && (SideDef[SideCount] == 1))

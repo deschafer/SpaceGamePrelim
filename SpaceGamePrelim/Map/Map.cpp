@@ -10,6 +10,8 @@
 #include <chrono>
 
 enum class Side { TOP, RIGHT, BOTTOM, LEFT, COMPL };
+enum class Movement { LEFT, RIGHT };
+
 
 static const int WidthRandomRate = 5;
 static const int HeightRandomRate = 5;
@@ -28,10 +30,17 @@ static const int ColumnWidth5 = 14;
 static const int ColumnSeparatorMax = 2;
 static const int ColumnSeparatorMin = 1;
 
-
-
 using namespace std;
 using namespace std::chrono;
+
+const static string WallCornerRight = "Wall_Corner_Right";
+const static string WallCornerLeft = "Wall_Corner_Left";
+const static string WallSideRight = "Wall_Side_Right";
+const static string WallSideLeft = "Wall_Side_Left";
+const static string WallBottom = "Wall_Bottom";
+const static string Default = "Wall";
+const static string WallTopGroup = "Wall_Top";
+const static string FloorGroup = "Floors";
 
 Map::Map()
 {
@@ -254,11 +263,6 @@ void Map::SetUpCorridor(int ColumnNumber, int ColumnOffsetX, int RoomOffsetX)
 		// Adding a test texture to obeserve the location
 		temp.push_back("Test");
 
-		if (RoomAbove->GetRoomType() == "Stair_Down")
-		{
-			cout << "bottom" << endl;
-		}
-
 		// Ask the room above for a suitable side to set as a beginning tile for the end point
 		// for this corridor.
 		// Get a wall from the indicated side
@@ -356,7 +360,6 @@ void Map::SetUpCorridor(int ColumnNumber, int ColumnOffsetX, int RoomOffsetX)
 //
 bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End)
 {
-	enum class Movement {LEFT, RIGHT};
 
 	int CurrentX = Begin.GetPositionX();
 	int CurrentY = Begin.GetPositionY();
@@ -365,13 +368,15 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End)
 	int MidPointY = CurrentY + DistanceY / 2;
 	Movement Direction;
 	bool Try = false;
-
+	bool MovementY = false;
+	bool MovementX = false;
+	bool BeginX = false;
+	bool EndX = false;
+	vector <MapCoordinate> TexturedCoords;
 
 	if (End.GetPositionX() > Begin.GetPositionX()) Direction = Movement::RIGHT;
 	else Direction = Movement::LEFT;
 
-	vector<string> Textures;
-	Textures.push_back("Test2");
 
 	// Adjusting the x transition 
 	// so that not conflicts occur
@@ -379,6 +384,33 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End)
 	{
 		MidPointY--;
 	}
+
+	// Loading a floor texture
+	vector<string> Textures;
+	Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(FloorGroup));
+
+	// Setting the begging cell
+	vector<string> TexturesT;
+	TexturesT.push_back(WallSideRight);
+	CheckCell(MapCoordinate(CurrentX - 1, CurrentY), 
+		TexturesT, 
+		Cell::Wall_Right, 
+		TexturedCoords, 
+		(Direction == Movement::LEFT));
+
+	TexturesT.clear();
+	TexturesT.push_back(WallSideLeft);
+	CheckCell(MapCoordinate(CurrentX + 1, CurrentY), 
+		TexturesT, 
+		Cell::Wall_Left, 
+		TexturedCoords, 
+		(Direction == Movement::RIGHT));
+
+	CheckCell(MapCoordinate(CurrentX, CurrentY), 
+		Textures, 
+		Cell::Floor, 
+		TexturedCoords, 
+		false);
 
 	// Until we reach our end destination
 	while (CurrentY != End.GetPositionY())
@@ -389,15 +421,22 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End)
 			DistanceX) || Try)
 		{
 			bool Taken = false;
+			// We will try every turn until we compete the x-movement
 			Try = true;
 
+			// First search our texured sides to verify 
 			// Verifying that the area is clear for the corridor
 			for (size_t i = 0, Pos = CurrentX; i < DistanceX; i++)
 			{
 				if (Direction == Movement::LEFT) Pos--;
 				else Pos++;
-				if (m_Cells[Pos][CurrentY] != nullptr)
+				// If this cell is not occupied by an external cell
+				// and it is not one of our drawn texture cells
+				if (m_Cells[Pos][CurrentY] != nullptr && (TexturedCoords.empty() ||
+					!(TexturedCoords[TexturedCoords.size() - 1].GetPositionY() == CurrentY && 
+						TexturedCoords[TexturedCoords.size() - 1].GetPositionX() == Pos)))
 				{
+					// This path is taken
 					Taken = true;
 					break;
 				}
@@ -407,30 +446,206 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End)
 			if (Taken)
 			{
 				CurrentY++;
+				MovementY = true;
 			}
 			// Otherwise move in correct x pos
-			else if (Begin.GetPositionX() < End.GetPositionX())
+			else if (Direction == Movement::RIGHT)
 			{
+				if (CurrentX == Begin.GetPositionX()) BeginX = true;
 				CurrentX++;
+				if (CurrentX == End.GetPositionX()) EndX = true;
 				DistanceX--;
+				MovementX = true;
 			}
 			else
 			{
+				if (CurrentX == Begin.GetPositionX()) BeginX = true;
 				CurrentX--;
+				if (CurrentX == End.GetPositionX()) EndX = true;
 				DistanceX--;
+				MovementX = true;
 			}
+			// Try until we are done moving x-wise
 			if (!DistanceX) Try = false;
 		}
 		// Increment Y be default
 		else
 		{
 			CurrentY++;
+			MovementY = true;
 		}
 
 		// Adding the corridor to the array
 		m_Cells[CurrentX][CurrentY] = 
 			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
 
+		// If there was a y movement,  then we add to the 
+		// cells to the left and right to add the walls to
+		// encompass the corridor
+		if (MovementY)
+		{
+			vector<string> Textures;
+			Textures.push_back(WallSideRight);
+			CheckCell(MapCoordinate(CurrentX - 1, CurrentY), 
+				Textures, 
+				Cell::Wall_Right, 
+				TexturedCoords, 
+				(Direction == Movement::LEFT));
+
+			Textures.clear();
+			Textures.push_back(WallSideLeft);
+			CheckCell(MapCoordinate(CurrentX + 1, CurrentY), 
+				Textures, 
+				Cell::Wall_Left, 
+				TexturedCoords, 
+				(Direction == Movement::RIGHT));
+
+			MovementY = false;
+		}
+		// Otherwise, if a x movement occurred
+		else if (MovementX)
+		{
+			// The beg of the x-movement
+			// DIRECTION MATTERS
+			if (BeginX)
+			{
+				int Change = 0;
+				int LessChange = 0;
+
+				if (Direction == Movement::LEFT)
+				{
+					Change += 2;
+					LessChange++;
+				}
+				else
+				{
+					Change -= 2;
+					LessChange--;
+				}
+				vector<string> Textures;
+				Textures.push_back(WallBottom);
+				CheckCell(MapCoordinate(CurrentX + LessChange, CurrentY + 1), 
+					Textures, 
+					Cell::Wall_Bottom, 
+					TexturedCoords, 
+					false);
+
+				CheckCell(MapCoordinate(CurrentX, CurrentY + 1),
+					Textures,
+					Cell::Wall_Bottom,
+					TexturedCoords,
+					false);
+
+				Textures.clear();
+				(Direction == Movement::LEFT) ? Textures.push_back(WallCornerRight) : Textures.push_back(WallCornerLeft);
+				CheckCell(
+					MapCoordinate(CurrentX + Change, CurrentY + 1), 
+					Textures, (Direction == Movement::LEFT) ? 
+					Cell::Wall_Corner_Right_Bottom : 
+					Cell::Wall_Corner_Left_Bottom, 
+					TexturedCoords, 
+					false);
+
+				Textures.clear();
+				Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
+				CheckCell(MapCoordinate(CurrentX, CurrentY - 1), 
+					Textures, 
+					Cell::Wall_Top, 
+					TexturedCoords, 
+					false);
+
+				BeginX = false;
+			}
+			// The end of the x-movement
+			// DIRECTION MATTERS
+			else if (EndX)
+			{
+				int Change = 0;
+
+				if (Direction == Movement::LEFT) Change = -1;
+				else Change = 1;
+
+				vector<string> Textures;
+				(Change > 0) ? Textures.push_back(WallSideLeft) : Textures.push_back(WallSideRight);
+				CheckCell(MapCoordinate(CurrentX + Change, CurrentY - 1), 
+					Textures, 
+					(Change > 0) ? Cell::Wall_Left : Cell::Wall_Right,
+					TexturedCoords, 
+					false);
+				CheckCell(MapCoordinate(CurrentX + Change, CurrentY), 
+					Textures, 
+					(Change > 0) ? Cell::Wall_Left : Cell::Wall_Right,
+					TexturedCoords, 
+					false);
+				Textures.clear();
+				Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
+				CheckCell(MapCoordinate(CurrentX, CurrentY - 1), 
+					Textures, 
+					Cell::Wall_Top, 
+					TexturedCoords, 
+					false);
+
+				EndX = false;
+			}
+			// Adding to the cells above and below this current cell
+			// Does not matter with the direction of the x corridor movement
+			else
+			{
+				vector<string> Textures;
+				Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
+				CheckCell(MapCoordinate(CurrentX, CurrentY - 1), 
+					Textures, 
+					Cell::Wall_Top, 
+					TexturedCoords, 
+					false);
+
+				Textures.clear();
+				Textures.push_back(WallBottom);
+				CheckCell(MapCoordinate(CurrentX, CurrentY + 1), 
+					Textures, 
+					Cell::Wall_Bottom, 
+					TexturedCoords, 
+					false);
+			}
+			MovementX = false;
+		}
 	}
 	return false;
+}
+
+//
+// CheckCell()
+// Checks the given cell and adds the texture to its location,
+// allocating a new cell if needed
+//
+void Map::CheckCell(MapCoordinate CellPosition, std::vector<std::string> Textures, 
+	Cell CellType, std::vector<MapCoordinate>& TextureCoords, bool Right)
+{
+	int X = CellPosition.GetPositionX();
+	int Y = CellPosition.GetPositionY();
+
+	if ((X < m_Width) && (Y < m_Height) && (Y >= 0) && (X >= 0))
+	{
+		// If there is no cell here currently
+		if (!m_Cells[X][Y])
+		{
+			// Then we add one
+			m_Cells[X][Y] = new MapInactive(Textures, MapCoordinate(X, Y), CellType);
+			if (Right) TextureCoords.push_back(MapCoordinate(X, Y));
+
+			return;
+		}
+		// Otherwise, check if the cell if a Wall_Top type, as we will not
+		// add a texture here
+		MapCell* Cell = dynamic_cast<MapCell*>(m_Cells[X][Y]);
+
+		if (Cell->GetCellType() != Cell::Wall_Top)
+		{
+			// Add the texture to the list to draw with the other textures here
+			for (size_t i = 0; i < Textures.size(); i++)
+			{
+				Cell->AddRedTexture(Textures[i]);
+			}
+		}
+	}
 }
