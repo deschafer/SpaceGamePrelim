@@ -22,6 +22,12 @@ private:
 	std::vector<std::pair<MapCoordinate, MapCoordinate>> m_RightFacingCandiates;	// Candidates are sides that are suitable for a corridor
 	std::vector<std::pair<MapCoordinate, MapCoordinate>> m_BottomFacingCandiates;	// Candidates are sides that are suitable for a corridor
 	std::vector<std::pair<MapCoordinate, MapCoordinate>> m_LeftFacingCandiates;		// Candidates are sides that are suitable for a corridor
+	
+	std::vector<MapRoom*> m_TopLinkedRooms;		// Rooms that are physically linked with corridors
+	std::vector<MapRoom*> m_RightLinkedRooms;	// ..
+	std::vector<MapRoom*> m_BottomLinkedRooms;	// ..
+	std::vector<MapRoom*> m_LeftLinkedRooms;	// ..
+		
 
 	int m_CellWidth;
 	int m_CellHeight;
@@ -39,8 +45,12 @@ public:
 	int GetHeight() { return m_Height; }
 	int GetWidth() { return m_Width; }
 	std::string GetRoomType() { return m_RoomType; }
+	void AddLinkedRoom(Side side, MapRoom* LinkedRoom);
+
 
 	std::pair<MapCoordinate, MapCoordinate>* GetFacingFromSide(Side side);
+	std::pair<MapCoordinate, MapCoordinate>* GetFacingFromSideIndexed(Side side, int Index);
+
 
 	MapRoom();
 	MapRoom(std::string RoomType, int Width, int Height); // Known room

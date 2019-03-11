@@ -37,6 +37,7 @@ const static string WallTopGroup = "Wall_Top";
 const static string FloorGroup = "Floors";
 
 const static int MinCandidateSideLength = 2;
+const static int ReflectionChance = 1;
 
 
 MapRoom::MapRoom()
@@ -1139,7 +1140,7 @@ top:
 
 #ifndef NO_REFLECT
 	// Reflection of the current room
-	if ((rand() % 2) == 0)
+	if ((rand() % ReflectionChance) == 0)
 	{
 		// Reflects the room
 		Reflect(m_Cells, m_Width, m_Height);
@@ -1155,6 +1156,8 @@ top:
 		}
 
 		ReflectCandidates(m_Width, m_Height, m_TopFacingCandiates, m_RightFacingCandiates, m_BottomFacingCandiates, m_LeftFacingCandiates);
+
+		int number = 123;
 	}
 #endif // !NO_REFLECT
 
@@ -1409,8 +1412,8 @@ vector<string> ReflectTile(MapObject* Tile)
 }
 
 //
-//
-//
+// ReflectCandidates()
+// Reflects the candidate sides used for corridor creation
 //
 void ReflectCandidates(
 	int Width, int Height,
@@ -1422,7 +1425,26 @@ void ReflectCandidates(
 	int DistanceFirst = 0;
 	int DistanceSecond = 0;
 	int YPosition = 0;
+	int XPosition = 0;
 	Width--;
+	Height--;
+
+	// Left and right need to swap sides
+	vector<pair<MapCoordinate, MapCoordinate>> TempFacingCandiates;
+	for (size_t i = 0; i < LeftFacingCandiates.size(); i++)
+	{
+		TempFacingCandiates.push_back(LeftFacingCandiates[i]);
+	}
+	LeftFacingCandiates.clear();
+	for (size_t i = 0; i < RightFacingCandiates.size(); i++)
+	{
+		LeftFacingCandiates.push_back(RightFacingCandiates[i]);
+	}
+	RightFacingCandiates.clear();
+	for (size_t i = 0; i < TempFacingCandiates.size(); i++)
+	{
+		RightFacingCandiates.push_back(TempFacingCandiates[i]);
+	}
 
 	pair<MapCoordinate, MapCoordinate> *NewPair;
 
@@ -1447,10 +1469,11 @@ void ReflectCandidates(
 		DistanceFirst = RightFacingCandiates[i].first.GetPositionX();
 		DistanceSecond = RightFacingCandiates[i].second.GetPositionX();
 		YPosition = RightFacingCandiates[i].first.GetPositionY();
+		int YPosition2 = RightFacingCandiates[i].second.GetPositionY();
 
 		NewPair = new std::pair<MapCoordinate, MapCoordinate>(
-			MapCoordinate(Width - DistanceFirst, YPosition),
-			MapCoordinate(Width - DistanceSecond, YPosition));
+			MapCoordinate(Width - DistanceSecond, YPosition2),
+			MapCoordinate(Width - DistanceFirst, YPosition));
 
 		RightFacingCandiates[i] = *NewPair;
 
@@ -1474,11 +1497,11 @@ void ReflectCandidates(
 		DistanceFirst = LeftFacingCandiates[i].first.GetPositionX();
 		DistanceSecond = LeftFacingCandiates[i].second.GetPositionX();
 		YPosition = LeftFacingCandiates[i].first.GetPositionY();
+		int YPosition2 = LeftFacingCandiates[i].second.GetPositionY();
 
 		NewPair = new std::pair<MapCoordinate, MapCoordinate>(
-			MapCoordinate(Width - DistanceFirst, YPosition),
-			MapCoordinate(Width - DistanceSecond, YPosition));
-
+			MapCoordinate(Width - DistanceSecond, YPosition2),
+			MapCoordinate(Width - DistanceFirst, YPosition));
 		LeftFacingCandiates[i] = *NewPair;
 	}
 
@@ -1540,12 +1563,12 @@ void MapRoom::AddCandidate(Side CurrentSide, MapCoordinate Start, MapCoordinate 
 }
 
 //
-//
-//
+// GetFacingFromSide()
+// Gets a side that is facing outwards of the given side, and
+// is a candidate for a corridor connection
 //
 std::pair<MapCoordinate, MapCoordinate>* MapRoom::GetFacingFromSide(Side side)
 {
-
 	switch (side)
 	{
 	case Side::TOP:
@@ -1569,5 +1592,61 @@ std::pair<MapCoordinate, MapCoordinate>* MapRoom::GetFacingFromSide(Side side)
 	}
 
 	return nullptr;
+}
 
+//
+// GetFacingFromSideIndexed()
+// Returns an indexed side from the corresponding given side and index
+// if it exists
+//
+pair<MapCoordinate, MapCoordinate>* MapRoom::GetFacingFromSideIndexed(Side side, int Index)
+{
+	switch (side)
+	{
+	case Side::TOP:
+		if (!m_TopFacingCandiates.empty() && Index < m_TopFacingCandiates.size())
+			return &m_TopFacingCandiates[Index];
+		break;
+	case Side::RIGHT:
+		if (!m_RightFacingCandiates.empty() && Index < m_RightFacingCandiates.size())
+			return &m_RightFacingCandiates[Index];
+		break;
+	case Side::BOTTOM:
+		if (!m_BottomFacingCandiates.empty() && Index < m_BottomFacingCandiates.size())
+			return &m_BottomFacingCandiates[Index];
+		break;
+	case Side::LEFT:
+		if (!m_LeftFacingCandiates.empty() && Index < m_LeftFacingCandiates.size())
+			return &m_LeftFacingCandiates[Index];
+		break;
+	default:
+		break;
+	}
+
+	return nullptr;
+}
+
+//
+// AddLinkedRoom()
+// Adds LinkedRoom param to the approp. side given by side param
+//
+void MapRoom::AddLinkedRoom(Side side, MapRoom* LinkedRoom)
+{
+	switch (side)
+	{
+	case Side::TOP:
+		m_TopLinkedRooms.push_back(LinkedRoom);
+		return;
+	case Side::RIGHT:
+		m_RightLinkedRooms.push_back(LinkedRoom);
+		return;
+	case Side::BOTTOM:
+		m_BottomLinkedRooms.push_back(LinkedRoom);
+		return;
+	case Side::LEFT:
+		m_LeftLinkedRooms.push_back(LinkedRoom);
+		return;
+	default:
+		break;
+	}
 }

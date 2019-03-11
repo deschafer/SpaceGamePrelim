@@ -24,12 +24,13 @@ private:
 	// Parallel room vectors
 	std::vector<std::vector<MapRoom*>> m_Rooms;		// Holds the 2D array of rooms
 	std::vector<std::vector<int>> m_ColumnOffsetsX;	// Holds ind. offsets within columns for each room
-	std::vector<std::vector<int>> m_ColumnOffsetsY;
+	std::vector<std::vector<int>> m_ColumnOffsetsY; // Starting y pos for the given room
 
 	void GenerateRoom(int OffsetX, int OffsetY, int ColumnWidth, int Index);
 
-	bool GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End);
-	void SetUpCorridor(int ColumnNumber, int OffsetX, int RoomOffsetX);
+	bool GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int DistanceBetween, bool Horiz);
+	void SetUpCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* BottomRoom);
+	void SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* Room);
 	void CheckCell(MapCoordinate CellPosition, 
 		std::vector<std::string> Textures, 
 		Cell CellType, 
