@@ -427,7 +427,7 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 
 		// Adjusting the y transition 
 		// so that no conflicts occur
-		while (m_Cells[MidPointX][CurrentY] != nullptr)
+		while (!m_Cells[MidPointX][CurrentY] && !m_CorridorCells[MidPointX][CurrentY])
 		{
 			MidPointX--; // Move backwards
 			if (MidPointX < 0)
@@ -481,7 +481,7 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 					else Pos++;
 					// If this cell is not occupied by an external cell
 					// and it is not one of our drawn texture cells
-					if ((m_Cells[CurrentX][Pos] != nullptr || m_CorridorCells[CurrentX][Pos]) && 
+					if ((m_Cells[CurrentX][Pos] != nullptr && m_CorridorCells[CurrentX][Pos]) && 
 						(TexturedCoords.empty() ||
 						!(TexturedCoords[TexturedCoords.size() - 1].GetPositionX() == CurrentX &&
 							TexturedCoords[TexturedCoords.size() - 1].GetPositionY() == Pos)))
@@ -953,6 +953,10 @@ void Map::CheckCell(MapCoordinate CellPosition, std::vector<std::string> Texture
 				{
 					Cell->SetCellType(Cell::Wall_Top);
 				}
+				else if (CellType == Cell::Floor)
+				{
+					Cell->SetCellType(Cell::Floor);
+				}
 			}
 		}
 
@@ -1335,3 +1339,4 @@ void Map::FindCandidateSidePositions(MapRoom* RightRoom, int RightOffsetX, int R
 	m_Cells[LeftRoomPoint.GetPositionX()][LeftRoomPoint.GetPositionY()] = new MapWall(Textures, MapCoordinate(LeftRoomPoint), Cell::Floor);
 	#endif // DEBUG_CORRIDOR_HORIZ
 }
+
