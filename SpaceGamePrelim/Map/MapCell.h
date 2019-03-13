@@ -62,7 +62,7 @@ public:
 	std::vector<std::string>* ReturnRedTextures() { return m_RedTextureIDs; }
 
 	Cell GetCellType() { return m_CellType; }
-	Cell SetCellType(Cell CellType) { m_CellType = CellType; }
+	void SetCellType(Cell CellType) { m_CellType = CellType; }
 
 	virtual ~MapCell();
 };

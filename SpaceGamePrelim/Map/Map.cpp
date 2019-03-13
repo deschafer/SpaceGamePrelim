@@ -10,7 +10,7 @@
 #include <chrono>
 
 //#define DEBUG_CORRIDOR_VERTICAL
-//#define c
+//#define DEBUG_CORRIDOR_HORIZ
 
 enum class Side { TOP, RIGHT, BOTTOM, LEFT, COMPL };
 
@@ -61,9 +61,11 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 {
 	// Generating the array for this map
 	m_Cells = new MapObject**[m_Height];
+	m_CorridorCells = new MapObject**[m_Height];
 	for (int i = 0; i < m_Height; i++)
 	{
 		m_Cells[i] = new MapObject*[m_Width];
+		m_CorridorCells[i] = new MapObject*[m_Width];
 	}
 
 	// Initializing all of the cells to nullptr
@@ -72,6 +74,7 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 		for (int j = 0; j < m_Width; j++)
 		{
 			m_Cells[i][j] = nullptr;
+			m_CorridorCells[i][j] = nullptr;
 		}
 	}
 
@@ -206,6 +209,7 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	m_ColumnOffsetsX[ColNumber].push_back(xOffset);
 	m_ColumnOffsetsY[ColNumber].push_back(OffsetY);
 
+	MapCell* Place = nullptr;
 	// Now since the space has been allocated, and the room has been 
 	// generated, let's place the object in the array
 	for (size_t IndexX = OffsetX + xOffset, MagX = 0;
@@ -216,7 +220,30 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 			MagY < RoomHeight;
 			MagY++, IndexY++)
 		{
-			m_Cells[IndexX][IndexY] = Room->GetCell(MagX, MagY);
+			Place = (MapCell*)m_Cells[IndexX][IndexY];
+			if (!Place)
+			{
+				m_Cells[IndexX][IndexY] = Room->GetCell(MagX, MagY);
+			}
+			else
+			{
+				vector<string>* Textures = Place->ReturnRedTextures();
+				m_Cells[IndexX][IndexY] = Room->GetCell(MagX, MagY);
+
+				MapCell* ChangeCell = dynamic_cast<MapCell*>(m_Cells[IndexX][IndexY]);
+				if (ChangeCell)
+				{
+					vector<string> OtherTextures = *ChangeCell->ReturnRedTextures();
+
+					ChangeCell->ChangeRedTextures(*Textures);
+					for (size_t i = 0; i < OtherTextures.size(); i++)
+					{
+						ChangeCell->AddRedTexture((OtherTextures)[i]);
+					}
+					delete Place;
+				}
+				else m_Cells[IndexX][IndexY] = Place;
+			}
 		}
 	}
 
@@ -227,9 +254,9 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 		Room->AddLinkedRoom(Side::TOP, RoomAbove);	// Link from this room to the room above
 	}
 
-	SetUpHorizCorridor(ColNumber - 1, OffsetX, OffsetY, xOffset, Room);
 	SetUpCorridor(ColNumber, OffsetX, OffsetY, xOffset, Room);
-	
+	SetUpHorizCorridor(ColNumber - 1, OffsetX, OffsetY, xOffset, Room);
+
 
 	// Generating the next room below this one
 	GenerateRoom(OffsetX, OffsetY + RoomHeight + rand() % ColumnSeparatorMax + ColumnSeparatorMin, MaxWidth, ColNumber);
@@ -379,7 +406,6 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 
 	if (Horizontal)
 	{
-
 		int MidPointX = (CurrentX + ((Result = ceil(Result / 2)) ? Result : 1));
 
 		bool BeginY = false;
@@ -388,21 +414,56 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 		if (End.GetPositionY() < Begin.GetPositionY()) Direction = Movement::UP;
 		else Direction = Movement::DOWN;
 
+		// Testing if the start is within a cell
+		if (m_Cells[CurrentX + 1][CurrentY] && !m_CorridorCells[CurrentX + 1][CurrentY])
+		{
+			cout << "Start is within a cell" << endl;
+			return false;
+		}
+		else if (m_CorridorCells[CurrentX + 1][CurrentY])
+		{
+			cout << "Double Corridor" << endl;
+		}
+
 		// Adjusting the y transition 
 		// so that no conflicts occur
 		while (m_Cells[MidPointX][CurrentY] != nullptr)
 		{
 			MidPointX--; // Move backwards
+			if (MidPointX < 0)
+			{
+				cout << "No valid path found" << endl;
+				return false;
+			}
 		}
 
-		// Loading a floor texture
 		vector<string> Textures;
+		Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
+		CheckCell(MapCoordinate(CurrentX, CurrentY - 1),
+			Textures,
+			Cell::Wall_Top,
+			TexturedCoords,
+			false);
+		Textures.clear();
+		Textures.push_back(WallBottom);
+		CheckCell(MapCoordinate(CurrentX, CurrentY + 1),
+			Textures,
+			Cell::Wall_Bottom,
+			TexturedCoords,
+			false);
+
+		// Loading a floor texture
+		Textures.clear();
 		Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(FloorGroup));
+		CheckCell(MapCoordinate(CurrentX, CurrentY),
+			Textures,
+			Cell::Floor,
+			TexturedCoords,
+			false);
 
 		// Until we reach our end destination
 		while (CurrentX != End.GetPositionX())
 		{
-
 			// If we need to move x-wise
 			if ((CurrentX == MidPointX &&
 				(Begin.GetPositionY() != End.GetPositionY()) &&
@@ -420,7 +481,8 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 					else Pos++;
 					// If this cell is not occupied by an external cell
 					// and it is not one of our drawn texture cells
-					if (m_Cells[CurrentX][Pos] != nullptr && (TexturedCoords.empty() ||
+					if ((m_Cells[CurrentX][Pos] != nullptr || m_CorridorCells[CurrentX][Pos]) && 
+						(TexturedCoords.empty() ||
 						!(TexturedCoords[TexturedCoords.size() - 1].GetPositionX() == CurrentX &&
 							TexturedCoords[TexturedCoords.size() - 1].GetPositionY() == Pos)))
 					{
@@ -428,9 +490,7 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 						Taken = true;
 						break;
 					}
-
 				}
-
 				// If the area is taken, then increment y and try next time
 				if (Taken)
 				{
@@ -454,11 +514,10 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 					DistanceY--;
 					MovementY = true;
 				}
-				// Try until we are done moving x-wise
+				// Try until we are done moving y-wise
 				if (!DistanceY) Try = false;
 			}
-
-			// Increment X be default
+			// Increment X by default
 			else
 			{
 				CurrentX++;
@@ -468,14 +527,139 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 			// Adding the corridor to the array
 			m_Cells[CurrentX][CurrentY] =
 				new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
+			// Add to the corridor array
+			m_CorridorCells[CurrentX][CurrentY] = m_Cells[CurrentX][CurrentY];
 
+			// Determining correct tile types for the corresponding cells
+			// Normal X movement
+			if (MovementX)
+			{
+				vector<string> Textures;
+				Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
+				CheckCell(MapCoordinate(CurrentX, CurrentY - 1),
+					Textures,
+					Cell::Wall_Top,
+					TexturedCoords,
+					(Direction == Movement::UP) ? true : false);
+				Textures.clear();
+				Textures.push_back(WallBottom);
+				CheckCell(MapCoordinate(CurrentX, CurrentY + 1),
+					Textures,
+					Cell::Wall_Bottom,
+					TexturedCoords,
+					(Direction == Movement::DOWN) ? true : false);
+
+				MovementX = false;
+			}
+			else if (MovementY)
+			{
+				// Beginning cell for y movement
+				if (BeginY)
+				{
+					vector<string> Textures;
+					if (Direction != Movement::UP)
+					{
+						Textures.push_back(WallSideRight);
+						CheckCell(MapCoordinate(CurrentX - 1, CurrentY),
+							Textures,
+							Cell::Wall_Right,
+							TexturedCoords,
+							false);
+					}
+
+					Textures.clear();
+					Textures.push_back(WallSideLeft);
+					CheckCell(MapCoordinate(CurrentX + 1, CurrentY),
+						Textures,
+						Cell::Wall_Left,
+						TexturedCoords,
+						false);
+					CheckCell(MapCoordinate(CurrentX + 1, CurrentY + ((Direction == Movement::UP) ? 1 : -1)),
+						Textures,
+						Cell::Wall_Left,
+						TexturedCoords,
+						false);
+
+					Textures.clear();
+
+					Direction == Movement::UP ? Textures.push_back(WallCornerRight) : Textures.push_back(WallSideLeft);
+
+					CheckCell(MapCoordinate(CurrentX + 1, CurrentY + ((Direction == Movement::UP) ? 2 : -2)),
+						Textures,
+						Direction == Movement::UP ? Cell::Wall_Corner_Right : Cell::Wall_Left,
+						TexturedCoords,
+						false);
+
+				}
+				// Ending cell for y movement
+				if (EndY)
+				{
+
+					vector<string> Textures;
+					(Direction == Movement::UP) ? 
+						Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup)) : 
+						Textures.push_back(WallBottom);
+					CheckCell(MapCoordinate(CurrentX, CurrentY + ((Direction == Movement::UP) ? -1 : 1)),
+						Textures,
+						(Direction == Movement::UP) ? Cell::Wall_Top : Cell::Wall_Bottom,
+						TexturedCoords,
+						false);
+
+					Textures.clear();
+					Textures.push_back(WallSideRight);
+					CheckCell(MapCoordinate(CurrentX - 1, CurrentY),
+						Textures,
+						Cell::Wall_Right,
+						TexturedCoords,
+						false);
+					if (Direction == Movement::UP)
+					{
+						CheckCell(MapCoordinate(CurrentX - 1, CurrentY -1),
+							Textures,
+							Cell::Wall_Right,
+							TexturedCoords,
+							false);
+					}
+					else
+					{
+						Textures.clear();
+						Textures.push_back(WallCornerLeft);
+						CheckCell(MapCoordinate(CurrentX - 1, CurrentY + 1),
+							Textures,
+							Cell::Wall_Corner_Left,
+							TexturedCoords,
+							false);
+					}
+				}
+				// Normal y movement cell
+				if (!BeginY && !EndY)
+				{
+					vector<string> Textures;
+					Textures.push_back(WallSideRight);
+					CheckCell(MapCoordinate(CurrentX - 1, CurrentY),
+						Textures,
+						Cell::Wall_Right,
+						TexturedCoords,
+						false);
+
+					Textures.clear();
+					Textures.push_back(WallSideLeft);
+					CheckCell(MapCoordinate(CurrentX + 1, CurrentY),
+						Textures,
+						Cell::Wall_Left,
+						TexturedCoords,
+						false);
+				}
+
+				BeginY = false;
+				EndY = false;
+				MovementY = false;
+			}
 		}
-
 		if (CurrentX != End.GetPositionX() || CurrentY != End.GetPositionY())
 		{
 			cout << "Did not find the end." << endl;
 		}
-
 	}
 	else
 	{
@@ -587,6 +771,10 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 			// Adding the corridor to the array
 			m_Cells[CurrentX][CurrentY] =
 				new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
+			// Add to the corridor array
+			m_CorridorCells[CurrentX][CurrentY] = m_Cells[CurrentX][CurrentY];
+
+			// set as floor cell
 
 			// If there was a y movement,  then we add to the 
 			// cells to the left and right to add the walls to
@@ -721,8 +909,7 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 		}
 	}
 
-	
-	return false;
+	return true;
 }
 
 //
@@ -736,6 +923,7 @@ void Map::CheckCell(MapCoordinate CellPosition, std::vector<std::string> Texture
 	int X = CellPosition.GetPositionX();
 	int Y = CellPosition.GetPositionY();
 
+
 	if ((X < m_Width) && (Y < m_Height) && (Y >= 0) && (X >= 0))
 	{
 		// If there is no cell here currently
@@ -743,22 +931,32 @@ void Map::CheckCell(MapCoordinate CellPosition, std::vector<std::string> Texture
 		{
 			// Then we add one
 			m_Cells[X][Y] = new MapInactive(Textures, MapCoordinate(X, Y), CellType);
+			// Set the corridor array
 			if (Right) TextureCoords.push_back(MapCoordinate(X, Y));
+
+			m_CorridorCells[X][Y] = m_Cells[X][Y];
 
 			return;
 		}
 		// Otherwise, check if the cell if a Wall_Top type, as we will not
 		// add a texture here
 		MapCell* Cell = dynamic_cast<MapCell*>(m_Cells[X][Y]);
-
-		if (Cell->GetCellType() != Cell::Wall_Top)
+		
+		if (Cell->GetCellType() != Cell::Wall_Top && Cell->GetCellType() != Cell::Floor)
 		{
+
 			// Add the texture to the list to draw with the other textures here
 			for (size_t i = 0; i < Textures.size(); i++)
 			{
 				Cell->AddRedTexture(Textures[i]);
+				if (CellType == Cell::Wall_Top)
+				{
+					Cell->SetCellType(Cell::Wall_Top);
+				}
 			}
 		}
+
+		m_CorridorCells[X][Y] = m_Cells[X][Y];
 	}
 }
 
@@ -800,7 +998,7 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 	int CurrRoomEnd = 0;
 	int CurrRoomBeg = 0;
 	pair<MapCoordinate, MapCoordinate>* GetLocationBegSide;
-	pair<MapCoordinate, MapCoordinate>* TempSide;
+	pair<MapCoordinate, MapCoordinate>* TempSide = nullptr;
 	pair<MapCoordinate, MapCoordinate>* GetLocationEndSide;
 
 	MapCoordinate Beginning;
@@ -814,7 +1012,7 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 
 		// If this room is within the bounds of the room next to it,
 		// we add it as a candidate for corridor generation
-		if(CurrRoomBeg < RoomEnd && CurrRoomEnd > OffsetY)
+		if(CurrRoomBeg <= RoomEnd && CurrRoomEnd > OffsetY)
 		{
 			CandidateRooms.push_back(pair<MapRoom*, MapCoordinate>(m_Rooms[ColumnNumber][i], MapCoordinate(m_ColumnOffsetsX[ColumnNumber][i], CurrRoomBeg)));
 			CandidateIndices.push_back(i);
@@ -835,191 +1033,305 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 	// If there is only one room present, then we will connect to the room regardless
 	if (CandidateRooms.size() == 1)
 	{
-
-		int YStartPos = 0;
-		int Difference = 0;
-
-		// Set a start position within +/- 2 blocks of the center side (if Possible)
-		// Save the pos. of this side
-		// Get a side that is within +/- 2 blocks of the first selected side
-		// Add new mapcells with text texutres at both sides
-		// Eventually, use a horiz corridor creator to create the connection
-
-		// First get a minor side from the major left side for the beginning room
-		GetLocationBegSide = Room->GetFacingFromSide(Side::LEFT);
-
-		// Then select a YPos in here for the actual start.
-
-		Difference = GetLocationBegSide->first.GetPositionY() - GetLocationBegSide->second.GetPositionY();
-
-		// This will a part of this side with variation
-		YStartPos = rand() % (Difference - 1) + GetLocationBegSide->second.GetPositionY() + 1;
-
-		// Now get the closest end position to here
-		// First, find a ending side, if it exists, otherwise get the closest
-
-		CurrRoom = CandidateRooms[0].first;
-
-		int LeftPositionBeg = TempSide->first.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][CandidateIndices[0]];
-		int RightPositionBeg = YStartPos - ComparisonSideWidth / 2 + OffsetY;
-		int LeftPositionEnd = TempSide->second.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][CandidateIndices[0]];
-		int RightPositionEnd = YStartPos + ComparisonSideWidth / 2 + OffsetY;
-		int RightPositionBaseBeg = GetLocationBegSide->first.GetPositionY() + OffsetY;
-		int RightPositionBaseEnd = GetLocationBegSide->second.GetPositionY() + OffsetY;
-
-
-		int LeftRoomOffsetX = ColumnNumber * ColumnWidth5;
-		int LeftRoomColumnOffsetX = m_ColumnOffsetsX[ColumnNumber][CandidateIndices[0]];
-		int LeftRoomOffsetY = m_ColumnOffsetsY[ColumnNumber][CandidateIndices[0]];
-
-		vector<pair<MapCoordinate, MapCoordinate>> WideCandidateSides;
-		vector<pair<MapCoordinate, MapCoordinate>> CandidateSides;
-		bool PerfectFit = false;
-
-		// TODO: Take all the declarations outside of the loop below
-
-		for (size_t Index = 0; ; Index++)
-		{
-			TempSide = CurrRoom->GetFacingFromSideIndexed(Side::RIGHT, Index);
-
-			if (!TempSide) break;
-
-			// Determine if this side is within the desired position
-			// First case - side is within a set param, like 2 blocks, of the starting corridor position
-			if (LeftPositionBeg <= RightPositionEnd && LeftPositionEnd > RightPositionBeg)
-			{
-				CandidateSides.push_back(*TempSide);
-			}
-			// Second case - side is within the bounds of the entire side of where the starting corridor pos. is
-			else if (LeftPositionBeg <= RightPositionBaseEnd && LeftPositionEnd > RightPositionBaseBeg)
-			{
-				WideCandidateSides.push_back(*TempSide);
-			}
-			// Third case - If the exact Y position of the starting corridor position is located within this side
-			if (LeftPositionBeg <= (YStartPos + OffsetY) && LeftPositionEnd >= (YStartPos + OffsetY))
-			{
-				PerfectFit = true;
-				// We have a fitting side, so leave
-				break;
-			}
-		}
-
-		// Setting a formal MapCoord for the starting room pos.
-		MapCoordinate LeftRoomPoint(
-			OffsetX + RoomOffsetX + GetLocationBegSide->first.GetPositionX(),
-			OffsetY + YStartPos);
-		MapCoordinate RightRoomPoint(0,0);
-
-		if (PerfectFit)
-		{
-			// Good to go, we can set this ypos as the ending pos.
-
-			// Need to verify we are not at the absolute end of this side
-			// Since we are on the Right side of the left room,
-			// Verify that this point is not equal to a point in the room. 
-			// If it is, incr or decr appropriately.
-
-			int Pos = YStartPos + OffsetY;
-
-			// Upper part of this side section
-			// Determining if this point is at the endge of this side, which
-			// usually is not a valid place for a corridor
-			if (Pos == TempSide->first.GetPositionY() + LeftRoomOffsetY)
-			{
-				// Move downwards one, increment by 1
-				Pos++;
-			}
-			else if (Pos == TempSide->second.GetPositionY() + LeftRoomOffsetY)
-			{
-				// Move upwards one, increment by 1
-				Pos--;
-			}
-
-			// Save this position
-			RightRoomPoint = MapCoordinate(
-				LeftRoomOffsetX + LeftRoomColumnOffsetX + TempSide->first.GetPositionX(),
-				Pos);
-		}
-		// If there are several sides that work
-		else if(!CandidateSides.empty() || !WideCandidateSides.empty())
-		{
-			// Select a random side from those available
-			if (!CandidateSides.empty())
-			{
-				int SideIndex = rand() % CandidateSides.size();
-				TempSide = &CandidateSides[SideIndex];
-			}
-			else if (!WideCandidateSides.empty())
-			{
-				int SideIndex = rand() % WideCandidateSides.size();
-				TempSide = &WideCandidateSides[SideIndex];
-			}
-			
-			// Get a magnitude of the difference
-			int SideDifference = TempSide->second.GetPositionY() - TempSide->first.GetPositionY();
-
-			// Start at the middle of this side
-			int Pos = TempSide->first.GetPositionY() + SideDifference/2 + LeftRoomOffsetY;
-			int Goal = YStartPos + OffsetY;
-			int EndLegalSideTop = TempSide->first.GetPositionY() + LeftRoomOffsetY + 1;
-			int StartLegalSideBottom = TempSide->second.GetPositionY() + LeftRoomOffsetY - 1;
-
-			// Move to a pos as close to the other point as possible
-			while (true)
-			{
-				if (Pos > Goal)
-				{
-					if (Pos - 1 > EndLegalSideTop) Pos--;
-					else break;
-				}
-				else
-				{
-					Pos++;
-					if (Pos + 1 < StartLegalSideBottom) Pos++;
-					else break;
-				}
-			}
-			
-			// Save this new position
-			RightRoomPoint = MapCoordinate(
-				LeftRoomOffsetX + LeftRoomColumnOffsetX + TempSide->first.GetPositionX(),
-				Pos);
-		}
-		// If there was an ending point found
-		if (TempSide != nullptr)
-		{
-			int RightRoomXPos = OffsetX + RoomOffsetX;
-			int LeftRoomXPos = LeftRoomOffsetX + LeftRoomColumnOffsetX + CurrRoom->GetWidth();
-
-			GenerateCorridorBetween(
-				MapCoordinate(RightRoomPoint),
-				MapCoordinate(LeftRoomPoint),
-				abs(RightRoomXPos - LeftRoomXPos),
-				true
-			);
-
-		#ifdef DEBUG_CORRIDOR_HORIZ
-			cout << "Room -- " << Room->GetRoomType() << " Connected to " << CurrRoom->GetRoomType() << " with distance between " << abs(RightRoomXPos - LeftRoomXPos) << endl;
-		#endif // DEBUG_CORRIDOR_HORIZ
-
-			m_Cells[RightRoomPoint.GetPositionX()][RightRoomPoint.GetPositionY()] = new MapWall(Textures, MapCoordinate(RightRoomPoint), Cell::Floor);
-
-		}
-		else
-		{
-	#ifdef _DEBUG
-			cout << "Corridor Horiz Gen Error: No ending point found for " << Room->GetRoomType() << " to " << CurrRoom->GetRoomType() << endl;
-	#endif // _DEBUG
-		}
-		m_Cells[LeftRoomPoint.GetPositionX()][LeftRoomPoint.GetPositionY()] = new MapWall(Textures, MapCoordinate(LeftRoomPoint), Cell::Floor);
+		FindCandidateSidePositions(
+			Room, 
+			OffsetX + RoomOffsetX, 
+			OffsetY, 
+			CandidateRooms[0].first, 
+			m_ColumnOffsetsX[ColumnNumber][CandidateIndices[0]], 
+			m_ColumnOffsetsY[ColumnNumber][CandidateIndices[0]], 
+			ColumnNumber);
 	}
 	// If more than one room available, the anwser is more difficult
 	else
 	{
-		// If any of the rooms given does not have a connection, connect to that one
+		vector<bool> Connections;
+		int ConnectionlessCount = 0;
+		int ConnectionlessIndex = -1;	// Holds the index of a connectionless room -- intended for one connectionless room only
+		MapRoom* SelectedRoom = nullptr;
+
+		for (size_t i = 0; i < CandidateRooms.size(); i++)
+		{
+			// Adding all of the connections for the candiate rooms
+			if (CandidateRooms[i].first->ConnectedToRoom(Side::RIGHT))
+			{
+				Connections.push_back(true);
+			}
+			else
+			{
+				Connections.push_back(false);
+				ConnectionlessCount++;
+				ConnectionlessIndex = i;
+			}
+		}
+
+		// If no rooms are not connected to
+		if (ConnectionlessCount == 0)
+		{
+			return;
+		}
+
+		// If any of the rooms given does not have a connection, connect to one of those
+		// If one connectionless room, connect to that one
+		else if (ConnectionlessCount == 1)
+		{
+			FindCandidateSidePositions(
+				Room,
+				OffsetX + RoomOffsetX,
+				OffsetY,
+				CandidateRooms[ConnectionlessIndex].first,
+				m_ColumnOffsetsX[ColumnNumber][CandidateIndices[ConnectionlessIndex]],
+				m_ColumnOffsetsY[ColumnNumber][CandidateIndices[ConnectionlessIndex]],
+				ColumnNumber);
+		}
+		// More than one possible room
+		else if (ConnectionlessCount)
+		{
+			int Index = -1;
+			// Find the connectionless room that is above
+			for (size_t i = 0; i < Connections.size(); i++)
+			{
+				// Due to how the rooms are found, from up to down, we can
+				// always assume that the first connectionless index is the highest room
+				if (!Connections[i])
+				{
+					Index = i;
+					break;
+				}
+			}
+
+			if (Index == -1) cout << "Error?: Incorred index" << endl;
+			else
+			{
+				FindCandidateSidePositions(
+					Room,
+					OffsetX + RoomOffsetX,
+					OffsetY,
+					CandidateRooms[Index].first,
+					m_ColumnOffsetsX[ColumnNumber][CandidateIndices[Index]],
+					CandidateRooms[Index].second.GetPositionY(),
+					ColumnNumber);
+			}
+
+		}
+		// If more than one, connect to the one above
+
+
+
 		// If all rooms do not have a connection, connect to the upper room
 		// If all have links, that connect to the closest room
 
 
 	}
+}
+
+//
+//
+//
+//
+void Map::FindCandidateSidePositions(MapRoom* RightRoom, int RightOffsetX, int RightOffsetY, MapRoom* LeftRoom, int LeftOffsetX, int LeftOffsetY, int ColumnNumber)
+{
+	vector<string> Textures;
+	static int Counter = 0;
+
+	switch (Counter)
+	{
+	case 0:
+		Counter++;
+		Textures.push_back("Test");
+		break;
+	case 1:
+		Textures.push_back("Test2");
+		Counter = 0;
+		break;
+	default:
+		break;
+	}
+
+	int YStartPos = 0;
+	int Difference = 0;
+	pair<MapCoordinate, MapCoordinate>* GetLocationBegSide;
+	pair<MapCoordinate, MapCoordinate>* TempSide = nullptr;
+	pair<MapCoordinate, MapCoordinate>* GetLocationEndSide;
+
+	// Set a start position within +/- 2 blocks of the center side (if Possible)
+	// Save the pos. of this side
+	// Get a side that is within +/- 2 blocks of the first selected side
+	// Add new mapcells with text texutres at both sides
+	// Eventually, use a horiz corridor creator to create the connection
+
+	// First get a minor side from the major left side for the beginning room
+	GetLocationBegSide = RightRoom->GetFacingFromSide(Side::LEFT);
+
+	// Then select a YPos in here for the actual start.
+
+	Difference = GetLocationBegSide->first.GetPositionY() - GetLocationBegSide->second.GetPositionY();
+
+	// This will a part of this side with variation
+	YStartPos = rand() % (Difference - 1) + GetLocationBegSide->second.GetPositionY() + 1;
+
+	// Now get the closest end position to here
+	// First, find a ending side, if it exists, otherwise get the closest
+
+	int LeftPositionBeg = 0;
+	int RightPositionBeg = YStartPos - ComparisonSideWidth / 2 + RightOffsetY;
+	int LeftPositionEnd = 0;
+	int RightPositionEnd = YStartPos + ComparisonSideWidth / 2 + RightOffsetY;
+
+	//int RightPositionBaseBeg = GetLocationBegSide->second.GetPositionY() + RightOffsetY;
+	//int RightPositionBaseEnd = GetLocationBegSide->first.GetPositionY() + RightOffsetY;
+	int RightPositionBaseBeg = RightOffsetY;
+	int RightPositionBaseEnd = RightRoom->GetHeight() + RightOffsetY;
+
+	int LeftRoomOffsetX = ColumnNumber * ColumnWidth5;
+	int LeftRoomColumnOffsetX = LeftOffsetX;
+	int LeftRoomOffsetY = LeftOffsetY;
+
+	vector<pair<MapCoordinate, MapCoordinate>> WideCandidateSides;
+	vector<pair<MapCoordinate, MapCoordinate>> CandidateSides;
+	bool PerfectFit = false;
+
+	// TODO: Take all the declarations outside of the loop below
+
+	for (size_t Index = 0; ; Index++)
+	{
+		TempSide = LeftRoom->GetFacingFromSideIndexed(Side::RIGHT, Index);
+
+		if (!TempSide) break;
+
+		LeftPositionBeg = TempSide->first.GetPositionY() + LeftRoomOffsetY;
+		LeftPositionEnd = TempSide->second.GetPositionY() + LeftRoomOffsetY;
+
+		// Determine if this side is within the desired position
+		// First case - side is within a set param, like 2 blocks, of the starting corridor position
+		if (LeftPositionBeg <= RightPositionEnd && LeftPositionEnd > RightPositionBeg)
+		{
+			CandidateSides.push_back(*TempSide);
+		}
+		// Second case - side is within the bounds of the entire side of where the starting corridor pos. is
+		else if (LeftPositionBeg <= RightPositionBaseEnd && LeftPositionEnd >= RightPositionBaseBeg)
+		{
+			WideCandidateSides.push_back(*TempSide);
+		}
+		// Third case - If the exact Y position of the starting corridor position is located within this side
+		if (LeftPositionBeg <= (YStartPos + RightOffsetY) && LeftPositionEnd >= (YStartPos + RightOffsetY))
+		{
+			PerfectFit = true;
+			// We have a fitting side, so leave
+			break;
+		}
+	}
+
+	// Setting a formal MapCoord for the starting room pos.
+	MapCoordinate LeftRoomPoint(
+		RightOffsetX + GetLocationBegSide->first.GetPositionX(),
+		RightOffsetY + YStartPos);
+	MapCoordinate RightRoomPoint(0, 0);
+
+	if (PerfectFit)
+	{
+		// Good to go, we can set this ypos as the ending pos.
+
+		// Need to verify we are not at the absolute end of this side
+		// Since we are on the Right side of the left room,
+		// Verify that this point is not equal to a point in the room. 
+		// If it is, incr or decr appropriately.
+
+		int Pos = YStartPos + RightOffsetY;
+
+		// Upper part of this side section
+		// Determining if this point is at the endge of this side, which
+		// usually is not a valid place for a corridor
+		if (Pos == TempSide->first.GetPositionY() + LeftRoomOffsetY)
+		{
+			// Move downwards one, increment by 1
+			Pos++;
+		}
+		else if (Pos == TempSide->second.GetPositionY() + LeftRoomOffsetY)
+		{
+			// Move upwards one, increment by 1
+			Pos--;
+		}
+
+		// Save this position
+		RightRoomPoint = MapCoordinate(
+			LeftRoomOffsetX + LeftRoomColumnOffsetX + TempSide->first.GetPositionX(),
+			Pos);
+	}
+	// If there are several sides that work
+	else if (!CandidateSides.empty() || !WideCandidateSides.empty())
+	{
+		// Select a random side from those available
+		if (!CandidateSides.empty())
+		{
+			int SideIndex = rand() % CandidateSides.size();
+			TempSide = &CandidateSides[SideIndex];
+		}
+		else if (!WideCandidateSides.empty())
+		{
+			int SideIndex = rand() % WideCandidateSides.size();
+			TempSide = &WideCandidateSides[SideIndex];
+		}
+
+		// Get a magnitude of the difference
+		int SideDifference = TempSide->second.GetPositionY() - TempSide->first.GetPositionY();
+
+		// Start at the middle of this side
+		int Pos = TempSide->first.GetPositionY() + SideDifference / 2 + LeftRoomOffsetY;
+		int Goal = YStartPos + RightOffsetY;
+		int EndLegalSideTop = TempSide->first.GetPositionY() + LeftRoomOffsetY + 1;
+		int StartLegalSideBottom = TempSide->second.GetPositionY() + LeftRoomOffsetY - 1;
+
+		// Move to a pos as close to the other point as possible
+		while (true)
+		{
+			if (Pos > Goal)
+			{
+				if (Pos - 1 > EndLegalSideTop) Pos--;
+				else break;
+			}
+			else
+			{
+				if (Pos + 1 < StartLegalSideBottom) Pos++;
+				else break;
+			}
+		}
+
+		// Save this new position
+		RightRoomPoint = MapCoordinate(
+			LeftRoomOffsetX + LeftRoomColumnOffsetX + TempSide->first.GetPositionX(),
+			Pos);
+	}
+	// If there was an ending point found
+	if (TempSide != nullptr)
+	{
+		int RightRoomXPos = RightOffsetX;
+		int LeftRoomXPos = LeftRoomOffsetX + LeftRoomColumnOffsetX + LeftRoom->GetWidth();
+
+		// Adds the link to the left room
+		LeftRoom->AddLinkedRoom(Side::RIGHT, RightRoom);
+		// Adds the link to the right room
+		RightRoom->AddLinkedRoom(Side::LEFT, LeftRoom);
+
+		GenerateCorridorBetween(
+			MapCoordinate(RightRoomPoint),
+			MapCoordinate(LeftRoomPoint),
+			abs(RightRoomXPos - LeftRoomXPos),
+			true
+		);
+
+	#ifdef DEBUG_CORRIDOR_HORIZ
+		//cout << "Room -- " << RightRoom->GetRoomType() << " Connected to " << LeftRoom->GetRoomType() << " with distance between " << abs(RightRoomXPos - LeftRoomXPos) << endl;
+		m_Cells[RightRoomPoint.GetPositionX()][RightRoomPoint.GetPositionY()] = new MapWall(Textures, MapCoordinate(RightRoomPoint), Cell::Floor);
+	#endif // DEBUG_CORRIDOR_HORIZ
+	}
+	else
+	{
+	#ifdef _DEBUG
+		cout << "Corridor Horiz Gen Error: No ending point found for " << RightRoom->GetRoomType() << " to " << LeftRoom->GetRoomType() << endl;
+	#endif // _DEBUG
+	}
+	#ifdef DEBUG_CORRIDOR_HORIZ
+	m_Cells[LeftRoomPoint.GetPositionX()][LeftRoomPoint.GetPositionY()] = new MapWall(Textures, MapCoordinate(LeftRoomPoint), Cell::Floor);
+	#endif // DEBUG_CORRIDOR_HORIZ
 }

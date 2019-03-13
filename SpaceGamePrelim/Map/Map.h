@@ -20,6 +20,7 @@ private:
 	MapCoordinate m_MapCoordinates;		// Coordinates of the map in comparison to other maps	
 
 	MapObject*** m_Cells;						// Cells of this map
+	MapObject*** m_CorridorCells;
 
 	// Parallel room vectors
 	std::vector<std::vector<MapRoom*>> m_Rooms;		// Holds the 2D array of rooms
@@ -28,6 +29,7 @@ private:
 
 	void GenerateRoom(int OffsetX, int OffsetY, int ColumnWidth, int Index);
 
+	void FindCandidateSidePositions(MapRoom* RightRoom, int RightOffsetX, int RightOffsetY, MapRoom* LeftRoom, int LeftOffsetX, int LeftOffsetY, int ColumnNumber);
 	bool GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int DistanceBetween, bool Horiz);
 	void SetUpCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* BottomRoom);
 	void SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* Room);

@@ -37,7 +37,7 @@ const static string WallTopGroup = "Wall_Top";
 const static string FloorGroup = "Floors";
 
 const static int MinCandidateSideLength = 2;
-const static int ReflectionChance = 1;
+const static int ReflectionChance = 2;
 
 
 MapRoom::MapRoom()
@@ -1221,8 +1221,8 @@ vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, boo
 		}
 		else
 		{
-			CellType = Cell::Default;
-			Strings.push_back(Default);
+			CellType = Cell::Wall_Top;
+			Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
 		}
 	}
 	// For a normal block in a side
@@ -1649,4 +1649,30 @@ void MapRoom::AddLinkedRoom(Side side, MapRoom* LinkedRoom)
 	default:
 		break;
 	}
+}
+
+//
+//
+//
+//
+bool MapRoom::ConnectedToRoom(Side side)
+{
+	switch (side)
+	{
+	case Side::TOP:
+		return m_TopLinkedRooms.size() ? true : false;
+		break;
+	case Side::RIGHT:
+		return m_RightLinkedRooms.size() ? true : false;
+		break;
+	case Side::BOTTOM:
+		return m_BottomLinkedRooms.size() ? true : false;
+		break;
+	case Side::LEFT:
+		return m_LeftLinkedRooms.size() ? true : false;
+		break;
+	default:
+		break;
+	}
+	return false;
 }

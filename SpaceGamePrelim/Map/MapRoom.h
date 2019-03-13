@@ -46,11 +46,10 @@ public:
 	int GetWidth() { return m_Width; }
 	std::string GetRoomType() { return m_RoomType; }
 	void AddLinkedRoom(Side side, MapRoom* LinkedRoom);
-
+	bool ConnectedToRoom(Side side);
 
 	std::pair<MapCoordinate, MapCoordinate>* GetFacingFromSide(Side side);
 	std::pair<MapCoordinate, MapCoordinate>* GetFacingFromSideIndexed(Side side, int Index);
-
 
 	MapRoom();
 	MapRoom(std::string RoomType, int Width, int Height); // Known room

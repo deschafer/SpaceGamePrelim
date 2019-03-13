@@ -30,7 +30,9 @@ int main(int argc, char* argv[])
 	std::chrono::milliseconds dur(duration);
 	std::chrono::time_point<std::chrono::system_clock> dt(dur);
 
-	srand(duration);
+	//srand(duration);
+	srand(1);
+
 
 	MainApplication* Application = MainApplication::Instance();	// Getting the app instance
 	// 1408 x 896

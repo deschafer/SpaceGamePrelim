@@ -138,7 +138,7 @@
     </GSideDef>
   </DEF>
 
-  <DEF name="Complex_Top"  minwidth="10" minheight="8"  >
+  <DEF name="Complex_Top"  minwidth="10" minheight="12"  >
     <Turns>
       <T t="R"/>
       <T t="L"/>
