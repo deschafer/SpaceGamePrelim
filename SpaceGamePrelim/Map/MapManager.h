@@ -10,6 +10,9 @@
 #include "Map.h"
 #include "RoomManager.h"
 
+//
+// Coordinate space of connected maps follows a traditonal cartesian coordinate space, pos X to the right, pos y to the top.
+//
 
 // Singleton class structure
 class MapManager
@@ -35,10 +38,15 @@ private:
 	MapObject*** m_VisibleObjectArray;	// 2D array of pointers to mapobjects visible
 	Map* m_ActiveMap;					// Active map pointer
 	RoomManager* m_RoomManager;
-	std::vector<MapObject*> m_LoadedMapObjects;
+	std::vector<Map*> m_LoadedMaps;
+	std::map<std::pair<int, int>, Map*> m_CoordinateMaps;
+	std::vector<Map*> m_GeneratingMaps;	// Holds maps that need to be linked in the coordinate map structure
 
-	void LoadMapObjects();		// This will load the inview map objects
-	void LoadDefaultMapObjects();
+	void SetLink(Map* NewMap);
+	void GenerateNeighbors();
+	void GenerateNeighbor(std::string MapType, MapDirection ActiveMapDir, MapDirection NewMapDir, MapCoordinate NewMapCoord);
+	void HandleInput();
+	void CheckGeneratingMaps();
 
 	MapManager();
 

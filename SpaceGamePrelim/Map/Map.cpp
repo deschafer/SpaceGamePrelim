@@ -32,6 +32,7 @@ static const int ColumnWidth5 = 14;
 static const int ColumnSeparatorMax = 3;
 static const int ColumnSeparatorMin = 1;
 static const int ComparisonSideWidth = 6;
+static const int NeighMapCount = 8;
 
 using namespace std;
 using namespace std::chrono;
@@ -45,6 +46,7 @@ const static string Default = "Wall";
 const static string WallTopGroup = "Wall_Top";
 const static string FloorGroup = "Floors";
 
+
 Map::Map()
 {
 }
@@ -57,7 +59,9 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 	m_Width(Width),
 	m_Height(Height),
 	m_MapType(MapType),
-	m_MapCoordinates(Coords)
+	m_MapCoordinates(Coords),
+	m_NeighborMapsSize(NeighMapCount),
+	m_Generated(false)
 {
 	// Generating the array for this map
 	m_Cells = new MapObject**[m_Height];
@@ -78,6 +82,10 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 		}
 	}
 
+	for (size_t i = 0; i < NeighMapCount; i++)
+	{
+		m_NeighboringMaps[i] = nullptr;
+	}
 }
 
 Map::~Map()
@@ -130,6 +138,9 @@ void Map::Generate()
 		Index++;
 	}
 
+	// Set this map as generated
+	m_Generated = true;
+	
 #ifdef _DEBUG
 	// Preformance based -- not in final version
 	high_resolution_clock::time_point t2 = high_resolution_clock::now();
@@ -1325,7 +1336,9 @@ void Map::FindCandidateSidePositions(MapRoom* RightRoom, int RightOffsetX, int R
 		);
 
 	#ifdef DEBUG_CORRIDOR_HORIZ
-		//cout << "Room -- " << RightRoom->GetRoomType() << " Connected to " << LeftRoom->GetRoomType() << " with distance between " << abs(RightRoomXPos - LeftRoomXPos) << endl;
+		//cout << "Room -- " << RightRoom->GetRoomType() << " Connected to " << LeftRoom->GetRoomType() << " with distance between " << abs(RightRoomXPos - 
+		
+		LeftRoomXPos) << endl;
 		m_Cells[RightRoomPoint.GetPositionX()][RightRoomPoint.GetPositionY()] = new MapWall(Textures, MapCoordinate(RightRoomPoint), Cell::Floor);
 	#endif // DEBUG_CORRIDOR_HORIZ
 	}
@@ -1340,3 +1353,36 @@ void Map::FindCandidateSidePositions(MapRoom* RightRoom, int RightOffsetX, int R
 	#endif // DEBUG_CORRIDOR_HORIZ
 }
 
+//
+// GetColumn()
+// Returns the indicate column of cells if it is within the bounds,
+// otherwise it returns nullptr
+//
+MapObject** Map::GetColumn(int ZeroIndexedColumn)
+{
+	if (ZeroIndexedColumn < m_Width && ZeroIndexedColumn >= 0)
+	{
+		return m_Cells[ZeroIndexedColumn];
+	}
+	else return nullptr;
+}
+
+//
+// GetRow()
+// Gets the corresponding indexed row if its exists
+//
+MapObject** Map::GetRow(int ZeroIndexedRow)
+{
+	if (ZeroIndexedRow < m_Height && ZeroIndexedRow >= 0)
+	{
+		// Create an array
+		MapObject** TempArray = new MapObject*[m_Width];
+		// Get each of the cells in this column
+		for (size_t i = 0; i < m_Width; i++)
+		{
+			TempArray[i] = m_Cells[i][ZeroIndexedRow];
+		}
+		return TempArray;
+	}
+	else return nullptr;
+}

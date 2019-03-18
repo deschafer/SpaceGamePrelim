@@ -4,8 +4,9 @@
 
 #include <iostream>
 #include <ctime>
-
 #include <map>
+
+using namespace std;
 
 static const int CellWidthSrc = 32;
 static const int CellHeightSrc = 32;
@@ -13,9 +14,29 @@ static const int MapSizeW = 100;
 static const int MapSizeH = 100;
 static const int MapMovementModulo = 1;
 
-using namespace std;
+static const string DefaultMapStr = "Default";
+
+static int ThreadGenerateMap(void* Mem);
+
+typedef std::pair<int, int> Coord;
 
 MapManager* MapManager::m_Instance = nullptr;
+
+//
+// ThreadGenerateMap()
+// Thead handler used for each map generation thread to generate its given map
+//
+static int ThreadGenerateMap(void* Mem)
+{
+	if (Mem == nullptr) return -1;
+	// Convert the memory to its map form
+	Map* GenMap = static_cast<Map*>(Mem);
+
+	// Then proceed to generate it
+	GenMap->Generate();
+
+	return EXIT_SUCCESS;
+}
 
 MapManager::MapManager() :
 	m_ActiveWndHeight(0),
@@ -34,6 +55,10 @@ MapManager::MapManager() :
 	m_RoomManager = RoomManager::Instance();
 	m_ActiveWndHeight = MainApplication::Instance()->GetWndHeight();
 	m_ActiveWndWidth = MainApplication::Instance()->GetWndWidth();
+
+	m_CoordinateMaps[pair<int, int>(0, 0)] = m_ActiveMap;
+
+	m_LoadedMaps.push_back(m_ActiveMap);
 
 	// Getting a count of rows and columns
 	m_Rows = MapSizeH;		// Get a count of columns
@@ -66,7 +91,6 @@ MapManager::~MapManager()
 // Draws all of the visible cells onto the screen
 // part of update loop
 //
-
 void MapManager::Draw()
 {
 
@@ -87,60 +111,34 @@ void MapManager::Draw()
 			}
 		}
 	}
-
 }
 
+//
+//
+//
+//
 void MapManager::Update()
 {
-	static int Up = true;
-	static int Down = true;
-	static int Left = true;
-	static int Right = true;
-
-	// Checks for user input
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_DOWN))// && !Down)
+	// Checks if the current map has no neighbooring maps
+	// If it is not completely surrounded, generate new maps
+	if (!m_ActiveMap->IsSurrounded())
 	{
-
-		//if (m_OffsetY - 1 >= 0 && !m_ActOffsetY) m_OffsetY--;
-		//else if (m_ActOffsetY != MapSizeH) m_ActOffsetY++;
-		m_PixelOffsetY -= 8;
-
-		Up++;
+		GenerateNeighbors();
 	}
-	//else ++Up %= MapMovementModulo;
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_UP))// && !Up)
+
+	// Check if all of the newly generated maps are done
+	if (!m_GeneratingMaps.empty())
 	{
-		
-
-		//if (m_OffsetY + 1 < m_Rows && !m_ActOffsetY) m_OffsetY++;
-		//else if (m_ActOffsetY) m_ActOffsetY--;
-
-
-		m_PixelOffsetY += 8;
-
-		Down++;
+		CheckGeneratingMaps();
 	}
-	//else ++Down %= MapMovementModulo;
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_LEFT))// && !Left)
-	{
-		//if (m_OffsetX - 1 >= 0 && !m_ActOffsetX) m_OffsetX--;
-		//else if(m_ActOffsetX != MapSizeW) m_ActOffsetX++;
-		//Left++;
 
-		m_PixelOffsetX += 8;
+	HandleInput();
 
-	}
-	//else ++Left %= MapMovementModulo;
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_RIGHT))// && !Right)
-	{
-	//	if (m_OffsetX + 1 < m_Columns && !m_ActOffsetX) m_OffsetX++;
-	//	else if (m_ActOffsetX) m_ActOffsetX--;
-	//	Right++;
+	// If there are portions on the screen not for the active map,
+	// Then get those cells, and add those to the active object array
+	
+	// Once the current map has less displayed than another map, that one becomes the active map
 
-		m_PixelOffsetX -= 8;
-
-	}
-	//else ++Right %= MapMovementModulo;
 
 	// Getting the new cells for the offset
 	// If there is an X offset
@@ -184,17 +182,14 @@ void MapManager::Update()
 			}
 		}
 	}
-
-	
 }
 
 //
 // DrawGrid()
-// This is a temporary function, its status is currently being reevaluated
+// Draws a debug grid following the cell widths and heights
 //
 void MapManager::DrawGrid()
 {
-	
 	int OldR, OldG, OldB, OldA;
 	SDL_Renderer* renderer = MainApplication::Instance()->GetRenderer();
 
@@ -209,7 +204,6 @@ void MapManager::DrawGrid()
 		SDL_RenderDrawLine(renderer, 0, (i + 1) * m_CellHeight, m_ActiveWndWidth, (i + 1) * m_CellHeight);
 
 	}
-
 	// Drawing vertical lines
 	for (int i = 0; i < m_Columns; i++)
 	{
@@ -231,29 +225,6 @@ void MapManager::DrawGrid()
 	SDL_SetRenderDrawColor(renderer, OldR, OldG, OldB, OldA);
 }
 
-
-
-//
-//
-// This will load the inview map objects
-//
-void MapManager::LoadMapObjects()
-{
-
-	
-
-}
-
-//
-//
-//
-//
-void MapManager::LoadDefaultMapObjects()
-{
-
-
-}
-
 //
 // ResetMap()
 // Redraws the current map, currently 
@@ -263,4 +234,197 @@ void MapManager::ResetMap()
 {
 	m_ActiveMap = new Map("Default", 100, 100, MapCoordinate(0, 0));
 	m_ActiveMap->Generate();
+}
+
+//
+//
+//
+//
+void MapManager::SetLink(Map* NewMap)
+{
+
+	MapCoordinate Coor = NewMap->GetCoordinate();
+	Map* Test = nullptr;
+	// Check all surrounding cells in the map for neighbors
+
+	// Check north
+	if (Test = m_CoordinateMaps[Coord(Coor.GetPositionX(), Coor.GetPositionY() + 1)])
+	{
+		// Set the link between the two maps
+		NewMap->SetLink(MapDirection::North, Test);
+		Test->SetLink(MapDirection::South, NewMap);
+	}
+	// Checks northeast
+	if (Test = m_CoordinateMaps[Coord(Coor.GetPositionX() + 1, Coor.GetPositionY() + 1)])
+	{
+		// Set the link between the two maps
+		NewMap->SetLink(MapDirection::Northeast, Test);
+		Test->SetLink(MapDirection::Southwest, NewMap);
+	}
+	// Checks East
+	if (Test = m_CoordinateMaps[Coord(Coor.GetPositionX() + 1, Coor.GetPositionY())])
+	{
+		// Set the link between the two maps
+		NewMap->SetLink(MapDirection::East, Test);
+		Test->SetLink(MapDirection::West, NewMap);
+	}
+	// Checks southeast
+	if (Test = m_CoordinateMaps[Coord(Coor.GetPositionX() + 1, Coor.GetPositionY() - 1)])
+	{
+		// Set the link between the two maps
+		NewMap->SetLink(MapDirection::Southeast, Test);
+		Test->SetLink(MapDirection::Northwest, NewMap);
+	}
+	// Checks south
+	if (Test = m_CoordinateMaps[Coord(Coor.GetPositionX(), Coor.GetPositionY() - 1)])
+	{
+		// Set the link between the two maps
+		NewMap->SetLink(MapDirection::South, Test);
+		Test->SetLink(MapDirection::North, NewMap);
+	}
+	// Checks southwest
+	if (Test = m_CoordinateMaps[Coord(Coor.GetPositionX() - 1, Coor.GetPositionY() - 1)])
+	{
+		// Set the link between the two maps
+		NewMap->SetLink(MapDirection::Southwest, Test);
+		Test->SetLink(MapDirection::Northeast, NewMap);
+	}
+	// Checks west
+	if (Test = m_CoordinateMaps[Coord(Coor.GetPositionX() - 1, Coor.GetPositionY())])
+	{
+		// Set the link between the two maps
+		NewMap->SetLink(MapDirection::West, Test);
+		Test->SetLink(MapDirection::East, NewMap);
+	}
+	// Checks northwest
+	if (Test = m_CoordinateMaps[Coord(Coor.GetPositionX() - 1, Coor.GetPositionY() + 1)])
+	{
+		// Set the link between the two maps
+		NewMap->SetLink(MapDirection::Northwest, Test);
+		Test->SetLink(MapDirection::Southeast, NewMap);
+	}
+
+}
+
+//
+// GenerateNeighbors()
+// Checks all of the surrounding sides of the map and generates them if needed
+//
+void MapManager::GenerateNeighbors()
+{
+	int CurrentX = m_ActiveMap->GetCoordinate().GetPositionX();
+	int CurrentY = m_ActiveMap->GetCoordinate().GetPositionY();
+
+	// Check every direction, and generate the map for each
+	if (!m_ActiveMap->CheckLink(MapDirection::North))
+	{
+		GenerateNeighbor(DefaultMapStr, MapDirection::North, MapDirection::South, MapCoordinate(CurrentX, CurrentY + 1));
+	}
+	if (!m_ActiveMap->CheckLink(MapDirection::Northeast))
+	{
+		GenerateNeighbor(DefaultMapStr, MapDirection::Northeast, MapDirection::Southwest, MapCoordinate(CurrentX + 1, CurrentY + 1));
+	}
+	if (!m_ActiveMap->CheckLink(MapDirection::East))
+	{
+		GenerateNeighbor(DefaultMapStr, MapDirection::East, MapDirection::West, MapCoordinate(CurrentX + 1, CurrentY));
+	}
+	if (!m_ActiveMap->CheckLink(MapDirection::Southeast))
+	{
+		GenerateNeighbor(DefaultMapStr, MapDirection::Southeast, MapDirection::Northwest, MapCoordinate(CurrentX + 1, CurrentY - 1));
+	}
+	if (!m_ActiveMap->CheckLink(MapDirection::South))
+	{
+		GenerateNeighbor(DefaultMapStr, MapDirection::South, MapDirection::North, MapCoordinate(CurrentX, CurrentY - 1));
+	}
+	if (!m_ActiveMap->CheckLink(MapDirection::Southwest))
+	{
+		GenerateNeighbor(DefaultMapStr, MapDirection::Southwest, MapDirection::Northeast, MapCoordinate(CurrentX - 1, CurrentY - 1));
+	}
+	if (!m_ActiveMap->CheckLink(MapDirection::West))
+	{
+		GenerateNeighbor(DefaultMapStr, MapDirection::West, MapDirection::East, MapCoordinate(CurrentX - 1, CurrentY));
+	}
+	if (!m_ActiveMap->CheckLink(MapDirection::Northwest))
+	{
+		GenerateNeighbor(DefaultMapStr, MapDirection::Northwest, MapDirection::Southeast, MapCoordinate(CurrentX - 1, CurrentY + 1));
+	}
+}
+
+//
+// GenerateNeighbor()
+// Creates the new map, sets the appropriate links, and creates the thread to 
+// generate the new map
+//
+void MapManager::GenerateNeighbor(std::string MapType, MapDirection ActiveMapDir, MapDirection NewMapDir, MapCoordinate NewMapCoord)
+{
+	// Create the new map
+	Map* NewMap = new Map(MapType, MapSizeW, MapSizeH, NewMapCoord);
+
+	// Set the link from the active map to this map
+	// so we do not generate this map again in this place for the activemap
+	m_ActiveMap->SetLink(ActiveMapDir, NewMap);
+	NewMap->SetLink(NewMapDir, m_ActiveMap);
+
+	// Then save it into the map
+	m_CoordinateMaps[Coord(NewMapCoord.GetPositionX(), NewMapCoord.GetPositionY())] = NewMap;
+
+	// Add this map to the queue to be linked
+	m_GeneratingMaps.push_back(NewMap);
+
+	// Create a new thread to generate this new map
+	SDL_Thread *Thread = SDL_CreateThread(ThreadGenerateMap, "MapGenThread", NewMap);
+}
+
+//
+// CheckGeneratingMaps()
+// Checks the multithreaded map generation to see if all of the maps have been made.
+// If all of the maps are generated, then we can link them all together without
+// any need for multithreaded mut. exclusion
+//
+void MapManager::CheckGeneratingMaps()
+{
+	bool Generated = true;
+	for (size_t i = 0; i < m_GeneratingMaps.size(); i++)
+	{
+		if (!m_GeneratingMaps[i]->IsGenerated())
+		{
+			Generated = false;
+			break;
+		}
+	}
+	// If they are all complete, then we add their links
+	if (Generated)
+	{
+		for (size_t i = 0; i < m_GeneratingMaps.size(); i++)
+		{
+			SetLink(m_GeneratingMaps[i]);
+		}
+		m_GeneratingMaps.clear();
+	}
+}
+
+//
+// HandleInput()
+//
+//
+void MapManager::HandleInput()
+{
+	// Checks for user input
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_DOWN))// && !Down)
+	{
+		m_PixelOffsetY -= 8;
+	}
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_UP))// && !Up)
+	{
+		m_PixelOffsetY += 8;
+	}
+
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_LEFT))// && !Left)
+	{
+		m_PixelOffsetX += 8;
+	}
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_RIGHT))// && !Right)
+	{
+		m_PixelOffsetX -= 8;
+	}
 }
