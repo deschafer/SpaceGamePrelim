@@ -157,15 +157,6 @@ MapObject* MapRoom::GetCell(int X, int Y)
 //
 void MapRoom::Generate()
 {
-	
-	// Preformance testing only
-	static int enter = 0;
-	// This label is just for preformance testing only, and will not be in the final version
-top:
-	// Preformance testing only
-	enter++;
-	high_resolution_clock::time_point t1 = high_resolution_clock::now();
-
 	RoomProperties* Properties = m_Properties;
 
 	// Check if the definition was found prior to generating
@@ -977,7 +968,6 @@ top:
 	// Now the next step, drawing in the set sides. This goes through the side vector, and draws them 
 	// with their desired length and in the direction indicated by the turns vector.
 
-	int CurrentSideLength;
 	MapCoordinate CandidateStart;
 	MapCoordinate CandidateEnd;
 
@@ -1324,15 +1314,15 @@ void Reflect(MapObject*** &Cells, int Width, int Height)
 	
 	MapObject** Temporary = new MapObject*[Width];
 
-	for (size_t y = 0; y < Height; y++)
+	for (int y = 0; y < Height; y++)
 	{
 
-		for (size_t i = 0; i < Width; i++)
+		for (int i = 0; i < Width; i++)
 		{
 			Temporary[i] = Cells[i][y];
 		}
 
-		for (size_t xBeg = 0, xEnd = (Width - 1); (xBeg < Width) && (xEnd >= 0); xBeg++, xEnd--)
+		for (int xBeg = 0, xEnd = (Width - 1); (xBeg < Width) && (xEnd >= 0); xBeg++, xEnd--)
 		{
 			temp = Cells[xBeg][y];
 			Cells[xBeg][y] = Temporary[xEnd];

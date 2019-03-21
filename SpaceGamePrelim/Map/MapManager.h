@@ -20,16 +20,28 @@ class MapManager
 private:
 	int m_ActiveWndWidth;
 	int m_ActiveWndHeight;
+	int m_VisibleRows;
+	int m_VisibleColumns;
+	int m_VisibleColumnsWithoutBuffer;
+	int m_VisibleRowsWithoutBuffer;
 	int m_Rows;
 	int m_Columns;
 	int m_CellWidth;
 	int m_CellHeight;
 	int m_OffsetX;		
 	int m_OffsetY;		
+	int m_MapOffsetX;
+	int m_MapOffsetY;
 	int m_ActOffsetX;
 	int m_ActOffsetY;
 	int m_PixelOffsetY;
 	int m_PixelOffsetX;
+
+	bool m_MovementLeft;
+	bool m_MovementRight;
+	bool m_MovementNorth;
+	bool m_MovementSouth;
+
 
 	bool m_Init;
 
@@ -47,6 +59,7 @@ private:
 	void GenerateNeighbor(std::string MapType, MapDirection ActiveMapDir, MapDirection NewMapDir, MapCoordinate NewMapCoord);
 	void HandleInput();
 	void CheckGeneratingMaps();
+	void CullMap();
 
 	MapManager();
 

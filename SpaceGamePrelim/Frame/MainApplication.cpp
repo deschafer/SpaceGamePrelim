@@ -58,7 +58,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 		if (g_pWindow != 0)
 		{
 			std::cout << "Window creation success\n";
-			g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, SDL_RENDERER_ACCELERATED);
+			g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 			if (g_pRenderer != nullptr) // renderer init success
 			{

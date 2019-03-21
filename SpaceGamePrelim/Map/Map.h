@@ -66,7 +66,7 @@ public:
 	MapObject*** GetCellArray() { return m_Cells; }
 	int GetHeight() { return m_Height; }
 	int GetWidth() { return m_Width; }
-	bool IsSurrounded() { for (size_t i = 0; i < m_NeighborMapsSize; i++) if (!m_NeighboringMaps[i]) return false; return true; }
+	bool IsSurrounded() { for (int i = 0; i < m_NeighborMapsSize; i++) if (!m_NeighboringMaps[i]) return false; return true; }
 	bool IsGenerated() { return m_Generated; }
 	bool CheckLink(MapDirection Direction) { return m_NeighboringMaps[static_cast<int>(Direction)] ? true : false; }
 
@@ -74,6 +74,7 @@ public:
 
 	MapObject** GetColumn(int ZeroIndexedColumn);
 	MapObject** GetRow(int ZeroIndexedRow);
+	Map* GetNeighbor(MapDirection Direction) { return m_NeighboringMaps[static_cast<int>(Direction)]; }
 
 	MapCoordinate GetCoordinate() { return m_MapCoordinates; }
 
