@@ -64,6 +64,7 @@ public:
 
 	MapObject* GetCell(int X, int Y);
 	MapObject*** GetCellArray() { return m_Cells; }
+	MapObject**** GetCellArrayAddress() { return &m_Cells; }
 	int GetHeight() { return m_Height; }
 	int GetWidth() { return m_Width; }
 	bool IsSurrounded() { for (int i = 0; i < m_NeighborMapsSize; i++) if (!m_NeighboringMaps[i]) return false; return true; }

@@ -1,14 +1,15 @@
 
 #include "MapManager.h"
 #include "..\Frame\MainApplication.h"
+#include "MapInactive.h"
 
 #include <iostream>
 #include <ctime>
 #include <map>
 #include <chrono>
 
-//#define Windows		// Usage of windows threads
-#define CrossPlatform
+#define Windows		// Usage of windows threads
+//#define CrossPlatform
 
 #ifdef Windows
 #include <Windows.h>
@@ -21,9 +22,11 @@ static const int CellWidthSrc = 32;
 static const int CellHeightSrc = 32;
 static const int MapSizeW = 100;
 static const int MapSizeH = 100;
-static const int HorizontalMovementSpeed = 8;
+static const int HorizontalMovementSpeed = 16;
+static const int VerticalMovementSpeed = 16;
 static const int VisibleHorizonBufferSize = 2;
 static const int VisibleVerticalBufferSize = 2;
+static const int CenterMapArrayIndex = 8;
 
 static const string DefaultMapStr = "Default";
 
@@ -33,6 +36,7 @@ MapManager* MapManager::m_Instance = nullptr;
 
 void ShiftAllArrayCellsLeft(MapObject*** Array, int X, int Y);
 void ShiftAllArrayCellsRight(MapObject*** Array, int X, int Y);
+pair<int, int> GetMapOffsets(MapDirection Direction);
 
 // User-level threads that work for all platforms
 #ifdef CrossPlatform
@@ -72,11 +76,23 @@ static int ThreadGenerateMap(void* Mem)
 
 DWORD WINAPI ThreadGenerateMap(LPVOID lpParam)
 {
+
+	// Time seed generation
+	auto now = std::chrono::system_clock::now();
+	auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+	auto value = now_ms.time_since_epoch();
+	long duration = value.count();
+
+	std::chrono::milliseconds dur(duration);
+	std::chrono::time_point<std::chrono::system_clock> dt(dur);
+
+	srand(duration);
+
 	if (!lpParam)
 	{
-	#ifdef _DEBUG
+#ifdef _DEBUG
 		cout << "Memory passed in was nullptr" << endl;
-	#endif // _DEBUG
+#endif // _DEBUG
 		return -1;
 	}
 	Map* NewMap = static_cast<Map*>(lpParam);
@@ -109,22 +125,72 @@ void ShiftAllArrayCellsRight(MapObject*** Array, int X, int Y)
 	Array[0] = nullptr;
 }
 
+bool SearchVector(vector <pair<MapDirection, bool>> MapDirections, MapDirection SearchQuery)
+{
+	for (size_t i = 0; i < MapDirections.size(); i++)
+	{
+		if (MapDirections[i].first == SearchQuery)
+		{
+			MapDirections[i].second = false;
+			return true;
+		}
+	}
+	return false;
+}
+
+pair<int, int> GetMapOffsets(MapDirection Direction)
+{
+	typedef pair<int, int> Pair;
+
+	switch (Direction)
+	{
+	case MapDirection::North:
+		return Pair(0, MapSizeH);
+		break;
+	case MapDirection::Northeast:
+		return Pair(MapSizeW, MapSizeH);
+		break;
+	case MapDirection::East:
+		return Pair(MapSizeW, 0);
+		break;
+	case MapDirection::Southeast:
+		return Pair(MapSizeW, -MapSizeH);
+		break;
+	case MapDirection::South:
+		return Pair(0, -MapSizeH);
+		break;
+	case MapDirection::Southwest:
+		return Pair(-MapSizeW, -MapSizeH);
+		break;
+	case MapDirection::West:
+		return Pair(-MapSizeW, 0);
+		break;
+	case MapDirection::Northwest:
+		return Pair(-MapSizeW, MapSizeH);
+		break;
+	default:
+		break;
+	}
+	return pair<int, int>(0, 0);
+}
+
 MapManager::MapManager() :
 	m_ActiveWndHeight(0),
 	m_ActiveWndWidth(0),
 	m_CellHeight(CellWidthSrc),
 	m_CellWidth(CellHeightSrc),
 	m_Init(true),
+	m_MapNeedsSwapping(false),
+	m_MapsAreGenerating(false),
+	m_HorizMovementSwapped(false),
+	m_VertiMovementSwapped(false),
 	m_OffsetX(0),
 	m_OffsetY(0),
-	m_MapOffsetX(0),
-	m_MapOffsetY(0),
-	m_ActOffsetX(0),
-	m_ActOffsetY(0),
+	m_PixelOffsetX(0),
 	m_PixelOffsetY(0),
 	m_ActiveMap(new Map("Default", MapSizeW, MapSizeH, MapCoordinate(0, 0)))
 {
-	
+
 	m_RoomManager = RoomManager::Instance();
 	m_ActiveWndHeight = MainApplication::Instance()->GetWndHeight();
 	m_ActiveWndWidth = MainApplication::Instance()->GetWndWidth();
@@ -137,18 +203,16 @@ MapManager::MapManager() :
 	m_Rows = MapSizeH;		// Get a count of columns
 	m_Columns = MapSizeW;		// Get a count of rows
 
-	// Visible object array is the cells that fill the screen
-	// and is therefore the appropriate size of the screen, plus a buffer of 2 cells
-	// on for all the sides.
+								// Visible object array is the cells that fill the screen
+								// and is therefore the appropriate size of the screen, plus a buffer of 2 cells
+								// on for all the sides.
 
 	int ResolutionX = MainApplication::Instance()->GetWndWidth();
 	int ResolutionY = MainApplication::Instance()->GetWndHeight();
 
-	
-	m_VisibleColumns = ceil(static_cast<float>(ResolutionX / m_CellWidth));// + VisibleHorizonBufferSize;
-	m_VisibleRows = ceil(static_cast<float>(ResolutionY / m_CellHeight));// +VisibleVerticalBufferSize;
-	m_VisibleColumnsWithoutBuffer = m_VisibleColumns;// -VisibleHorizonBufferSize;
-	m_VisibleRowsWithoutBuffer = m_VisibleRows;// -VisibleVerticalBufferSize;
+
+	m_VisibleColumns = 1000;
+	m_VisibleRows = 1000;
 
 	m_VisibleObjectArray = new MapObject**[m_VisibleColumns];
 	for (int i = 0; i < m_VisibleColumns; i++)
@@ -167,13 +231,33 @@ MapManager::MapManager() :
 	m_Instance = this;
 	m_ActiveMap->Generate();
 
+	// Loading the first map
 	for (int i = 0; i < m_VisibleColumns; i++)
 	{
 		for (int j = 0; j < m_VisibleRows; j++)
 		{
-			m_VisibleObjectArray[i][j] = m_ActiveMap->GetCell(i,j);
+			m_VisibleObjectArray[i][j] = m_ActiveMap->GetCell(i, j);
 		}
 	}
+	// However, to surrounding maps need to be loaded into the array
+	// So we set this to be accomplished when possible
+	m_MapNeedsSwapping = true;
+
+	// Add the indices for the VisibleMapCells
+	m_VisibleMapCells.push_back(nullptr);
+	m_VisibleMapCells.push_back(nullptr);
+	m_VisibleMapCells.push_back(nullptr);
+	m_VisibleMapCells.push_back(nullptr);
+	m_VisibleMapCells.push_back(nullptr);
+	m_VisibleMapCells.push_back(nullptr);
+	m_VisibleMapCells.push_back(nullptr);
+	m_VisibleMapCells.push_back(nullptr);
+	m_VisibleMapCells.push_back(nullptr);
+
+	m_VisibleMapCells[CenterMapArrayIndex] = m_ActiveMap->GetCellArrayAddress();
+
+	int run = 0;
+
 }
 
 MapManager::~MapManager()
@@ -187,18 +271,72 @@ MapManager::~MapManager()
 //
 void MapManager::Draw()
 {
+	MapObject* Object;
+	int MapPositionOffsetX = 0;
+	int MapPositionOffsetY = 0;
+	pair<int, int> Pair;
 
-	for (int i = 0; i < m_VisibleColumns; i++)
+	for (size_t CurrentMap = 0; CurrentMap < m_VisibleMapCells.size(); CurrentMap++)
 	{
-		for (int j = 0; j < m_VisibleRows; j++)
+		// Get the actual array of cells
+
+		if (m_VisibleMapCells[CurrentMap])
 		{
-			if (m_VisibleObjectArray[i][j] != nullptr)
+			m_VisibleObjectArray = *m_VisibleMapCells[CurrentMap];
+
+			// Then get the approp. offsets for these cells
+			if (CurrentMap != CenterMapArrayIndex)
 			{
-				m_VisibleObjectArray[i][j]->Draw(MapCoordinate((i)* m_CellWidth + m_PixelOffsetX, (j)* m_CellHeight));
+				Pair = GetMapOffsets(static_cast<MapDirection>(CurrentMap));
+				MapPositionOffsetX = Pair.first;
+				MapPositionOffsetY = Pair.second;
+			}
+			else
+			{
+				MapPositionOffsetX = 0;
+				MapPositionOffsetY = 0;
+			}
+			
+
+			for (int i = 0; i < MapSizeW; i++)
+			{
+				for (int j = 0; j < MapSizeH; j++)
+				{
+
+					
+					
+					Object = m_VisibleObjectArray[i][j];
+
+					int PositionX = (i)* m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
+					int PositionY = (j)* m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+
+					/*
+					if (CurrentMap == CenterMapArrayIndex &&
+						PositionX + m_CellWidth >= 0 &&
+						PositionX < m_ActiveWndWidth &&
+						PositionY + m_CellHeight >= 0 &&
+						PositionY < m_ActiveWndHeight && (rand() % 30 == 0))
+					{
+						vector<string> tes;
+						tes.push_back("Explosion");
+						MapInactive Cell(tes, MapCoordinate(PositionX, PositionY), Cell::Default);
+						Cell.Draw(MapCoordinate(PositionX, PositionY));
+
+					}
+
+					else */
+					if (Object &&
+						PositionX + m_CellWidth >= 0 &&
+						PositionX < m_ActiveWndWidth &&
+						PositionY + m_CellHeight >= 0 &&
+						PositionY < m_ActiveWndHeight)
+					{
+						Object->Draw(MapCoordinate(PositionX, PositionY));
+					}
+				}
 			}
 		}
 	}
-
 	//DrawGrid();
 }
 
@@ -221,23 +359,26 @@ void MapManager::Update()
 		CheckGeneratingMaps();
 	}
 
-	HandleInput();
+	// If all maps are complete and the map needs swapped
+	if (!m_MapsAreGenerating && m_MapNeedsSwapping)
+	{
+		MoveMap();
+	}
 
 	CullMap();
-
-
-	// If there are portions on the screen not for the active map,
-	// Then get those cells, and add those to the active object array
 	
-	// Once the current map has less displayed than another map, that one becomes the active map
 
+	// Gets input from the user
+	HandleInput();
+
+	// Centers the map around current center map
 
 
 
 	// Get all of our active map cells
-	for (int i = 0, MapI = 0; i < m_VisibleColumns; i++, MapI++)
+	for (int i = 0, MapI = 0; i < MapSizeW; i++, MapI++)
 	{
-		for (int j = 0, MapJ = 0; j < m_VisibleRows; j++, MapJ++)
+		for (int j = 0, MapJ = 0; j < MapSizeH; j++, MapJ++)
 		{
 			if (m_VisibleObjectArray[i][j] != nullptr)
 			{
@@ -245,8 +386,6 @@ void MapManager::Update()
 			}
 		}
 	}
-
-
 }
 
 //
@@ -265,7 +404,7 @@ void MapManager::DrawGrid()
 	// Drawing horizontal lines
 	for (int i = 0; i < m_Rows; i++)
 	{
-	
+
 		SDL_RenderDrawLine(renderer, 0, (i + 1) * m_CellHeight, m_ActiveWndWidth, (i + 1) * m_CellHeight);
 
 	}
@@ -411,6 +550,8 @@ void MapManager::GenerateNeighbors()
 	{
 		GenerateNeighbor(DefaultMapStr, MapDirection::Northwest, MapDirection::Southeast, MapCoordinate(CurrentX - 1, CurrentY + 1));
 	}
+
+	m_MapsAreGenerating = true;
 }
 
 //
@@ -476,6 +617,7 @@ void MapManager::CheckGeneratingMaps()
 			SetLink(m_GeneratingMaps[i]);
 		}
 		m_GeneratingMaps.clear();
+		m_MapsAreGenerating = false;
 	}
 }
 
@@ -486,53 +628,113 @@ void MapManager::CheckGeneratingMaps()
 void MapManager::HandleInput()
 {
 	// Checks for user input
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_DOWN))// && !Down)
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_DOWN) &&
+		!InputManager::Instance()->IsKeyDown(SDL_SCANCODE_UP))
 	{
-		m_PixelOffsetY -= 8;
-		//m_MapOffsetY--;
-	}
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_UP))// && !Up)
-	{
-		m_PixelOffsetY += 8;
-		//m_MapOffsetY++;
-	}
-
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_LEFT))// && !Left)
-	{
-		static int test = 0;
-
-		if (m_PixelOffsetX == m_CellWidth)
-		//{
-		//if (++test % 10 == 0)
+		if (m_PixelOffsetY % m_CellHeight == 0)
 		{
-
-
-			m_PixelOffsetX = 0;
-			m_MapOffsetX--;
+			m_MovementSouth = true;
+		}
+		m_PixelOffsetY -= VerticalMovementSpeed;
+	}
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_UP) &&
+		!InputManager::Instance()->IsKeyDown(SDL_SCANCODE_DOWN))
+	{
+		if (m_PixelOffsetY % m_CellHeight == 0)
+		{
+			m_MovementNorth = true;
+		}
+		m_PixelOffsetY += VerticalMovementSpeed;
+	}
+	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_LEFT) && 
+		!InputManager::Instance()->IsKeyDown(SDL_SCANCODE_RIGHT))
+	{
+		if (m_PixelOffsetX % m_CellWidth == 0)
+		{
 			m_MovementLeft = true;
 		}
-		//}
 		m_PixelOffsetX += HorizontalMovementSpeed;
-
 	}
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_RIGHT))// && !Right)
+	else if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_RIGHT) && 
+		!InputManager::Instance()->IsKeyDown(SDL_SCANCODE_LEFT))
 	{
-		static int test = 0;
-
-
-		if (m_PixelOffsetX == -m_CellWidth)
+		if (m_PixelOffsetX % m_CellWidth == 0)
 		{
-
-		//if (++test % 10 == 0)
-		//{
-
-			m_PixelOffsetX = 0;
-			m_MapOffsetX++;
 			m_MovementRight = true;
-
-		//}
 		}
 		m_PixelOffsetX -= HorizontalMovementSpeed;
+	}
+}
+
+//
+// MoveMap()
+// Moves the map in the specified direction by the map size.
+// Note: all surrounding maps should be generated,
+// so all maps should be generated before calling
+//
+void MapManager::MoveMap()
+{
+	static bool FirstMap = true;
+
+	// Set all of the surrounding maps to there approp. positions in
+	// reference to the newly set active/center map
+	m_VisibleMapCells[(int)MapDirection::North] = m_ActiveMap->GetNeighbor(MapDirection::North)->GetCellArrayAddress();
+	m_VisibleMapCells[(int)MapDirection::Northeast] = m_ActiveMap->GetNeighbor(MapDirection::Northeast)->GetCellArrayAddress();
+	m_VisibleMapCells[(int)MapDirection::East] = m_ActiveMap->GetNeighbor(MapDirection::East)->GetCellArrayAddress();
+	m_VisibleMapCells[(int)MapDirection::Southeast] = m_ActiveMap->GetNeighbor(MapDirection::Southeast)->GetCellArrayAddress();
+	m_VisibleMapCells[(int)MapDirection::South] = m_ActiveMap->GetNeighbor(MapDirection::South)->GetCellArrayAddress();
+	m_VisibleMapCells[(int)MapDirection::Southwest] = m_ActiveMap->GetNeighbor(MapDirection::Southwest)->GetCellArrayAddress();
+	m_VisibleMapCells[(int)MapDirection::West] = m_ActiveMap->GetNeighbor(MapDirection::West)->GetCellArrayAddress();
+	m_VisibleMapCells[(int)MapDirection::Northwest] = m_ActiveMap->GetNeighbor(MapDirection::Northwest)->GetCellArrayAddress();
+	// Finally set the cells for the new active map
+	m_VisibleMapCells[CenterMapArrayIndex] = m_ActiveMap->GetCellArrayAddress();;
+
+	// Map no longer needs swapping
+	m_MapNeedsSwapping = false;
+
+	// Reset the positions
+	if (!FirstMap)
+	{
+		if (m_HorizMovementSwapped)
+		{
+			if (abs(m_PixelOffsetX) >= (MapSizeW * m_CellWidth))
+			{
+				m_PixelOffsetX %= (MapSizeW * m_CellWidth);
+			}
+			else if (m_PixelOffsetX < 0)
+			{
+				m_PixelOffsetX = (MapSizeW * m_CellWidth) + m_PixelOffsetX;
+			}
+			else if (m_PixelOffsetX > 0)
+			{
+				m_PixelOffsetX = -(MapSizeW * m_CellWidth) + m_PixelOffsetX;
+			}
+			m_OffsetX = -m_PixelOffsetX / m_CellWidth;
+
+			m_HorizMovementSwapped = false;
+		}
+		if (m_VertiMovementSwapped)
+		{
+			if (abs(m_PixelOffsetY) >= (MapSizeH * m_CellHeight))
+			{
+				m_PixelOffsetY %= (MapSizeH * m_CellHeight);
+			}
+			else if (m_PixelOffsetY < 0)
+			{
+				m_PixelOffsetY = (MapSizeH * m_CellHeight) + m_PixelOffsetY;
+			}
+			else if (m_PixelOffsetY > 0)
+			{
+				m_PixelOffsetY = -(MapSizeH * m_CellHeight) + m_PixelOffsetY;
+			}
+			m_OffsetY = -m_PixelOffsetY / m_CellHeight;
+
+			m_VertiMovementSwapped = false;
+		}
+	}
+	else
+	{
+		FirstMap = false;
 	}
 }
 
@@ -549,96 +751,99 @@ void MapManager::CullMap()
 	// m_MapOffset holds the offset from the current activemap
 	// should also keep a count/offset from the origin map
 
-	// If the x offset has become negative, then we need to get a new cell
 	if (m_MovementLeft)
 	{
-		MapObject** LeftColumn;
-		Map* LeftMap = nullptr;
+		// Move to the left one position
+		m_OffsetX--;
 
-		// If the offset has become negative, we will need cells from the
-		// left map
-		if (m_MapOffsetX < 0)
+		// If the result is an integer that is a odd number
+		if (m_MapNeedsSwapping)
 		{
-			LeftMap = m_ActiveMap->GetNeighbor(MapDirection::West);
-			// If this is nullptr, which should NEVER happen, then the map is not generated and abort
-			if (!LeftMap) _DEBUG_ERROR("Neighbor map has not been generated");
-
-			LeftColumn = LeftMap->GetColumn(LeftMap->GetWidth() - 1 + m_MapOffsetX);
 		}
-		// Otherwise, just get from this map
-		else
+		else if (-m_OffsetX >= MapSizeW / 2)
 		{
-			LeftColumn = m_ActiveMap->GetColumn(m_MapOffsetX);
-			cout << "Getting cell " << m_MapOffsetX << endl;
+			// Set the active map to the map to the left
+			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::West);
 
+			// Make sure the flag is set
+			m_MapNeedsSwapping = true;
+			m_HorizMovementSwapped = true;
 		}
 
-		// Then we shift all elements of the visibleobject array to the right by one
-		ShiftAllArrayCellsRight(m_VisibleObjectArray, m_VisibleColumns, m_VisibleRows);
+		cout << "West -- X:" << m_OffsetX << " Y: " << m_OffsetY << endl;
 
-		// Then we substitute the leftmost with the new column
-		m_VisibleObjectArray[0] = LeftColumn;
-
-		// Check if this map has now become the active map
-		if (-m_MapOffsetX > (m_VisibleColumnsWithoutBuffer) / 2)
-		{
-			m_ActiveMap = LeftMap;
-			m_MapOffsetX = (MapSizeW - 1) + m_MapOffsetX;
-			cout << "Active map has been changed to the left\n";
-		}
-
-		cout << "left offset" << m_MapOffsetX << endl;
-
-		// We are done with this movement
 		m_MovementLeft = false;
-
-		// Also, check for any other maps on top or below, becuase we will need some of their cells too
 	}
-
-	// To check for right movement, see if the number of displayed cells on the screen is greater than the width of the map
-
 	if (m_MovementRight)
 	{
-		MapObject** RightColumn;
-		Map* RightMap = nullptr;
+		// Move to the left one position
+		m_OffsetX++;
 
-		// If the offset has become negative, we will need cells from the
-		// left map
-		if (m_MapOffsetX >= (m_ActiveMap->GetWidth() - m_VisibleColumnsWithoutBuffer))
+		if (m_MapNeedsSwapping)
 		{
-			RightMap = m_ActiveMap->GetNeighbor(MapDirection::East);
-			// If this is nullptr, which should NEVER happen, then the map is not generated and abort
-			if (!RightMap) _DEBUG_ERROR("Neighbor map has not been generated");
-
-			RightColumn = RightMap->GetColumn(m_MapOffsetX - (m_ActiveMap->GetWidth() - m_VisibleColumnsWithoutBuffer));
 		}
-		// Otherwise, just get from this map
-		else
+		// If the result is an integer that is a odd number
+		else if (m_OffsetX >= MapSizeW)
 		{
-			RightColumn = m_ActiveMap->GetColumn(m_MapOffsetX + m_VisibleColumnsWithoutBuffer - 1);
-			cout << "Getting cell " << m_MapOffsetX + m_VisibleColumnsWithoutBuffer << endl;
+			// Set the active map to the map to the left
+			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::East);
+
+			// Make sure the flag is set
+			m_MapNeedsSwapping = true;
+			m_HorizMovementSwapped = true;
 		}
 
-		// Then we shift all elements of the visibleobject array to the right by one
-		ShiftAllArrayCellsLeft(m_VisibleObjectArray, m_VisibleColumns, m_VisibleRows);
+		cout << "East -- X:" << m_OffsetX << " Y: " << m_OffsetY << endl;
 
-		// Then we substitute the leftmost with the new column
-		m_VisibleObjectArray[m_VisibleColumns - 1] = RightColumn;
-
-		// Check if this map has now become the active map
-		if ((m_MapOffsetX) >= (MapSizeW - 1) - (m_VisibleColumnsWithoutBuffer)/2)
-		{
-			m_ActiveMap = RightMap;
-			m_MapOffsetX = m_MapOffsetX - (MapSizeW - 1);
-			cout << "Active map has been changed to the right\n";
-		}
-
-		cout << "Right offset" << m_MapOffsetX << endl;
-
-		// We are done with this movement
 		m_MovementRight = false;
+	}
+	if (m_MovementNorth)
+	{
+		// Move to the left one position
+		m_OffsetY--;
 
-		// Also, check for any other maps on top or below, becuase we will need some of their cells too
+		if (m_MapNeedsSwapping)
+		{
+		}
+		// If the result is an integer that is a odd number
+		else if (-m_OffsetY >= MapSizeH / 2)
+		{
+			// Set the active map to the map to the left
+			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::South);
 
+			// Make sure the flag is set
+			m_MapNeedsSwapping = true;
+			m_VertiMovementSwapped = true;
+
+		}
+
+		cout << "South -- X:" << m_OffsetX << " Y: " << m_OffsetY << endl;
+
+
+		m_MovementNorth = false;
+	}
+	if (m_MovementSouth)
+	{
+		// Move to the left one position
+		m_OffsetY++;
+
+		if (m_MapNeedsSwapping)
+		{
+		}
+		// If the result is an integer that is a odd number
+		else if (m_OffsetY >= MapSizeH)
+		{
+			// Set the active map to the map to the left
+			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::North);
+
+			// Make sure the flag is set
+			m_MapNeedsSwapping = true;
+			m_VertiMovementSwapped = true;
+
+		}
+
+		cout << "North -- X:" << m_OffsetX << " Y: " << m_OffsetY << endl;
+
+		m_MovementSouth = false;
 	}
 }

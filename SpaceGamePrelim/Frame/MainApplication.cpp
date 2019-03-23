@@ -53,6 +53,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 		// Create the window with the new settings
 		g_pWindow = SDL_CreateWindow(WindowTitle, topLeftXPos, topLeftYPos, WndWidth, WndHeight, WndFlags);
+		//SDL_SetWindowResizable(g_pWindow, SDL_TRUE);
 
 		// if the window creation succeeded create our renderer
 		if (g_pWindow != 0)
