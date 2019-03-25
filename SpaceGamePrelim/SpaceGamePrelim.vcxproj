@@ -23,6 +23,7 @@
     <ClCompile Include="Frame\InputManager.cpp" />
     <ClCompile Include="Frame\Main.cpp" />
     <ClCompile Include="Frame\MainApplication.cpp" />
+    <ClCompile Include="Map\GenRoomComp.cpp" />
     <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Map\MapCell.cpp" />
     <ClCompile Include="Map\MapInactive.cpp" />

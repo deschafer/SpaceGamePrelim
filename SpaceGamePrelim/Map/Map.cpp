@@ -3,7 +3,7 @@
 #include "MapRoom.h"
 #include "MapWall.h"
 #include "MapInactive.h"
-//#include "GenRoomComp.h"
+#include "GenRoomComp.h"
 
 #include "..\Frame\MainApplication.h"
 
@@ -11,9 +11,6 @@
 
 //#define DEBUG_CORRIDOR_VERTICAL
 //#define DEBUG_CORRIDOR_HORIZ
-
-enum class Side { TOP, RIGHT, BOTTOM, LEFT, COMPL };
-
 
 static const int WidthRandomRate = 5;
 static const int HeightRandomRate = 5;
@@ -165,7 +162,7 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	int xOffset;
 
 	// We need to get a room height, first check if there is a boundary within 20 cells
-	for (size_t i = OffsetY, Count = 0; i < m_Height && Count < MaxRoomHeight; i++, Count++)
+	for (size_t i = OffsetY, Count = 0; i < (m_Height - 1) && Count < MaxRoomHeight; i++, Count++)
 	{
 		RoomHeight++;
 	}
@@ -343,7 +340,6 @@ void Map::SetUpCorridor(int ColumnNumber, int ColumnOffsetX, int OffsetY, int Ro
 			int XPos1 = GetLocationBeg->first.GetPositionX() + AboveOffsetX;
 			int XPos2 = GetLocationBeg->second.GetPositionX() + AboveOffsetX;
 
-
 			// If the x coord of the shorter is within the range of this side
 			// if so, that is the new point
 			if ((XPos1 < ShorterXLoc && ShorterXLoc < XPos2) ||
@@ -372,10 +368,10 @@ void Map::SetUpCorridor(int ColumnNumber, int ColumnOffsetX, int OffsetY, int Ro
 
 		GenerateCorridorBetween(
 			MapCoordinate(
-				AboveLocation.GetPositionX() + ColumnOffsetX, 
-				AboveLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size]), 
+				AboveLocation.GetPositionX() + ColumnOffsetX,
+				AboveLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size]),
 			MapCoordinate(
-				CurrLocation.GetPositionX() + ColumnOffsetX, 
+				CurrLocation.GetPositionX() + ColumnOffsetX,
 				CurrLocation.GetPositionY() + m_ColumnOffsetsY[ColumnNumber][Size + 1]
 			),
 			ThisRoomOffsetY - CenterPointY,
@@ -1385,4 +1381,64 @@ MapObject** Map::GetRow(int ZeroIndexedRow)
 		return TempArray;
 	}
 	else return nullptr;
+}
+
+//
+// GetRoomXFromColumnY()
+// Gets the indicated room from this map if it exists, and
+// sets its location of its topleft corner in the offset variables
+// bool param is if the last room of the indicated column is requested
+//
+MapRoom* Map::GetRoomXFromColumnY(int RowX, int ColumnY, int& OffsetX, int& OffsetY, bool Last)
+{
+	// Checking bounds
+	if (ColumnY > m_Rooms.size() - 1)
+	{
+#ifdef _DEBUG
+		cout << "GetRoomXFromColumnY: Requested column is out of bounds" << endl;
+#endif // _DEBUG
+		return nullptr;
+	}
+
+	// Returning the last room of the given column
+	if (Last)
+	{
+		int Index = m_Rooms[ColumnY].size() - 1;
+		
+		OffsetY = m_ColumnOffsetsY[ColumnY][Index];
+		OffsetX = m_ColumnOffsetsX[ColumnY][Index] + (ColumnY * ColumnWidth5);
+		return m_Rooms[ColumnY][Index];
+	}
+
+	if (RowX > m_Rooms[ColumnY].size() - 1)
+	{
+#ifdef _DEBUG
+		cout << "GetRoomXFromColumnY: Requested row is out of bounds" << endl;
+#endif // _DEBUG
+		return nullptr;
+	}
+
+	OffsetY = m_ColumnOffsetsY[ColumnY][RowX];
+	OffsetX = m_ColumnOffsetsX[ColumnY][RowX] + (ColumnY * ColumnWidth5);
+	return m_Rooms[ColumnY][RowX];
+}
+
+//
+// SetCell()
+// Sets the corresponding map cell
+//
+void Map::SetCell(int X, int Y, MapObject *Cell)
+{
+	if (X < m_Width && Y < m_Height)
+		m_Cells[X][Y] = Cell;
+}
+
+//
+// SetCorridorCell()
+// Sets the corresponding corridor cell
+//
+void Map::SetCorridorCell(int X, int Y, MapObject* Cell)
+{
+	if (X < m_Width && Y < m_Height)
+		m_CorridorCells[X][Y] = Cell;
 }

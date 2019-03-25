@@ -62,6 +62,9 @@ private:
 	void CullMap();
 	void MoveMap();
 
+	void ConnectMapsVertically(Map* Map1, Map* Map2);
+	void GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, Map* Map2, MapCoordinate Pos2);
+
 	MapManager();
 
 public:
@@ -82,6 +85,9 @@ public:
 
 	int GetCellWidth() { return m_CellWidth; }
 	int GetCellHeight() { return m_CellHeight; }
+
+	void ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween);
+
 
 	void ResetMap();
 	

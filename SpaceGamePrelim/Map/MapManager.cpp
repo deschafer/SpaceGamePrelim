@@ -2,11 +2,14 @@
 #include "MapManager.h"
 #include "..\Frame\MainApplication.h"
 #include "MapInactive.h"
+#include "GenRoomComp.h"
+#include "Map.h"
 
 #include <iostream>
 #include <ctime>
 #include <map>
 #include <chrono>
+#include <functional>
 
 #define Windows		// Usage of windows threads
 //#define CrossPlatform
@@ -15,8 +18,12 @@
 #include <Windows.h>
 #endif // Windows
 
+#define DEBUG_CORRIDOR_VERTICAL
+
 
 using namespace std;
+
+typedef pair<MapCoordinate, MapCoordinate> SideA;
 
 static const int CellWidthSrc = 32;
 static const int CellHeightSrc = 32;
@@ -28,6 +35,22 @@ static const int VisibleHorizonBufferSize = 2;
 static const int VisibleVerticalBufferSize = 2;
 static const int CenterMapArrayIndex = 8;
 
+static const int ColumnWidth1 = 6;
+static const int ColumnWidth2 = 8;
+static const int ColumnWidth3 = 10;
+static const int ColumnWidth4 = 12;
+static const int ColumnWidth5 = 14;
+static const int NumberColumns = MapSizeW / ColumnWidth5;
+
+const static string WallCornerRight = "Wall_Corner_Right";
+const static string WallCornerLeft = "Wall_Corner_Left";
+const static string WallSideRight = "Wall_Side_Right";
+const static string WallSideLeft = "Wall_Side_Left";
+const static string WallBottom = "Wall_Bottom";
+const static string Default = "Wall";
+const static string WallTopGroup = "Wall_Top";
+const static string FloorGroup = "Floors";
+
 static const string DefaultMapStr = "Default";
 
 typedef std::pair<int, int> Coord;
@@ -37,6 +60,27 @@ MapManager* MapManager::m_Instance = nullptr;
 void ShiftAllArrayCellsLeft(MapObject*** Array, int X, int Y);
 void ShiftAllArrayCellsRight(MapObject*** Array, int X, int Y);
 pair<int, int> GetMapOffsets(MapDirection Direction);
+bool IsHorizLink(MapDirection Link);
+bool IsVertiLink(MapDirection Link);
+
+
+struct CorridorThreadInformation
+{
+	Map* MapFrom;
+	Map* MapTo;
+	MapDirection LinkBetween;
+	MapManager* Manager;
+	CorridorThreadInformation(
+		Map* Map1, 
+		Map* Map2, 
+		MapDirection Link,  
+		MapManager* manager) :
+		MapFrom(Map1),
+		MapTo(Map2),
+		LinkBetween(Link),
+		Manager(manager)
+	{}
+};
 
 // User-level threads that work for all platforms
 #ifdef CrossPlatform
@@ -48,7 +92,6 @@ pair<int, int> GetMapOffsets(MapDirection Direction);
 static int ThreadGenerateMap(void* Mem)
 {
 	if (Mem == nullptr) return -1;
-
 
 	// Time seed generation
 	auto now = std::chrono::system_clock::now();
@@ -69,6 +112,27 @@ static int ThreadGenerateMap(void* Mem)
 
 	return EXIT_SUCCESS;
 }
+
+static int ThreadGenerateMap(void* Mem)
+{
+	if (Mem == nullptr) return -1;
+
+	// Time seed generation
+	auto now = std::chrono::system_clock::now();
+	auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+	auto value = now_ms.time_since_epoch();
+	long duration = value.count();
+
+	std::chrono::milliseconds dur(duration);
+	std::chrono::time_point<std::chrono::system_clock> dt(dur);
+
+	srand(duration);
+
+
+	return EXIT_SUCCESS;
+}
+
+
 #endif // !CrossPlatform
 
 // Windows kernel-level threads
@@ -81,12 +145,12 @@ DWORD WINAPI ThreadGenerateMap(LPVOID lpParam)
 	auto now = std::chrono::system_clock::now();
 	auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
 	auto value = now_ms.time_since_epoch();
-	long duration = value.count();
+	auto duration = value.count();
 
 	std::chrono::milliseconds dur(duration);
 	std::chrono::time_point<std::chrono::system_clock> dt(dur);
 
-	srand(duration);
+	srand((unsigned int)duration);
 
 	if (!lpParam)
 	{
@@ -101,11 +165,41 @@ DWORD WINAPI ThreadGenerateMap(LPVOID lpParam)
 	return EXIT_SUCCESS;
 }
 
+DWORD WINAPI ThreadConnectMaps(LPVOID lpParam)
+{
+
+	// Time seed generation
+	auto now = std::chrono::system_clock::now();
+	auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
+	auto value = now_ms.time_since_epoch();
+	auto duration = value.count();
+
+	std::chrono::milliseconds dur(duration);
+	std::chrono::time_point<std::chrono::system_clock> dt(dur);
+
+	srand((unsigned int)duration);
+
+	if (!lpParam)
+	{
+#ifdef _DEBUG
+		cout << "Memory passed in was nullptr" << endl;
+#endif // _DEBUG
+		return -1;
+	}
+
+	CorridorThreadInformation* Info = static_cast<CorridorThreadInformation*>(lpParam);
+
+	Info->Manager->ConnectTwoMaps(Info->MapTo, Info->MapFrom, Info->LinkBetween);
+
+	return EXIT_SUCCESS;
+}
+
+
 #endif // Windows
 
 void ShiftAllArrayCellsLeft(MapObject*** Array, int X, int Y)
 {
-	for (size_t i = 1; i < X; i++)
+	for (int i = 1; i < X; i++)
 	{
 		// Change the columns themselves
 		Array[i - 1] = Array[i];
@@ -172,6 +266,74 @@ pair<int, int> GetMapOffsets(MapDirection Direction)
 		break;
 	}
 	return pair<int, int>(0, 0);
+}
+
+bool IsHorizLink(MapDirection Link)
+{
+	switch (Link)
+	{
+	case MapDirection::North:
+		return false;
+		break;
+	case MapDirection::Northeast:
+		return false;
+		break;
+	case MapDirection::East:
+		return true;
+		break;
+	case MapDirection::Southeast:
+		return false;
+		break;
+	case MapDirection::South:
+		return false;
+		break;
+	case MapDirection::Southwest:
+		return false;
+		break;
+	case MapDirection::West:
+		return true;
+		break;
+	case MapDirection::Northwest:
+		return false;
+		break;
+	default:
+		break;
+	}
+	return false;
+}
+
+bool IsVertiLink(MapDirection Link)
+{
+	switch (Link)
+	{
+	case MapDirection::North:
+		return true;
+		break;
+	case MapDirection::Northeast:
+		return false;
+		break;
+	case MapDirection::East:
+		return false;
+		break;
+	case MapDirection::Southeast:
+		return false;
+		break;
+	case MapDirection::South:
+		return true;
+		break;
+	case MapDirection::Southwest:
+		return false;
+		break;
+	case MapDirection::West:
+		return false;
+		break;
+	case MapDirection::Northwest:
+		return false;
+		break;
+	default:
+		break;
+	}
+	return false;
 }
 
 MapManager::MapManager() :
@@ -449,12 +611,29 @@ void MapManager::SetLink(Map* NewMap)
 	Map* Test = nullptr;
 	// Check all surrounding cells in the map for neighbors
 
+	// Here also physically connect the maps via corridors
+
 	// Check north
 	if (Test = m_CoordinateMaps[Coord(Coor.GetPositionX(), Coor.GetPositionY() + 1)])
 	{
 		// Set the link between the two maps
 		NewMap->SetLink(MapDirection::North, Test);
 		Test->SetLink(MapDirection::South, NewMap);
+
+		#ifdef CrossPlatform
+			SDL_Thread *Thread = SDL_CreateThread(ThreadGenerateMap, "MapGenThread", NewMap);
+#endif // CrossPlatform
+#ifdef Windows
+		CreateThread(
+			nullptr,					// default security attributess
+			0,							// use default stack size  
+			ThreadConnectMaps,			// thread function name
+			new CorridorThreadInformation(NewMap, Test, MapDirection::North, this),	// argument to thread function 
+			0,							// use default creation flags 
+			nullptr);					// returns the thread identifier 
+#endif // Windows
+
+		//ConnectTwoMaps(Test, NewMap, MapDirection::North);
 	}
 	// Checks northeast
 	if (Test = m_CoordinateMaps[Coord(Coor.GetPositionX() + 1, Coor.GetPositionY() + 1)])
@@ -846,4 +1025,445 @@ void MapManager::CullMap()
 
 		m_MovementSouth = false;
 	}
+}
+
+//
+// ConnectTwoMaps()
+// 
+// Note: Link is from map1 to map2
+//
+void MapManager::ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween)
+{
+
+	// Check the link between
+	if (IsVertiLink(LinkBetween))
+	{
+		// Travelling north
+		if (LinkBetween == MapDirection::North)
+		{
+			// Find the starting poisiton
+			ConnectMapsVertically(Map2, Map1);
+		}
+		// Travelling south
+		else
+		{
+
+		}
+	}
+	
+
+	// If vertical link, then determine relative placement of map1, map2
+	// Determine a suitable starting position for map1
+	// Determine a suitable ending position for map2
+	// Get a distance between these two points
+	// Generate the corridor
+
+}
+
+//
+// ConnectMapsVertically()
+//
+// Note: Map1 should ALWAYS be ABOVE map2, otherwise undefined behavior
+//
+void MapManager::ConnectMapsVertically(Map* Map1, Map* Map2)
+{
+	MapRoom* AboveRoom;
+	int AboveOffsetX = 0;
+	int AboveOffsetY = 0;
+	int AboveRoomSideDifference = 0;
+	MapRoom* BelowRoom;
+	int BelowOffsetX = 0;
+	int BelowOffsetY = 0;
+	int BelowRoomSideDifference = 0;
+
+
+	MapCoordinate BeginningPos;
+	SideA* AboveSide;
+	MapCoordinate EndingPos;
+	SideA* BelowSide;
+
+	int ShorterXLocation = 0;
+	bool BelowIsShorter = false;
+
+	
+	// Connect each room located at each column
+	for (int i = 0; i < NumberColumns; i++)
+	{
+
+		// Get a room from each map
+		AboveRoom = Map1->GetRoomXFromColumnY(0, i, AboveOffsetX, AboveOffsetY, true);	// Last room in this column
+		BelowRoom = Map2->GetRoomXFromColumnY(0, i, BelowOffsetX, BelowOffsetY);		// First room in this column
+
+		
+		// Ask the room above for a suitable side to set as a beginning tile for the end point
+		// for this corridor.
+		// Get a wall from the indicated side
+		AboveSide = AboveRoom->GetFacingFromSide(Side::BOTTOM);
+		// Do the same for the current room on the top side
+		BelowSide = BelowRoom->GetFacingFromSide(Side::TOP);
+
+		// Next find the smallest side
+		// If this wall with min size exists
+		if (AboveSide)
+		{
+			AboveRoomSideDifference = (AboveSide->first.GetPositionX() - AboveSide->second.GetPositionX());
+		}
+		else return;
+		if (BelowSide)
+		{
+			BelowRoomSideDifference = (BelowSide->first.GetPositionX() - BelowSide->second.GetPositionX());
+		}
+		else return;
+
+		// Handle the shorter side first
+		if (abs(BelowRoomSideDifference) > abs(AboveRoomSideDifference))
+		{
+			BeginningPos = MapCoordinate(
+				AboveSide->first.GetPositionX() - AboveRoomSideDifference / 2 + AboveOffsetX, 
+				AboveSide->first.GetPositionY()
+			);
+			ShorterXLocation = BeginningPos.GetPositionX(); // Saving this x pos with respect to column offset
+		}
+		else
+		{
+			EndingPos = MapCoordinate(
+				BelowSide->first.GetPositionX() - BelowRoomSideDifference / 2 + BelowOffsetX, 
+				BelowSide->first.GetPositionY()
+			);
+			ShorterXLocation = EndingPos.GetPositionX(); // Saving this x pos with respect to column offset
+			BelowIsShorter = true;
+		}
+
+		// Then we need to process the room above
+		if (BelowIsShorter)
+		{
+			// Standardize the coordinates so we can compare them
+			int XPos1 = AboveSide->first.GetPositionX() + AboveOffsetX;
+			int XPos2 = AboveSide->second.GetPositionX() + AboveOffsetX;
+
+			// If the x coord of the shorter is within the range of this side
+			// if so, that is the new point
+			if ((XPos1 < ShorterXLocation && ShorterXLocation < XPos2) ||
+				(XPos1 > ShorterXLocation && ShorterXLocation > XPos2))
+			{
+				BeginningPos = MapCoordinate(ShorterXLocation, AboveSide->first.GetPositionY());
+			}
+			else BeginningPos = MapCoordinate(AboveSide->first.GetPositionX() - AboveRoomSideDifference / 2 + AboveOffsetX, AboveSide->first.GetPositionY());
+
+		}
+		// Then we need to process the room below
+		else
+		{
+			int XPos1 = BelowSide->first.GetPositionX() + BelowOffsetX;
+			int XPos2 = BelowSide->second.GetPositionX() + BelowOffsetX;
+
+			// If the x coord of the shorter is within the range of this side
+			// if so, that is the new point
+			if ((XPos1 < ShorterXLocation && ShorterXLocation < XPos2) ||
+				(XPos1 > ShorterXLocation && ShorterXLocation > XPos2))
+			{
+				EndingPos = MapCoordinate(ShorterXLocation, BelowSide->first.GetPositionY());
+			}
+			else EndingPos = MapCoordinate(BelowSide->first.GetPositionX() - BelowRoomSideDifference / 2 + BelowOffsetX, BelowSide->first.GetPositionY());
+		}
+		
+
+
+		// The start and ending position are now found
+
+#ifdef DEBUG_CORRIDOR_VERTICAL
+		vector<string> Textures;
+		Textures.push_back("Test");
+
+		int X1 = EndingPos.GetPositionX();
+		int Y1 = EndingPos.GetPositionY() + BelowOffsetY;
+		MapCell* Cell1 = new MapInactive(Textures, MapCoordinate(0, 0), Cell::Floor);
+
+		Map2->SetCell(X1, Y1, Cell1);
+
+		int X2 = BeginningPos.GetPositionX();
+		int Y2 = BeginningPos.GetPositionY() + AboveOffsetY;
+		MapCell* Cell2 = new MapInactive(Textures, MapCoordinate(0, 0), Cell::Floor);
+
+		Map1->SetCell(X2, Y2, Cell2);
+
+#endif // DEBUG_CORRIDOR_VERTICAL
+
+		GenerateVerticalCorridorBetween(Map1, BeginningPos, Map2, EndingPos);
+
+	}
+}
+
+//
+// GenerateVerticalCorridorBetween()
+//
+// Note: Goes from the bottom, at Pos1, to the top, at Pos2
+//
+void MapManager::GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, Map* Map2, MapCoordinate Pos2)
+{
+
+	enum class Movement { LEFT, RIGHT, UP, DOWN };
+
+	float DistanceBetween = Pos1.GetPositionY() + MapSizeH - Pos2.GetPositionY();
+
+	int CurrentX = Pos1.GetPositionX();
+	int CurrentY = Pos1.GetPositionY();
+	int DistanceX = abs(Pos1.GetPositionX() - Pos2.GetPositionX());
+	int DistanceY = abs(Pos1.GetPositionY() - Pos2.GetPositionY());
+	int MidPointY = (CurrentY + ((DistanceBetween = ceil(DistanceBetween / 2)) ? DistanceBetween : 1));
+	bool Try = false;
+	bool MovementY = false;
+	bool MovementX = false;
+	bool BeginX = false;
+	bool EndX = false;
+	Movement Direction;
+	vector <MapCoordinate> TexturedCoords;
+
+	Map* ActiveMap = Map1;
+
+	if (Pos2.GetPositionX() > Pos1.GetPositionX()) Direction = Movement::RIGHT;
+	else Direction = Movement::LEFT;
+
+	// Adjusting the x transition 
+	// so that no conflicts occur
+	while (ActiveMap->GetCell(CurrentX, MidPointY) != nullptr)
+	{
+		MidPointY--;
+	}
+
+	// Loading a floor texture
+	vector<string> Textures;
+	Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(FloorGroup));
+
+	// Setting the begging cell
+	vector<string> TexturesT;
+	TexturesT.push_back(WallSideRight);
+	ActiveMap->CheckCell(MapCoordinate(CurrentX - 1, CurrentY),
+		TexturesT,
+		Cell::Wall_Right,
+		TexturedCoords,
+		(Direction == Movement::LEFT));
+
+	TexturesT.clear();
+	TexturesT.push_back(WallSideLeft);
+	ActiveMap->CheckCell(MapCoordinate(CurrentX + 1, CurrentY),
+		TexturesT,
+		Cell::Wall_Left,
+		TexturedCoords,
+		(Direction == Movement::RIGHT));
+
+	ActiveMap->CheckCell(MapCoordinate(CurrentX, CurrentY),
+		Textures,
+		Cell::Floor,
+		TexturedCoords,
+		false);
+
+	// Until we reach our end destination
+	while (CurrentY != Pos2.GetPositionY())
+	{
+		// If we need to move x-wise
+		if ((CurrentY == MidPointY &&
+			(Pos1.GetPositionX() != Pos2.GetPositionX()) &&
+			DistanceX) || Try)
+		{
+			bool Taken = false;
+			// We will try every turn until we compete the x-movement
+			Try = true;
+
+			// First search our texured sides to verify 
+			// Verifying that the area is clear for the corridor
+			for (size_t i = 0, Pos = CurrentX; i < DistanceX; i++)
+			{
+				if (Direction == Movement::LEFT) Pos--;
+				else Pos++;
+				// If this cell is not occupied by an external cell
+				// and it is not one of our drawn texture cells
+				if (ActiveMap->GetCell(Pos,CurrentY) != nullptr && (TexturedCoords.empty() ||
+					!(TexturedCoords[TexturedCoords.size() - 1].GetPositionY() == CurrentY &&
+						TexturedCoords[TexturedCoords.size() - 1].GetPositionX() == Pos)))
+				{
+					// This path is taken
+					Taken = true;
+					break;
+				}
+			}
+
+			// If the area is taken, then increment y and try next time
+			if (Taken)
+			{
+				CurrentY++;
+				MovementY = true;
+			}
+			// Otherwise move in correct x pos
+			else if (Direction == Movement::RIGHT)
+			{
+				if (CurrentX == Pos1.GetPositionX()) BeginX = true;
+				CurrentX++;
+				if (CurrentX == Pos2.GetPositionX()) EndX = true;
+				DistanceX--;
+				MovementX = true;
+			}
+			else
+			{
+				if (CurrentX == Pos1.GetPositionX()) BeginX = true;
+				CurrentX--;
+				if (CurrentX == Pos2.GetPositionX()) EndX = true;
+				DistanceX--;
+				MovementX = true;
+			}
+			// Try until we are done moving x-wise
+			if (!DistanceX) Try = false;
+		}
+		// Increment Y be default
+		else
+		{
+			CurrentY++;
+			MovementY = true;
+		}
+
+		// When we need to swap active maps
+		if (CurrentX >= MapSizeH)
+		{
+			ActiveMap = Map2;
+		}
+
+		MapCell* NewCell = new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
+
+		// Adding the corridor to the array
+		ActiveMap->SetCell(CurrentX, CurrentY, NewCell);
+		// Add to the corridor array
+		ActiveMap->SetCorridorCell(CurrentX, CurrentY, NewCell);
+
+		// If there was a y movement,  then we add to the 
+		// cells to the left and right to add the walls to
+		// encompass the corridor
+		if (MovementY)
+		{
+			vector<string> Textures;
+			Textures.push_back(WallSideRight);
+			ActiveMap->CheckCell(MapCoordinate(CurrentX - 1, CurrentY),
+				Textures,
+				Cell::Wall_Right,
+				TexturedCoords,
+				(Direction == Movement::LEFT));
+
+			Textures.clear();
+			Textures.push_back(WallSideLeft);
+			ActiveMap->CheckCell(MapCoordinate(CurrentX + 1, CurrentY),
+				Textures,
+				Cell::Wall_Left,
+				TexturedCoords,
+				(Direction == Movement::RIGHT));
+
+			MovementY = false;
+		}
+		// Otherwise, if a x movement occurred
+		else if (MovementX)
+		{
+			// The beg of the x-movement
+			// DIRECTION MATTERS
+			if (BeginX)
+			{
+				int Change = 0;
+				int LessChange = 0;
+
+				if (Direction == Movement::LEFT)
+				{
+					Change += 2;
+					LessChange++;
+				}
+				else
+				{
+					Change -= 2;
+					LessChange--;
+				}
+				vector<string> Textures;
+				Textures.push_back(WallBottom);
+				ActiveMap->CheckCell(MapCoordinate(CurrentX + LessChange, CurrentY + 1),
+					Textures,
+					Cell::Wall_Bottom,
+					TexturedCoords,
+					false);
+
+				ActiveMap->CheckCell(MapCoordinate(CurrentX, CurrentY + 1),
+					Textures,
+					Cell::Wall_Bottom,
+					TexturedCoords,
+					false);
+
+				Textures.clear();
+				(Direction == Movement::LEFT) ? Textures.push_back(WallCornerRight) : Textures.push_back(WallCornerLeft);
+				ActiveMap->CheckCell(
+					MapCoordinate(CurrentX + Change, CurrentY + 1),
+					Textures, (Direction == Movement::LEFT) ?
+					Cell::Wall_Corner_Right_Bottom :
+					Cell::Wall_Corner_Left_Bottom,
+					TexturedCoords,
+					false);
+
+				Textures.clear();
+				Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
+				ActiveMap->CheckCell(MapCoordinate(CurrentX, CurrentY - 1),
+					Textures,
+					Cell::Wall_Top,
+					TexturedCoords,
+					false);
+
+			}
+			// The end of the x-movement
+			// DIRECTION MATTERS
+			if (EndX)
+			{
+				int Change = 0;
+
+				if (Direction == Movement::LEFT) Change = -1;
+				else Change = 1;
+
+				vector<string> Textures;
+				(Change > 0) ? Textures.push_back(WallSideLeft) : Textures.push_back(WallSideRight);
+				ActiveMap->CheckCell(MapCoordinate(CurrentX + Change, CurrentY - 1),
+					Textures,
+					(Change > 0) ? Cell::Wall_Left : Cell::Wall_Right,
+					TexturedCoords,
+					false);
+				ActiveMap->CheckCell(MapCoordinate(CurrentX + Change, CurrentY),
+					Textures,
+					(Change > 0) ? Cell::Wall_Left : Cell::Wall_Right,
+					TexturedCoords,
+					false);
+				Textures.clear();
+				Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
+				ActiveMap->CheckCell(MapCoordinate(CurrentX, CurrentY - 1),
+					Textures,
+					Cell::Wall_Top,
+					TexturedCoords,
+					false);
+
+			}
+			// Adding to the cells above and below this current cell
+			// Does not matter with the direction of the x corridor movement
+			else if (!BeginX && !EndX)
+			{
+				vector<string> Textures;
+				Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(WallTopGroup));
+				ActiveMap->CheckCell(MapCoordinate(CurrentX, CurrentY - 1),
+					Textures,
+					Cell::Wall_Top,
+					TexturedCoords,
+					false);
+
+				Textures.clear();
+				Textures.push_back(WallBottom);
+				ActiveMap->CheckCell(MapCoordinate(CurrentX, CurrentY + 1),
+					Textures,
+					Cell::Wall_Bottom,
+					TexturedCoords,
+					false);
+			}
+			EndX = false;
+			BeginX = false;
+			MovementX = false;
+		}
+	}
+
 }

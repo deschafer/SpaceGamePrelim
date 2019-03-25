@@ -50,11 +50,7 @@ private:
 	bool GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int DistanceBetween, bool Horiz);
 	void SetUpCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* BottomRoom);
 	void SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* Room);
-	void CheckCell(MapCoordinate CellPosition, 
-		std::vector<std::string> Textures, 
-		Cell CellType, 
-		std::vector<MapCoordinate>& TextureCoords, 
-		bool Right);
+	
 
 
 public:
@@ -70,6 +66,7 @@ public:
 	bool IsSurrounded() { for (int i = 0; i < m_NeighborMapsSize; i++) if (!m_NeighboringMaps[i]) return false; return true; }
 	bool IsGenerated() { return m_Generated; }
 	bool CheckLink(MapDirection Direction) { return m_NeighboringMaps[static_cast<int>(Direction)] ? true : false; }
+	MapRoom* GetRoomXFromColumnY(int RowX, int ColumnY, int& OffsetX, int& OffsetY, bool Last = false);
 
 	void SetLink(MapDirection Direction, Map* LinkedMap) { m_NeighboringMaps[static_cast<int>(Direction)] = LinkedMap; }
 
@@ -79,6 +76,13 @@ public:
 
 	MapCoordinate GetCoordinate() { return m_MapCoordinates; }
 
+	void SetCell(int X, int Y, MapObject *Cell); 
+	void SetCorridorCell(int X, int Y, MapObject* Cell);
+	void CheckCell(MapCoordinate CellPosition,
+		std::vector<std::string> Textures,
+		Cell CellType,
+		std::vector<MapCoordinate>& TextureCoords,
+		bool Right);
 
 	Map();
 	Map(std::string MapType, int Width, int Height, MapCoordinate Coords);
