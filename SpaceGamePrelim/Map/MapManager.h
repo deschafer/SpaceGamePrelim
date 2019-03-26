@@ -61,6 +61,7 @@ private:
 	void CheckGeneratingMaps();
 	void CullMap();
 	void MoveMap();
+	void UpdateCells();
 
 	void ConnectMapsVertically(Map* Map1, Map* Map2);
 	void GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, Map* Map2, MapCoordinate Pos2);

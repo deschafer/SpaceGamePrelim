@@ -4,22 +4,14 @@
 #include "MapInactive.h"
 #include "GenRoomComp.h"
 #include "Map.h"
+#include "MapManagerThreads.h"
 
 #include <iostream>
 #include <ctime>
 #include <map>
 #include <chrono>
-#include <functional>
-
-#define Windows		// Usage of windows threads
-//#define CrossPlatform
-
-#ifdef Windows
-#include <Windows.h>
-#endif // Windows
 
 #define DEBUG_CORRIDOR_VERTICAL
-
 
 using namespace std;
 
@@ -41,6 +33,9 @@ static const int ColumnWidth3 = 10;
 static const int ColumnWidth4 = 12;
 static const int ColumnWidth5 = 14;
 static const int NumberColumns = MapSizeW / ColumnWidth5;
+static const int ActiveCellsWidth = 1000;
+static const int ActiveCellsHeight = 1000;
+
 
 const static string WallCornerRight = "Wall_Corner_Right";
 const static string WallCornerLeft = "Wall_Corner_Left";
@@ -56,146 +51,6 @@ static const string DefaultMapStr = "Default";
 typedef std::pair<int, int> Coord;
 
 MapManager* MapManager::m_Instance = nullptr;
-
-void ShiftAllArrayCellsLeft(MapObject*** Array, int X, int Y);
-void ShiftAllArrayCellsRight(MapObject*** Array, int X, int Y);
-pair<int, int> GetMapOffsets(MapDirection Direction);
-bool IsHorizLink(MapDirection Link);
-bool IsVertiLink(MapDirection Link);
-
-
-struct CorridorThreadInformation
-{
-	Map* MapFrom;
-	Map* MapTo;
-	MapDirection LinkBetween;
-	MapManager* Manager;
-	CorridorThreadInformation(
-		Map* Map1, 
-		Map* Map2, 
-		MapDirection Link,  
-		MapManager* manager) :
-		MapFrom(Map1),
-		MapTo(Map2),
-		LinkBetween(Link),
-		Manager(manager)
-	{}
-};
-
-// User-level threads that work for all platforms
-#ifdef CrossPlatform
-
-//
-// ThreadGenerateMap()
-// Thead handler used for each map generation thread to generate its given map
-//
-static int ThreadGenerateMap(void* Mem)
-{
-	if (Mem == nullptr) return -1;
-
-	// Time seed generation
-	auto now = std::chrono::system_clock::now();
-	auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-	auto value = now_ms.time_since_epoch();
-	long duration = value.count();
-
-	std::chrono::milliseconds dur(duration);
-	std::chrono::time_point<std::chrono::system_clock> dt(dur);
-
-	srand(duration);
-
-	// Convert the memory to its map form
-	Map* GenMap = static_cast<Map*>(Mem);
-
-	// Then proceed to generate it
-	GenMap->Generate();
-
-	return EXIT_SUCCESS;
-}
-
-static int ThreadGenerateMap(void* Mem)
-{
-	if (Mem == nullptr) return -1;
-
-	// Time seed generation
-	auto now = std::chrono::system_clock::now();
-	auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-	auto value = now_ms.time_since_epoch();
-	long duration = value.count();
-
-	std::chrono::milliseconds dur(duration);
-	std::chrono::time_point<std::chrono::system_clock> dt(dur);
-
-	srand(duration);
-
-
-	return EXIT_SUCCESS;
-}
-
-
-#endif // !CrossPlatform
-
-// Windows kernel-level threads
-#ifdef Windows
-
-DWORD WINAPI ThreadGenerateMap(LPVOID lpParam)
-{
-
-	// Time seed generation
-	auto now = std::chrono::system_clock::now();
-	auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-	auto value = now_ms.time_since_epoch();
-	auto duration = value.count();
-
-	std::chrono::milliseconds dur(duration);
-	std::chrono::time_point<std::chrono::system_clock> dt(dur);
-
-	srand((unsigned int)duration);
-
-	if (!lpParam)
-	{
-#ifdef _DEBUG
-		cout << "Memory passed in was nullptr" << endl;
-#endif // _DEBUG
-		return -1;
-	}
-	Map* NewMap = static_cast<Map*>(lpParam);
-	NewMap->Generate();
-
-	return EXIT_SUCCESS;
-}
-
-DWORD WINAPI ThreadConnectMaps(LPVOID lpParam)
-{
-
-	// Time seed generation
-	auto now = std::chrono::system_clock::now();
-	auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);
-	auto value = now_ms.time_since_epoch();
-	auto duration = value.count();
-
-	std::chrono::milliseconds dur(duration);
-	std::chrono::time_point<std::chrono::system_clock> dt(dur);
-
-	srand((unsigned int)duration);
-
-	if (!lpParam)
-	{
-#ifdef _DEBUG
-		cout << "Memory passed in was nullptr" << endl;
-#endif // _DEBUG
-		return -1;
-	}
-
-	CorridorThreadInformation* Info = static_cast<CorridorThreadInformation*>(lpParam);
-
-	Info->Manager->ConnectTwoMaps(Info->MapTo, Info->MapFrom, Info->LinkBetween);
-
-	return EXIT_SUCCESS;
-}
-
-
-#endif // Windows
 
 void ShiftAllArrayCellsLeft(MapObject*** Array, int X, int Y)
 {
@@ -218,7 +73,6 @@ void ShiftAllArrayCellsRight(MapObject*** Array, int X, int Y)
 	// set the last column to nullptr
 	Array[0] = nullptr;
 }
-
 bool SearchVector(vector <pair<MapDirection, bool>> MapDirections, MapDirection SearchQuery)
 {
 	for (size_t i = 0; i < MapDirections.size(); i++)
@@ -231,7 +85,6 @@ bool SearchVector(vector <pair<MapDirection, bool>> MapDirections, MapDirection 
 	}
 	return false;
 }
-
 pair<int, int> GetMapOffsets(MapDirection Direction)
 {
 	typedef pair<int, int> Pair;
@@ -267,7 +120,6 @@ pair<int, int> GetMapOffsets(MapDirection Direction)
 	}
 	return pair<int, int>(0, 0);
 }
-
 bool IsHorizLink(MapDirection Link)
 {
 	switch (Link)
@@ -301,7 +153,6 @@ bool IsHorizLink(MapDirection Link)
 	}
 	return false;
 }
-
 bool IsVertiLink(MapDirection Link)
 {
 	switch (Link)
@@ -358,49 +209,21 @@ MapManager::MapManager() :
 	m_ActiveWndWidth = MainApplication::Instance()->GetWndWidth();
 
 	m_CoordinateMaps[pair<int, int>(0, 0)] = m_ActiveMap;
-
 	m_LoadedMaps.push_back(m_ActiveMap);
 
 	// Getting a count of rows and columns
-	m_Rows = MapSizeH;		// Get a count of columns
+	m_Rows = MapSizeH;			// Get a count of columns
 	m_Columns = MapSizeW;		// Get a count of rows
 
-								// Visible object array is the cells that fill the screen
-								// and is therefore the appropriate size of the screen, plus a buffer of 2 cells
-								// on for all the sides.
-
+	// Visible object array is the cells that fill the screen
+	// and is therefore the appropriate size of the screen, plus a buffer of 2 cells
+	// on for all the sides.
 	int ResolutionX = MainApplication::Instance()->GetWndWidth();
 	int ResolutionY = MainApplication::Instance()->GetWndHeight();
-
-
-	m_VisibleColumns = 1000;
-	m_VisibleRows = 1000;
-
-	m_VisibleObjectArray = new MapObject**[m_VisibleColumns];
-	for (int i = 0; i < m_VisibleColumns; i++)
-	{
-		m_VisibleObjectArray[i] = new MapObject*[m_VisibleRows];
-	}
-
-	for (int i = 0; i < m_VisibleColumns; i++)
-	{
-		for (int j = 0; j < m_VisibleRows; j++)
-		{
-			m_VisibleObjectArray[i][j] = nullptr;
-		}
-	}
 
 	m_Instance = this;
 	m_ActiveMap->Generate();
 
-	// Loading the first map
-	for (int i = 0; i < m_VisibleColumns; i++)
-	{
-		for (int j = 0; j < m_VisibleRows; j++)
-		{
-			m_VisibleObjectArray[i][j] = m_ActiveMap->GetCell(i, j);
-		}
-	}
 	// However, to surrounding maps need to be loaded into the array
 	// So we set this to be accomplished when possible
 	m_MapNeedsSwapping = true;
@@ -417,13 +240,12 @@ MapManager::MapManager() :
 	m_VisibleMapCells.push_back(nullptr);
 
 	m_VisibleMapCells[CenterMapArrayIndex] = m_ActiveMap->GetCellArrayAddress();
-
-	int run = 0;
-
 }
 
 MapManager::~MapManager()
 {
+	// Should deconstruct all maps
+	// Deconstruct all data structures
 }
 
 //
@@ -458,35 +280,16 @@ void MapManager::Draw()
 				MapPositionOffsetX = 0;
 				MapPositionOffsetY = 0;
 			}
-			
 
 			for (int i = 0; i < MapSizeW; i++)
 			{
 				for (int j = 0; j < MapSizeH; j++)
 				{
-
-					
-					
 					Object = m_VisibleObjectArray[i][j];
 
 					int PositionX = (i)* m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
 					int PositionY = (j)* m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
 
-					/*
-					if (CurrentMap == CenterMapArrayIndex &&
-						PositionX + m_CellWidth >= 0 &&
-						PositionX < m_ActiveWndWidth &&
-						PositionY + m_CellHeight >= 0 &&
-						PositionY < m_ActiveWndHeight && (rand() % 30 == 0))
-					{
-						vector<string> tes;
-						tes.push_back("Explosion");
-						MapInactive Cell(tes, MapCoordinate(PositionX, PositionY), Cell::Default);
-						Cell.Draw(MapCoordinate(PositionX, PositionY));
-
-					}
-
-					else */
 					if (Object &&
 						PositionX + m_CellWidth >= 0 &&
 						PositionX < m_ActiveWndWidth &&
@@ -499,11 +302,10 @@ void MapManager::Draw()
 			}
 		}
 	}
-	//DrawGrid();
 }
 
 //
-//
+// Update()
 //
 //
 void MapManager::Update()
@@ -514,41 +316,67 @@ void MapManager::Update()
 	{
 		GenerateNeighbors();
 	}
-
 	// Check if all of the newly generated maps are done
 	if (!m_GeneratingMaps.empty())
 	{
 		CheckGeneratingMaps();
 	}
-
 	// If all maps are complete and the map needs swapped
 	if (!m_MapsAreGenerating && m_MapNeedsSwapping)
 	{
 		MoveMap();
 	}
 
+	// Handles all map correction
 	CullMap();
 	
-
 	// Gets input from the user
 	HandleInput();
 
-	// Centers the map around current center map
+	// Update our cells -- WILL use a thread
+	// UpdateCells();
+}
 
+//
+// UpdateCells()
+// Updates the cells of the loaded active maps
+//
+void MapManager::UpdateCells()
+{
+	MapObject* Object;
+	int MapPositionOffsetX = 0;
+	int MapPositionOffsetY = 0;
+	pair<int, int> Pair;
 
-
-	// Get all of our active map cells
-	for (int i = 0, MapI = 0; i < MapSizeW; i++, MapI++)
+	for (size_t CurrentMap = 0; CurrentMap < m_VisibleMapCells.size(); CurrentMap++)
 	{
-		for (int j = 0, MapJ = 0; j < MapSizeH; j++, MapJ++)
+		// Get the actual array of cells
+		if (m_VisibleMapCells[CurrentMap])
 		{
-			if (m_VisibleObjectArray[i][j] != nullptr)
+			m_VisibleObjectArray = *m_VisibleMapCells[CurrentMap];
+			// Then get the approp. offsets for these cells
+			if (CurrentMap != CenterMapArrayIndex)
 			{
-				m_VisibleObjectArray[i][j]->Update();
+				Pair = GetMapOffsets(static_cast<MapDirection>(CurrentMap));
+				MapPositionOffsetX = Pair.first;
+				MapPositionOffsetY = Pair.second;
+			}
+			else
+			{
+				MapPositionOffsetX = 0;
+				MapPositionOffsetY = 0;
+			}
+
+			for (int i = 0; i < MapSizeW; i++)
+			{
+				for (int j = 0; j < MapSizeH; j++)
+					if(Object = m_VisibleObjectArray[i][j])
+						Object->Update();
 			}
 		}
 	}
 }
+
 
 //
 // DrawGrid()
@@ -577,36 +405,24 @@ void MapManager::DrawGrid()
 		SDL_RenderDrawLine(renderer, (i + 1) * m_CellWidth, 0, (i + 1) * m_CellWidth, m_ActiveWndHeight);
 
 	}
-
 	SDL_SetRenderDrawColor(renderer, OldR, OldG, OldB, OldA);
 }
 
 //
 // ResetMap()
 // Redraws the current map, currently 
-// used as a test function only
+// used as a test function only -- currently defunct
 //
 void MapManager::ResetMap()
 {
-	m_ActiveMap = new Map("Default", 100, 100, MapCoordinate(0, 0));
-	m_ActiveMap->Generate();
-
-	for (int i = 0; i < m_VisibleColumns; i++)
-	{
-		for (int j = 0; j < m_VisibleRows; j++)
-		{
-			m_VisibleObjectArray[i][j] = m_ActiveMap->GetCell(i, j);
-		}
-	}
 }
 
 //
-//
+// SetLink()
 //
 //
 void MapManager::SetLink(Map* NewMap)
 {
-
 	MapCoordinate Coor = NewMap->GetCoordinate();
 	Map* Test = nullptr;
 	// Check all surrounding cells in the map for neighbors
@@ -620,19 +436,14 @@ void MapManager::SetLink(Map* NewMap)
 		NewMap->SetLink(MapDirection::North, Test);
 		Test->SetLink(MapDirection::South, NewMap);
 
-		#ifdef CrossPlatform
-			SDL_Thread *Thread = SDL_CreateThread(ThreadGenerateMap, "MapGenThread", NewMap);
-#endif // CrossPlatform
-#ifdef Windows
-		CreateThread(
-			nullptr,					// default security attributess
-			0,							// use default stack size  
-			ThreadConnectMaps,			// thread function name
-			new CorridorThreadInformation(NewMap, Test, MapDirection::North, this),	// argument to thread function 
-			0,							// use default creation flags 
-			nullptr);					// returns the thread identifier 
-#endif // Windows
-
+		ThreadGenerator(
+			new CorridorThreadInformation(
+				NewMap, 
+				Test, 
+				MapDirection::North, 
+				this), 
+			MapManagerThreadType::MapCorridorGenerate
+		);
 		//ConnectTwoMaps(Test, NewMap, MapDirection::North);
 	}
 	// Checks northeast
@@ -684,7 +495,6 @@ void MapManager::SetLink(Map* NewMap)
 		NewMap->SetLink(MapDirection::Northwest, Test);
 		Test->SetLink(MapDirection::Southeast, NewMap);
 	}
-
 }
 
 //
@@ -755,20 +565,7 @@ void MapManager::GenerateNeighbor(std::string MapType, MapDirection ActiveMapDir
 	m_GeneratingMaps.push_back(NewMap);
 
 	// Create a new thread to generate this new map
-#ifdef CrossPlatform
-	SDL_Thread *Thread = SDL_CreateThread(ThreadGenerateMap, "MapGenThread", NewMap);
-#endif // CrossPlatform
-#ifdef Windows
-	CreateThread(
-		nullptr,                   // default security attributes
-		0,                      // use default stack size  
-		ThreadGenerateMap,       // thread function name
-		NewMap,          // argument to thread function 
-		0,                      // use default creation flags 
-		nullptr);   // returns the thread identifier 
-#endif // Windows
-
-
+	ThreadGenerator(NewMap, MapManagerThreadType::MapGenerate);
 }
 
 //
@@ -944,6 +741,8 @@ void MapManager::CullMap()
 			// Set the active map to the map to the left
 			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::West);
 
+			cout << "ActiveMap " << m_ActiveMap->GetCoordinate().GetPositionX() << " " << m_ActiveMap->GetCoordinate().GetPositionY() << endl;
+
 			// Make sure the flag is set
 			m_MapNeedsSwapping = true;
 			m_HorizMovementSwapped = true;
@@ -967,6 +766,9 @@ void MapManager::CullMap()
 			// Set the active map to the map to the left
 			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::East);
 
+			cout << "ActiveMap " << m_ActiveMap->GetCoordinate().GetPositionX() << " " << m_ActiveMap->GetCoordinate().GetPositionY() << endl;
+
+
 			// Make sure the flag is set
 			m_MapNeedsSwapping = true;
 			m_HorizMovementSwapped = true;
@@ -989,6 +791,8 @@ void MapManager::CullMap()
 		{
 			// Set the active map to the map to the left
 			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::South);
+			cout << "ActiveMap " << m_ActiveMap->GetCoordinate().GetPositionX() << " " << m_ActiveMap->GetCoordinate().GetPositionY() << endl;
+
 
 			// Make sure the flag is set
 			m_MapNeedsSwapping = true;
@@ -1014,6 +818,9 @@ void MapManager::CullMap()
 		{
 			// Set the active map to the map to the left
 			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::North);
+
+			cout << "ActiveMap " << m_ActiveMap->GetCoordinate().GetPositionX() << " " << m_ActiveMap->GetCoordinate().GetPositionY() << endl;
+
 
 			// Make sure the flag is set
 			m_MapNeedsSwapping = true;
@@ -1089,6 +896,7 @@ void MapManager::ConnectMapsVertically(Map* Map1, Map* Map2)
 	// Connect each room located at each column
 	for (int i = 0; i < NumberColumns; i++)
 	{
+		BelowIsShorter = false;
 
 		// Get a room from each map
 		AboveRoom = Map1->GetRoomXFromColumnY(0, i, AboveOffsetX, AboveOffsetY, true);	// Last room in this column
@@ -1119,7 +927,7 @@ void MapManager::ConnectMapsVertically(Map* Map1, Map* Map2)
 		if (abs(BelowRoomSideDifference) > abs(AboveRoomSideDifference))
 		{
 			BeginningPos = MapCoordinate(
-				AboveSide->first.GetPositionX() - AboveRoomSideDifference / 2 + AboveOffsetX, 
+				AboveSide->first.GetPositionX() - (AboveRoomSideDifference) / 2 + AboveOffsetX, 
 				AboveSide->first.GetPositionY()
 			);
 			ShorterXLocation = BeginningPos.GetPositionX(); // Saving this x pos with respect to column offset
@@ -1127,7 +935,7 @@ void MapManager::ConnectMapsVertically(Map* Map1, Map* Map2)
 		else
 		{
 			EndingPos = MapCoordinate(
-				BelowSide->first.GetPositionX() - BelowRoomSideDifference / 2 + BelowOffsetX, 
+				BelowSide->first.GetPositionX() - (BelowRoomSideDifference) / 2 + BelowOffsetX, 
 				BelowSide->first.GetPositionY()
 			);
 			ShorterXLocation = EndingPos.GetPositionX(); // Saving this x pos with respect to column offset
@@ -1148,7 +956,7 @@ void MapManager::ConnectMapsVertically(Map* Map1, Map* Map2)
 			{
 				BeginningPos = MapCoordinate(ShorterXLocation, AboveSide->first.GetPositionY());
 			}
-			else BeginningPos = MapCoordinate(AboveSide->first.GetPositionX() - AboveRoomSideDifference / 2 + AboveOffsetX, AboveSide->first.GetPositionY());
+			else BeginningPos = MapCoordinate(AboveSide->first.GetPositionX() - (AboveRoomSideDifference) / 2 + AboveOffsetX, AboveSide->first.GetPositionY());
 
 		}
 		// Then we need to process the room below
@@ -1164,7 +972,7 @@ void MapManager::ConnectMapsVertically(Map* Map1, Map* Map2)
 			{
 				EndingPos = MapCoordinate(ShorterXLocation, BelowSide->first.GetPositionY());
 			}
-			else EndingPos = MapCoordinate(BelowSide->first.GetPositionX() - BelowRoomSideDifference / 2 + BelowOffsetX, BelowSide->first.GetPositionY());
+			else EndingPos = MapCoordinate(BelowSide->first.GetPositionX() - (BelowRoomSideDifference) / 2 + BelowOffsetX, BelowSide->first.GetPositionY());
 		}
 		
 
@@ -1179,17 +987,17 @@ void MapManager::ConnectMapsVertically(Map* Map1, Map* Map2)
 		int Y1 = EndingPos.GetPositionY() + BelowOffsetY;
 		MapCell* Cell1 = new MapInactive(Textures, MapCoordinate(0, 0), Cell::Floor);
 
-		Map2->SetCell(X1, Y1, Cell1);
+		//Map2->SetCell(X1, Y1, Cell1);
 
 		int X2 = BeginningPos.GetPositionX();
 		int Y2 = BeginningPos.GetPositionY() + AboveOffsetY;
 		MapCell* Cell2 = new MapInactive(Textures, MapCoordinate(0, 0), Cell::Floor);
 
-		Map1->SetCell(X2, Y2, Cell2);
+		//Map1->SetCell(X2, Y2, Cell2);
 
 #endif // DEBUG_CORRIDOR_VERTICAL
 
-		GenerateVerticalCorridorBetween(Map1, BeginningPos, Map2, EndingPos);
+		GenerateVerticalCorridorBetween(Map1, MapCoordinate(BeginningPos.GetPositionX(), BeginningPos.GetPositionY() + AboveOffsetY), Map2, MapCoordinate(EndingPos.GetPositionX(), EndingPos.GetPositionY() + BelowOffsetY));
 
 	}
 }
@@ -1197,19 +1005,18 @@ void MapManager::ConnectMapsVertically(Map* Map1, Map* Map2)
 //
 // GenerateVerticalCorridorBetween()
 //
-// Note: Goes from the bottom, at Pos1, to the top, at Pos2
+// Note: Goes from the top, at Pos1, to the bottom, at Pos2
 //
 void MapManager::GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, Map* Map2, MapCoordinate Pos2)
 {
 
 	enum class Movement { LEFT, RIGHT, UP, DOWN };
 
-	float DistanceBetween = Pos1.GetPositionY() + MapSizeH - Pos2.GetPositionY();
+	float DistanceBetween = MapSizeH - Pos1.GetPositionY() + Pos2.GetPositionY();
 
 	int CurrentX = Pos1.GetPositionX();
 	int CurrentY = Pos1.GetPositionY();
-	int DistanceX = abs(Pos1.GetPositionX() - Pos2.GetPositionX());
-	int DistanceY = abs(Pos1.GetPositionY() - Pos2.GetPositionY());
+	int DistanceX = abs(Pos1.GetPositionX() - Pos2.GetPositionX());	// Dependent on vertical or horiz corridors
 	int MidPointY = (CurrentY + ((DistanceBetween = ceil(DistanceBetween / 2)) ? DistanceBetween : 1));
 	bool Try = false;
 	bool MovementY = false;
@@ -1226,10 +1033,22 @@ void MapManager::GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, 
 
 	// Adjusting the x transition 
 	// so that no conflicts occur
+
+	if (MidPointY >= MapSizeH) MidPointY = MapSizeH - 1;
+
+	int BegMidPoint = MidPointY;
 	while (ActiveMap->GetCell(CurrentX, MidPointY) != nullptr)
 	{
 		MidPointY--;
+		if (MidPointY <= Pos1.GetPositionY())
+		{
+			MidPointY = BegMidPoint;
+			cout << "OCCURRED: CURRENTMAP: " << Map1->GetCoordinate().GetPositionX() << " " << Map1->GetCoordinate().GetPositionY() << endl << endl;
+			break;
+		}
 	}
+
+
 
 	// Loading a floor texture
 	vector<string> Textures;
@@ -1322,9 +1141,11 @@ void MapManager::GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, 
 		}
 
 		// When we need to swap active maps
-		if (CurrentX >= MapSizeH)
+		if (CurrentY >= MapSizeH)
 		{
 			ActiveMap = Map2;
+			CurrentY = 0;
+			MidPointY %= MapSizeH;
 		}
 
 		MapCell* NewCell = new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
@@ -1464,6 +1285,28 @@ void MapManager::GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, 
 			BeginX = false;
 			MovementX = false;
 		}
+	}
+
+	if (CurrentX != Pos2.GetPositionX())
+	{
+
+#ifdef DEBUG_CORRIDOR_VERTICAL
+		vector<string> Textures;
+		Textures.push_back("Test2");
+
+		MapCell* Cell1 = new MapInactive(Textures, MapCoordinate(0, 0), Cell::Floor);
+
+		Map1->SetCell(Pos1.GetPositionX(), Pos1.GetPositionY(), Cell1);
+
+		Textures.clear();
+		Textures.push_back("Explosion");
+
+		Cell1 = new MapInactive(Textures, MapCoordinate(0, 0), Cell::Floor);
+
+		Map2->SetCell(Pos2.GetPositionX(), Pos2.GetPositionY(), Cell1);
+
+#endif // DEBUG_CORRIDOR_VERTICAL
+		cout << "Could not find the end to connect this map\n\n\n\n";
 	}
 
 }

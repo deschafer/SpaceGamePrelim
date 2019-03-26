@@ -28,6 +28,7 @@
     <ClCompile Include="Map\MapCell.cpp" />
     <ClCompile Include="Map\MapInactive.cpp" />
     <ClCompile Include="Map\MapManager.cpp" />
+    <ClCompile Include="Map\MapManagerThreads.cpp" />
     <ClCompile Include="Map\MapObject.cpp" />
     <ClCompile Include="Map\MapRoom.cpp" />
     <ClCompile Include="Map\MapWall.cpp" />
@@ -56,12 +57,14 @@
     <ClInclude Include="BasicTypes\Vector.h" />
     <ClInclude Include="Frame\InputManager.h" />
     <ClInclude Include="Frame\MainApplication.h" />
+    <ClInclude Include="Frame\Threads.h" />
     <ClInclude Include="Map\GenRoomComp.h" />
     <ClInclude Include="Map\Map.h" />
     <ClInclude Include="Map\MapCell.h" />
     <ClInclude Include="Map\MapCoordinate.h" />
     <ClInclude Include="Map\MapInactive.h" />
     <ClInclude Include="Map\MapManager.h" />
+    <ClInclude Include="Map\MapManagerThreads.h" />
     <ClInclude Include="Map\MapObject.h" />
     <ClInclude Include="Map\MapRoom.h" />
     <ClInclude Include="Map\MapWall.h" />

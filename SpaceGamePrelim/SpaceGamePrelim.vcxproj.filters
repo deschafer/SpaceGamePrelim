@@ -152,6 +152,9 @@
     <ClCompile Include="TextureCode\TextureProperties.cpp">
       <Filter>Source Files\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="Map\MapManagerThreads.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -246,6 +249,12 @@
     </ClInclude>
     <ClInclude Include="Frame\MainApplication.h">
       <Filter>Header Files\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\Threads.h">
+      <Filter>Header Files\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\MapManagerThreads.h">
+      <Filter>Header Files\Map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
