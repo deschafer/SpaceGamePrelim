@@ -365,7 +365,7 @@ void MapRoom::Generate()
 			int TempCount = CountRecord;	// Beginning count for looking at the temp vectors
 			int Index = TempCount;			// ..
 
-			int Space = ((EffectWidth * Variance) == 0) ? 1 : EffectWidth * Variance;
+			int Space = ((int)(EffectWidth * Variance) == 0) ? 1 : (int)(EffectWidth * Variance);
 
 			int HorizontalMagnitude = (TempSidesEast.size() + TempSidesWest.size()) - 1;
 			int VerticalMagnitude = (TempSidesNorth.size() + TempSidesSouth.size()) - 1;

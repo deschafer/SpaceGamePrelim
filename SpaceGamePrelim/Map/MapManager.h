@@ -63,8 +63,16 @@ private:
 	void MoveMap();
 	void UpdateCells();
 
+	void CheckCell(Map* MapAbove, Map* MapBelow, Map* ActiveMap,MapCoordinate CellPosition, std::vector<std::string> Textures, 
+		Cell CellType, std::vector<MapCoordinate> DrawnCells, bool Right);
+
 	void ConnectMapsVertically(Map* Map1, Map* Map2);
+	void ConnectMapsHorizontally(Map* Map1, Map* Map2);
+	void ConnectRoomsHoriz(Map* MapLeft, Map* MapRight, MapRoom* RightRoom, MapCoordinate RightRoomPos);
+	void FindCandidateSidePositions(Map* Left, Map* Right, MapRoom* RightRoom, int RightOffsetX, int RightOffsetY,
+		MapRoom* LeftRoom, int LeftOffsetX, int LeftOffsetY, int ColumnNumber);
 	void GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, Map* Map2, MapCoordinate Pos2);
+	void GenerateHorizontalCorridorBetween(Map* Map1, MapCoordinate Pos1, Map* Map2, MapCoordinate Pos2);
 
 	MapManager();
 

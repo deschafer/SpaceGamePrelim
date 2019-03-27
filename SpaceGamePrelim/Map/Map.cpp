@@ -399,7 +399,7 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 {
 	enum class Movement { LEFT, RIGHT, UP, DOWN };
 
-	float Result = DistanceBetween;
+	float Result = (int)DistanceBetween;
 	int CurrentX = Begin.GetPositionX();
 	int CurrentY = Begin.GetPositionY();
 	int DistanceX = abs(Begin.GetPositionX() - End.GetPositionX());
@@ -413,7 +413,7 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 
 	if (Horizontal)
 	{
-		int MidPointX = (CurrentX + ((Result = ceil(Result / 2)) ? Result : 1));
+		int MidPointX = (CurrentX + ((int)(Result = ceil(Result / 2)) ? (int)Result : 1));
 
 		bool BeginY = false;
 		bool EndY = false;
@@ -980,27 +980,6 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 	// No rooms to connect to
 	if (ColumnNumber < 0) return;
 
-	// Find room candidates to the left using the offsets given
-	// Add these to a list
-
-	vector<string> Textures;
-
-	static int Counter = 0;
-
-	switch (Counter)
-	{
-	case 0:
-		Counter++;
-		Textures.push_back("Test");
-		break;
-	case 1:
-		Textures.push_back("Test2");
-		Counter = 0;
-		break;
-	default:
-		break;
-	}
-
 	vector<pair<MapRoom*, MapCoordinate>> CandidateRooms;	// Holds a mapRoom and its starting topleft pos
 	vector<int> CandidateIndices;
 	int RoomHeight = Room->GetHeight();
@@ -1123,16 +1102,7 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 					CandidateRooms[Index].second.GetPositionY(),
 					ColumnNumber);
 			}
-
 		}
-		// If more than one, connect to the one above
-
-
-
-		// If all rooms do not have a connection, connect to the upper room
-		// If all have links, that connect to the closest room
-
-
 	}
 }
 
@@ -1142,23 +1112,6 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 //
 void Map::FindCandidateSidePositions(MapRoom* RightRoom, int RightOffsetX, int RightOffsetY, MapRoom* LeftRoom, int LeftOffsetX, int LeftOffsetY, int ColumnNumber)
 {
-	vector<string> Textures;
-	static int Counter = 0;
-
-	switch (Counter)
-	{
-	case 0:
-		Counter++;
-		Textures.push_back("Test");
-		break;
-	case 1:
-		Textures.push_back("Test2");
-		Counter = 0;
-		break;
-	default:
-		break;
-	}
-
 	int YStartPos = 0;
 	int Difference = 0;
 	pair<MapCoordinate, MapCoordinate>* GetLocationBegSide;
@@ -1330,23 +1283,17 @@ void Map::FindCandidateSidePositions(MapRoom* RightRoom, int RightOffsetX, int R
 			abs(RightRoomXPos - LeftRoomXPos),
 			true
 		);
-
-	#ifdef DEBUG_CORRIDOR_HORIZ
-		//cout << "Room -- " << RightRoom->GetRoomType() << " Connected to " << LeftRoom->GetRoomType() << " with distance between " << abs(RightRoomXPos - 
-		
-		LeftRoomXPos) << endl;
-		m_Cells[RightRoomPoint.GetPositionX()][RightRoomPoint.GetPositionY()] = new MapWall(Textures, MapCoordinate(RightRoomPoint), Cell::Floor);
-	#endif // DEBUG_CORRIDOR_HORIZ
 	}
 	else
 	{
 	#ifdef _DEBUG
-		cout << "Corridor Horiz Gen Error: No ending point found for " << RightRoom->GetRoomType() << " to " << LeftRoom->GetRoomType() << endl;
+		cout << "Corridor Horiz Gen Error: No ending point found for " 
+			<< RightRoom->GetRoomType() 
+			<< " to " 
+			<< LeftRoom->GetRoomType() 
+			<< endl;
 	#endif // _DEBUG
 	}
-	#ifdef DEBUG_CORRIDOR_HORIZ
-	m_Cells[LeftRoomPoint.GetPositionX()][LeftRoomPoint.GetPositionY()] = new MapWall(Textures, MapCoordinate(LeftRoomPoint), Cell::Floor);
-	#endif // DEBUG_CORRIDOR_HORIZ
 }
 
 //
