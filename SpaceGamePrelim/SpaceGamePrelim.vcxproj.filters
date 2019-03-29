@@ -155,6 +155,18 @@
     <ClCompile Include="Map\MapManagerThreads.cpp">
       <Filter>Source Files\Map</Filter>
     </ClCompile>
+    <ClCompile Include="Map\RoomConnector.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\CorridorVertical.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\CorridorHoriz.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\Corridor.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -254,6 +266,18 @@
       <Filter>Header Files\Frame</Filter>
     </ClInclude>
     <ClInclude Include="Map\MapManagerThreads.h">
+      <Filter>Header Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\RoomConnector.h">
+      <Filter>Header Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\CorridorVertical.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\CorridorHoriz.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\Corridor.h">
       <Filter>Header Files\Map</Filter>
     </ClInclude>
   </ItemGroup>

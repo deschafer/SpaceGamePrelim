@@ -23,6 +23,9 @@
     <ClCompile Include="Frame\InputManager.cpp" />
     <ClCompile Include="Frame\Main.cpp" />
     <ClCompile Include="Frame\MainApplication.cpp" />
+    <ClCompile Include="Map\Corridor.cpp" />
+    <ClCompile Include="Map\CorridorHoriz.cpp" />
+    <ClCompile Include="Map\CorridorVertical.cpp" />
     <ClCompile Include="Map\GenRoomComp.cpp" />
     <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Map\MapCell.cpp" />
@@ -32,6 +35,7 @@
     <ClCompile Include="Map\MapObject.cpp" />
     <ClCompile Include="Map\MapRoom.cpp" />
     <ClCompile Include="Map\MapWall.cpp" />
+    <ClCompile Include="Map\RoomConnector.cpp" />
     <ClCompile Include="Map\RoomManager.cpp" />
     <ClCompile Include="Objects\Button.cpp" />
     <ClCompile Include="Objects\GameEntity.cpp" />
@@ -58,6 +62,9 @@
     <ClInclude Include="Frame\InputManager.h" />
     <ClInclude Include="Frame\MainApplication.h" />
     <ClInclude Include="Frame\Threads.h" />
+    <ClInclude Include="Map\Corridor.h" />
+    <ClInclude Include="Map\CorridorHoriz.h" />
+    <ClInclude Include="Map\CorridorVertical.h" />
     <ClInclude Include="Map\GenRoomComp.h" />
     <ClInclude Include="Map\Map.h" />
     <ClInclude Include="Map\MapCell.h" />
@@ -68,6 +75,7 @@
     <ClInclude Include="Map\MapObject.h" />
     <ClInclude Include="Map\MapRoom.h" />
     <ClInclude Include="Map\MapWall.h" />
+    <ClInclude Include="Map\RoomConnector.h" />
     <ClInclude Include="Map\RoomManager.h" />
     <ClInclude Include="Objects\BaseCreator.h" />
     <ClInclude Include="Objects\Button.h" />
