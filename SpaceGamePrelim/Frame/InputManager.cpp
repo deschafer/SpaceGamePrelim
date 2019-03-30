@@ -31,8 +31,8 @@ void InputManager::OnKeyUp()
 void InputManager::OnMouseMove(SDL_Event& Event)
 {
 
-	m_MousePosition->setX(Event.motion.x);
-	m_MousePosition->setY(Event.motion.y);
+	m_MousePosition->setX((float)Event.motion.x);
+	m_MousePosition->setY((float)Event.motion.y);
 
 }
 
@@ -74,7 +74,7 @@ bool InputManager::IsKeyDown(SDL_Scancode Key)
 {
 	if (m_KeyStates != nullptr)
 	{
-		if (m_KeyStates[Key] == true)
+		if ((bool)m_KeyStates[Key] == true)
 		{
 			return true;
 		}

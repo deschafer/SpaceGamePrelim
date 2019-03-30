@@ -54,13 +54,11 @@ MapRoom* RoomConnector::FindRoomToConnectToHoriz()
 	MapRoom* CurrRoom = nullptr;
 	vector<pair<MapRoom*, MapCoordinate>> CandidateRooms;	// Holds a mapRoom and its starting topleft pos
 	vector<int> CandidateIndices;
-	pair<MapCoordinate, MapCoordinate>* GetLocationBegSide;
 	pair<MapCoordinate, MapCoordinate>* TempSide = nullptr;
-	pair<MapCoordinate, MapCoordinate>* GetLocationEndSide;
 	MapCoordinate Beginning;
 	MapCoordinate Ending;
 
-	for (size_t i = 0; i < (CurrRoomBeg = m_PossibleRoomOffsets.size()); i++)
+	for (size_t i = 0; i < (size_t)(CurrRoomBeg = (int)m_PossibleRoomOffsets.size()); i++)
 	{
 		CurrRoomBeg = m_PossibleRoomOffsets[i].GetPositionY();
 		CurrRoom = m_PossibleRooms[i];
@@ -173,7 +171,6 @@ DeterminedRoomPositions* RoomConnector::FindRoomPositionsHoriz()
 	int LeftOffsetY = m_OtherRoomPosition.GetPositionY();
 	pair<MapCoordinate, MapCoordinate>* GetLocationBegSide;
 	pair<MapCoordinate, MapCoordinate>* TempSide = nullptr;
-	pair<MapCoordinate, MapCoordinate>* GetLocationEndSide;
 
 	// Set a start position within +/- 2 blocks of the center side (if Possible)
 	// Save the pos. of this side
@@ -326,16 +323,16 @@ DeterminedRoomPositions* RoomConnector::FindRoomPositionsHoriz()
 		// Adds the link to the right room
 		m_BaseRoom->AddLinkedRoom(Side::LEFT, m_OtherRoom);
 
-		DeterminedRoomPositions ReturnValue;
-		ReturnValue.BaseOffset = MapCoordinate(
+		DeterminedRoomPositions *ReturnValue = new DeterminedRoomPositions;
+		ReturnValue->BaseOffset = MapCoordinate(
 			RightRoomPoint.GetPositionX() - m_BaseRoomPosition.GetPositionX(),
 			RightRoomPoint.GetPositionY() - m_BaseRoomPosition.GetPositionY());
-		ReturnValue.OtherRoom = m_OtherRoom;
-		ReturnValue.OtherPosOffset = MapCoordinate(
+		ReturnValue->OtherRoom = m_OtherRoom;
+		ReturnValue->OtherPosOffset = MapCoordinate(
 			LeftRoomPoint.GetPositionX() - m_OtherRoomPosition.GetPositionX(),
 			LeftRoomPoint.GetPositionY() - m_OtherRoomPosition.GetPositionY());
 
-		return &ReturnValue;
+		return ReturnValue;
 	}
 	else
 	{
@@ -446,18 +443,18 @@ DeterminedRoomPositions* RoomConnector::FindRoomPositionsVerti()
 		else CurrLocation = MapCoordinate(GetLocationEnd->first.GetPositionX() - CurrDifference / 2 + BelowOffsetX, GetLocationEnd->first.GetPositionY());
 	}
 
-	DeterminedRoomPositions ReturnValue;
+	DeterminedRoomPositions* ReturnValue = new DeterminedRoomPositions;
 
 	// Need to standardize the entries with respect to each room
-	ReturnValue.BaseOffset = MapCoordinate(
+	ReturnValue->BaseOffset = MapCoordinate(
 		AboveLocation.GetPositionX() - AboveOffsetX,
 		AboveLocation.GetPositionY());
 
-	ReturnValue.OtherRoom = m_OtherRoom;
-	ReturnValue.OtherPosOffset = MapCoordinate(
+	ReturnValue->OtherRoom = m_OtherRoom;
+	ReturnValue->OtherPosOffset = MapCoordinate(
 		CurrLocation.GetPositionX() - BelowOffsetX,
 		CurrLocation.GetPositionY());
 
- 	return &ReturnValue;
+ 	return ReturnValue;
 }
 

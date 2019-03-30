@@ -129,7 +129,7 @@ RoomProperties* RoomManager::GetRandomTypeThatFits(std::string  &roomType, int M
 	int SetIndex = rand() % SetMax;
 	Columns CurrentCol = Set[SetIndex];
 
-	for (size_t SetNumber = 0; SetNumber < SetMax; SetNumber++)
+	for (size_t SetNumber = 0; SetNumber < (size_t)SetMax; SetNumber++)
 	{
 		if (!m_WidthGroups[CurrentCol].empty())
 		{

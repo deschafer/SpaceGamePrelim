@@ -52,6 +52,7 @@
     <ClCompile Include="Scene\MapScene.cpp" />
     <ClCompile Include="Scene\MenuScene.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
+    <ClCompile Include="TextureCode\TextureDefinitions.cpp" />
     <ClCompile Include="TextureCode\TextureManager.cpp" />
     <ClCompile Include="TextureCode\TextureProperties.cpp" />
   </ItemGroup>
@@ -91,6 +92,7 @@
     <ClInclude Include="Scene\MapScene.h" />
     <ClInclude Include="Scene\MenuScene.h" />
     <ClInclude Include="Scene\Scene.h" />
+    <ClInclude Include="TextureCode\TextureDefinitions.h" />
     <ClInclude Include="TextureCode\TextureManager.h" />
     <ClInclude Include="TextureCode\TextureProperties.h" />
   </ItemGroup>

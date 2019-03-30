@@ -52,6 +52,8 @@ bool TextureManager::SetTexture(std::string Pathname, std::string TextureID, SDL
 #ifdef _DEBUG
 	cout << "New texture " << TextureID << " loaded successfully." << endl;
 #endif // DEBUG
+
+	return true;
 }
 
 //

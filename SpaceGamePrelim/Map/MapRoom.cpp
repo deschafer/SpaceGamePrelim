@@ -1117,7 +1117,7 @@ void MapRoom::Generate()
 
 			SideCount++;
 			// Greater Side Definition
-			if ((SideDef.size() > SideCount) && (SideDef[SideCount] == 1))
+			if ((SideDef.size() > (size_t)SideCount) && (SideDef[SideCount] == 1))
 			{
 				CurrentSide = NextSide(CurrentSide);
 			}
@@ -1589,8 +1589,10 @@ std::pair<MapCoordinate, MapCoordinate>* MapRoom::GetFacingFromSide(Side side)
 // Returns an indexed side from the corresponding given side and index
 // if it exists
 //
-pair<MapCoordinate, MapCoordinate>* MapRoom::GetFacingFromSideIndexed(Side side, int Index)
+pair<MapCoordinate, MapCoordinate>* MapRoom::GetFacingFromSideIndexed(Side side, int IndexI)
 {
+	size_t Index = (size_t)IndexI;
+
 	switch (side)
 	{
 	case Side::TOP:

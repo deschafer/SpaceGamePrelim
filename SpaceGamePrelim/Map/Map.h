@@ -2,6 +2,7 @@
 
 #include "MapObject.h"
 #include "MapRoom.h"
+#include "Corridor.h"
 
 #include <string>
 #include <Windows.h>
@@ -40,6 +41,7 @@ private:
 	std::vector<std::vector<MapRoom*>> m_Rooms;		// Holds the 2D array of rooms
 	std::vector<std::vector<int>> m_ColumnOffsetsX;	// Holds ind. offsets within columns for each room
 	std::vector<std::vector<int>> m_ColumnOffsetsY; // Starting y pos for the given room
+	std::vector<Corridor*> m_Corridors;
 
 	Map* m_NeighboringMaps[MapDirectionCt];					// Holds a pointer to all of the surrounding maps
 	int m_NeighborMapsSize;
@@ -49,7 +51,8 @@ private:
 	void SetUpVertiCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* BottomRoom);
 	void SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* Room);
 	
-
+	void SetNewCorridorCell(MapCoordinate CellPosition,
+		MapCell* NewCell, bool LastCell);
 
 public:
 
@@ -81,6 +84,8 @@ public:
 		Cell CellType,
 		std::vector<MapCoordinate>& TextureCoords,
 		bool Right);
+	void SetNewCell(MapCoordinate CellPosition,
+		MapCell* NewCell);
 
 	Map();
 	Map(std::string MapType, int Width, int Height, MapCoordinate Coords);

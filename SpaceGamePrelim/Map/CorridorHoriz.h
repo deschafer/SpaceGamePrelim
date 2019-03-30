@@ -5,9 +5,9 @@
 class CorridorHoriz : public Corridor
 {
 public:
-	CorridorHoriz();
+	CorridorHoriz(int Width, int Height);
 	virtual ~CorridorHoriz();
 
-	virtual Array GenerateCorridor(Array BoundsMatrix, Array CorridorLocaleMartrix);
+	virtual Corridor* GenerateCorridor(Array BoundsMatrix, Array CorridorLocaleMartrix, MapCoordinate Beg, MapCoordinate End, int DistanceBetween);
 };
 

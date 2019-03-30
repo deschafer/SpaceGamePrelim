@@ -2,7 +2,8 @@
 
 
 
-CorridorHoriz::CorridorHoriz()
+CorridorHoriz::CorridorHoriz(int Width, int Height) :
+	Corridor(Width, Height)
 {
 }
 
@@ -11,7 +12,7 @@ CorridorHoriz::~CorridorHoriz()
 {
 }
 
-Array CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLocaleMartrix)
+Corridor* CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLocaleMartrix, MapCoordinate Beg, MapCoordinate End, int DistanceBetween)
 {
-	return Array();
+	return nullptr;
 }

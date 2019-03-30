@@ -188,9 +188,9 @@ bool SceneFactory::LoadNewScene(std::string Filename, Scene* LoadingScene)
 					AnimSpeed),
 					TypeID,
 					SpecID,
-					Vector(VelX, VelY),
-					Vector(AccelX, AccelY),
-					Vector(PosX, PosY),
+					Vector((float)VelX, (float)VelY),
+					Vector((float)AccelX, (float)AccelY),
+					Vector((float)PosX, (float)PosY),
 					LoadingScene->GetCallback(HandlerID));
 
 				// Adding this object to the parsed objects

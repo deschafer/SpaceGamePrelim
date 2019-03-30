@@ -435,7 +435,7 @@ void MapManager::SetLink(Map* NewMap)
 		// Set the link between the two maps
 		NewMap->SetLink(MapDirection::North, Test);
 		Test->SetLink(MapDirection::South, NewMap);
-
+		/*
 		ThreadGenerator(
 			new CorridorThreadInformation(
 				NewMap,
@@ -444,6 +444,7 @@ void MapManager::SetLink(Map* NewMap)
 				this),
 			MapManagerThreadType::MapCorridorGenerate
 		);
+		*/
 		//ConnectTwoMaps(Test, NewMap, MapDirection::North);
 	}
 	// Checks northeast
@@ -748,8 +749,6 @@ void MapManager::CullMap()
 			m_HorizMovementSwapped = true;
 		}
 
-		cout << "West -- X:" << m_OffsetX << " Y: " << m_OffsetY << endl;
-
 		m_MovementLeft = false;
 	}
 	if (m_MovementRight)
@@ -773,8 +772,6 @@ void MapManager::CullMap()
 			m_MapNeedsSwapping = true;
 			m_HorizMovementSwapped = true;
 		}
-
-		cout << "East -- X:" << m_OffsetX << " Y: " << m_OffsetY << endl;
 
 		m_MovementRight = false;
 	}
@@ -800,9 +797,6 @@ void MapManager::CullMap()
 
 		}
 
-		cout << "South -- X:" << m_OffsetX << " Y: " << m_OffsetY << endl;
-
-
 		m_MovementNorth = false;
 	}
 	if (m_MovementSouth)
@@ -827,8 +821,6 @@ void MapManager::CullMap()
 			m_VertiMovementSwapped = true;
 
 		}
-
-		cout << "North -- X:" << m_OffsetX << " Y: " << m_OffsetY << endl;
 
 		m_MovementSouth = false;
 	}
@@ -1012,12 +1004,12 @@ void MapManager::GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, 
 
 	enum class Movement { LEFT, RIGHT, UP, DOWN };
 
-	float DistanceBetween = MapSizeH - Pos1.GetPositionY() + Pos2.GetPositionY();
+	float DistanceBetween = (float)(MapSizeH - Pos1.GetPositionY() + Pos2.GetPositionY());
 
 	int CurrentX = Pos1.GetPositionX();
 	int CurrentY = Pos1.GetPositionY();
 	int DistanceX = abs(Pos1.GetPositionX() - Pos2.GetPositionX());	// Dependent on vertical or horiz corridors
-	int MidPointY = (CurrentY + ((DistanceBetween = ceil(DistanceBetween / 2)) ? DistanceBetween : 1));
+	int MidPointY = (CurrentY + (int)((DistanceBetween = ceil(DistanceBetween / 2)) ? DistanceBetween : 1));
 	bool Try = false;
 	bool MovementY = false;
 	bool MovementX = false;
@@ -1091,7 +1083,7 @@ void MapManager::GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, 
 
 			// First search our texured sides to verify 
 			// Verifying that the area is clear for the corridor
-			for (size_t i = 0, Pos = CurrentX; i < DistanceX; i++)
+			for (size_t i = 0, Pos = CurrentX; i < (size_t)DistanceX; i++)
 			{
 				if (Direction == Movement::LEFT) Pos--;
 				else Pos++;

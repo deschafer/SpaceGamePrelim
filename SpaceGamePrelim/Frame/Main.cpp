@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 		frameTime = 0;
 
 	const int FPS = 60;
-	const int DELAY_TIME = 1000.0f / FPS;
+	const int DELAY_TIME = 1000 / FPS;
 
 	// Time seed generation
 	auto now = std::chrono::system_clock::now();
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 	std::chrono::milliseconds dur(duration);
 	std::chrono::time_point<std::chrono::system_clock> dt(dur);
 
-	srand(duration);
+	srand((unsigned int)duration);
 	//srand(1);
 
 

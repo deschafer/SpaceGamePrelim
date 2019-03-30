@@ -12,6 +12,15 @@ public:
 	MapCoordinate() {}
 	~MapCoordinate() {}
 
+	bool operator ==(MapCoordinate Other)
+	{
+		if (Other.GetPositionX() != m_PositionX)
+			return false;
+		if (Other.GetPositionY() != m_PositionY)
+			return false;
+		return true;
+	}
+
 	int GetPositionX() { return m_PositionX; }
 	int GetPositionY() { return m_PositionY; }
 };

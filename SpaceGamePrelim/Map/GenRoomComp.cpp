@@ -63,6 +63,7 @@ Side CorrespondingSide(Direction Dir)
 		return Side::LEFT;
 	}
 
+	return Side::COMPL;
 }
 
 Direction CorrespondingDirection(Side side)
@@ -88,6 +89,7 @@ Direction CorrespondingDirection(Side side)
 		break;
 	}
 
+	return Direction::WEST;
 }
 
 bool SideHorizontal(Side side)
@@ -112,6 +114,7 @@ bool SideHorizontal(Side side)
 		break;
 	}
 
+	return false;
 }
 
 bool SideVertical(Side side)
@@ -136,4 +139,5 @@ bool SideVertical(Side side)
 		break;
 	}
 
+	return false;
 }

@@ -5,6 +5,9 @@
 #include "MapInactive.h"
 #include "GenRoomComp.h"
 #include "RoomConnector.h"
+#include "CorridorVertical.h"
+#include "CorridorHoriz.h"
+
 
 #include "..\Frame\MainApplication.h"
 
@@ -43,6 +46,7 @@ const static string WallBottom = "Wall_Bottom";
 const static string Default = "Wall";
 const static string WallTopGroup = "Wall_Top";
 const static string FloorGroup = "Floors";
+
 
 
 Map::Map()
@@ -163,7 +167,7 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	int xOffset;
 
 	// We need to get a room height, first check if there is a boundary within 20 cells
-	for (size_t i = OffsetY, Count = 0; i < (m_Height - 1) && Count < MaxRoomHeight; i++, Count++)
+	for (size_t i = OffsetY, Count = 0; i < (size_t)(m_Height - 1) && Count < (size_t)MaxRoomHeight; i++, Count++)
 	{
 		RoomHeight++;
 	}
@@ -222,11 +226,11 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	// Now since the space has been allocated, and the room has been 
 	// generated, let's place the object in the array
 	for (size_t IndexX = OffsetX + xOffset, MagX = 0;
-		MagX < RoomWidth;
+		MagX < (size_t)RoomWidth;
 		MagX++, IndexX++)
 	{
 		for (size_t IndexY = OffsetY, MagY = 0;
-			MagY < RoomHeight;
+			MagY < (size_t)RoomHeight;
 			MagY++, IndexY++)
 		{
 			Place = (MapCell*)m_Cells[IndexX][IndexY];
@@ -293,6 +297,10 @@ void Map::SetUpVertiCorridor(int ColumnNumber, int ColumnOffsetX, int OffsetY, i
 
 		if (Positions)
 		{
+			int Distance = abs(AboveLocation.GetPositionY() + RoomAbove->GetHeight() - CurrLocation.GetPositionY());
+			if (!Distance) 
+				Distance = 1;
+
 			// Translating back into map coordinates
 			AboveLocation = MapCoordinate(
 				Positions->BaseOffset.GetPositionX() + AboveLocation.GetPositionX(), 
@@ -301,13 +309,138 @@ void Map::SetUpVertiCorridor(int ColumnNumber, int ColumnOffsetX, int OffsetY, i
 				Positions->OtherPosOffset.GetPositionX() + CurrLocation.GetPositionX(),
 				Positions->OtherPosOffset.GetPositionY() + CurrLocation.GetPositionY());
 			
+			/*
 			GenerateCorridorBetween(
 				AboveLocation,
 				CurrLocation,
-				abs(AboveLocation.GetPositionY() - CurrLocation.GetPositionY()),
+				Distance,
 				false
 			);
+			*/
+
+			// Find furthest left cell
+			// Then if that is the corner, good
+
+			
+
+			MapCoordinate TopLeft;
+			MapCoordinate BottomRight;
+
+			// If the AboveLoc is furthest right
+			if (AboveLocation.GetPositionX() <= CurrLocation.GetPositionX())
+			{
+				int X = AboveLocation.GetPositionX();
+				TopLeft = MapCoordinate(AboveLocation.GetPositionX() - ((AboveLocation.GetPositionX() - 1 >= 0) ? 1 : 0), AboveLocation.GetPositionY() - 1);
+				BottomRight = MapCoordinate(CurrLocation.GetPositionX() + ((CurrLocation.GetPositionX() + 1 < m_Width) ? 1 : 0), CurrLocation.GetPositionY() + 1);
+			}
+			else
+			{
+				TopLeft = MapCoordinate(CurrLocation.GetPositionX() - ((CurrLocation.GetPositionX() - 1 >= 0) ? 1 : 0), AboveLocation.GetPositionY() - 1);
+				BottomRight = MapCoordinate(AboveLocation.GetPositionX() + ((AboveLocation.GetPositionX() + 1 < m_Width) ? 1 : 0), CurrLocation.GetPositionY() + 1);
+			}
+
+			int DistanceX = abs(TopLeft.GetPositionX() - BottomRight.GetPositionX()) + 1;
+			int DistanceY = abs(TopLeft.GetPositionY() - BottomRight.GetPositionY()) + 1;
+
+			vector<vector<MapCell*>> BoundsMatrix;
+			vector<vector<MapCell*>> CorridorLocaleMatrix;
+			MapObject* TempCell;
+
+			MapCoordinate BoundedTop = MapCoordinate(AboveLocation.GetPositionX() - TopLeft.GetPositionX(), AboveLocation.GetPositionY() - TopLeft.GetPositionY());
+			MapCoordinate BoundedBottom = MapCoordinate(CurrLocation.GetPositionX() - TopLeft.GetPositionX(), CurrLocation.GetPositionY() - TopLeft.GetPositionY());
+
+			// Create the bounds matrix and corridor locale matrix
+			for (int i = 0, X = TopLeft.GetPositionX(); i < DistanceX; i++, X++)
+			{
+				BoundsMatrix.push_back(vector<MapCell*>());
+				CorridorLocaleMatrix.push_back(vector<MapCell*>());
+				for (int j = 0, Y = TopLeft.GetPositionY(); j < DistanceY; j++, Y++)
+				{
+					if (TempCell = m_Cells[X][Y])
+					{
+						BoundsMatrix[i].push_back(static_cast<MapCell*>(m_Cells[X][Y]));
+					}
+					else BoundsMatrix[i].push_back(nullptr);
+
+					if (TempCell = m_CorridorCells[X][Y])
+					{
+						CorridorLocaleMatrix[i].push_back(static_cast<MapCell*>(m_CorridorCells[X][Y]));
+					}
+					else CorridorLocaleMatrix[i].push_back(nullptr);
+				}
+			}
+
+			if (BoundsMatrix.empty())
+			{
+				cout << "broken";
+			}
+
+			// Create the corridor and generate it
+			CorridorVertical VertiCorrridor(DistanceX, DistanceY);
+			m_Corridors.push_back(&VertiCorrridor);
+
+			VertiCorrridor.GenerateCorridor(BoundsMatrix, CorridorLocaleMatrix, BoundedTop, BoundedBottom, Distance);
+
+			// Then place the corridor cells into the map
+			MapCell*** CorridorCells = VertiCorrridor.GetCells();
+
+			// Create the bounds matrix and corridor locale matrix
+			for (int i = 0, X = TopLeft.GetPositionX(); i < DistanceX; i++, X++)
+			{
+				for (int j = 0, Y = TopLeft.GetPositionY(); j < DistanceY; j++, Y++)
+				{
+					SetNewCorridorCell(MapCoordinate(X, Y), CorridorCells[i][j], (CurrLocation == MapCoordinate(X,Y) ? true : false));
+				}
+			}
 		}
+	}
+}
+
+//
+// SetNewCorridorCell()
+// 
+//
+void Map::SetNewCorridorCell(MapCoordinate CellPosition, MapCell* NewCell, bool LastCell)
+{
+	int X = CellPosition.GetPositionX();
+	int Y = CellPosition.GetPositionY();
+
+
+	if ((X < m_Width) && (Y < m_Height) && (Y >= 0) && (X >= 0) && NewCell)
+	{
+		// If there is no cell here currently
+		if (!m_Cells[X][Y])
+		{
+			// Then we add one
+			m_Cells[X][Y] = NewCell;
+
+			m_CorridorCells[X][Y] = m_Cells[X][Y];
+			return;
+		}
+		// Otherwise, check if the cell if a Wall_Top type, as we will not
+		// add a texture here
+		MapCell* Cell = dynamic_cast<MapCell*>(m_Cells[X][Y]);
+
+		if ((Cell->GetCellType() != Cell::Wall_Top && Cell->GetCellType() != Cell::Floor) || LastCell)
+		{
+			vector<string> Textures = *NewCell->ReturnRedTextures();
+
+			// Add the texture to the list to draw with the other textures here
+			for (size_t i = 0; i < Textures.size(); i++)
+			{
+				Cell->AddRedTexture(Textures[i]);
+				if (NewCell->GetCellType() == Cell::Wall_Top)
+				{
+					Cell->SetCellType(Cell::Wall_Top);
+				}
+				else if (NewCell->GetCellType() == Cell::Floor)
+				{
+					Cell->SetCellType(Cell::Floor);
+				}
+			}
+		}
+
+		m_CorridorCells[X][Y] = m_Cells[X][Y];
 	}
 }
 
@@ -319,7 +452,7 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 {
 	enum class Movement { LEFT, RIGHT, UP, DOWN };
 
-	float Result = (int)DistanceBetween;
+	float Result = (float)DistanceBetween;
 	int CurrentX = Begin.GetPositionX();
 	int CurrentY = Begin.GetPositionY();
 	int DistanceX = abs(Begin.GetPositionX() - End.GetPositionX());
@@ -331,9 +464,27 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 	Movement Direction;
 	vector <MapCoordinate> TexturedCoords;
 
+	// First check if the ending point can be reached
+	int X = End.GetPositionX();
+	int Y = End.GetPositionY();
+	if (Horizontal)
+	{  
+		if (X - 1 >= 0 && m_Cells[X - 1][Y] && !m_CorridorCells[X - 1][Y])
+		{
+		return false;
+		}
+	}
+	else
+	{
+		if (Y - 1 >= 0 && m_Cells[X][Y - 1] && !m_CorridorCells[X][Y - 1])
+		{
+			return false;
+		}
+	}
+
 	if (Horizontal)
 	{
-		int MidPointX = (CurrentX + ((int)(Result = ceil(Result / 2)) ? (int)Result : 1));
+		int MidPointX = (CurrentX + ((int)(Result = (Result / 2)) ? (int)Result : 1));
 
 		bool BeginY = false;
 		bool EndY = false;
@@ -354,7 +505,7 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 
 		// Adjusting the y transition 
 		// so that no conflicts occur
-		while (!m_Cells[MidPointX][CurrentY] && !m_CorridorCells[MidPointX][CurrentY])
+		while (m_Cells[MidPointX][CurrentY] && !m_CorridorCells[MidPointX][CurrentY])
 		{
 			MidPointX--; // Move backwards
 			if (MidPointX < 0)
@@ -402,13 +553,13 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 
 				// First search our texured sides to verify 
 				// Verifying that the area is clear for the corridor
-				for (size_t i = 0, Pos = CurrentY; i < DistanceY; i++)
+				for (int i = 0, Pos = CurrentY; i < DistanceY; i++)
 				{
 					if (Direction == Movement::UP) Pos--;
 					else Pos++;
 					// If this cell is not occupied by an external cell
 					// and it is not one of our drawn texture cells
-					if ((m_Cells[CurrentX][Pos] != nullptr && m_CorridorCells[CurrentX][Pos]) && 
+					if ((m_Cells[CurrentX][Pos] && !m_CorridorCells[CurrentX][Pos]) && 
 						(TexturedCoords.empty() ||
 						!(TexturedCoords[TexturedCoords.size() - 1].GetPositionX() == CurrentX &&
 							TexturedCoords[TexturedCoords.size() - 1].GetPositionY() == Pos)))
@@ -583,14 +734,11 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 				MovementY = false;
 			}
 		}
-		if (CurrentX != End.GetPositionX() || CurrentY != End.GetPositionY())
-		{
-			cout << "Did not find the end." << endl;
-		}
+
 	}
 	else
 	{
-		int MidPointY = (CurrentY + ((Result = ceil(Result / 2)) ? Result : 1));
+		int MidPointY = (CurrentY + (int)((Result = ceil(Result / 2)) ? Result : 1));
 
 		bool BeginX = false;
 		bool EndX = false;
@@ -646,7 +794,7 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 
 				// First search our texured sides to verify 
 				// Verifying that the area is clear for the corridor
-				for (size_t i = 0, Pos = CurrentX; i < DistanceX; i++)
+				for (int i = 0, Pos = CurrentX; i < DistanceX; i++)
 				{
 					if (Direction == Movement::LEFT) Pos--;
 					else Pos++;
@@ -836,6 +984,26 @@ bool Map::GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int Di
 		}
 	}
 
+	if (CurrentX != End.GetPositionX() || CurrentY != End.GetPositionY())
+	{
+		cout << "Did not find the end." << endl;
+
+		vector<string> Textures;
+		Textures.push_back("Test");
+
+		// Adding the corridor to the array
+		m_Cells[Begin.GetPositionX()][Begin.GetPositionY()] =
+			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
+
+		Textures.clear();
+		Textures.push_back("Explosion");
+
+		// Adding the corridor to the array
+		m_Cells[End.GetPositionX()][End.GetPositionY()] =
+			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
+
+	}
+
 	return true;
 }
 
@@ -892,6 +1060,52 @@ void Map::CheckCell(MapCoordinate CellPosition, std::vector<std::string> Texture
 }
 
 //
+//
+//
+//
+void Map::SetNewCell(MapCoordinate CellPosition, MapCell* NewCell)
+{
+	int X = CellPosition.GetPositionX();
+	int Y = CellPosition.GetPositionY();
+
+
+	if ((X < m_Width) && (Y < m_Height) && (Y >= 0) && (X >= 0) && NewCell)
+	{
+		// If there is no cell here currently
+		if (!m_Cells[X][Y])
+		{
+			// Then we add one
+			m_Cells[X][Y] = NewCell;
+
+			m_CorridorCells[X][Y] = m_Cells[X][Y];
+			return;
+		}
+		// Otherwise, check if the cell if a Wall_Top type, as we will not
+		// add a texture here
+		MapCell* Cell = dynamic_cast<MapCell*>(m_Cells[X][Y]);
+
+		if (Cell->GetCellType() != Cell::Wall_Top && Cell->GetCellType() != Cell::Floor)
+		{
+			vector<string> Textures = *NewCell->ReturnRedTextures();
+
+			// Add the texture to the list to draw with the other textures here
+			for (size_t i = 0; i < Textures.size(); i++)
+			{
+				Cell->AddRedTexture(Textures[i]);
+				if (NewCell->GetCellType() == Cell::Wall_Top)
+				{
+					Cell->SetCellType(Cell::Wall_Top);
+				}
+				else if (NewCell->GetCellType() == Cell::Floor)
+				{
+					Cell->SetCellType(Cell::Floor);
+				}
+			}
+		}
+	}
+}
+
+//
 // ManageHorizCorridor()
 // 
 //
@@ -907,10 +1121,7 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 	MapRoom* CurrRoom = nullptr;
 	int CurrRoomEnd = 0;
 	int CurrRoomBeg = 0;
-	pair<MapCoordinate, MapCoordinate>* GetLocationBegSide;
 	pair<MapCoordinate, MapCoordinate>* TempSide = nullptr;
-	pair<MapCoordinate, MapCoordinate>* GetLocationEndSide;
-
 	MapCoordinate Beginning;
 	MapCoordinate Ending;
 
@@ -922,7 +1133,7 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 
 	RoomConnector HorizConnector(Room, MapCoordinate(OffsetX + RoomOffsetX, OffsetY), m_Rooms[ColumnNumber], RoomOffsets);
 
-	if (HorizConnector.FindRoomToConnectToHoriz())
+	if (CurrRoom = HorizConnector.FindRoomToConnectToHoriz())
 	{
 		DeterminedRoomPositions *Positions = HorizConnector.FindRoomPositionsHoriz();
 		if (Positions)
@@ -940,7 +1151,7 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 			GenerateCorridorBetween(
 				Ending,
 				Beginning,
-				abs(Beginning.GetPositionX() - Ending.GetPositionX()),
+				abs(LeftMapPos.GetPositionX() + CurrRoom->GetWidth() - OffsetX + RoomOffsetX),
 				true
 			);
 		}
@@ -972,7 +1183,7 @@ MapObject** Map::GetRow(int ZeroIndexedRow)
 		// Create an array
 		MapObject** TempArray = new MapObject*[m_Width];
 		// Get each of the cells in this column
-		for (size_t i = 0; i < m_Width; i++)
+		for (int i = 0; i < m_Width; i++)
 		{
 			TempArray[i] = m_Cells[i][ZeroIndexedRow];
 		}
@@ -990,7 +1201,7 @@ MapObject** Map::GetRow(int ZeroIndexedRow)
 MapRoom* Map::GetRoomXFromColumnY(int RowX, int ColumnY, int& OffsetX, int& OffsetY, bool Last)
 {
 	// Checking bounds
-	if (ColumnY > m_Rooms.size() - 1)
+	if ((size_t)ColumnY > m_Rooms.size() - 1)
 	{
 #ifdef _DEBUG
 		cout << "GetRoomXFromColumnY: Requested column is out of bounds" << endl;
@@ -1008,7 +1219,7 @@ MapRoom* Map::GetRoomXFromColumnY(int RowX, int ColumnY, int& OffsetX, int& Offs
 		return m_Rooms[ColumnY][Index];
 	}
 
-	if (RowX > m_Rooms[ColumnY].size() - 1)
+	if ((size_t)RowX > m_Rooms[ColumnY].size() - 1)
 	{
 #ifdef _DEBUG
 		cout << "GetRoomXFromColumnY: Requested row is out of bounds" << endl;
