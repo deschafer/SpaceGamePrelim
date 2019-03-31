@@ -172,7 +172,6 @@ void MapRoom::Generate()
 	// definition dependent
 	float ParamInnerSizeY = Properties->m_InnerSizeX;
 	float ParamInnerSizeX = Properties->m_InnerSizeY;
-
 	float Variance;
 
 	// Numerics
@@ -1244,16 +1243,13 @@ vector<string> FindCorrectTile(Side CurrentSide, Direction CurrentDirection, boo
 	return Strings;
 }
 
-
 //
 // SetFloorTiles()
 // Wrapper around recursive alg to mark all floor tiles
 //
 void SetFloorTiles(MapObject*** &Cells, int StartX, int StartY, int XMax, int YMax)
 {
-
 	MarkFloorTile(Cells, StartX + 1, StartY + 1, XMax, YMax);
-
 }
 
 //
@@ -1334,7 +1330,6 @@ void Reflect(MapObject*** &Cells, int Width, int Height)
 		}
 	}
 }
-
 
 //
 // ReflectTile()
@@ -1494,7 +1489,6 @@ void ReflectCandidates(
 			MapCoordinate(Width - DistanceFirst, YPosition));
 		LeftFacingCandiates[i] = *NewPair;
 	}
-
 }
 
 //
@@ -1504,8 +1498,6 @@ void ReflectCandidates(
 //
 void MapRoom::AddCandidate(Side CurrentSide, MapCoordinate Start, MapCoordinate End)
 {
-
-
 	switch (CurrentSide)
 	{
 	case Side::TOP:
@@ -1547,9 +1539,6 @@ void MapRoom::AddCandidate(Side CurrentSide, MapCoordinate Start, MapCoordinate 
 	default:
 		break;
 	}
-
-
-
 }
 
 //

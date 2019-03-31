@@ -47,7 +47,8 @@ private:
 	int m_NeighborMapsSize;
 
 	void GenerateRoom(int OffsetX, int OffsetY, int ColumnWidth, int Index);
-	bool GenerateCorridorBetween(MapCoordinate Begin, MapCoordinate End, int DistanceBetween, bool Horiz);
+	void GenerateAndPlaceCorridor(Corridor* NewCorridor, MapCoordinate TopLeft, MapCoordinate BottomRight, MapCoordinate BegPos, 
+		MapCoordinate EndPos, int DistX, int DistY, int MajorDistance);
 	void SetUpVertiCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* BottomRoom);
 	void SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* Room);
 	
