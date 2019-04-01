@@ -170,7 +170,9 @@
     <ClCompile Include="TextureCode\TextureDefinitions.cpp">
       <Filter>Source Files\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="Map\MapConnector.cpp" />
+    <ClCompile Include="Map\MapConnector.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -275,9 +277,6 @@
     <ClInclude Include="Map\RoomConnector.h">
       <Filter>Header Files\Map</Filter>
     </ClInclude>
-    <ClInclude Include="Map\CorridorVertical.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Map\Corridor.h">
       <Filter>Header Files\Map</Filter>
     </ClInclude>
@@ -288,7 +287,10 @@
       <Filter>Header Files\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Map\MapConnector.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\CorridorVertical.h">
+      <Filter>Header Files\Map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
