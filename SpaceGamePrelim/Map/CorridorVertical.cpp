@@ -315,7 +315,7 @@ Corridor* CorridorVertical::GenerateCorridor(Array BoundsMatrix, Array CorridorL
 	if (CurrentX != End.GetPositionX() || CurrentY != End.GetPositionY())
 	{
 		cout << "Did not find the end." << endl;
-
+		/*
 		vector<string> Textures;
 		Textures.push_back("Test");
 
@@ -329,7 +329,9 @@ Corridor* CorridorVertical::GenerateCorridor(Array BoundsMatrix, Array CorridorL
 		// Adding the corridor to the array
 		m_Cells[End.GetPositionX()][End.GetPositionY()] =
 			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
+		*/
 
+		return nullptr;
 	}
 
 	return this;

@@ -29,6 +29,7 @@
     <ClCompile Include="Map\GenRoomComp.cpp" />
     <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Map\MapCell.cpp" />
+    <ClCompile Include="Map\MapConnector.cpp" />
     <ClCompile Include="Map\MapInactive.cpp" />
     <ClCompile Include="Map\MapManager.cpp" />
     <ClCompile Include="Map\MapManagerThreads.cpp" />
@@ -69,6 +70,7 @@
     <ClInclude Include="Map\GenRoomComp.h" />
     <ClInclude Include="Map\Map.h" />
     <ClInclude Include="Map\MapCell.h" />
+    <ClInclude Include="Map\MapConnector.h" />
     <ClInclude Include="Map\MapCoordinate.h" />
     <ClInclude Include="Map\MapInactive.h" />
     <ClInclude Include="Map\MapManager.h" />

@@ -53,6 +53,11 @@ private:
 
 	std::vector<MapObject****> m_VisibleMapCells;
 
+	std::list<std::pair<Map*, Map*>> m_QueuedEastConnections;
+	std::list<std::pair<Map*, Map*>> m_QueuedNorthConnections;
+	int m_ActivelyLinkedCount;
+	bool m_MapPhysicallyLinked;
+
 
 	void SetLink(Map* NewMap);
 	void GenerateNeighbors();
@@ -62,17 +67,9 @@ private:
 	void CullMap();
 	void MoveMap();
 	void UpdateCells();
+	void CheckPhysicalConnections();
 
-	void CheckCell(Map* MapAbove, Map* MapBelow, Map* ActiveMap,MapCoordinate CellPosition, std::vector<std::string> Textures, 
-		Cell CellType, std::vector<MapCoordinate> DrawnCells, bool Right);
 
-	void ConnectMapsVertically(Map* Map1, Map* Map2);
-	void ConnectMapsHorizontally(Map* Map1, Map* Map2);
-	void ConnectRoomsHoriz(Map* MapLeft, Map* MapRight, MapRoom* RightRoom, MapCoordinate RightRoomPos);
-	void FindCandidateSidePositions(Map* Left, Map* Right, MapRoom* RightRoom, int RightOffsetX, int RightOffsetY,
-		MapRoom* LeftRoom, int LeftOffsetX, int LeftOffsetY, int ColumnNumber);
-	void GenerateVerticalCorridorBetween(Map* Map1, MapCoordinate Pos1, Map* Map2, MapCoordinate Pos2);
-	void GenerateHorizontalCorridorBetween(Map* Map1, MapCoordinate Pos1, Map* Map2, MapCoordinate Pos2);
 
 	MapManager();
 
@@ -96,8 +93,7 @@ public:
 	int GetCellHeight() { return m_CellHeight; }
 
 	void ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween);
-
-
+	void RemoveQueuedMap();
 	void ResetMap();
 	
 	~MapManager();

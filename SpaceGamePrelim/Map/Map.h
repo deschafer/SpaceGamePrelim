@@ -37,6 +37,11 @@ private:
 	MapObject*** m_Cells;				// Cells of this map
 	MapObject*** m_CorridorCells;		// Cells of the corridors of this map. allows for corridor combinations
 
+	bool m_PhysicallyLinkedNorth;
+	bool m_PhysicallyLinkedEast;
+	bool m_PhysicallyLinkedWest;
+	bool m_PhysicallyLinkedSouth;
+
 	// Parallel room vectors
 	std::vector<std::vector<MapRoom*>> m_Rooms;		// Holds the 2D array of rooms
 	std::vector<std::vector<int>> m_ColumnOffsetsX;	// Holds ind. offsets within columns for each room
@@ -52,34 +57,34 @@ private:
 	void SetUpVertiCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* BottomRoom);
 	void SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* Room);
 	
-	void SetNewCorridorCell(MapCoordinate CellPosition,
-		MapCell* NewCell, bool LastCell);
-
 public:
 
 	void Generate();
-	
-
 	MapObject* GetCell(int X, int Y);
+	MapObject* GetCorridorCell(int X, int Y);
 	MapObject*** GetCellArray() { return m_Cells; }
 	MapObject**** GetCellArrayAddress() { return &m_Cells; }
+	MapCoordinate GetCoordinate() { return m_MapCoordinates; }
+	MapRoom* GetRoomXFromColumnY(int RowX, int ColumnY, int& OffsetX, int& OffsetY, bool Last = false);
+	MapObject** GetColumn(int ZeroIndexedColumn);
+	MapObject** GetRow(int ZeroIndexedRow);
+	Map* GetNeighbor(MapDirection Direction) { return m_NeighboringMaps[static_cast<int>(Direction)]; }
 	int GetHeight() { return m_Height; }
 	int GetWidth() { return m_Width; }
 	bool IsSurrounded() { for (int i = 0; i < m_NeighborMapsSize; i++) if (!m_NeighboringMaps[i]) return false; return true; }
 	bool IsGenerated() { return m_Generated; }
+	bool IsPhysicallyLinkedNorth() { return m_PhysicallyLinkedNorth; }
+	bool IsPhysicallyLinkedEast() { return m_PhysicallyLinkedEast; }
+	bool IsPhysicallyLinkedSouth() { return m_PhysicallyLinkedSouth; }
+	bool IsPhysicallyLinkedWest() { return m_PhysicallyLinkedWest; }
 	bool CheckLink(MapDirection Direction) { return m_NeighboringMaps[static_cast<int>(Direction)] ? true : false; }
-	MapRoom* GetRoomXFromColumnY(int RowX, int ColumnY, int& OffsetX, int& OffsetY, bool Last = false);
-
-	void SetLink(MapDirection Direction, Map* LinkedMap) { m_NeighboringMaps[static_cast<int>(Direction)] = LinkedMap; }
-
-	MapObject** GetColumn(int ZeroIndexedColumn);
-	MapObject** GetRow(int ZeroIndexedRow);
-	Map* GetNeighbor(MapDirection Direction) { return m_NeighboringMaps[static_cast<int>(Direction)]; }
-
-	MapCoordinate GetCoordinate() { return m_MapCoordinates; }
-
+	void SetPhysicallyLinkedNorth() { m_PhysicallyLinkedNorth = true; }
+	void SetPhysicallyLinkedEast() { m_PhysicallyLinkedEast = true; }
+	void SetPhysicallyLinkedSouth() { m_PhysicallyLinkedSouth = true; }
+	void SetPhysicallyLinkedWest() { m_PhysicallyLinkedWest = true; }
 	void SetCell(int X, int Y, MapObject *Cell); 
 	void SetCorridorCell(int X, int Y, MapObject* Cell);
+	void SetLink(MapDirection Direction, Map* LinkedMap) { m_NeighboringMaps[static_cast<int>(Direction)] = LinkedMap; }
 	void CheckCell(MapCoordinate CellPosition,
 		std::vector<std::string> Textures,
 		Cell CellType,
@@ -87,6 +92,16 @@ public:
 		bool Right);
 	void SetNewCell(MapCoordinate CellPosition,
 		MapCell* NewCell);
+	void SetNewCorridorCell(MapCoordinate CellPosition,
+		MapCell* NewCell, bool LastCell);
+	void AddCorridor(Corridor* NewCorridor) { m_Corridors.push_back(NewCorridor); }
+	MapCoordinate* GetRoomOffsetsFromLastRow(int X);
+	std::vector<MapRoom*> GetRoomsFromColumnX(int X, bool Last = false);
+
+	bool operator ==(Map Other)
+	{
+		return (m_MapCoordinates == Other.GetCoordinate());
+	}
 
 	Map();
 	Map(std::string MapType, int Width, int Height, MapCoordinate Coords);

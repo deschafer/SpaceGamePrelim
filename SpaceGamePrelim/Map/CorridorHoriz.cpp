@@ -193,6 +193,7 @@ Corridor* CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLoca
 	int Y = End.GetPositionY();
 	if (X - 1 >= 0 && BoundsMatrix[X - 1][Y] && !CorridorLocaleMartrix[X - 1][Y])
 	{
+		cout << "Bounded error" << endl;
 		return nullptr;
 	}
 
@@ -323,7 +324,7 @@ Corridor* CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLoca
 	if (CurrentX != End.GetPositionX() || CurrentY != End.GetPositionY())
 	{
 		cout << "Did not find the end." << endl;
-
+		/*
 		vector<string> Textures;
 		Textures.push_back("Test");
 
@@ -337,7 +338,8 @@ Corridor* CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLoca
 		// Adding the corridor to the array
 		m_Cells[End.GetPositionX()][End.GetPositionY()] =
 			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
-
+		*/
+		return nullptr;
 	}
 
 	return this;

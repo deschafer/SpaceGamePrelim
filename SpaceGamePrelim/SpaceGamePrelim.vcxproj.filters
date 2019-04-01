@@ -170,6 +170,7 @@
     <ClCompile Include="TextureCode\TextureDefinitions.cpp">
       <Filter>Source Files\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="Map\MapConnector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -285,6 +286,9 @@
     </ClInclude>
     <ClInclude Include="TextureCode\TextureDefinitions.h">
       <Filter>Header Files\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\MapConnector.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

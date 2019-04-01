@@ -63,7 +63,11 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 	m_MapType(MapType),
 	m_MapCoordinates(Coords),
 	m_NeighborMapsSize(NeighMapCount),
-	m_Generated(false)
+	m_Generated(false),
+	m_PhysicallyLinkedEast(false),
+	m_PhysicallyLinkedNorth(false),
+	m_PhysicallyLinkedSouth(false),
+	m_PhysicallyLinkedWest(false)
 {
 	// Generating the array for this map
 	m_Cells = new MapObject**[m_Height];
@@ -103,7 +107,6 @@ Map::~Map()
 //
 MapObject* Map::GetCell(int X, int Y)
 {
-
 	if (X < m_Width && X >= 0 && Y < m_Height && Y >= 0)
 	{
 		return m_Cells[X][Y];
@@ -112,7 +115,18 @@ MapObject* Map::GetCell(int X, int Y)
 	{
 		return nullptr;
 	}
+}
 
+MapObject* Map::GetCorridorCell(int X, int Y)
+{
+	if (X < m_Width && X >= 0 && Y < m_Height && Y >= 0)
+	{
+		return m_CorridorCells[X][Y];
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 //
@@ -387,16 +401,6 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 			Ending = MapCoordinate(
 				Positions->OtherPosOffset.GetPositionX() + LeftMapPos.GetPositionX(),
 				Positions->OtherPosOffset.GetPositionY() + LeftMapPos.GetPositionY());
-
-			/*
-			// Have to convert back into map coordinates
-			GenerateCorridorBetween(
-			Ending,
-			Beginning,
-			abs(LeftMapPos.GetPositionX() + CurrRoom->GetWidth() - OffsetX + RoomOffsetX),
-			true
-			);
-			*/
 
 			int Distance = abs(Beginning.GetPositionX() - Ending.GetPositionX());
 			if (!Distance)
@@ -681,9 +685,6 @@ MapRoom* Map::GetRoomXFromColumnY(int RowX, int ColumnY, int& OffsetX, int& Offs
 	// Checking bounds
 	if ((size_t)ColumnY > m_Rooms.size() - 1)
 	{
-#ifdef _DEBUG
-		cout << "GetRoomXFromColumnY: Requested column is out of bounds" << endl;
-#endif // _DEBUG
 		return nullptr;
 	}
 
@@ -699,15 +700,41 @@ MapRoom* Map::GetRoomXFromColumnY(int RowX, int ColumnY, int& OffsetX, int& Offs
 
 	if ((size_t)RowX > m_Rooms[ColumnY].size() - 1)
 	{
-#ifdef _DEBUG
-		cout << "GetRoomXFromColumnY: Requested row is out of bounds" << endl;
-#endif // _DEBUG
 		return nullptr;
 	}
 
 	OffsetY = m_ColumnOffsetsY[ColumnY][RowX];
 	OffsetX = m_ColumnOffsetsX[ColumnY][RowX] + (ColumnY * ColumnWidth5);
 	return m_Rooms[ColumnY][RowX];
+}
+
+//
+// GetRoomOffsetsFromLastRow()
+//
+//
+MapCoordinate* Map::GetRoomOffsetsFromLastRow(int X)
+{
+	int Index = m_ColumnOffsetsX.size() - 1;
+	if (X > m_ColumnOffsetsX[Index].size() - 1)
+		return nullptr;
+
+	return new MapCoordinate(m_ColumnOffsetsX[Index][X] + ColumnWidth5 * Index, m_ColumnOffsetsY[Index][X]);
+}
+
+//
+// GetRoomsFromColumnX()
+//
+//
+vector<MapRoom*> Map::GetRoomsFromColumnX(int X, bool Last)
+{
+	int Index = m_Rooms.size() - 1;
+	if (X > Index && !Last)
+		return vector<MapRoom*>();
+	
+	if (Last)
+		return m_Rooms[Index];
+	else
+		return m_Rooms[X];
 }
 
 //
