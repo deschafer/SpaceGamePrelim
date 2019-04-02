@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <SCENE name ="Test" paused="0">
   <OBJECTS>
-    
+    <!--
     <OBJECT  typeID="Button" 
              specID="Button" 
              dimX="0" 
@@ -18,7 +18,7 @@
              posX="100" 
              posY="100" 
              handlerID="ButtonHandler" />
-    <!--
+    
     <OBJECT  typeID="Player" 
              specID="Player" 
              dimX="0" 

@@ -30,7 +30,6 @@ public:
 	MapCell*** GetCells() { return m_Cells; }
 	MapRoom* GetRoomAboveOrRight() { return m_RoomAboveOrRight; }
 	MapRoom* RoomBelowOrLeft() { return m_RoomBelowOrLeft; }
-
 	virtual Corridor* GenerateCorridor(Array BoundsMatrix, Array CorridorLocaleMartrix, MapCoordinate Beg, MapCoordinate End, int DistanceBetween) = 0;
 };
 

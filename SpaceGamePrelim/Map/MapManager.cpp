@@ -27,7 +27,6 @@ static const int VerticalMovementSpeed = 16;
 static const int VisibleHorizonBufferSize = 2;
 static const int VisibleVerticalBufferSize = 2;
 static const int CenterMapArrayIndex = 8;
-
 static const int ColumnWidth1 = 6;
 static const int ColumnWidth2 = 8;
 static const int ColumnWidth3 = 10;
@@ -36,16 +35,6 @@ static const int ColumnWidth5 = 14;
 static const int NumberColumns = MapSizeW / ColumnWidth5;
 static const int ActiveCellsWidth = 1000;
 static const int ActiveCellsHeight = 1000;
-
-
-const static string WallCornerRight = "Wall_Corner_Right";
-const static string WallCornerLeft = "Wall_Corner_Left";
-const static string WallSideRight = "Wall_Side_Right";
-const static string WallSideLeft = "Wall_Side_Left";
-const static string WallBottom = "Wall_Bottom";
-const static string Default = "Wall";
-const static string WallTopGroup = "Wall_Top";
-const static string FloorGroup = "Floors";
 
 static const string DefaultMapStr = "Default";
 
@@ -218,9 +207,9 @@ MapManager::MapManager() :
 	m_Rows = MapSizeH;			// Get a count of columns
 	m_Columns = MapSizeW;		// Get a count of rows
 
-								// Visible object array is the cells that fill the screen
-								// and is therefore the appropriate size of the screen, plus a buffer of 2 cells
-								// on for all the sides.
+	// Visible object array is the cells that fill the screen
+	// and is therefore the appropriate size of the screen, plus a buffer of 2 cells
+	// on for all the sides.
 	int ResolutionX = MainApplication::Instance()->GetWndWidth();
 	int ResolutionY = MainApplication::Instance()->GetWndHeight();
 
@@ -333,14 +322,15 @@ void MapManager::Update()
 	// Handles all map correction
 	CullMap();
 
+	// Checks if any physical connections need to be made
+	CheckPhysicalConnections();
+
 	// Gets input from the user
 	HandleInput();
 
-	CheckPhysicalConnections();
 
-
-	// Update our cells -- WILL use a thread
-	// UpdateCells();
+	// Update our cells
+	UpdateCells();
 }
 
 //
@@ -356,10 +346,10 @@ void MapManager::UpdateCells()
 
 	for (size_t CurrentMap = 0; CurrentMap < m_VisibleMapCells.size(); CurrentMap++)
 	{
-		// Get the actual array of cells
 		if (m_VisibleMapCells[CurrentMap])
 		{
 			m_VisibleObjectArray = *m_VisibleMapCells[CurrentMap];
+
 			// Then get the approp. offsets for these cells
 			if (CurrentMap != CenterMapArrayIndex)
 			{
@@ -376,8 +366,21 @@ void MapManager::UpdateCells()
 			for (int i = 0; i < MapSizeW; i++)
 			{
 				for (int j = 0; j < MapSizeH; j++)
-					if (Object = m_VisibleObjectArray[i][j])
+				{
+					Object = m_VisibleObjectArray[i][j];
+
+					int PositionX = (i)* m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
+					int PositionY = (j)* m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+
+					if (Object &&
+						PositionX + m_CellWidth >= 0 &&
+						PositionX < m_ActiveWndWidth &&
+						PositionY + m_CellHeight >= 0 &&
+						PositionY < m_ActiveWndHeight)
+					{
 						Object->Update();
+					}
+				}
 			}
 		}
 	}
@@ -555,9 +558,6 @@ void MapManager::SetLink(Map* NewMap)
 		// Set the link between the two maps
 		NewMap->SetLink(MapDirection::West, Test);
 		Test->SetLink(MapDirection::East, NewMap);
-
-		//MapConnector Connector(NewMap, Test, MapDirection::East);
-		//Connector.ConnectMaps();
 
 		m_QueuedEastConnections.push_back(pair<Map*, Map*>(
 			Test,
@@ -923,4 +923,3 @@ void MapManager::ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween)
 		Connector.ConnectMaps();
 	}
 }
-
