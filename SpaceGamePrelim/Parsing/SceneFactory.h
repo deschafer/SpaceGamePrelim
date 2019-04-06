@@ -5,6 +5,7 @@
 
 #include "..\Scene\ActiveSceneManager.h"
 #include "..\Objects\BaseCreator.h"
+#include "..\Components\Component.h"
 
 // singleton class structure
 class SceneFactory
@@ -12,6 +13,7 @@ class SceneFactory
 private:
 
 	std::map<std::string, BaseCreator*> m_ObjectCreators;	// Holds the required creation functions for each object
+	std::map<std::string, ComponentCreator*> m_CompCreators;// Holds required creation functions for each registered component
 	static SceneFactory* m_Instance;
 
 	SceneFactory();
@@ -28,6 +30,7 @@ public:
 	}
 
 	void RegisterNewObject(std::string TypeID, BaseCreator* ObjectCreator);
+	void RegisterNewComponent(std::string CompID, ComponentCreator* CompCreator);
 	bool LoadNewScene(std::string Filename, Scene* LoadingScene);
 
 

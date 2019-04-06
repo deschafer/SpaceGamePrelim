@@ -2,6 +2,8 @@
 #include "GameEntity.h"
 #include "..\Frame\MainApplication.h"
 #include "..\TextureCode\TextureManager.h"
+#include "..\Components\Component.h"
+
 
 
 GameEntity::GameEntity() :
@@ -102,12 +104,14 @@ bool GameEntity::Load(
 //
 void GameEntity::Update()
 {
+	for (size_t i = 0; i < m_Components.size(); i++)
+	{
+		m_Components[i]->Execute();
+	}
 
+	// Update position and velcoity
 	m_Position += m_Velocity;
 	m_Velocity += m_Acceleration;
-
-	m_CurrentFrame = int(((SDL_GetTicks() / m_AnimationSpeed) % m_NumberFrames));
-
 }
 
 
@@ -138,4 +142,38 @@ void GameEntity::Draw()
 void GameEntity::Delete() 
 {
 
+}
+
+void GameEntity::OnCollision()
+{
+
+}
+
+void GameEntity::OnDamaged()
+{
+
+}
+
+void GameEntity::OnMovement()
+{
+
+}
+
+void GameEntity::OnInteraction()
+{
+
+}
+
+void GameEntity::SetFrame(int FrameNumber)
+{
+	if (m_CurrentFrame < m_NumberFrames)
+	{
+		m_CurrentFrame = FrameNumber;
+	}
+	else
+	{
+#ifdef _DEBUG
+		std::cout << "Frame number not within range" << std::endl;
+#endif // _DEBUG
+	}
 }

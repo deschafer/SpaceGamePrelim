@@ -1,23 +1,25 @@
 <?xml version="1.0"?>
 <SCENE name ="Test" paused="0">
   <OBJECTS>
-    <!--
-    <OBJECT  typeID="Button" 
-             specID="Button" 
-             dimX="0" 
-             dimY="0" 
-             dimW="32" 
-             dimH="31" 
-             txtID="Explosion" 
-             animSpeed="1" 
-             numFrames="3" 
-             velX="0" 
-             velY="0" 
-             accelX="0" 
-             accelY="0" 
-             posX="100" 
-             posY="100" 
-             handlerID="ButtonHandler" />
+    
+    <OBJECT  typeID="Button"
+             specID="Button"
+             dimX="0"
+             dimY="0"
+             dimW="32"
+             dimH="31"
+             txtID="Explosion"
+             animSpeed="1"
+             numFrames="3"
+             velX="0"
+             velY="0"
+             accelX="0"
+             accelY="0"
+             posX="100"
+             posY="100"
+             handlerID="ButtonHandler">
+      <COMP compID="ButtonInteract"/>   
+   </OBJECT>
     
     <OBJECT  typeID="Player" 
              specID="Player" 
@@ -34,8 +36,10 @@
              accelY="0" 
              posX="500" 
              posY="500" 
-             handlerID="" />
-             -->
+             handlerID="" >
+      <COMP compID="PlayerMovement"/>    
+    </OBJECT>
+             
     
   
   </OBJECTS>

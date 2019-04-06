@@ -25,7 +25,6 @@ GameScene::~GameScene()
 //
 void GameScene::Update()
 {
-	MapManager::Instance()->Update();
 	Scene::Update();
 }
 
@@ -35,7 +34,6 @@ void GameScene::Update()
 //
 void GameScene::Render()
 {
-	MapManager::Instance()->Draw();
 	Scene::Render();
 }
 

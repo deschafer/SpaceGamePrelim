@@ -20,6 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicTypes\Rect.cpp" />
+    <ClCompile Include="Components\ButtonInteractComp.cpp" />
+    <ClCompile Include="Components\Component.cpp" />
+    <ClCompile Include="Components\PlayerMovementComp.cpp" />
     <ClCompile Include="Frame\InputManager.cpp" />
     <ClCompile Include="Frame\Main.cpp" />
     <ClCompile Include="Frame\MainApplication.cpp" />
@@ -61,6 +64,9 @@
     <ClInclude Include="BasicTypes\BasicTypes.h" />
     <ClInclude Include="BasicTypes\Rect.h" />
     <ClInclude Include="BasicTypes\Vector.h" />
+    <ClInclude Include="Components\ButtonInteractComp.h" />
+    <ClInclude Include="Components\Component.h" />
+    <ClInclude Include="Components\PlayerMovementComp.h" />
     <ClInclude Include="Frame\InputManager.h" />
     <ClInclude Include="Frame\MainApplication.h" />
     <ClInclude Include="Frame\Threads.h" />

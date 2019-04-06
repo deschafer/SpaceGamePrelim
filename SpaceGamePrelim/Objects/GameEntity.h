@@ -3,8 +3,10 @@
 #include "GameObject.h"
 #include "..\BasicTypes\BasicTypes.h"
 
-
 #include <string>
+#include <vector>
+
+class Component;
 
 class GameEntity : public GameObject
 {
@@ -22,10 +24,7 @@ public:
 		std::string TypeID,
 		std::string SpecTypeID,
 		Vector InitPosition);
-
 	virtual ~GameEntity();
-
-
 	virtual bool Load(
 		TextureProperties* Properties,
 		std::string TypeID,
@@ -37,7 +36,18 @@ public:
 	virtual void Update();
 	virtual void Draw();
 	virtual void Delete();
+	virtual void OnCollision();
+	virtual void OnDamaged();
+	virtual void OnMovement();
+	virtual void OnInteraction();
 
+	virtual void SetFrame(int FrameNumber);
+	virtual void SetVelocity(Vector NewVel) { m_Velocity = NewVel; }
+	virtual void SetComponent(Component* NewComp) { m_Components.push_back(NewComp); }
+
+	virtual Vector GetPosition() { return m_Position; }
+	virtual Rect GetDimensions() { return m_Dimensions; }
+	virtual void ExecuteCallback() { m_Callback(); }
 
 protected:
 
@@ -60,5 +70,7 @@ protected:
 	std::string m_ReducedTextureID;
 	std::string m_TypeID;
 	std::string m_SpecTypeID;
+
+	std::vector<Component*> m_Components;
 };
 

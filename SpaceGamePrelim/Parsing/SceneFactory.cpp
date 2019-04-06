@@ -33,6 +33,8 @@ const std::string PosYStr = "posY";
 const std::string TypeIDStr = "typeID";
 const std::string SpecIDStr = "SpecID";
 const std::string HandlerIDStr = "handlerID";
+const std::string CompIDStr = "compID";
+
 
 
 
@@ -50,6 +52,22 @@ void SceneFactory::RegisterNewObject(std::string TypeID, BaseCreator* ObjectCrea
 	else
 	{
 		delete ObjectCreator;
+	}
+}
+
+// 
+// RegisterNewComponent()
+//
+//
+void SceneFactory::RegisterNewComponent(std::string CompID, ComponentCreator* CompCreator)
+{
+	if (!m_CompCreators[CompID])
+	{
+		m_CompCreators[CompID] = CompCreator;
+	}
+	else
+	{
+		delete CompCreator;
 	}
 }
 
@@ -92,6 +110,8 @@ bool SceneFactory::LoadNewScene(std::string Filename, Scene* LoadingScene)
 	int PosX;
 	int PosY;
 	std::string HandlerID;
+	std::vector<std::string> ComponentIDs;
+	ComponentCreator* CompCreator;
 
 	for (NextNode = NextNode->FirstChildElement(); NextNode != nullptr; NextNode = NextNode->NextSiblingElement())
 	{
@@ -103,6 +123,7 @@ bool SceneFactory::LoadNewScene(std::string Filename, Scene* LoadingScene)
 				ObjectNode != nullptr;
 				ObjectNode = ObjectNode->NextSiblingElement())
 			{
+
 				// For each object, get the following information
 				// each of these attributes is information regarding the
 				// creation of an object
@@ -170,7 +191,20 @@ bool SceneFactory::LoadNewScene(std::string Filename, Scene* LoadingScene)
 				{
 					HandlerID = *GetAttribute;
 				}
+
+				// Getting each of the components
 				
+				// Getting each of these objects
+				for (TiXmlElement* CompNode = ObjectNode->FirstChildElement();
+					CompNode != nullptr;
+					CompNode = CompNode->NextSiblingElement())
+				{
+					if (GetAttribute = CompNode->Attribute(CompIDStr))
+					{
+						ComponentIDs.push_back(*GetAttribute);
+					}
+				}
+
 				// First create this specefic object
 				GameObject* Object = m_ObjectCreators[TypeID]->CreateObject();
 
@@ -193,12 +227,24 @@ bool SceneFactory::LoadNewScene(std::string Filename, Scene* LoadingScene)
 					Vector((float)PosX, (float)PosY),
 					LoadingScene->GetCallback(HandlerID));
 
+				GameEntity* Entity = static_cast<GameEntity*>(Object);
+
+				// Then creating all the components and adding them to the 
+				// owning object
+				for (size_t i = 0; i < ComponentIDs.size(); i++)
+				{
+					if (CompCreator = m_CompCreators[ComponentIDs[i]])
+					{	
+						Entity->SetComponent(CompCreator->Create(Entity));
+					}
+				}
+
 				// Adding this object to the parsed objects
 				ParsedObjects.push_back(Object);
+				ComponentIDs.clear();
 			}
 		}
 	}
-
 	// Before finishing, set the new objects
 	LoadingScene->SetGameObjects(ParsedObjects);
 

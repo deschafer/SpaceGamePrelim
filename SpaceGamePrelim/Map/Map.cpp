@@ -715,7 +715,7 @@ MapRoom* Map::GetRoomXFromColumnY(int RowX, int ColumnY, int& OffsetX, int& Offs
 MapCoordinate* Map::GetRoomOffsetsFromLastRow(int X)
 {
 	int Index = m_ColumnOffsetsX.size() - 1;
-	if (X > m_ColumnOffsetsX[Index].size() - 1)
+	if ((size_t)X > m_ColumnOffsetsX[Index].size() - 1)
 		return nullptr;
 
 	return new MapCoordinate(m_ColumnOffsetsX[Index][X] + ColumnWidth5 * Index, m_ColumnOffsetsY[Index][X]);

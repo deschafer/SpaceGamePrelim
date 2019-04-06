@@ -60,6 +60,12 @@
     <Filter Include="Header Files\Texture\TinyXML">
       <UniqueIdentifier>{bc4a05ac-828b-4815-86a0-bea5f7a6f4f7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{93180c6d-661c-4a48-8edd-36a5b4adc4e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{327de58f-2436-4fa2-bfc6-3c243aa07cd9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Map\MapCell.cpp">
@@ -172,6 +178,15 @@
     </ClCompile>
     <ClCompile Include="Map\MapConnector.cpp">
       <Filter>Source Files\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Component.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\ButtonInteractComp.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\PlayerMovementComp.cpp">
+      <Filter>Source Files\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -291,6 +306,15 @@
     </ClInclude>
     <ClInclude Include="Map\CorridorVertical.h">
       <Filter>Header Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Component.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\ButtonInteractComp.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\PlayerMovementComp.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

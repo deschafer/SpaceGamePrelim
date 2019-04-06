@@ -24,10 +24,6 @@ public:
 		Vector InitAccel,
 		Callback callBack);
 
-	virtual void Update() override;
-
-
-
 	~Button();
 };
 

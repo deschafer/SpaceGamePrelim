@@ -3,6 +3,8 @@
 #include "../Objects/Button.h"
 #include "../Objects/Player.h"
 #include "../Map/MapManager.h"
+#include "../Components/PlayerMovementComp.h"
+#include "../Components/ButtonInteractComp.h"
 
 #include <iostream>
 
@@ -11,7 +13,6 @@ const std::string ButtonHandlerStr = "ButtonHandler";
 MapScene::MapScene()
 {
 }
-
 
 MapScene::~MapScene()
 {
@@ -24,7 +25,6 @@ MapScene::MapScene(std::string SceneID, bool Paused) :
 	m_Handlers[ButtonHandlerStr] = s_ButtonHandler;
 }
 
-
 //
 //
 //
@@ -33,9 +33,11 @@ bool MapScene::Enter()
 {
 	// Registering the types assoc with this scene
 	SceneFactory::Instance()->RegisterNewObject("Button", new ButtonCreator());
-	//SceneFactory::Instance()->RegisterNewObject("Player", new PlayerCreator());
+	SceneFactory::Instance()->RegisterNewComponent("ButtonInteract", new ButtonInteractCompCreator());
 
-	
+	SceneFactory::Instance()->RegisterNewObject("Player", new PlayerCreator());
+	SceneFactory::Instance()->RegisterNewComponent("PlayerMovement", new PlayerMovementCompCreator());
+
 
 	SceneFactory::Instance()->LoadNewScene("XML/Scenes/Test.xml", this);
 
@@ -67,7 +69,8 @@ void MapScene::Exit()
 //
 void MapScene::Update()
 {
-	GameScene::Update();
+	MapManager::Instance()->Update();
+	Scene::Update();
 }
 
 //
@@ -76,11 +79,14 @@ void MapScene::Update()
 //
 void MapScene::Render()
 {
-	GameScene::Render();
-
+	MapManager::Instance()->Draw();
+	Scene::Render();
 }
 
-
+//
+//
+//
+//
 void MapScene::s_ButtonHandler()
 {
 	MapManager::Instance()->ResetMap();

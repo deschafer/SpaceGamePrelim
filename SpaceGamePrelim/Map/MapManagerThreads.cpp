@@ -121,7 +121,7 @@ DWORD WINAPI ThreadConnectMaps(LPVOID lpParam)
 	CorridorThreadInformation* Info = static_cast<CorridorThreadInformation*>(lpParam);
 
 	Info->Manager->ConnectTwoMaps(Info->MapTo, Info->MapFrom, Info->LinkBetween);
-
+	
 	return EXIT_SUCCESS;
 }
 

@@ -13,8 +13,6 @@ public:
 	Player(std::string RedTexture, TextureProperties* Prop, std::string TypeID, std::string SpecID,
 		Vector InitPosition, Vector InitVelocity, Vector InitAccel);
 
-	virtual void Update() override;
-
 	Player();
 	~Player();
 };
