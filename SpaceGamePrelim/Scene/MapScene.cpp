@@ -5,6 +5,7 @@
 #include "../Map/MapManager.h"
 #include "../Components/PlayerMovementComp.h"
 #include "../Components/ButtonInteractComp.h"
+#include "../Components/CollisionComp.h"
 
 #include <iostream>
 
@@ -37,6 +38,7 @@ bool MapScene::Enter()
 
 	SceneFactory::Instance()->RegisterNewObject("Player", new PlayerCreator());
 	SceneFactory::Instance()->RegisterNewComponent("PlayerMovement", new PlayerMovementCompCreator());
+	SceneFactory::Instance()->RegisterNewComponent("Collision", new CollisionCompCreator());
 
 
 	SceneFactory::Instance()->LoadNewScene("XML/Scenes/Test.xml", this);

@@ -188,6 +188,9 @@
     <ClCompile Include="Components\PlayerMovementComp.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Collision\CollisionManager.cpp" />
+    <ClCompile Include="Collision\Collision.cpp" />
+    <ClCompile Include="Components\CollisionComp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -315,6 +318,18 @@
     </ClInclude>
     <ClInclude Include="Components\PlayerMovementComp.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\CollisionManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\Collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\CollisionComp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicTypes\EntityDirection.h">
+      <Filter>Header Files\BasicTypes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,7 @@
 
 #include "PlayerMovementComp.h"
 #include "..\Frame\InputManager.h"
+#include "..\BasicTypes\EntityDirection.h"
 
 PlayerMovementComp::PlayerMovementComp()
 {
@@ -18,6 +19,8 @@ PlayerMovementComp::~PlayerMovementComp()
 void PlayerMovementComp::Execute()
 {
 	Vector Velocity;
+	EntityDirection HorizComp = EntityDirection::None;
+	EntityDirection VertiComp = EntityDirection::None;;
 
 	Velocity.setX(0);
 	Velocity.setY(0);
@@ -39,5 +42,24 @@ void PlayerMovementComp::Execute()
 		Velocity.setX(1);
 	}
 
+	// Based on direction, set the owning object direction
+	if (Velocity.getX() > 0)
+	{
+		HorizComp = EntityDirection::East;
+	}
+	else if (Velocity.getX() < 0)
+	{
+		HorizComp = EntityDirection::West;
+	}
+	if (Velocity.getY() > 0)
+	{
+		VertiComp = EntityDirection::South;
+	}
+	else if (Velocity.getY() < 0)
+	{
+		VertiComp = EntityDirection::North;
+	}
+
+	m_Owner->SetDirection(HorizComp, VertiComp);
 	m_Owner->SetVelocity(Velocity);
 }

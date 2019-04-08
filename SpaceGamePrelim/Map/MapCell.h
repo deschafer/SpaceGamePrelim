@@ -18,7 +18,8 @@ enum class Cell
 	Wall_Corner_Right,
 	Wall_Corner_Left_Bottom,
 	Wall_Corner_Right_Bottom,
-	Default
+	Default,
+	Empty
 };
 
 class MapCell : public MapObject

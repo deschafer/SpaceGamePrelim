@@ -25,8 +25,8 @@
              specID="Player" 
              dimX="0" 
              dimY="0" 
-             dimW="32" 
-             dimH="31" 
+             dimW="20" 
+             dimH="20" 
              txtID="Explosion" 
              animSpeed="100" 
              numFrames="3" 
@@ -37,7 +37,9 @@
              posX="500" 
              posY="500" 
              handlerID="" >
-      <COMP compID="PlayerMovement"/>    
+      <COMP compID="PlayerMovement"/>  
+      <COMP compID="Collision"/>    
+    
     </OBJECT>
              
     

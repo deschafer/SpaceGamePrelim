@@ -22,8 +22,8 @@ static const int CellWidthSrc = 32;
 static const int CellHeightSrc = 32;
 static const int MapSizeW = 100;
 static const int MapSizeH = 100;
-static const int HorizontalMovementSpeed = 16;
-static const int VerticalMovementSpeed = 16;
+static const int HorizontalMovementSpeed = 8;
+static const int VerticalMovementSpeed = 8;
 static const int VisibleHorizonBufferSize = 2;
 static const int VisibleVerticalBufferSize = 2;
 static const int CenterMapArrayIndex = 8;
@@ -922,4 +922,135 @@ void MapManager::ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween)
 		MapConnector Connector(Map1, Map2, MapDirection::East);
 		Connector.ConnectMaps();
 	}
+}
+
+//
+// GetCellType()
+// Coordinates should be raw, and not standardized
+// So 300,0 would be in Map(3,0)
+//
+Cell MapManager::GetCellType(Vector ScreenPosition)
+{
+	Cell CellType = Cell::Default;
+	static Map* ActiveMap = m_ActiveMap;
+
+	if (!m_MapNeedsSwapping)
+	{
+		ActiveMap = m_ActiveMap;
+	}
+
+	// Add offsets to current screen position
+	Vector OffsettedPosition(
+		static_cast<float>(ScreenPosition.getX() - m_PixelOffsetX),
+		static_cast<float>(ScreenPosition.getY() - m_PixelOffsetY));
+	
+	Vector OriginPosition(
+		static_cast<float>(MapSizeW * CellWidthSrc + OffsettedPosition.getX()),
+		static_cast<float>(MapSizeH * CellHeightSrc + OffsettedPosition.getY()));
+	
+	cout << "OffsettedPosition: "
+		<< OriginPosition.getX()
+		<< " "
+		<< OriginPosition.getY()
+		<< " " << endl;
+
+	// Based on this offsetted position, get the mapcell out of the
+	// loaded maps
+	int Row = OriginPosition.getY() / (MapSizeH * CellHeightSrc);
+	int Col = OriginPosition.getX() / (MapSizeW * CellWidthSrc);
+	MapCoordinate CoordinateCell(
+		((int)OriginPosition.getX() / CellWidthSrc) % MapSizeW,
+		((int)OriginPosition.getY() / CellHeightSrc) % MapSizeH);
+	MapDirection VertiComp;
+	MapDirection HorizComp;
+	MapDirection ActDirection;
+	Map* ActualMap = ActiveMap;
+	bool NoVerticalComp = false;
+	bool NoHorizComp = false;
+
+	// First determine the row
+	if (Row == 0)
+	{
+		VertiComp = MapDirection::North;
+	}
+	else if (Row == 1)
+	{
+		NoVerticalComp = true;
+	}
+	else
+	{
+		VertiComp = MapDirection::South;
+	}
+	
+	// Then determine the column
+	// First determine the row
+	if (Col == 0)
+	{
+		HorizComp = MapDirection::West;
+	}
+	else if (Col == 1)
+	{
+		NoHorizComp = true;
+	}
+	else
+	{
+		HorizComp = MapDirection::East;
+	}
+
+	if (NoHorizComp && !NoVerticalComp)
+	{
+		ActDirection = VertiComp;
+		ActualMap = ActiveMap->GetNeighbor(VertiComp);
+	}
+	else if(NoVerticalComp && !NoHorizComp)
+	{
+		ActDirection = HorizComp;
+		ActualMap = ActiveMap->GetNeighbor(HorizComp);
+	}
+	else if(NoVerticalComp && NoHorizComp)
+	{
+		ActualMap = ActiveMap;
+	}
+	else
+	{
+		// Construct proper direction
+		if (Row == 0)
+		{
+			// Top left corner
+			if (Col == 0)
+			{
+				ActDirection = MapDirection::Northwest;
+			}
+			// Bottom left corner
+			else if (Col = 2)
+			{
+				ActDirection = MapDirection::Southwest;
+			}
+		}
+		else if (Row = 2)
+		{
+			// Top Right corner
+			if (Col == 0)
+			{
+				ActDirection = MapDirection::Northeast;
+			}
+			// Bottom right corner
+			else if (Col = 2)
+			{
+				ActDirection = MapDirection::Southeast;
+			}
+		}
+	}
+	
+	MapCell* CurrCell = static_cast<MapCell*>(ActualMap->GetCell(
+		CoordinateCell.GetPositionX(),
+		CoordinateCell.GetPositionY()));
+	if (CurrCell)
+		CellType = CurrCell->GetCellType();
+	else
+		CellType = Cell::Empty;
+		
+
+
+	return CellType;
 }

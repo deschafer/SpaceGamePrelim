@@ -84,6 +84,7 @@ public:
 
 	int GetCellWidth() { return m_CellWidth; }
 	int GetCellHeight() { return m_CellHeight; }
+	Cell GetCellType(Vector ScreenPosition);
 
 	void ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween);
 	void RemoveQueuedMap();

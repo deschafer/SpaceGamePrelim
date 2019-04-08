@@ -20,7 +20,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicTypes\Rect.cpp" />
+    <ClCompile Include="Collision\Collision.cpp" />
+    <ClCompile Include="Collision\CollisionManager.cpp" />
     <ClCompile Include="Components\ButtonInteractComp.cpp" />
+    <ClCompile Include="Components\CollisionComp.cpp" />
     <ClCompile Include="Components\Component.cpp" />
     <ClCompile Include="Components\PlayerMovementComp.cpp" />
     <ClCompile Include="Frame\InputManager.cpp" />
@@ -62,9 +65,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicTypes\BasicTypes.h" />
+    <ClInclude Include="BasicTypes\EntityDirection.h" />
     <ClInclude Include="BasicTypes\Rect.h" />
     <ClInclude Include="BasicTypes\Vector.h" />
+    <ClInclude Include="Collision\Collision.h" />
+    <ClInclude Include="Collision\CollisionManager.h" />
     <ClInclude Include="Components\ButtonInteractComp.h" />
+    <ClInclude Include="Components\CollisionComp.h" />
     <ClInclude Include="Components\Component.h" />
     <ClInclude Include="Components\PlayerMovementComp.h" />
     <ClInclude Include="Frame\InputManager.h" />

@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "..\BasicTypes\BasicTypes.h"
+#include "..\BasicTypes\EntityDirection.h"
 
 #include <string>
 #include <vector>
@@ -44,6 +45,7 @@ public:
 	virtual void SetFrame(int FrameNumber);
 	virtual void SetVelocity(Vector NewVel) { m_Velocity = NewVel; }
 	virtual void SetComponent(Component* NewComp) { m_Components.push_back(NewComp); }
+	virtual void SetDirection(EntityDirection Horiz, EntityDirection Verti) { m_HorizMovement = Horiz, m_VertiMovement = Verti; }
 
 	virtual Vector GetPosition() { return m_Position; }
 	virtual Rect GetDimensions() { return m_Dimensions; }
@@ -55,6 +57,8 @@ protected:
 	Vector m_Position;
 	Vector m_Velocity;
 	Vector m_Acceleration;
+	EntityDirection m_HorizMovement;
+	EntityDirection m_VertiMovement;
 
 	Rect m_Dimensions;
 
