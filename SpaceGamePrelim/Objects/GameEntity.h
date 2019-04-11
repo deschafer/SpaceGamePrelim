@@ -49,6 +49,10 @@ public:
 
 	virtual Vector GetPosition() { return m_Position; }
 	virtual Rect GetDimensions() { return m_Dimensions; }
+	virtual EntityDirection GetDirectionHoriz() { return m_HorizMovement; }
+	virtual EntityDirection GetDirectionVerti() { return m_VertiMovement; }
+	virtual Vector GetVelocity() { return m_Velocity; }
+
 	virtual void ExecuteCallback() { m_Callback(); }
 
 protected:

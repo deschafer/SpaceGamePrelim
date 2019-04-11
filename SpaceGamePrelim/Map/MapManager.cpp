@@ -947,12 +947,6 @@ Cell MapManager::GetCellType(Vector ScreenPosition)
 	Vector OriginPosition(
 		static_cast<float>(MapSizeW * CellWidthSrc + OffsettedPosition.getX()),
 		static_cast<float>(MapSizeH * CellHeightSrc + OffsettedPosition.getY()));
-	
-	cout << "OffsettedPosition: "
-		<< OriginPosition.getX()
-		<< " "
-		<< OriginPosition.getY()
-		<< " " << endl;
 
 	// Based on this offsetted position, get the mapcell out of the
 	// loaded maps
@@ -1050,7 +1044,195 @@ Cell MapManager::GetCellType(Vector ScreenPosition)
 	else
 		CellType = Cell::Empty;
 		
-
-
 	return CellType;
+}
+
+//
+// GetCellIndex()
+//
+//
+MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell)
+{
+	static Map* ActiveMap = m_ActiveMap;
+
+	if (!m_MapNeedsSwapping)
+	{
+		ActiveMap = m_ActiveMap;
+	}
+
+	// Add offsets to current screen position
+	Vector OffsettedPosition(
+		static_cast<float>(ScreenPosition.getX() - m_PixelOffsetX),
+		static_cast<float>(ScreenPosition.getY() - m_PixelOffsetY));
+	Vector OriginPosition(
+		static_cast<float>(MapSizeW * CellWidthSrc + OffsettedPosition.getX()),
+		static_cast<float>(MapSizeH * CellHeightSrc + OffsettedPosition.getY()));
+
+	// Based on this offsetted position, get the mapcell out of the
+	// loaded maps
+	int Row = OriginPosition.getY() / (MapSizeH * CellHeightSrc);
+	int Col = OriginPosition.getX() / (MapSizeW * CellWidthSrc);
+	MapCoordinate CoordinateCell(
+		((int)OriginPosition.getX() / CellWidthSrc) % MapSizeW,
+		((int)OriginPosition.getY() / CellHeightSrc) % MapSizeH);
+	MapDirection VertiComp;
+	MapDirection HorizComp;
+	MapDirection ActDirection;
+	Map* ActualMap = ActiveMap;
+	bool NoVerticalComp = false;
+	bool NoHorizComp = false;
+
+	// First determine the row
+	if (Row == 0)
+	{
+		VertiComp = MapDirection::North;
+	}
+	else if (Row == 1)
+	{
+		NoVerticalComp = true;
+	}
+	else
+	{
+		VertiComp = MapDirection::South;
+	}
+
+	// Then determine the column
+	// First determine the row
+	if (Col == 0)
+	{
+		HorizComp = MapDirection::West;
+	}
+	else if (Col == 1)
+	{
+		NoHorizComp = true;
+	}
+	else
+	{
+		HorizComp = MapDirection::East;
+	}
+
+	if (NoHorizComp && !NoVerticalComp)
+	{
+		ActDirection = VertiComp;
+		ActualMap = ActiveMap->GetNeighbor(VertiComp);
+	}
+	else if (NoVerticalComp && !NoHorizComp)
+	{
+		ActDirection = HorizComp;
+		ActualMap = ActiveMap->GetNeighbor(HorizComp);
+	}
+	else if (NoVerticalComp && NoHorizComp)
+	{
+		ActualMap = ActiveMap;
+	}
+	else
+	{
+		// Construct proper direction
+		if (Row == 0)
+		{
+			// Top left corner
+			if (Col == 0)
+			{
+				ActDirection = MapDirection::Northwest;
+			}
+			// Bottom left corner
+			else if (Col = 2)
+			{
+				ActDirection = MapDirection::Southwest;
+			}
+		}
+		else if (Row = 2)
+		{
+			// Top Right corner
+			if (Col == 0)
+			{
+				ActDirection = MapDirection::Northeast;
+			}
+			// Bottom right corner
+			else if (Col = 2)
+			{
+				ActDirection = MapDirection::Southeast;
+			}
+		}
+	}
+
+	// Also return the map where this map was found
+	MapWithCell = ActualMap;
+
+	return MapCoordinate(CoordinateCell.GetPositionX(), CoordinateCell.GetPositionY());
+}
+
+//
+// CheckCollisions()
+//
+//
+std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vector PosWithoutMovement)
+{
+	std::vector<Collision*> Collisions;
+	Vector Movement(
+		PosWithoutMovement.getX() - PosWithMovement.getX(),
+		PosWithoutMovement.getY() - PosWithMovement.getY());
+	Collision* HorizCollision;
+	Collision* VertiCollision;
+	Collision* DiagonalCollision;
+
+	// For horizontal movement
+	if (Movement.getX())
+	{
+		HorizCollision = CheckCellForCollision(
+			Vector(
+				PosWithoutMovement.getX() + Movement.getX(),
+				PosWithoutMovement.getY()
+			),
+			CollisionDir::Horiz);
+		if(HorizCollision)
+			Collisions.push_back(HorizCollision);
+	}
+	// Do the same for vertical
+	if (Movement.getY())
+	{
+		VertiCollision = CheckCellForCollision(
+			Vector(
+				PosWithoutMovement.getX(),
+				PosWithoutMovement.getY() + Movement.getY()
+			),
+			CollisionDir::Verti);
+		if (VertiCollision)
+			Collisions.push_back(VertiCollision);
+	}
+	// If no collisions found, then do diagonal if there is movement
+	if (Collisions.empty() && Movement.getY() && Movement.getX())
+	{
+		DiagonalCollision = CheckCellForCollision(
+			Vector(
+				PosWithoutMovement.getX() + Movement.getX(),
+				PosWithoutMovement.getY() + Movement.getY()
+			),
+			CollisionDir::Diagonal);
+		if (DiagonalCollision)
+			Collisions.push_back(DiagonalCollision);
+	}
+
+	return Collisions;
+}
+
+//
+// CheckCellForCollision()
+//
+//
+Collision* MapManager::CheckCellForCollision(Vector Position, CollisionDir Direction)
+{
+	Map* CurrentMap;
+	MapCoordinate Index = GetCellIndex(Position, CurrentMap);
+	MapCell* CurrCell = static_cast<MapCell*>(CurrentMap->GetCell(Index.GetPositionX(), Index.GetPositionY()));
+
+	// We got our cell so check if it is a wall
+	// In the near future wach cell will know if its an opaque
+	// type, but for new we just compare
+	if (CurrCell && (CurrCell->GetCellType() != Cell::Floor))
+	{
+		// Create a new collision
+		return new Collision(CollisionType::MapWall, Direction);
+	}
+	else return nullptr;
 }

@@ -17,11 +17,12 @@ CollisionManager::~CollisionManager()
 // Checks the current position for any collisions, and if any are present,
 // it returns a list of objects representing the collisions
 //
-std::vector<Collision*> CollisionManager::CheckPosition(Vector Position)
+std::vector<Collision*> CollisionManager::CheckPosition(Vector PositionAfter, Vector PositionBefore)
 {
 	std::vector<Collision*> Collisions;
 
-	CheckMapForCollisions(Collisions, Position);
+	// Get collisions from the map
+	Collisions = MapManager::Instance()->CheckCollisions(PositionAfter, PositionBefore);
 
 	return Collisions;
 }
@@ -30,15 +31,21 @@ std::vector<Collision*> CollisionManager::CheckPosition(Vector Position)
 // CheckMapForCollisions()
 //
 //
-void CollisionManager::CheckMapForCollisions(std::vector<Collision*> &Collisions, Vector Position)
+void CollisionManager::CheckMapForCollisions(std::vector<Collision*> &Collisions, Vector PositionAfter, Vector PositionBefore)
 {
-
+	/*
 	Cell CellType = MapManager::Instance()->GetCellType(Position);
 
 	if (CellType != Cell::Floor)
 	{
 		Collisions.push_back(new Collision(CollisionType::MapWall));
 	}
+	*/
+
+	// Get collisions from the map
+	std::vector<Collision*> CurrCollisions = MapManager::Instance()->CheckCollisions(PositionAfter, PositionBefore);
+
+
 	/*
 	switch (CellType)
 	{

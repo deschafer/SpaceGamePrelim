@@ -11,6 +11,13 @@ Collision::Collision(CollisionType Type) :
 {
 }
 
+Collision::Collision(CollisionType Type, CollisionDir Direction) : 
+	m_Type(Type),
+	m_Direction(Direction)
+{
+}
+
+
 Collision::~Collision()
 {
 }

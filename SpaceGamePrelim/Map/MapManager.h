@@ -9,6 +9,7 @@
 #include "MapCell.h"
 #include "Map.h"
 #include "RoomManager.h"
+#include "..\Collision\Collision.h"
 
 //
 // Coordinate space of connected maps follows a traditonal cartesian coordinate space, pos X to the right, pos y to the top.
@@ -64,6 +65,7 @@ private:
 	void MoveMap();
 	void UpdateCells();
 	void CheckPhysicalConnections();
+	Collision* CheckCellForCollision(Vector Position, CollisionDir Direction);
 	MapManager();
 
 public:
@@ -85,6 +87,8 @@ public:
 	int GetCellWidth() { return m_CellWidth; }
 	int GetCellHeight() { return m_CellHeight; }
 	Cell GetCellType(Vector ScreenPosition);
+	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell);
+	std::vector<Collision*> CheckCollisions(Vector PosWithMovement, Vector PosWithoutMovement);
 
 	void ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween);
 	void RemoveQueuedMap();

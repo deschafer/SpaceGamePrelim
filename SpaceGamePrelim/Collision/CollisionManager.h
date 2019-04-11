@@ -12,7 +12,7 @@ private:
 
 	static CollisionManager* m_Instance;
 
-	void CheckMapForCollisions(std::vector<Collision*> &Collisions, Vector Position);
+	void CheckMapForCollisions(std::vector<Collision*> &Collisions, Vector PositionAfter, Vector PositionBefore);
 
 	CollisionManager();
 public:
@@ -26,7 +26,7 @@ public:
 		else return m_Instance;
 	}
 
-	std::vector<Collision*> CheckPosition(Vector Position);
+	std::vector<Collision*> CheckPosition(Vector PositionAfter, Vector PositionBefore);
 
 	~CollisionManager();
 };
