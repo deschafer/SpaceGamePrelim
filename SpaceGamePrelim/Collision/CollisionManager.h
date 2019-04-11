@@ -5,6 +5,8 @@
 
 #include <vector>
 
+class GameEntity;
+
 // singleton class structure
 class CollisionManager
 {
@@ -12,7 +14,6 @@ private:
 
 	static CollisionManager* m_Instance;
 
-	void CheckMapForCollisions(std::vector<Collision*> &Collisions, Vector PositionAfter, Vector PositionBefore);
 
 	CollisionManager();
 public:
@@ -26,7 +27,7 @@ public:
 		else return m_Instance;
 	}
 
-	std::vector<Collision*> CheckPosition(Vector PositionAfter, Vector PositionBefore);
+	std::vector<Collision*> CheckPosition(Vector PositionAfter, Vector PositionBefore, GameEntity* Object);
 
 	~CollisionManager();
 };

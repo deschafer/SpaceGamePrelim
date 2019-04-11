@@ -27,19 +27,19 @@ void PlayerMovementComp::Execute()
 
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_W))
 	{
-		Velocity.setY(-1);
+		Velocity.setY(-3);
 	}
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_A))
 	{
-		Velocity.setX(-1);
+		Velocity.setX(-3);
 	}
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_S))
 	{
-		Velocity.setY(1);
+		Velocity.setY(3);
 	}
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_D))
 	{
-		Velocity.setX(1);
+		Velocity.setX(3);
 	}
 
 	// Based on direction, set the owning object direction

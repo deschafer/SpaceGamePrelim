@@ -1166,7 +1166,7 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell)
 // CheckCollisions()
 //
 //
-std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vector PosWithoutMovement)
+std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vector PosWithoutMovement, GameEntity* Object)
 {
 	std::vector<Collision*> Collisions;
 	Vector Movement(
@@ -1179,9 +1179,12 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 	// For horizontal movement
 	if (Movement.getX())
 	{
+		int Additional = 0;
+		if (Movement.getX() > 0) Additional = Object->GetDimensions().Width();
+
 		HorizCollision = CheckCellForCollision(
 			Vector(
-				PosWithoutMovement.getX() + Movement.getX(),
+				PosWithoutMovement.getX() + Movement.getX() + Additional,
 				PosWithoutMovement.getY()
 			),
 			CollisionDir::Horiz);
@@ -1191,10 +1194,13 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 	// Do the same for vertical
 	if (Movement.getY())
 	{
+		int Additional = 0;
+		if (Movement.getY() > 0) Additional = Object->GetDimensions().Height();
+
 		VertiCollision = CheckCellForCollision(
 			Vector(
 				PosWithoutMovement.getX(),
-				PosWithoutMovement.getY() + Movement.getY()
+				PosWithoutMovement.getY() + Movement.getY() + Additional
 			),
 			CollisionDir::Verti);
 		if (VertiCollision)
@@ -1203,10 +1209,16 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 	// If no collisions found, then do diagonal if there is movement
 	if (Collisions.empty() && Movement.getY() && Movement.getX())
 	{
+		int AdditionalX = 0;
+		int AdditionalY = 0;
+		if (Movement.getY() > 0) AdditionalY = Object->GetDimensions().Height();
+		if (Movement.getX() > 0) AdditionalX = Object->GetDimensions().Width();
+
+
 		DiagonalCollision = CheckCellForCollision(
 			Vector(
-				PosWithoutMovement.getX() + Movement.getX(),
-				PosWithoutMovement.getY() + Movement.getY()
+				PosWithoutMovement.getX() + Movement.getX() + AdditionalX,
+				PosWithoutMovement.getY() + Movement.getY() + AdditionalY
 			),
 			CollisionDir::Diagonal);
 		if (DiagonalCollision)

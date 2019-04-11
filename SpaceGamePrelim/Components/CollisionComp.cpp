@@ -33,7 +33,7 @@ void CollisionComp::Execute()
 
 	// Get the collisions
 	std::vector<Collision*> Collisions = CollisionManager::Instance()->CheckPosition(
-		CurrentPosition, PositionAfterMovement);
+		CurrentPosition, PositionAfterMovement, m_Owner);
 
 	for(size_t i = 0; i < Collisions.size(); i++)
 	{ 
