@@ -1187,9 +1187,13 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 				PosWithoutMovement.getX() + Movement.getX() + Additional,
 				PosWithoutMovement.getY()
 			),
-			CollisionDir::Horiz);
-		if(HorizCollision)
+			MapCollisionDir::Horiz,
+			(Additional) ? MapDirection::West : MapDirection::East);
+
+		if (HorizCollision)
+		{
 			Collisions.push_back(HorizCollision);
+		}
 	}
 	// Do the same for vertical
 	if (Movement.getY())
@@ -1202,7 +1206,7 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 				PosWithoutMovement.getX(),
 				PosWithoutMovement.getY() + Movement.getY() + Additional
 			),
-			CollisionDir::Verti);
+			MapCollisionDir::Verti);
 		if (VertiCollision)
 			Collisions.push_back(VertiCollision);
 	}
@@ -1214,13 +1218,12 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 		if (Movement.getY() > 0) AdditionalY = Object->GetDimensions().Height();
 		if (Movement.getX() > 0) AdditionalX = Object->GetDimensions().Width();
 
-
 		DiagonalCollision = CheckCellForCollision(
 			Vector(
 				PosWithoutMovement.getX() + Movement.getX() + AdditionalX,
 				PosWithoutMovement.getY() + Movement.getY() + AdditionalY
 			),
-			CollisionDir::Diagonal);
+			MapCollisionDir::Diagonal);
 		if (DiagonalCollision)
 			Collisions.push_back(DiagonalCollision);
 	}
@@ -1232,7 +1235,7 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 // CheckCellForCollision()
 //
 //
-Collision* MapManager::CheckCellForCollision(Vector Position, CollisionDir Direction)
+Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Direction)
 {
 	Map* CurrentMap;
 	MapCoordinate Index = GetCellIndex(Position, CurrentMap);
@@ -1244,7 +1247,53 @@ Collision* MapManager::CheckCellForCollision(Vector Position, CollisionDir Direc
 	if (CurrCell && (CurrCell->GetCellType() != Cell::Floor))
 	{
 		// Create a new collision
-		return new Collision(CollisionType::MapWall, Direction);
+		return new MapCollision(CollisionType::MapWall, Direction);
+	}
+	else return nullptr;
+}
+
+//
+// CheckCellForCollision()
+//
+//
+Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Direction, MapDirection SpecDirection)
+{
+	Map* CurrentMap;
+	MapCoordinate Index = GetCellIndex(Position, CurrentMap);
+	MapCell* CurrCell = static_cast<MapCell*>(CurrentMap->GetCell(Index.GetPositionX(), Index.GetPositionY()));
+	MapCell* DistanceCell;
+	int Distance = 0;
+
+	// Based on direction, check if there is space available to move
+	switch (SpecDirection)
+	{
+	case MapDirection::North:
+		DistanceCell = static_cast<MapCell*>(CurrentMap->GetCell(Index.GetPositionX(), Index.GetPositionY() - 1));
+
+		if(DistanceCell)
+		{
+			// Need to get the position of this cell in relation to the CurrCell
+			// Then find the distance we need
+		}
+
+		break;
+	case MapDirection::East:
+		break;
+	case MapDirection::South:
+		break;
+	case MapDirection::West:
+		break;
+	default:
+		break;
+	}
+
+	// We got our cell so check if it is a wall
+	// In the near future wach cell will know if its an opaque
+	// type, but for new we just compare
+	if (CurrCell && (CurrCell->GetCellType() != Cell::Floor))
+	{
+		// Create a new collision
+		return new MapCollision(CollisionType::MapWall, Direction);
 	}
 	else return nullptr;
 }

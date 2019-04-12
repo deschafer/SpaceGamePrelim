@@ -9,7 +9,7 @@
 #include "MapCell.h"
 #include "Map.h"
 #include "RoomManager.h"
-#include "..\Collision\Collision.h"
+#include "..\Collision\MapCollision.h"
 
 class GameEntity;
 
@@ -21,6 +21,8 @@ class GameEntity;
 class MapManager
 {
 private:
+
+	static MapManager* m_Instance;
 
 	int m_ActiveWndWidth;
 	int m_ActiveWndHeight;
@@ -34,6 +36,7 @@ private:
 	int m_OffsetY;		
 	int m_PixelOffsetY;
 	int m_PixelOffsetX;
+	int m_ActivelyLinkedCount;
 	bool m_MovementLeft;
 	bool m_MovementRight;
 	bool m_MovementNorth;
@@ -43,6 +46,7 @@ private:
 	bool m_MapsAreGenerating;
 	bool m_HorizMovementSwapped;
 	bool m_VertiMovementSwapped;
+	bool m_MapPhysicallyLinked;
 	MapObject*** m_VisibleObjectArray;	// 2D array of pointers to mapobjects visible
 	Map* m_ActiveMap;					// Active map pointer
 	RoomManager* m_RoomManager;
@@ -53,10 +57,6 @@ private:
 	std::vector<MapObject****> m_VisibleMapCells;
 	std::list<std::pair<Map*, Map*>> m_QueuedEastConnections;
 	std::list<std::pair<Map*, Map*>> m_QueuedNorthConnections;
-	int m_ActivelyLinkedCount;
-	bool m_MapPhysicallyLinked;
-
-	static MapManager* m_Instance;
 
 	void SetLink(Map* NewMap);
 	void GenerateNeighbors();
@@ -67,7 +67,9 @@ private:
 	void MoveMap();
 	void UpdateCells();
 	void CheckPhysicalConnections();
-	Collision* CheckCellForCollision(Vector Position, CollisionDir Direction);
+	Collision* CheckCellForCollision(Vector Position, MapCollisionDir Direction);
+	Collision* CheckCellForCollision(Vector Position, MapCollisionDir Direction, MapDirection SpecDirection);
+
 	MapManager();
 
 public:

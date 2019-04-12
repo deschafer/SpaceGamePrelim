@@ -1,6 +1,7 @@
 #include "CollisionComp.h"
 #include "../Collision/CollisionManager.h"
 #include "../BasicTypes/EntityDirection.h"
+#include "../Collision/MapCollision.h"
 
 #include <iostream>
 
@@ -17,13 +18,16 @@ CollisionComp::CollisionComp(GameEntity* Owner) :
 {
 }
 
+//
+//
+//
+//
 void CollisionComp::Execute()
 {
-	// Cheeck if we have actually moved,
+	// Check if we have actually moved,
 	// if not then do not check for collisions
 	bool CollisionPresent = false;
-	bool CollisionAngleHoriz = false;
-	bool CollisionAngleVerti = false;
+	MapCollision* CurrMapCollision;
 
 	Vector CurrentPosition = m_Owner->GetPosition();
 	Vector SetVelocity = m_Owner->GetVelocity();
@@ -39,73 +43,76 @@ void CollisionComp::Execute()
 	{ 
 		if (Collisions[i]->GetType() == CollisionType::MapWall)
 		{
+			HandleMapCollisions(
+				static_cast<MapCollision*>(Collisions[i]),
+				SetVelocity);
 			CollisionPresent = true;
-		}
-		if (Collisions[i]->GetDir() == CollisionDir::Horiz)
-		{
-			CollisionAngleHoriz = true;
-			std::cout << "Horiz collision" << std::endl;
-		}
-		else if (Collisions[i]->GetDir() == CollisionDir::Verti)
-		{
-			CollisionAngleVerti = true;
-			std::cout << "Verti collision" << std::endl;
-		}
-		else if(Collisions[i]->GetDir() == CollisionDir::Diagonal)
-		{
-			CollisionAngleHoriz = true;
-			CollisionAngleVerti = true;
-			std::cout << "Diag collision" << std::endl;
-		}
+		}	
 	}
 
-	// If collisions are present, 
-	// do something
-
-	// for now just stop movement for testing
 	if (CollisionPresent)
 	{
-		EntityDirection Horiz = m_Owner->GetDirectionHoriz();
-		EntityDirection Verti = m_Owner->GetDirectionVerti();
-	
-
-		if (CollisionAngleHoriz)
-		{
-			if (Horiz == EntityDirection::East && (SetVelocity.getX() > 0))
-			{
-				// Then prevent eastward movement
-				SetVelocity.setX(0);
-			}
-			else if (Horiz == EntityDirection::West && (SetVelocity.getX() < 0))
-			{
-				// Then prevent westward movement
-				SetVelocity.setX(0);
-			}
-		}
-		if (CollisionAngleVerti)
-		{
-			if (Verti == EntityDirection::South && (SetVelocity.getY() > 0))
-			{
-				// Then prevent eastward movement
-				SetVelocity.setY(0);
-			}
-			else if (Verti == EntityDirection::North && (SetVelocity.getY() < 0))
-			{
-				// Then prevent westward movement
-				SetVelocity.setY(0);
-			}
-		}
 		std::cout << "Vel: " << SetVelocity.getX() << " " << SetVelocity.getY() << std::endl;
-
 
 		m_Owner->SetVelocity(SetVelocity);
 	}
-	// Get the last direction moved, and if the velocity is in this direction, set it to zero
-
-
-
-	// Otherwise, do nothing
 }
 
+//
+// HandleMapCollisions()
+//
+//
+void CollisionComp::HandleMapCollisions(MapCollision* NewCollision, Vector &SetVelocity) 
+{
+	bool CollisionAngleHoriz = false;
+	bool CollisionAngleVerti = false;
+
+	EntityDirection Horiz = m_Owner->GetDirectionHoriz();
+	EntityDirection Verti = m_Owner->GetDirectionVerti();
+
+	if (NewCollision->GetDir() == MapCollisionDir::Horiz)
+	{
+		CollisionAngleHoriz = true;
+		std::cout << "Horiz collision" << std::endl;
+	}
+	else if (NewCollision->GetDir() == MapCollisionDir::Verti)
+	{
+		CollisionAngleVerti = true;
+		std::cout << "Verti collision" << std::endl;
+	}
+	else if (NewCollision->GetDir() == MapCollisionDir::Diagonal)
+	{
+		CollisionAngleHoriz = true;
+		CollisionAngleVerti = true;
+		std::cout << "Diag collision" << std::endl;
+	}
+
+	if (CollisionAngleHoriz)
+	{
+		if (Horiz == EntityDirection::East && (SetVelocity.getX() > 0))
+		{
+			// Then prevent eastward movement
+			SetVelocity.setX(0);
+		}
+		else if (Horiz == EntityDirection::West && (SetVelocity.getX() < 0))
+		{
+			// Then prevent westward movement
+			SetVelocity.setX(0);
+		}
+	}
+	if (CollisionAngleVerti)
+	{
+		if (Verti == EntityDirection::South && (SetVelocity.getY() > 0))
+		{
+			// Then prevent eastward movement
+			SetVelocity.setY(0);
+		}
+		else if (Verti == EntityDirection::North && (SetVelocity.getY() < 0))
+		{
+			// Then prevent westward movement
+			SetVelocity.setY(0);
+		}
+	}
+}
 
 

@@ -191,6 +191,7 @@
     <ClCompile Include="Collision\CollisionManager.cpp" />
     <ClCompile Include="Collision\Collision.cpp" />
     <ClCompile Include="Components\CollisionComp.cpp" />
+    <ClCompile Include="Collision\MapCollision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -330,6 +331,9 @@
     </ClInclude>
     <ClInclude Include="BasicTypes\EntityDirection.h">
       <Filter>Header Files\BasicTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\MapCollision.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

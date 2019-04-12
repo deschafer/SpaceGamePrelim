@@ -9,7 +9,6 @@ CollisionManager::CollisionManager()
 
 CollisionManager::~CollisionManager()
 {
-
 }
 
 //

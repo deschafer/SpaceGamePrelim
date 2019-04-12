@@ -1,8 +1,14 @@
 #pragma once
 #include "Component.h"
 
+class MapCollision;
+
 class CollisionComp : public Component
 {
+private:
+
+	void HandleMapCollisions(MapCollision* NewCollision, Vector &SetVelocity);
+
 public:
 	virtual void Execute();
 
