@@ -68,7 +68,7 @@ private:
 	void UpdateCells();
 	void CheckPhysicalConnections();
 	Collision* CheckCellForCollision(Vector Position, MapCollisionDir Direction);
-	Collision* CheckCellForCollision(Vector Position, MapCollisionDir Direction, MapDirection SpecDirection);
+	Collision* CheckCellForCollision(Vector Position, MapCollisionDir Direction, MapDirection SpecDirection, Vector Movement);
 
 	MapManager();
 
@@ -92,6 +92,7 @@ public:
 	int GetCellHeight() { return m_CellHeight; }
 	Cell GetCellType(Vector ScreenPosition);
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell);
+	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell, Vector &CellTopLeft, Vector &OriginPos);
 	std::vector<Collision*> CheckCollisions(Vector PosWithMovement, Vector PosWithoutMovement, GameEntity* Object);
 
 	void ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween);

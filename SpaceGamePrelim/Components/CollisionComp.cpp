@@ -37,7 +37,7 @@ void CollisionComp::Execute()
 
 	// Get the collisions
 	std::vector<Collision*> Collisions = CollisionManager::Instance()->CheckPosition(
-		CurrentPosition, PositionAfterMovement, m_Owner);
+		PositionAfterMovement, CurrentPosition, m_Owner);
 
 	for(size_t i = 0; i < Collisions.size(); i++)
 	{ 
@@ -91,26 +91,30 @@ void CollisionComp::HandleMapCollisions(MapCollision* NewCollision, Vector &SetV
 	{
 		if (Horiz == EntityDirection::East && (SetVelocity.getX() > 0))
 		{
-			// Then prevent eastward movement
-			SetVelocity.setX(0);
+			// Set this to the distance we can travel until we collide
+			int Distance = NewCollision->GetDistance();
+			SetVelocity.setX(Distance);
 		}
 		else if (Horiz == EntityDirection::West && (SetVelocity.getX() < 0))
 		{
-			// Then prevent westward movement
-			SetVelocity.setX(0);
+			// Set this to the distance we can travel until we collide
+			int Distance = NewCollision->GetDistance();
+			SetVelocity.setX(-Distance);
 		}
 	}
 	if (CollisionAngleVerti)
 	{
 		if (Verti == EntityDirection::South && (SetVelocity.getY() > 0))
 		{
-			// Then prevent eastward movement
-			SetVelocity.setY(0);
+			// Set this to the distance we can travel until we collide
+			int Distance = NewCollision->GetDistance();
+			SetVelocity.setY(Distance);
 		}
 		else if (Verti == EntityDirection::North && (SetVelocity.getY() < 0))
 		{
-			// Then prevent westward movement
-			SetVelocity.setY(0);
+			// Set this to the distance we can travel until we collide
+			int Distance = NewCollision->GetDistance();
+			SetVelocity.setY(-Distance);
 		}
 	}
 }
