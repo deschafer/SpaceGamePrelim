@@ -68,7 +68,7 @@ private:
 	void UpdateCells();
 	void CheckPhysicalConnections();
 	Collision* CheckCellForCollision(Vector Position, MapCollisionDir Direction);
-	Collision* CheckCellForCollision(Vector Position, MapCollisionDir Direction, MapDirection SpecDirection, Vector Movement);
+	Collision* CheckCellForCollision(Vector Position, MapCollisionDir Direction, MapDirection SpecDirection, Vector Movement, Rect ObjectDimensions);
 
 	MapManager();
 

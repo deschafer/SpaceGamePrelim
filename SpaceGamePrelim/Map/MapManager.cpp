@@ -950,8 +950,8 @@ Cell MapManager::GetCellType(Vector ScreenPosition)
 
 	// Based on this offsetted position, get the mapcell out of the
 	// loaded maps
-	int Row = OriginPosition.getY() / (MapSizeH * CellHeightSrc);
-	int Col = OriginPosition.getX() / (MapSizeW * CellWidthSrc);
+	int Row = (int)OriginPosition.getY() / (MapSizeH * CellHeightSrc);
+	int Col = (int)OriginPosition.getX() / (MapSizeW * CellWidthSrc);
 	MapCoordinate CoordinateCell(
 		((int)OriginPosition.getX() / CellWidthSrc) % MapSizeW,
 		((int)OriginPosition.getY() / CellHeightSrc) % MapSizeH);
@@ -1070,8 +1070,8 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell)
 
 	// Based on this offsetted position, get the mapcell out of the
 	// loaded maps
-	int Row = OriginPosition.getY() / (MapSizeH * CellHeightSrc);
-	int Col = OriginPosition.getX() / (MapSizeW * CellWidthSrc);
+	int Row = (int)OriginPosition.getY() / (MapSizeH * CellHeightSrc);
+	int Col = (int)OriginPosition.getX() / (MapSizeW * CellWidthSrc);
 	MapCoordinate CoordinateCell(
 		((int)OriginPosition.getX() / CellWidthSrc) % MapSizeW,
 		((int)OriginPosition.getY() / CellHeightSrc) % MapSizeH);
@@ -1191,8 +1191,8 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell,
 
 	// Based on this offsetted position, get the mapcell out of the
 	// loaded maps
-	int Row = OriginPosition.getY() / (MapSizeH * CellHeightSrc);
-	int Col = OriginPosition.getX() / (MapSizeW * CellWidthSrc);
+	int Row = (int)OriginPosition.getY() / (MapSizeH * CellHeightSrc);
+	int Col = (int)OriginPosition.getX() / (MapSizeW * CellWidthSrc);
 	MapCoordinate CoordinateCell(
 		((int)OriginPosition.getX() / CellWidthSrc) % MapSizeW,
 		((int)OriginPosition.getY() / CellHeightSrc) % MapSizeH);
@@ -1310,7 +1310,8 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			),
 			MapCollisionDir::Horiz,
 			(Additional) ? MapDirection::East : MapDirection::West,
-			Movement);
+			Movement,
+			Object->GetDimensions());
 
 		if (HorizCollision)
 		{
@@ -1330,7 +1331,8 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			),
 			MapCollisionDir::Verti,
 			(Additional) ? MapDirection::South : MapDirection::North,
-			Movement);
+			Movement,
+			Object->GetDimensions());
 		if (VertiCollision)
 			Collisions.push_back(VertiCollision);
 	}
@@ -1347,7 +1349,10 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 				PosWithoutMovement.getX() + Movement.getX() + AdditionalX,
 				PosWithoutMovement.getY() + Movement.getY() + AdditionalY
 			),
-			MapCollisionDir::Diagonal);
+			MapCollisionDir::Diagonal,
+			(AdditionalX) ? MapDirection::East : MapDirection::West,
+			Movement,
+			Object->GetDimensions());
 		if (DiagonalCollision)
 			Collisions.push_back(DiagonalCollision);
 	}
@@ -1380,7 +1385,7 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 // CheckCellForCollision()
 //
 //
-Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Direction, MapDirection SpecDirection, Vector Movement)
+Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Direction, MapDirection SpecDirection, Vector Movement, Rect ObjectDimensions)
 {
 	Map* CurrentMap;
 	Vector CellPos;
@@ -1388,67 +1393,127 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 	MapCoordinate Index = GetCellIndex(Position, CurrentMap, CellPos, OriginPostion);
 	MapCell* CurrCell = static_cast<MapCell*>(CurrentMap->GetCell(Index.GetPositionX(), Index.GetPositionY()));
 	MapCell* DistanceCell;
+	MapCell* AltMovementCell = nullptr;
 	MapCollision* NewCollision = nullptr;
+	int CellAlt = 0;
+
+	// Get the correct position of the offsetted corners for the collision checks
+	if (Direction == MapCollisionDir::Horiz)
+	{
+		CellAlt = (int)OriginPostion.getY() % m_CellHeight + (ObjectDimensions.Height() - 1);
+		AltMovementCell = static_cast<MapCell*>(CurrentMap->GetCell(	// Checking the other corner of this object
+			Index.GetPositionX(),
+			Index.GetPositionY() + CellAlt / m_CellWidth));
+	}
+	else if (Direction == MapCollisionDir::Verti)
+	{
+		// Get the approp surrounding cell information
+		CellAlt = (int)OriginPostion.getX() % m_CellWidth + (ObjectDimensions.Width() - 1);
+		AltMovementCell = static_cast<MapCell*>(CurrentMap->GetCell(	// Checking the other corner of this object
+			Index.GetPositionX() + CellAlt / m_CellWidth,
+			Index.GetPositionY()));
+	}
 
 	// Based on direction, check if there is space available to move
 	switch (SpecDirection)
 	{
 	case MapDirection::North:
-		DistanceCell = static_cast<MapCell*>(CurrentMap->GetCell(Index.GetPositionX(), Index.GetPositionY() + 1));
 
-		if(DistanceCell && (CurrCell->GetCellType() != Cell::Floor))
+		DistanceCell = static_cast<MapCell*>(CurrentMap->GetCell(
+			Index.GetPositionX(), 
+			Index.GetPositionY() + 1));
+
+		if (AltMovementCell && AltMovementCell->GetCellType() != Cell::Floor)
+		{
+			CellPos = Vector(CellPos.getX() + m_CellWidth, CellPos.getY());
+			CurrCell = AltMovementCell;
+		}
+		if((!CurrCell && DistanceCell) || 
+			(DistanceCell && CurrCell && 
+			(CurrCell->GetCellType() != Cell::Floor)))
 		{
 			// Get the cell prior to the movement
 			Vector DistanceCellPos(CellPos.getX(), CellPos.getY() + m_CellHeight);
 			// Get how far the distance is within its cell
-			int DistanceWithinWall = DistanceCellPos.getY() - OriginPostion.getY();
+			int DistanceWithinWall = (int)DistanceCellPos.getY() - (int)OriginPostion.getY();
 			// Then find the distance from the pos w/o movement to the edge of the cell
-			int CurrentDistanceUntilCollision = abs(Movement.getY()) - DistanceWithinWall;
+			int CurrentDistanceUntilCollision = abs((int)Movement.getY()) - DistanceWithinWall;
 			// Create the collision reflecting this situation
 			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Verti, (CurrentDistanceUntilCollision));
 		}
+	
 		break;
 	case MapDirection::East:
-		DistanceCell = static_cast<MapCell*>(CurrentMap->GetCell(Index.GetPositionX() - 1, Index.GetPositionY()));
 
-		if (DistanceCell && (CurrCell->GetCellType() != Cell::Floor))
+		DistanceCell = static_cast<MapCell*>(CurrentMap->GetCell(		// The position prior to any movement
+			Index.GetPositionX() - 1, 
+			Index.GetPositionY()));
+					
+		if (AltMovementCell && AltMovementCell->GetCellType() != Cell::Floor)
+		{
+			CellPos = Vector(CellPos.getX(), CellPos.getY() + m_CellHeight);
+			CurrCell = AltMovementCell;
+		}
+		if ((!CurrCell && DistanceCell) ||
+			(DistanceCell && CurrCell &&
+			(CurrCell->GetCellType() != Cell::Floor)))
 		{
 			// Get the cell prior to the movement
 			Vector DistanceCellPos(CellPos.getX(), CellPos.getY());
 			// Get how far the distance is within its cell
-			int DistanceWithinWall = OriginPostion.getX() - DistanceCellPos.getX();
+			int DistanceWithinWall = (int)OriginPostion.getX() - (int)DistanceCellPos.getX();
 			// Then find the distance from the pos w/o movement to the edge of the cell
-			int CurrentDistanceUntilCollision = abs(Movement.getX()) - DistanceWithinWall;
+			int CurrentDistanceUntilCollision = abs((int)Movement.getX()) - DistanceWithinWall;
 			// Create the collision reflecting this situation
 			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Horiz, (CurrentDistanceUntilCollision));
 		}
 		break;
 	case MapDirection::South:
-		DistanceCell = static_cast<MapCell*>(CurrentMap->GetCell(Index.GetPositionX(), Index.GetPositionY() - 1));
-
-		if (DistanceCell && (CurrCell->GetCellType() != Cell::Floor))
+								
+		DistanceCell = static_cast<MapCell*>(CurrentMap->GetCell(		// The position prior to any movement
+			Index.GetPositionX(), 
+			Index.GetPositionY() - 1));
+		
+		if (AltMovementCell && AltMovementCell->GetCellType() != Cell::Floor)
+		{
+			CellPos = Vector(CellPos.getX() + m_CellWidth, CellPos.getY());
+			CurrCell = AltMovementCell;
+		}
+		if ((!CurrCell && DistanceCell) ||
+			(DistanceCell && CurrCell &&
+			(CurrCell->GetCellType() != Cell::Floor)))
 		{
 			// Get the cell prior to the movement
 			Vector DistanceCellPos(CellPos.getX(), CellPos.getY());
 			// Get how far the distance is within its cell
-			int DistanceWithinWall =  OriginPostion.getY() - DistanceCellPos.getY();
+			int DistanceWithinWall = (int)OriginPostion.getY() - (int)DistanceCellPos.getY();
 			// Then find the distance from the pos w/o movement to the edge of the cell
-			int CurrentDistanceUntilCollision = abs(Movement.getY()) - DistanceWithinWall;
+			int CurrentDistanceUntilCollision = abs((int)Movement.getY()) - DistanceWithinWall;
 			// Create the collision reflecting this situation
 			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Verti, (CurrentDistanceUntilCollision));
 		}
 		break;
 	case MapDirection::West:
-		DistanceCell = static_cast<MapCell*>(CurrentMap->GetCell(Index.GetPositionX() + 1, Index.GetPositionY()));
 
-		if (DistanceCell && (CurrCell->GetCellType() != Cell::Floor))
+		DistanceCell = static_cast<MapCell*>(CurrentMap->GetCell(
+			Index.GetPositionX() + 1, 
+			Index.GetPositionY()));
+
+		if (AltMovementCell && AltMovementCell->GetCellType() != Cell::Floor)
+		{
+			CellPos = Vector(CellPos.getX(), CellPos.getY() + m_CellHeight);
+			CurrCell = AltMovementCell;
+		}
+		if ((!CurrCell && DistanceCell) ||
+			(DistanceCell && CurrCell &&
+			(CurrCell->GetCellType() != Cell::Floor)))
 		{
 			// Get the cell prior to the movement
 			Vector DistanceCellPos(CellPos.getX() + m_CellWidth, CellPos.getY());
 			// Get how far the distance is within its cell
-			int DistanceWithinWall = DistanceCellPos.getX() - OriginPostion.getX();
+			int DistanceWithinWall = (int)DistanceCellPos.getX() - (int)OriginPostion.getX();
 			// Then find the distance from the pos w/o movement to the edge of the cell
-			int CurrentDistanceUntilCollision = abs(Movement.getX()) - DistanceWithinWall;
+			int CurrentDistanceUntilCollision = abs((int)Movement.getX()) - DistanceWithinWall;
 			// Create the collision reflecting this situation
 			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Horiz, (CurrentDistanceUntilCollision));
 		}
