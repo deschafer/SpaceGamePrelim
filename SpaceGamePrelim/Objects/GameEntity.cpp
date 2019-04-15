@@ -109,9 +109,9 @@ void GameEntity::Update()
 		m_Components[i]->Execute();
 	}
 
-	// Update position and velcoity
-	m_Position += m_Velocity;
-	m_Velocity += m_Acceleration;
+	// Update position and velocity
+	//m_Position += m_Velocity;
+	//m_Velocity += m_Acceleration;
 }
 
 

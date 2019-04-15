@@ -37,9 +37,11 @@
              posX="500" 
              posY="500" 
              handlerID="" >
-      <COMP compID="PlayerMovement"/>  
-      <COMP compID="Collision"/>    
-    
+      <COMP compID="PlayerMovement"/>
+      <COMP compID="Collision"/>
+      <COMP compID="PlayerMapMovement"/>
+
+
     </OBJECT>
              
     

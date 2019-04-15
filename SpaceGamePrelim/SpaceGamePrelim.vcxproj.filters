@@ -66,6 +66,12 @@
     <Filter Include="Source Files\Components">
       <UniqueIdentifier>{327de58f-2436-4fa2-bfc6-3c243aa07cd9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Collision">
+      <UniqueIdentifier>{3cebbbc5-4917-46db-8f70-443249696258}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Collision">
+      <UniqueIdentifier>{bb2a5bf3-080e-4b2b-ad71-cf6229d02689}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Map\MapCell.cpp">
@@ -188,10 +194,19 @@
     <ClCompile Include="Components\PlayerMovementComp.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Collision\CollisionManager.cpp" />
-    <ClCompile Include="Collision\Collision.cpp" />
-    <ClCompile Include="Components\CollisionComp.cpp" />
-    <ClCompile Include="Collision\MapCollision.cpp" />
+    <ClCompile Include="Collision\Collision.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\CollisionComp.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\CollisionManager.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\MapCollision.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\PlayerMapMovementComp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -320,19 +335,22 @@
     <ClInclude Include="Components\PlayerMovementComp.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\CollisionManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision\Collision.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\CollisionComp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BasicTypes\EntityDirection.h">
       <Filter>Header Files\BasicTypes</Filter>
     </ClInclude>
+    <ClInclude Include="Collision\Collision.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\CollisionComp.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\CollisionManager.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
     <ClInclude Include="Collision\MapCollision.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\PlayerMapMovementComp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

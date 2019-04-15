@@ -188,6 +188,8 @@ MapManager::MapManager() :
 	m_HorizMovementSwapped(false),
 	m_VertiMovementSwapped(false),
 	m_MapPhysicallyLinked(true),
+	m_NoMovementFlag(true),
+	m_RequestedMovement(0,0),
 	m_OffsetX(0),
 	m_OffsetY(0),
 	m_PixelOffsetX(0),
@@ -306,28 +308,31 @@ void MapManager::Update()
 	// If it is not completely surrounded, generate new maps
 	if (!m_ActiveMap->IsSurrounded())
 	{
-		//GenerateNeighbors();
+		GenerateNeighbors();
 	}
 	// Check if all of the newly generated maps are done
 	if (!m_GeneratingMaps.empty())
 	{
-		//CheckGeneratingMaps();
+		CheckGeneratingMaps();
 	}
 	// If all maps are complete and the map needs swapped
 	if (!m_MapsAreGenerating && m_MapNeedsSwapping)
 	{
-		//MoveMap();
+		MoveMap();
 	}
 
 	// Handles all map correction
-	//CullMap();
+	CullMap();
 
 	// Checks if any physical connections need to be made
-	//CheckPhysicalConnections();
+	CheckPhysicalConnections();
 
 	// Gets input from the user
 	HandleInput();
 
+	// Handles any movent requested by other objects
+	HandleExternalMovement();
+	CheckOffsets();
 
 	// Update our cells
 	UpdateCells();
@@ -402,16 +407,12 @@ void MapManager::DrawGrid()
 	// Drawing horizontal lines
 	for (int i = 0; i < m_Rows; i++)
 	{
-
 		SDL_RenderDrawLine(renderer, 0, (i + 1) * m_CellHeight, m_ActiveWndWidth, (i + 1) * m_CellHeight);
-
 	}
 	// Drawing vertical lines
 	for (int i = 0; i < m_Columns; i++)
 	{
-
 		SDL_RenderDrawLine(renderer, (i + 1) * m_CellWidth, 0, (i + 1) * m_CellWidth, m_ActiveWndHeight);
-
 	}
 	SDL_SetRenderDrawColor(renderer, OldR, OldG, OldB, OldA);
 }
@@ -717,6 +718,77 @@ void MapManager::HandleInput()
 			m_MovementRight = true;
 		}
 		m_PixelOffsetX -= HorizontalMovementSpeed;
+	}
+}
+
+//
+// HandleExternalMovement()
+//
+//
+void MapManager::HandleExternalMovement()
+{
+	if (m_RequestedMovement.getX() != 0 ||
+		m_RequestedMovement.getY() != 0)
+	{
+		m_PixelOffsetX -= m_RequestedMovement.getX();
+		m_PixelOffsetY -= m_RequestedMovement.getY();
+		
+		if (m_RequestedMovement.getX() > 0)
+		{
+			m_RequestedHorizMovement = MapDirection::East;
+		}
+		else if (m_RequestedMovement.getX() < 0)
+		{
+			m_RequestedHorizMovement = MapDirection::West;
+		}
+
+		if (m_RequestedMovement.getY() > 0)
+		{
+			m_RequestedHorizMovement = MapDirection::South;
+		}
+		else if (m_RequestedMovement.getY() < 0)
+		{
+			m_RequestedHorizMovement = MapDirection::North;
+		}
+
+		m_NoMovementFlag = false;
+
+		// Set back to default movement
+		m_RequestedMovement = Vector(0, 0);
+	}
+}
+
+// 
+// CheckOffsets()
+//
+//
+void MapManager::CheckOffsets()
+{
+	if (!m_NoMovementFlag)
+	{
+		if (m_PixelOffsetX % m_CellWidth == 0)
+		{
+			if (m_RequestedHorizMovement == MapDirection::East)
+			{
+				m_MovementRight = true;
+			}
+			else if (m_RequestedHorizMovement == MapDirection::West)
+			{
+				m_MovementLeft = true;
+			}
+		}
+		if (m_PixelOffsetY % m_CellHeight == 0)
+		{
+			if (m_RequestedVertiMovement == MapDirection::North)
+			{
+				m_MovementNorth = true;
+			}
+			else if (m_RequestedVertiMovement == MapDirection::South)
+			{
+				m_MovementSouth = true;
+			}
+		}
+		m_NoMovementFlag = true;
 	}
 }
 

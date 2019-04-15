@@ -47,6 +47,7 @@ private:
 	bool m_HorizMovementSwapped;
 	bool m_VertiMovementSwapped;
 	bool m_MapPhysicallyLinked;
+	bool m_NoMovementFlag;
 	MapObject*** m_VisibleObjectArray;	// 2D array of pointers to mapobjects visible
 	Map* m_ActiveMap;					// Active map pointer
 	RoomManager* m_RoomManager;
@@ -57,11 +58,16 @@ private:
 	std::vector<MapObject****> m_VisibleMapCells;
 	std::list<std::pair<Map*, Map*>> m_QueuedEastConnections;
 	std::list<std::pair<Map*, Map*>> m_QueuedNorthConnections;
+	Vector m_RequestedMovement;
+	MapDirection m_RequestedHorizMovement;
+	MapDirection m_RequestedVertiMovement;
 
 	void SetLink(Map* NewMap);
 	void GenerateNeighbors();
 	void GenerateNeighbor(std::string MapType, MapDirection ActiveMapDir, MapDirection NewMapDir, MapCoordinate NewMapCoord);
 	void HandleInput();
+	void HandleExternalMovement();
+	void CheckOffsets();
 	void CheckGeneratingMaps();
 	void CullMap();
 	void MoveMap();
@@ -94,6 +100,7 @@ public:
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell);
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell, Vector &CellTopLeft, Vector &OriginPos);
 	std::vector<Collision*> CheckCollisions(Vector PosWithMovement, Vector PosWithoutMovement, GameEntity* Object);
+	void OffsetMap(Vector PixelOffsets) { m_RequestedMovement = PixelOffsets; }
 
 	void ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween);
 	void RemoveQueuedMap();

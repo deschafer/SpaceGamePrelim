@@ -73,18 +73,15 @@ void CollisionComp::HandleMapCollisions(MapCollision* NewCollision, Vector &SetV
 	if (NewCollision->GetDir() == MapCollisionDir::Horiz)
 	{
 		CollisionAngleHoriz = true;
-		std::cout << "Horiz collision" << std::endl;
 	}
 	else if (NewCollision->GetDir() == MapCollisionDir::Verti)
 	{
 		CollisionAngleVerti = true;
-		std::cout << "Verti collision" << std::endl;
 	}
 	else if (NewCollision->GetDir() == MapCollisionDir::Diagonal)
 	{
 		CollisionAngleHoriz = true;
 		CollisionAngleVerti = true;
-		std::cout << "Diag collision" << std::endl;
 	}
 
 	if (CollisionAngleHoriz)
