@@ -256,8 +256,6 @@ void MapManager::Draw()
 	int MapPositionOffsetY = 0;
 	pair<int, int> Pair;
 	vector<string> txts;
-	txts.push_back("Explosion");
-	MapCell* Test = new MapWall(txts, MapCoordinate(0, 0), Cell::Default);
 
 	for (size_t CurrentMap = 0; CurrentMap < m_VisibleMapCells.size(); CurrentMap++)
 	{
@@ -295,12 +293,7 @@ void MapManager::Draw()
 						PositionY + m_CellHeight >= 0 &&
 						PositionY < m_ActiveWndHeight)
 					{
-						if (CurrentMap == 8 && (rand() % 200 == 0))
-						{
-							Test->Draw(MapCoordinate(PositionX, PositionY));
-						}
-						else
-							Object->Draw(MapCoordinate(PositionX, PositionY));
+						Object->Draw(MapCoordinate(PositionX, PositionY));
 					}
 				}
 			}
@@ -1451,10 +1444,6 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 	MapCell* AltMovementCell = nullptr;
 	MapCollision* NewCollision = nullptr;
 	int CellAlt = 0;
-
-	// Test to add cells to the path that has been moved for debugging
-	if (CurrCell)
-		CurrCell->AddRedTexture("Test2");
 
 	// Get the correct position of the offsetted corners for the collision checks
 	if (Direction == MapCollisionDir::Horiz)
