@@ -21,13 +21,8 @@ PlayerMapMovementComp::~PlayerMapMovementComp()
 //
 void PlayerMapMovementComp::Execute()
 {
-
-	// Need to incorporate velocity
-	// Change from the current position
+	// Need to incorporate acceleration
 
 	Vector Velocity = m_Owner->GetVelocity();
-
 	MapManager::Instance()->OffsetMap(Velocity);
-	
-
 }

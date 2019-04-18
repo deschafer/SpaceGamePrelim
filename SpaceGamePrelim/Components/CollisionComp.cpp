@@ -52,8 +52,6 @@ void CollisionComp::Execute()
 
 	if (CollisionPresent)
 	{
-		std::cout << "Vel: " << SetVelocity.getX() << " " << SetVelocity.getY() << std::endl;
-
 		m_Owner->SetVelocity(SetVelocity);
 	}
 }

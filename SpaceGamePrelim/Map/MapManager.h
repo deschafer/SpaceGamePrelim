@@ -21,19 +21,14 @@ class GameEntity;
 class MapManager
 {
 private:
-
 	static MapManager* m_Instance;
 
 	int m_ActiveWndWidth;
 	int m_ActiveWndHeight;
-	int m_VisibleRows;
-	int m_VisibleColumns;
 	int m_Rows;
 	int m_Columns;
 	int m_CellWidth;
-	int m_CellHeight;
-	int m_OffsetX;		
-	int m_OffsetY;		
+	int m_CellHeight;	
 	int m_PixelOffsetY;
 	int m_PixelOffsetX;
 	int m_ActivelyLinkedCount;
@@ -48,6 +43,8 @@ private:
 	bool m_VertiMovementSwapped;
 	bool m_MapPhysicallyLinked;
 	bool m_NoMovementFlag;
+	bool m_NoMovementXFlag;
+	bool m_NoMovementYFlag;
 	MapObject*** m_VisibleObjectArray;	// 2D array of pointers to mapobjects visible
 	Map* m_ActiveMap;					// Active map pointer
 	RoomManager* m_RoomManager;
@@ -62,6 +59,7 @@ private:
 	MapDirection m_RequestedHorizMovement;
 	MapDirection m_RequestedVertiMovement;
 
+	MapCell* GetCellFromMaps(Map* CurrentMap, MapCoordinate RequestedCell);
 	void SetLink(Map* NewMap);
 	void GenerateNeighbors();
 	void GenerateNeighbor(std::string MapType, MapDirection ActiveMapDir, MapDirection NewMapDir, MapCoordinate NewMapCoord);
@@ -93,19 +91,16 @@ public:
 	void DrawGrid();
 	void Draw();
 	void Update();
-
+	void OffsetMap(Vector PixelOffsets) { m_RequestedMovement = PixelOffsets; }
+	void ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween);
+	void RemoveQueuedMap();
+	void ResetMap();
 	int GetCellWidth() { return m_CellWidth; }
 	int GetCellHeight() { return m_CellHeight; }
 	Cell GetCellType(Vector ScreenPosition);
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell);
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell, Vector &CellTopLeft, Vector &OriginPos);
 	std::vector<Collision*> CheckCollisions(Vector PosWithMovement, Vector PosWithoutMovement, GameEntity* Object);
-	void OffsetMap(Vector PixelOffsets) { m_RequestedMovement = PixelOffsets; }
-
-	void ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween);
-	void RemoveQueuedMap();
-	void ResetMap();
-	
 	~MapManager();
 };
 

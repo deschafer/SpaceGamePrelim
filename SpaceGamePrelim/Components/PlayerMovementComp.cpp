@@ -3,6 +3,8 @@
 #include "..\Frame\InputManager.h"
 #include "..\BasicTypes\EntityDirection.h"
 
+static int MovementSpeed = 8;
+
 PlayerMovementComp::PlayerMovementComp()
 {
 }
@@ -27,19 +29,19 @@ void PlayerMovementComp::Execute()
 
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_W))
 	{
-		Velocity.setY(-4);
+		Velocity.setY(-MovementSpeed);
 	}
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_A))
 	{
-		Velocity.setX(-4);
+		Velocity.setX(-MovementSpeed);
 	}
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_S))
 	{
-		Velocity.setY(4);
+		Velocity.setY(MovementSpeed);
 	}
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_D))
 	{
-		Velocity.setX(4);
+		Velocity.setX(MovementSpeed);
 	}
 
 	// Based on direction, set the owning object direction

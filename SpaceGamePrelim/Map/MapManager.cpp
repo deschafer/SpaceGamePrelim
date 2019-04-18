@@ -22,6 +22,8 @@ static const int CellWidthSrc = 32;
 static const int CellHeightSrc = 32;
 static const int MapSizeW = 100;
 static const int MapSizeH = 100;
+static const int MapWidthPixels = CellWidthSrc * MapSizeW;
+static const int MapHeightPixels = CellHeightSrc * MapSizeH;
 static const int HorizontalMovementSpeed = 8;
 static const int VerticalMovementSpeed = 8;
 static const int VisibleHorizonBufferSize = 2;
@@ -188,10 +190,10 @@ MapManager::MapManager() :
 	m_HorizMovementSwapped(false),
 	m_VertiMovementSwapped(false),
 	m_MapPhysicallyLinked(true),
+	m_NoMovementXFlag(true),
+	m_NoMovementYFlag(true),
 	m_NoMovementFlag(true),
 	m_RequestedMovement(0,0),
-	m_OffsetX(0),
-	m_OffsetY(0),
 	m_PixelOffsetX(0),
 	m_PixelOffsetY(0),
 	m_ActivelyLinkedCount(0),
@@ -253,6 +255,9 @@ void MapManager::Draw()
 	int MapPositionOffsetX = 0;
 	int MapPositionOffsetY = 0;
 	pair<int, int> Pair;
+	vector<string> txts;
+	txts.push_back("Explosion");
+	MapCell* Test = new MapWall(txts, MapCoordinate(0, 0), Cell::Default);
 
 	for (size_t CurrentMap = 0; CurrentMap < m_VisibleMapCells.size(); CurrentMap++)
 	{
@@ -290,7 +295,12 @@ void MapManager::Draw()
 						PositionY + m_CellHeight >= 0 &&
 						PositionY < m_ActiveWndHeight)
 					{
-						Object->Draw(MapCoordinate(PositionX, PositionY));
+						if (CurrentMap == 8 && (rand() % 200 == 0))
+						{
+							Test->Draw(MapCoordinate(PositionX, PositionY));
+						}
+						else
+							Object->Draw(MapCoordinate(PositionX, PositionY));
 					}
 				}
 			}
@@ -688,7 +698,7 @@ void MapManager::HandleInput()
 	{
 		if (m_PixelOffsetY % m_CellHeight == 0)
 		{
-			m_MovementSouth = true;
+			//m_MovementSouth = true;
 		}
 		m_PixelOffsetY -= VerticalMovementSpeed;
 	}
@@ -697,7 +707,7 @@ void MapManager::HandleInput()
 	{
 		if (m_PixelOffsetY % m_CellHeight == 0)
 		{
-			m_MovementNorth = true;
+			//m_MovementNorth = true;
 		}
 		m_PixelOffsetY += VerticalMovementSpeed;
 	}
@@ -706,7 +716,7 @@ void MapManager::HandleInput()
 	{
 		if (m_PixelOffsetX % m_CellWidth == 0)
 		{
-			m_MovementLeft = true;
+			//m_MovementLeft = true;
 		}
 		m_PixelOffsetX += HorizontalMovementSpeed;
 	}
@@ -715,7 +725,7 @@ void MapManager::HandleInput()
 	{
 		if (m_PixelOffsetX % m_CellWidth == 0)
 		{
-			m_MovementRight = true;
+			//m_MovementRight = true;
 		}
 		m_PixelOffsetX -= HorizontalMovementSpeed;
 	}
@@ -736,25 +746,37 @@ void MapManager::HandleExternalMovement()
 		if (m_RequestedMovement.getX() > 0)
 		{
 			m_RequestedHorizMovement = MapDirection::East;
+			m_NoMovementXFlag = false;
 		}
 		else if (m_RequestedMovement.getX() < 0)
 		{
 			m_RequestedHorizMovement = MapDirection::West;
+			m_NoMovementXFlag = false;
 		}
+		else m_NoMovementXFlag = true;
 
 		if (m_RequestedMovement.getY() > 0)
 		{
-			m_RequestedHorizMovement = MapDirection::South;
+			m_RequestedVertiMovement = MapDirection::South;
+			m_NoMovementYFlag = false;
 		}
 		else if (m_RequestedMovement.getY() < 0)
 		{
-			m_RequestedHorizMovement = MapDirection::North;
+			m_RequestedVertiMovement = MapDirection::North;
+			m_NoMovementYFlag = false;
 		}
+		else 
+			m_NoMovementYFlag = true;
 
 		m_NoMovementFlag = false;
 
 		// Set back to default movement
 		m_RequestedMovement = Vector(0, 0);
+	}
+	else
+	{
+		m_NoMovementXFlag = true;
+		m_NoMovementYFlag = true;
 	}
 }
 
@@ -766,7 +788,7 @@ void MapManager::CheckOffsets()
 {
 	if (!m_NoMovementFlag)
 	{
-		if (m_PixelOffsetX % m_CellWidth == 0)
+		if (!m_NoMovementXFlag)
 		{
 			if (m_RequestedHorizMovement == MapDirection::East)
 			{
@@ -777,7 +799,7 @@ void MapManager::CheckOffsets()
 				m_MovementLeft = true;
 			}
 		}
-		if (m_PixelOffsetY % m_CellHeight == 0)
+		if (!m_NoMovementYFlag)
 		{
 			if (m_RequestedVertiMovement == MapDirection::North)
 			{
@@ -835,7 +857,6 @@ void MapManager::MoveMap()
 			{
 				m_PixelOffsetX = -(MapSizeW * m_CellWidth) + m_PixelOffsetX;
 			}
-			m_OffsetX = -m_PixelOffsetX / m_CellWidth;
 
 			m_HorizMovementSwapped = false;
 		}
@@ -853,7 +874,6 @@ void MapManager::MoveMap()
 			{
 				m_PixelOffsetY = -(MapSizeH * m_CellHeight) + m_PixelOffsetY;
 			}
-			m_OffsetY = -m_PixelOffsetY / m_CellHeight;
 
 			m_VertiMovementSwapped = false;
 		}
@@ -866,34 +886,21 @@ void MapManager::MoveMap()
 
 //
 // CullMap()
-//
+// Idea is that there is a certain number of movements that move a pixel offset, then
+// at some point we also get a new cell
 //
 void MapManager::CullMap()
 {
-	// Idea is that there is a certain number of movements that move a pixel offset, then
-	// at some point we also get a new cell
-
-	// m_MapOffset holds the offset from the current activemap
-	// should also keep a count/offset from the origin map
+	bool MapSwapped = false;
 
 	if (m_MovementLeft)
 	{
-		// Move to the left one position
-		m_OffsetX--;
-
-		// If the result is an integer that is a odd number
-		if (m_MapNeedsSwapping)
-		{
-		}
-		else if (-m_OffsetX >= MapSizeW / 2)
+		// If the map is updated and it is time to switch the active map
+		if ((m_PixelOffsetX >= MapWidthPixels / 2) && !m_MapNeedsSwapping)
 		{
 			// Set the active map to the map to the left
 			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::West);
-
-			cout << "ActiveMap " << m_ActiveMap->GetCoordinate().GetPositionX() << " " << m_ActiveMap->GetCoordinate().GetPositionY() << endl;
-
-			// Make sure the flag is set
-			m_MapNeedsSwapping = true;
+			MapSwapped = true;
 			m_HorizMovementSwapped = true;
 		}
 
@@ -901,23 +908,12 @@ void MapManager::CullMap()
 	}
 	if (m_MovementRight)
 	{
-		// Move to the left one position
-		m_OffsetX++;
-
-		if (m_MapNeedsSwapping)
-		{
-		}
-		// If the result is an integer that is a odd number
-		else if (m_OffsetX >= MapSizeW)
+		// If the map is updated and it is time to switch the active map
+		if ((-m_PixelOffsetX >= MapWidthPixels) && !m_MapNeedsSwapping)
 		{
 			// Set the active map to the map to the left
 			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::East);
-
-			cout << "ActiveMap " << m_ActiveMap->GetCoordinate().GetPositionX() << " " << m_ActiveMap->GetCoordinate().GetPositionY() << endl;
-
-
-			// Make sure the flag is set
-			m_MapNeedsSwapping = true;
+			MapSwapped = true;
 			m_HorizMovementSwapped = true;
 		}
 
@@ -925,50 +921,40 @@ void MapManager::CullMap()
 	}
 	if (m_MovementNorth)
 	{
-		// Move to the left one position
-		m_OffsetY--;
-
-		if (m_MapNeedsSwapping)
-		{
-		}
-		// If the result is an integer that is a odd number
-		else if (-m_OffsetY >= MapSizeH / 2)
+		// If the map is updated and it is time to switch the active map
+		if ((m_PixelOffsetY >= MapHeightPixels / 2) && !m_MapNeedsSwapping)
 		{
 			// Set the active map to the map to the left
 			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::South);
-			cout << "ActiveMap " << m_ActiveMap->GetCoordinate().GetPositionX() << " " << m_ActiveMap->GetCoordinate().GetPositionY() << endl;
-
-
-			// Make sure the flag is set
-			m_MapNeedsSwapping = true;
+			MapSwapped = true;
 			m_VertiMovementSwapped = true;
-
 		}
 
 		m_MovementNorth = false;
 	}
 	if (m_MovementSouth)
 	{
-		// Move to the left one position
-		m_OffsetY++;
-
-		if (m_MapNeedsSwapping)
-		{
-		}
-		// If the result is an integer that is a odd number
-		else if (m_OffsetY >= MapSizeH)
+		// If the map is updated and it is time to switch the active map
+		if ((-m_PixelOffsetY >= MapHeightPixels) && !m_MapNeedsSwapping)
 		{
 			// Set the active map to the map to the left
 			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::North);
-
-			cout << "ActiveMap " << m_ActiveMap->GetCoordinate().GetPositionX() << " " << m_ActiveMap->GetCoordinate().GetPositionY() << endl;
-
-
-			// Make sure the flag is set
-			m_MapNeedsSwapping = true;
+			MapSwapped = true;
 			m_VertiMovementSwapped = true;
 		}
 		m_MovementSouth = false;
+	}
+
+	if(MapSwapped)
+	{
+		cout << "ActiveMap "
+			<< m_ActiveMap->GetCoordinate().GetPositionX()
+			<< " "
+			<< m_ActiveMap->GetCoordinate().GetPositionY()
+			<< endl;
+
+		// Make sure the flag is set
+		m_MapNeedsSwapping = true;
 	}
 }
 
@@ -1254,13 +1240,10 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell,
 	Vector OriginPosition(
 		static_cast<float>(MapSizeW * CellWidthSrc + OffsettedPosition.getX()),
 		static_cast<float>(MapSizeH * CellHeightSrc + OffsettedPosition.getY()));
-
 	OriginPos = OriginPosition;
-
 	CellOriginTopLeftPosition = Vector(
 		OriginPosition.getX() - (int)OriginPosition.getX() % m_CellWidth,
 		OriginPosition.getY() - (int)OriginPosition.getY() % m_CellHeight);
-
 	// Based on this offsetted position, get the mapcell out of the
 	// loaded maps
 	int Row = (int)OriginPosition.getY() / (MapSizeH * CellHeightSrc);
@@ -1270,7 +1253,7 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell,
 		((int)OriginPosition.getY() / CellHeightSrc) % MapSizeH);
 	MapDirection VertiComp;
 	MapDirection HorizComp;
-	MapDirection ActDirection;
+	MapDirection ActDirection =MapDirection::North;
 	Map* ActualMap = ActiveMap;
 	bool NoVerticalComp = false;
 	bool NoHorizComp = false;
@@ -1278,7 +1261,7 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell,
 	// First determine the row
 	if (Row == 0)
 	{
-		VertiComp = MapDirection::North;
+		VertiComp = MapDirection::South;
 	}
 	else if (Row == 1)
 	{
@@ -1286,7 +1269,7 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell,
 	}
 	else
 	{
-		VertiComp = MapDirection::South;
+		VertiComp = MapDirection::North;
 	}
 
 	// Then determine the column
@@ -1326,12 +1309,12 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell,
 			// Top left corner
 			if (Col == 0)
 			{
-				ActDirection = MapDirection::Northwest;
+				ActDirection = MapDirection::Southwest;
 			}
 			// Bottom left corner
 			else if (Col = 2)
 			{
-				ActDirection = MapDirection::Southwest;
+				ActDirection = MapDirection::Southeast;
 			}
 		}
 		else if (Row = 2)
@@ -1339,16 +1322,16 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell,
 			// Top Right corner
 			if (Col == 0)
 			{
-				ActDirection = MapDirection::Northeast;
+				ActDirection = MapDirection::Northwest;
 			}
 			// Bottom right corner
 			else if (Col = 2)
 			{
-				ActDirection = MapDirection::Southeast;
+				ActDirection = MapDirection::Northeast;
 			}
 		}
+		ActualMap = ActiveMap->GetNeighbor(ActDirection);
 	}
-
 	// Also return the map where this map was found
 	MapWithCell = ActualMap;
 
@@ -1463,27 +1446,35 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 	Vector CellPos;
 	Vector OriginPostion;
 	MapCoordinate Index = GetCellIndex(Position, CurrentMap, CellPos, OriginPostion);
-	MapCell* CurrCell = static_cast<MapCell*>(CurrentMap->GetCell(Index.GetPositionX(), Index.GetPositionY()));
+	MapCell* CurrCell = GetCellFromMaps(CurrentMap, Index);
 	MapCell* DistanceCell;
 	MapCell* AltMovementCell = nullptr;
 	MapCollision* NewCollision = nullptr;
 	int CellAlt = 0;
 
+	// Test to add cells to the path that has been moved for debugging
+	if (CurrCell)
+		CurrCell->AddRedTexture("Test2");
+
 	// Get the correct position of the offsetted corners for the collision checks
 	if (Direction == MapCollisionDir::Horiz)
 	{
 		CellAlt = (int)OriginPostion.getY() % m_CellHeight + (ObjectDimensions.Height() - 1);
-		AltMovementCell = static_cast<MapCell*>(CurrentMap->GetCell(	// Checking the other corner of this object
-			Index.GetPositionX(),
-			Index.GetPositionY() + CellAlt / m_CellWidth));
+		AltMovementCell = GetCellFromMaps(
+			CurrentMap,	
+			MapCoordinate(
+				Index.GetPositionX(),
+				Index.GetPositionY() + CellAlt / m_CellWidth));
 	}
 	else if (Direction == MapCollisionDir::Verti)
 	{
 		// Get the approp surrounding cell information
 		CellAlt = (int)OriginPostion.getX() % m_CellWidth + (ObjectDimensions.Width() - 1);
-		AltMovementCell = static_cast<MapCell*>(CurrentMap->GetCell(	// Checking the other corner of this object
-			Index.GetPositionX() + CellAlt / m_CellWidth,
-			Index.GetPositionY()));
+		AltMovementCell = GetCellFromMaps(
+			CurrentMap,
+			MapCoordinate(
+				Index.GetPositionX() + CellAlt / m_CellWidth,
+				Index.GetPositionY()));
 	}
 
 	// Based on direction, check if there is space available to move
@@ -1595,4 +1586,119 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 	}
 
 	return NewCollision;
+}
+
+//
+// GetCellFromMaps()
+// Note: We can assume that the cell needed is a neighbor of the currentmap
+//
+MapCell* MapManager::GetCellFromMaps(Map* CurrentMap, MapCoordinate RequestedCell)
+{
+	int Width = CurrentMap->GetWidth();
+	int Height = CurrentMap->GetHeight();
+	MapCoordinate StandardPos = RequestedCell;
+	Map* NewMap = nullptr;
+
+	// Check if the requested cell is within the bounds of the map
+
+	if (RequestedCell.GetPositionX() < Width && 
+		RequestedCell.GetPositionX() >= 0 &&
+		RequestedCell.GetPositionY() < Height &&
+		RequestedCell.GetPositionY() >= 0)
+	{
+		return static_cast<MapCell*>(CurrentMap->GetCell(
+			RequestedCell.GetPositionX(), 
+			RequestedCell.GetPositionY()));
+	}
+	// if not, get it from the appopriate map ...
+	// If in the top left corner
+	else if (RequestedCell.GetPositionX() < 0 &&
+		RequestedCell.GetPositionY() < 0)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() + MapSizeW,
+			RequestedCell.GetPositionY() + MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::Southwest);
+	}
+	// If in directly above this map
+	else if (RequestedCell.GetPositionX() >= 0 &&
+		RequestedCell.GetPositionX() < Width &&
+		RequestedCell.GetPositionY() < 0)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX(),
+			RequestedCell.GetPositionY() + MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::South);
+	}
+	// If in the top right corner
+	else if (RequestedCell.GetPositionX() >= Width &&
+		RequestedCell.GetPositionY() < 0)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() - MapSizeW,
+			RequestedCell.GetPositionY() + MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::Southeast);
+	}
+	// If on the right
+	else if (RequestedCell.GetPositionX() >= Width &&
+		RequestedCell.GetPositionY() >= 0 &&
+		RequestedCell.GetPositionY() < Height)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() - MapSizeW,
+			RequestedCell.GetPositionY());
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::East);
+	}
+	// If in the bottom right corner
+	else if (RequestedCell.GetPositionX() >= Width &&
+		RequestedCell.GetPositionY() >= Height)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() - MapSizeW,
+			RequestedCell.GetPositionY() - MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::Northeast);
+	}
+	// If on the bottom sides
+	else if (RequestedCell.GetPositionX() < Width &&
+		RequestedCell.GetPositionX() >= 0 &&
+		RequestedCell.GetPositionY() >= Height)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX(),
+			RequestedCell.GetPositionY() - MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::North);
+	}
+	// If on the bottom sides
+	else if (RequestedCell.GetPositionX() < 0 &&
+		RequestedCell.GetPositionY() >= Height)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() + MapSizeW,
+			RequestedCell.GetPositionY() - MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::Northwest);
+	}
+	// If on the bottom sides
+	else if (RequestedCell.GetPositionX() < 0 &&
+		RequestedCell.GetPositionY() >= 0 &&
+		RequestedCell.GetPositionY() < Height)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() + MapSizeW,
+			RequestedCell.GetPositionY());
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::West);
+	}
+	
+	if (!NewMap) _DEBUG_ERROR("Map in collision management was nullptr");
+
+	return static_cast<MapCell*>(NewMap->GetCell(
+		StandardPos.GetPositionX(),
+		StandardPos.GetPositionY()));
 }
