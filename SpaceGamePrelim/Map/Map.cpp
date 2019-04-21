@@ -60,6 +60,8 @@ Map::Map()
 Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 	m_Width(Width),
 	m_Height(Height),
+	m_CellWidth(48),
+	m_CellHeight(48),
 	m_MapType(MapType),
 	m_MapCoordinates(Coords),
 	m_NeighborMapsSize(NeighMapCount),
@@ -533,11 +535,14 @@ void Map::SetNewCorridorCell(MapCoordinate CellPosition, MapCell* NewCell, bool 
 				}
 				else if (NewCell->GetCellType() == Cell::Floor)
 				{
-					Cell->SetCellType(Cell::Floor);
+					MapCell* Temp = Cell;
+					m_Cells[X][Y] = NewCell;
+					NewCell->ChangeRedTextures(*Temp->ReturnRedTextures());
+					NewCell->SetCellType(Cell::Floor);
+					delete Temp;
 				}
 			}
 		}
-
 		m_CorridorCells[X][Y] = m_Cells[X][Y];
 	}
 }
@@ -585,58 +590,6 @@ void Map::SetNewCell(MapCoordinate CellPosition, MapCell* NewCell)
 				}
 			}
 		}
-	}
-}
-
-//
-// CheckCell()
-// Checks the given cell and adds the texture to its location,
-// allocating a new cell if needed
-//
-void Map::CheckCell(MapCoordinate CellPosition, std::vector<std::string> Textures,
-	Cell CellType, std::vector<MapCoordinate>& TextureCoords, bool Right)
-{
-	int X = CellPosition.GetPositionX();
-	int Y = CellPosition.GetPositionY();
-
-
-	if ((X < m_Width) && (Y < m_Height) && (Y >= 0) && (X >= 0))
-	{
-		// If there is no cell here currently
-		if (!m_Cells[X][Y])
-		{
-			// Then we add one
-			m_Cells[X][Y] = new MapInactive(Textures, MapCoordinate(X, Y), CellType);
-			// Set the corridor array
-			if (Right) TextureCoords.push_back(MapCoordinate(X, Y));
-
-			m_CorridorCells[X][Y] = m_Cells[X][Y];
-
-			return;
-		}
-		// Otherwise, check if the cell if a Wall_Top type, as we will not
-		// add a texture here
-		MapCell* Cell = dynamic_cast<MapCell*>(m_Cells[X][Y]);
-
-		if (Cell->GetCellType() != Cell::Wall_Top && Cell->GetCellType() != Cell::Floor)
-		{
-
-			// Add the texture to the list to draw with the other textures here
-			for (size_t i = 0; i < Textures.size(); i++)
-			{
-				Cell->AddRedTexture(Textures[i]);
-				if (CellType == Cell::Wall_Top)
-				{
-					Cell->SetCellType(Cell::Wall_Top);
-				}
-				else if (CellType == Cell::Floor)
-				{
-					Cell->SetCellType(Cell::Floor);
-				}
-			}
-		}
-
-		m_CorridorCells[X][Y] = m_Cells[X][Y];
 	}
 }
 
@@ -755,4 +708,55 @@ void Map::SetCorridorCell(int X, int Y, MapObject* Cell)
 {
 	if (X < m_Width && Y < m_Height)
 		m_CorridorCells[X][Y] = Cell;
+}
+
+//
+// GetFloorCellCoord()
+// Returns a coordinate of a floor cell within this map
+//
+MapCoordinate Map::GetFloorCellCoord()
+{
+	int Column = rand() % (m_ColumnOffsetsX.size());		// Pick a column
+	int Row = rand() % (m_ColumnOffsetsY[Column].size());	// Pick a row
+	MapRoom* PickedRoom = m_Rooms[Column][Row];
+
+	// then find a map floor somewhere around here
+
+	MapCoordinate StartingCoord(
+		m_ColumnOffsetsX[Column][Row] + Column*ColumnWidth5,
+		m_ColumnOffsetsY[Column][Row]);
+
+	// We will check the middle of this room
+	int AdditionX = PickedRoom->GetWidth() / 2;
+	int AdditionY = PickedRoom->GetHeight() / 2;
+
+	MapCoordinate PickedCoordinate(
+		StartingCoord.GetPositionX() + AdditionX,
+		StartingCoord.GetPositionY() + AdditionY);
+
+	MapCell* PickedCell = 
+		static_cast<MapCell*>(m_Cells[PickedCoordinate.GetPositionX()][PickedCoordinate.GetPositionY()]);
+
+	if (PickedCell)
+	{
+		if (!PickedCell->IsCollidableType())
+		{
+			// The picked coordinate is good
+		}
+		else
+		{
+			cout << "Picked cell was incorrect" << endl;
+			PickedCoordinate = MapCoordinate(50, 50);
+
+		}
+
+	}
+	else
+	{
+		cout << "Picked cell was nullptr" << endl;
+		PickedCoordinate = MapCoordinate(50, 50);
+	}
+
+
+	return PickedCoordinate;
 }

@@ -24,6 +24,7 @@
     <ClCompile Include="Collision\CollisionManager.cpp" />
     <ClCompile Include="Collision\MapCollision.cpp" />
     <ClCompile Include="Components\ButtonInteractComp.cpp" />
+    <ClCompile Include="Components\CenterPosComp.cpp" />
     <ClCompile Include="Components\CollisionComp.cpp" />
     <ClCompile Include="Components\Component.cpp" />
     <ClCompile Include="Components\PlayerMapMovementComp.cpp" />
@@ -74,6 +75,7 @@
     <ClInclude Include="Collision\CollisionManager.h" />
     <ClInclude Include="Collision\MapCollision.h" />
     <ClInclude Include="Components\ButtonInteractComp.h" />
+    <ClInclude Include="Components\CenterPosComp.h" />
     <ClInclude Include="Components\CollisionComp.h" />
     <ClInclude Include="Components\Component.h" />
     <ClInclude Include="Components\PlayerMapMovementComp.h" />

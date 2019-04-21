@@ -51,6 +51,7 @@ public:
 	void DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFlip Flip, 
 		SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame = 1);
 	void DrawStaticFrame(int X, int Y, int RedIndex, SDL_Renderer *pRenderer);
+	void DrawStaticFrame(int X, int Y, int RedIndex, Rect DestDimesnions, SDL_Renderer *pRenderer);
 	void FastDrawFrame(int X, int Y, TextureProperties* Properties, SDL_Texture* Texture, SDL_Renderer* Renderer);
 
 	void AddTextureGroup(std::string GroupID, std::vector<std::string> ReducedTextures);

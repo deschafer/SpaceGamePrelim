@@ -71,8 +71,16 @@ private:
 	void MoveMap();
 	void UpdateCells();
 	void CheckPhysicalConnections();
-	Collision* CheckCellForCollision(Vector Position, MapCollisionDir Direction);
-	Collision* CheckCellForCollision(Vector Position, MapCollisionDir Direction, MapDirection SpecDirection, Vector Movement, Rect ObjectDimensions);
+	Collision* CheckCellForCollision(
+		Vector Position, 
+		MapCollisionDir
+		Direction, 
+		MapDirection SpecDirection, 
+		Vector Movement, 
+		Rect ObjectDimensions,
+		GameEntity* Entity);
+
+	void ComputeStartingOffsets();
 
 	MapManager();
 

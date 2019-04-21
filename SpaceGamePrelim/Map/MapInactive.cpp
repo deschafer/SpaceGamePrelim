@@ -1,6 +1,5 @@
 #include "MapInactive.h"
 
-
 MapInactive::MapInactive()
 {
 	m_ObjType = MapObjectTypes::CELL_INACTIVE;
@@ -19,6 +18,12 @@ MapInactive::MapInactive(std::vector<std::string> RedTextureIDs, std::vector<Tex
 
 MapInactive::MapInactive(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell CellType) :
 	MapCell(RedTextureIDs, Position, CellType)
+{
+	MapInactive();
+}
+
+MapInactive::MapInactive(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Rect DestRect, Cell CellType) :
+	MapCell(RedTextureIDs, Position, DestRect, CellType)
 {
 	MapInactive();
 }

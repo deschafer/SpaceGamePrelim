@@ -206,7 +206,10 @@
     <ClCompile Include="Collision\MapCollision.cpp">
       <Filter>Source Files\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Components\PlayerMapMovementComp.cpp" />
+    <ClCompile Include="Components\PlayerMapMovementComp.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\CenterPosComp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -351,6 +354,9 @@
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Components\PlayerMapMovementComp.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\CenterPosComp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

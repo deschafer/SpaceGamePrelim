@@ -1043,7 +1043,7 @@ void MapRoom::Generate()
 				// Finally, finish by setting the appropriate texture here
 				tempStr.push_back(WallSideRight);
 
-				m_Cells[Start][0] = new MapWall(tempStr, MapCoordinate(TempX, TempY), Cell::Wall_Right);
+				m_Cells[Start][0] = new MapWall(tempStr, MapCoordinate(TempX, TempY), Rect(0, 0, m_CellWidth, m_CellHeight), Cell::Wall_Right);
 			}
 
 			complete = true;
@@ -1090,7 +1090,7 @@ void MapRoom::Generate()
 				CellType);
 
 			// Finally, creating a new map cell representing the outer walls of this room
-			m_Cells[TempX][TempY] = new MapWall(tempStr, MapCoordinate(TempX, TempY), CellType);
+			m_Cells[TempX][TempY] = new MapWall(tempStr, MapCoordinate(TempX, TempY), Rect(0, 0, m_CellWidth, m_CellHeight), CellType);
 		}
 
 		// Decrementing the length
@@ -1268,7 +1268,7 @@ void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax)
 	if (Cells[X][Y] == nullptr)
 	{
 		Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(FloorGroup));
-		Cells[X][Y] = new MapInactive(Strings, MapCoordinate(X * Width, Y * Height), Cell::Floor);
+		Cells[X][Y] = new MapInactive(Strings, MapCoordinate(X * Width, Y * Height), Rect(0, 0, Width, Height), Cell::Floor);
 	}
 	// One cell to the east
 	if ((X + 1) < XMax &&

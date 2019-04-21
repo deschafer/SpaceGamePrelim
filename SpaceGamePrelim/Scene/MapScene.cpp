@@ -7,6 +7,7 @@
 #include "../Components/ButtonInteractComp.h"
 #include "../Components/PlayerMapMovementComp.h"
 #include "../Components/CollisionComp.h"
+#include "../Components/CenterPosComp.h"
 
 #include <iostream>
 
@@ -41,6 +42,8 @@ bool MapScene::Enter()
 	SceneFactory::Instance()->RegisterNewComponent("PlayerMovement", new PlayerMovementCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("Collision", new CollisionCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("PlayerMapMovement", new PlayerMapMovementCompCreator());
+	SceneFactory::Instance()->RegisterNewComponent("CenteredPos", new CenterPosCompCreator());
+
 
 
 

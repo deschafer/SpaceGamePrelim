@@ -75,7 +75,7 @@ bool GameEntity::Load(
 	Vector InitPosition,
 	Callback Handler)
 {
-
+	// Less than 0 for pos means to be manually set by somewhere else
 	m_Position = InitPosition;
 	m_Velocity = InitVelocity;
 	m_Acceleration = InitAccel;
@@ -112,6 +112,15 @@ void GameEntity::Update()
 	// Update position and velocity
 	//m_Position += m_Velocity;
 	//m_Velocity += m_Acceleration;
+
+	// We Eliminate any floating point errors here
+	float X = abs(m_Velocity.getX());
+	float Y = abs(m_Velocity.getY());
+
+	if (X < 0.01 && X != 0)
+		m_Velocity.setX(0);
+	if (Y < 0.01 && Y != 0)
+		m_Velocity.setY(0);
 }
 
 

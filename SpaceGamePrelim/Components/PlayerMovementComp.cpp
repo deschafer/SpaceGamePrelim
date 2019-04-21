@@ -3,7 +3,12 @@
 #include "..\Frame\InputManager.h"
 #include "..\BasicTypes\EntityDirection.h"
 
-static int MovementSpeed = 8;
+#include <iostream>
+
+static int MovementSpeed = 2;
+static float MovementAccel = 0.30F;
+static float MovementDeaccel = 0.10F;
+static int MovementMax = 4;
 
 PlayerMovementComp::PlayerMovementComp()
 {
@@ -14,12 +19,15 @@ PlayerMovementComp::PlayerMovementComp(GameEntity* Owner) :
 {
 }
 
-PlayerMovementComp::~PlayerMovementComp()
+PlayerMovementComp::~PlayerMovementComp() 
 {
+
 }
+
 
 void PlayerMovementComp::Execute()
 {
+	Vector CurrentVelocity = m_Owner->GetVelocity();
 	Vector Velocity;
 	EntityDirection HorizComp = EntityDirection::None;
 	EntityDirection VertiComp = EntityDirection::None;;
@@ -27,21 +35,43 @@ void PlayerMovementComp::Execute()
 	Velocity.setX(0);
 	Velocity.setY(0);
 
+	float MovementMagnitudeY = (abs(CurrentVelocity.getY()) + MovementAccel);
+	float MovementMagnitudeX = (abs(CurrentVelocity.getX()) + MovementAccel);
+
+
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_W))
 	{
-		Velocity.setY(-MovementSpeed);
+		Velocity.setY(-(MovementMagnitudeY >= MovementMax ? MovementMax : MovementMagnitudeY));
 	}
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_A))
 	{
-		Velocity.setX(-MovementSpeed);
+		Velocity.setX(-(MovementMagnitudeX >= MovementMax ? MovementMax : MovementMagnitudeX));
 	}
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_S))
 	{
-		Velocity.setY(MovementSpeed);
+		Velocity.setY((MovementMagnitudeY >= MovementMax ? MovementMax : MovementMagnitudeY));
 	}
 	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_D))
 	{
-		Velocity.setX(MovementSpeed);
+		Velocity.setX((MovementMagnitudeX >= MovementMax ? MovementMax : MovementMagnitudeX));
+
+	}
+
+	// If there is not input,
+	// then allow for deacceleration
+	if (Velocity.getY() == 0 && CurrentVelocity.getY() != 0)
+	{
+		Velocity.setY(
+			(CurrentVelocity.getY() < 0) ? 
+			CurrentVelocity.getY() + MovementDeaccel :
+			CurrentVelocity.getY() - MovementDeaccel);
+	}
+	if (Velocity.getX() == 0 && CurrentVelocity.getX() != 0)
+	{
+		Velocity.setX(
+			(CurrentVelocity.getX() < 0) ?
+			CurrentVelocity.getX() + MovementDeaccel :
+			CurrentVelocity.getX() - MovementDeaccel);
 	}
 
 	// Based on direction, set the owning object direction

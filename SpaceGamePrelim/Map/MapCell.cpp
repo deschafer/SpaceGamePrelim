@@ -21,7 +21,8 @@ MapCell::MapCell() :
 //
 MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	Cell CellType) : 
-	m_CellType(CellType)
+	m_CellType(CellType),
+	m_DestRect(0, 0, 0, 0)
 {
 	MapCell();
 
@@ -43,9 +44,10 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 // For a MapCell that has animated textures with assoc properties
 //
 MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties, MapCoordinate Position,
-	Cell CellType) : 
+	Cell CellType) :
 	m_CellType(CellType),
-	m_Animated(true)
+	m_Animated(true),
+	m_DestRect(0, 0, 0, 0)
 {
 
 	TextureProperties* CurrentProp;
@@ -74,6 +76,27 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProp
 	}
 
 }
+
+MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
+	Rect DstDimen, Cell CellType) :
+	m_CellType(CellType),
+	m_DestRect(DstDimen)
+{
+	MapCell();
+
+	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
+
+	TextureManager* Manager = TextureManager::Instance();
+	// Getting the proper indices for each of the textures 
+	// associated with this object
+	for (size_t i = 0; i < m_RedTextureIDs->size(); i++)
+	{
+		m_RedTextureIndex.push_back(Manager->GetRedTextureIndex((*m_RedTextureIDs)[i]));
+	}
+
+	MapObject::m_Position = Position;
+}
+
 
 MapCell::~MapCell()
 {
@@ -133,14 +156,30 @@ void MapCell::DrawStatic(MapCoordinate Coords)
 	{
 		std::cout << "textures are empty";
 	}
-	// Draws each of the textures in the vector
-	for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
+	if (m_DestRect.Height() != 0 && m_DestRect.Width() != 0)
 	{
-		Instance->DrawStaticFrame(
-			Coords.GetPositionX(),
-			Coords.GetPositionY(),
-			m_RedTextureIndex[i],
-			MainApplication::Instance()->GetRenderer());
+		// Draws each of the textures in the vector
+		for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
+		{
+			Instance->DrawStaticFrame(
+				Coords.GetPositionX(),
+				Coords.GetPositionY(),
+				m_RedTextureIndex[i],
+				m_DestRect,
+				MainApplication::Instance()->GetRenderer());
+		}
+	}
+	else
+	{
+		// Draws each of the textures in the vector
+		for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
+		{
+			Instance->DrawStaticFrame(
+				Coords.GetPositionX(),
+				Coords.GetPositionY(),
+				m_RedTextureIndex[i],
+				MainApplication::Instance()->GetRenderer());
+		}
 	}
 }
 
@@ -162,3 +201,13 @@ void MapCell::ChangeRedTextures(std::vector<std::string> NewTextures)
 	}
 }
 
+//
+// OnCollision()
+// Returns true if there is a no-movement 
+// Collision. Does what it needs to the player
+// here by modifying its data.
+//
+bool MapCell::OnCollision(GameEntity* Enitity)
+{
+	return false;	// Base object has no affect on the player
+}

@@ -46,6 +46,7 @@ public:
 	virtual void SetVelocity(Vector NewVel) { m_Velocity = NewVel; }
 	virtual void SetComponent(Component* NewComp) { m_Components.push_back(NewComp); }
 	virtual void SetDirection(EntityDirection Horiz, EntityDirection Verti) { m_HorizMovement = Horiz, m_VertiMovement = Verti; }
+	virtual void SetPosition(Vector NewPos) { m_Position = NewPos; }
 
 	virtual Vector GetPosition() { return m_Position; }
 	virtual Rect GetDimensions() { return m_Dimensions; }

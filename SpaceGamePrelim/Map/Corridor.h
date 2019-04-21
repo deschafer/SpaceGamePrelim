@@ -15,6 +15,8 @@ protected:
 	enum class Movement { LEFT, RIGHT, UP, DOWN };
 	int m_Width;
 	int m_Height;
+	int m_CellWidth;
+	int m_CellHeight;
 	std::string MapType;
 	MapCell*** m_Cells;
 	MapRoom* m_RoomAboveOrRight;

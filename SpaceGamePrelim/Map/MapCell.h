@@ -3,6 +3,7 @@
 #include "MapObject.h"
 #include "..\BasicTypes\BasicTypes.h"
 #include "..\TextureCode\TextureManager.h"
+#include "..\Objects\GameEntity.h"
 
 #include <string>
 #include <vector>
@@ -28,43 +29,44 @@ protected:
 
 	std::vector<std::string>* m_RedTextureIDs;
 	bool m_Animated;
-
 	Cell m_CellType;		// Type of this cell object
+	Rect m_DestRect;		// Width and height of this individual object
 
 	// Texture Properties -- have to be list to support multiple textures
 	std::vector<int> m_CurrentFrame;
 	std::vector<int> m_CurrentRow;
 	std::vector<int> m_AnimationSpeed;
 	std::vector<int> m_NumberFrames;
-
 	std::vector<int> m_RedTextureIndex;	// Indices for access of textures
-
 
 	MapCell::MapCell(std::vector<std::string> RedTextureIDs,
 		MapCoordinate Position,
 		Cell CellType);
-
 	MapCell::MapCell(std::vector<std::string> RedTextureIDs,
 		std::vector<TextureProperties*> Properties,
 		MapCoordinate Position,
+		Cell CellType);
+	MapCell::MapCell(std::vector<std::string> RedTextureIDs,
+		MapCoordinate Position,
+		Rect DstDimen,
 		Cell CellType);
 
 public:
 
 	MapCell();
 
-	virtual void Draw(MapCoordinate Coords);
 	void DrawStatic(MapCoordinate Coords);
-	virtual void Update();
-
-
 	void ChangeRedTextures(std::vector<std::string> NewTextures);
 	void AddRedTexture(std::string RedTextureID) { m_RedTextureIndex.push_back(TextureManager::Instance()->GetRedTextureIndex(RedTextureID)); m_RedTextureIDs->push_back(RedTextureID); }
 	std::vector<std::string>* ReturnRedTextures() { return m_RedTextureIDs; }
-
 	Cell GetCellType() { return m_CellType; }
+	MapCoordinate GetPosition() { return m_Position; }
 	void SetCellType(Cell CellType) { m_CellType = CellType; }
 
+	virtual void Draw(MapCoordinate Coords);
+	virtual bool OnCollision(GameEntity* Enitity);
+	virtual bool IsCollidableType() { return false; }
+	virtual void Update();
 	virtual ~MapCell();
 };
 

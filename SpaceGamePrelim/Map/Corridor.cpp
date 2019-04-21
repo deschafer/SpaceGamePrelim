@@ -1,4 +1,5 @@
 #include "Corridor.h"
+#include "MapManager.h"
 
 
 
@@ -8,7 +9,9 @@ Corridor::Corridor()
 
 Corridor::Corridor(int Width, int Height) :
 	m_Width(Width),
-	m_Height(Height)
+	m_Height(Height),
+	m_CellWidth(MapManager::Instance()->GetCellWidth()),
+	m_CellHeight(MapManager::Instance()->GetCellHeight())
 {
 	// Create the array
 	m_Cells = new MapCell**[Width];
@@ -50,7 +53,11 @@ void Corridor::AddCell(MapCoordinate CellPosition, MapCell* Cell)
 				}
 				else if (Cell->GetCellType() == Cell::Floor)
 				{
+					MapCell* Temp = m_Cells[X][Y];
+					m_Cells[X][Y] = Cell;
+					Cell->ChangeRedTextures(*Temp->ReturnRedTextures());
 					m_Cells[X][Y]->SetCellType(Cell::Floor);
+					delete Temp;
 				}
 			}
 		}

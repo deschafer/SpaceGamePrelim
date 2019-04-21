@@ -24,6 +24,7 @@ void CorridorHoriz::AddBeginningCell(MapCoordinate Pos)
 	AddCell(MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY() - 1),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY() - 1),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Wall_Top));
 
 	Textures.clear();
@@ -31,6 +32,7 @@ void CorridorHoriz::AddBeginningCell(MapCoordinate Pos)
 	AddCell(MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY() + 1),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY() + 1),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Wall_Bottom));
 
 	Textures.clear();
@@ -38,6 +40,7 @@ void CorridorHoriz::AddBeginningCell(MapCoordinate Pos)
 	AddCell(MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY()),
 		new MapInactive(Textures,
 			MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY()),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Floor));
 }
 
@@ -52,6 +55,7 @@ void CorridorHoriz::NormalMajorAxisMovement(MapCoordinate Pos)
 	AddCell(MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY() - 1),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY() - 1),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Wall_Top));
 
 	Textures.clear();
@@ -59,6 +63,7 @@ void CorridorHoriz::NormalMajorAxisMovement(MapCoordinate Pos)
 	AddCell(MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY() + 1),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY() + 1),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Wall_Bottom));
 }
 
@@ -75,6 +80,7 @@ void CorridorHoriz::MinorAxisMovementBeg(MapCoordinate Pos, Movement Direction)
 		AddCell(MapCoordinate(Pos.GetPositionX() - 1, Pos.GetPositionY()),
 			new MapWall(Textures,
 				MapCoordinate(Pos.GetPositionX() - 1, Pos.GetPositionY()),
+				Rect(0, 0, m_CellWidth, m_CellHeight),
 				Cell::Wall_Right));
 		Textures.clear();
 	}
@@ -83,10 +89,12 @@ void CorridorHoriz::MinorAxisMovementBeg(MapCoordinate Pos, Movement Direction)
 	AddCell(MapCoordinate(Pos.GetPositionX() + 1, Pos.GetPositionY()),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX() + 1, Pos.GetPositionY()),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Wall_Left));
 	AddCell(MapCoordinate(Pos.GetPositionX() + 1, Pos.GetPositionY() + ((Direction == Movement::UP) ? 1 : -1)),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX() + 1, Pos.GetPositionY() + ((Direction == Movement::UP) ? 1 : -1)),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Wall_Left));
 
 	Textures.clear();
@@ -94,6 +102,7 @@ void CorridorHoriz::MinorAxisMovementBeg(MapCoordinate Pos, Movement Direction)
 	AddCell(MapCoordinate(Pos.GetPositionX() + 1, Pos.GetPositionY() + ((Direction == Movement::UP) ? 2 : -2)),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX() + 1, Pos.GetPositionY() + ((Direction == Movement::UP) ? 2 : -2)),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Direction == Movement::UP ? Cell::Wall_Corner_Right : Cell::Wall_Left));
 }
 
@@ -111,6 +120,7 @@ void CorridorHoriz::MinorAxisMovementEnd(MapCoordinate Pos, Movement Direction)
 	AddCell(MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY() + ((Direction == Movement::UP) ? -1 : 1)),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY() + ((Direction == Movement::UP) ? -1 : 1)),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			(Direction == Movement::UP) ? Cell::Wall_Top : Cell::Wall_Bottom));
 
 	Textures.clear();
@@ -118,6 +128,7 @@ void CorridorHoriz::MinorAxisMovementEnd(MapCoordinate Pos, Movement Direction)
 	AddCell(MapCoordinate(Pos.GetPositionX() - 1, Pos.GetPositionY()),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX() - 1, Pos.GetPositionY()),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Wall_Right));
 
 	if (Direction == Movement::UP)
@@ -125,6 +136,7 @@ void CorridorHoriz::MinorAxisMovementEnd(MapCoordinate Pos, Movement Direction)
 		AddCell(MapCoordinate(Pos.GetPositionX() - 1, Pos.GetPositionY() - 1),
 			new MapWall(Textures,
 				MapCoordinate(Pos.GetPositionX() - 1, Pos.GetPositionY() - 1),
+				Rect(0, 0, m_CellWidth, m_CellHeight),
 				Cell::Wall_Right));
 	}
 	else
@@ -134,6 +146,7 @@ void CorridorHoriz::MinorAxisMovementEnd(MapCoordinate Pos, Movement Direction)
 		AddCell(MapCoordinate(Pos.GetPositionX() - 1, Pos.GetPositionY() + 1),
 			new MapWall(Textures,
 				MapCoordinate(Pos.GetPositionX() - 1, Pos.GetPositionY() + 1),
+				Rect(0, 0, m_CellWidth, m_CellHeight),
 				Cell::Wall_Corner_Left));
 	}
 }
@@ -149,6 +162,7 @@ void CorridorHoriz::NormalMinorAxisMovement(MapCoordinate Pos)
 	AddCell(MapCoordinate(Pos.GetPositionX() - 1, Pos.GetPositionY()),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX() - 1, Pos.GetPositionY()),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Wall_Right));
 
 	Textures.clear();
@@ -156,6 +170,7 @@ void CorridorHoriz::NormalMinorAxisMovement(MapCoordinate Pos)
 	AddCell(MapCoordinate(Pos.GetPositionX() + 1, Pos.GetPositionY()),
 		new MapWall(Textures,
 			MapCoordinate(Pos.GetPositionX() + 1, Pos.GetPositionY()),
+			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Wall_Left));
 }
 
@@ -185,8 +200,6 @@ Corridor* CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLoca
 	Movement Direction;						// Direction of minor axis movement
 	vector<string> Textures;
 	Textures.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(FloorGroup));
-
-	
 
 	// First check if the ending point can be reached
 	int X = End.GetPositionX();
@@ -288,7 +301,7 @@ Corridor* CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLoca
 
 		// Adding the corridor to the array
 		m_Cells[CurrentX][CurrentY] =
-			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
+			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Rect(0, 0, m_CellWidth, m_CellHeight), Cell::Floor);
 
 		// Determining correct tile types for the corresponding cells
 		// Normal X movement
@@ -324,21 +337,6 @@ Corridor* CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLoca
 	if (CurrentX != End.GetPositionX() || CurrentY != End.GetPositionY())
 	{
 		cout << "Did not find the end." << endl;
-		/*
-		vector<string> Textures;
-		Textures.push_back("Test");
-
-		// Adding the corridor to the array
-		m_Cells[Begin.GetPositionX()][Begin.GetPositionY()] =
-			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
-
-		Textures.clear();
-		Textures.push_back("Explosion");
-
-		// Adding the corridor to the array
-		m_Cells[End.GetPositionX()][End.GetPositionY()] =
-			new MapInactive(Textures, MapCoordinate(CurrentX, CurrentY), Cell::Floor);
-		*/
 		return nullptr;
 	}
 

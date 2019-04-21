@@ -18,8 +18,8 @@ using namespace std;
 
 typedef pair<MapCoordinate, MapCoordinate> SideA;
 
-static const int CellWidthSrc = 32;
-static const int CellHeightSrc = 32;
+static const int CellWidthSrc = 16;		// Source for entire project's cell sizes
+static const int CellHeightSrc = 16;
 static const int MapSizeW = 100;
 static const int MapSizeH = 100;
 static const int MapWidthPixels = CellWidthSrc * MapSizeW;
@@ -236,12 +236,33 @@ MapManager::MapManager() :
 	m_VisibleMapCells.push_back(nullptr);
 
 	m_VisibleMapCells[CenterMapArrayIndex] = m_ActiveMap->GetCellArrayAddress();
+
+	ComputeStartingOffsets();	
 }
 
 MapManager::~MapManager()
 {
 	// Should deconstruct all maps
 	// Deconstruct all data structures
+}
+
+//
+// ComputeStartingOffsets()
+// Finds a suitable starting position,
+// and sets the offsets accordingly so the player starts there
+//
+void MapManager::ComputeStartingOffsets()
+{
+
+	MapCoordinate Coord = m_ActiveMap->GetFloorCellCoord();
+
+	// Then set the offsets so they reflect this
+
+	m_PixelOffsetX = -Coord.GetPositionX() * m_CellWidth;// +m_ActiveWndWidth / 2;
+	m_PixelOffsetY = -Coord.GetPositionY()* m_CellHeight;// +m_ActiveWndWidth / 2;
+
+	//m_PixelOffsetX = -3 * m_CellWidth;
+
 }
 
 //
@@ -256,6 +277,8 @@ void MapManager::Draw()
 	int MapPositionOffsetY = 0;
 	pair<int, int> Pair;
 	vector<string> txts;
+
+	//DrawGrid();	// Debugging gridlines
 
 	for (size_t CurrentMap = 0; CurrentMap < m_VisibleMapCells.size(); CurrentMap++)
 	{
@@ -1359,7 +1382,8 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			MapCollisionDir::Horiz,
 			(Additional) ? MapDirection::East : MapDirection::West,
 			Movement,
-			Object->GetDimensions());
+			Object->GetDimensions(),
+			Object);
 
 		if (HorizCollision)
 		{
@@ -1380,7 +1404,8 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			MapCollisionDir::Verti,
 			(Additional) ? MapDirection::South : MapDirection::North,
 			Movement,
-			Object->GetDimensions());
+			Object->GetDimensions(),
+			Object);
 		if (VertiCollision)
 			Collisions.push_back(VertiCollision);
 	}
@@ -1400,7 +1425,8 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			MapCollisionDir::Diagonal,
 			(AdditionalX) ? MapDirection::East : MapDirection::West,
 			Movement,
-			Object->GetDimensions());
+			Object->GetDimensions(),
+			Object);
 		if (DiagonalCollision)
 			Collisions.push_back(DiagonalCollision);
 	}
@@ -1412,28 +1438,13 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 // CheckCellForCollision()
 //
 //
-Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Direction)
-{
-	Map* CurrentMap;
-	MapCoordinate Index = GetCellIndex(Position, CurrentMap);
-	MapCell* CurrCell = static_cast<MapCell*>(CurrentMap->GetCell(Index.GetPositionX(), Index.GetPositionY()));
-
-	// We got our cell so check if it is a wall
-	// In the near future wach cell will know if its an opaque
-	// type, but for new we just compare
-	if (CurrCell && (CurrCell->GetCellType() != Cell::Floor))
-	{
-		// Create a new collision
-		return new MapCollision(CollisionType::MapWall, Direction);
-	}
-	else return nullptr;
-}
-
-//
-// CheckCellForCollision()
-//
-//
-Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Direction, MapDirection SpecDirection, Vector Movement, Rect ObjectDimensions)
+Collision* MapManager::CheckCellForCollision(
+	Vector Position, 
+	MapCollisionDir Direction, 
+	MapDirection SpecDirection, 
+	Vector Movement, 
+	Rect ObjectDimensions,
+	GameEntity* Entity)
 {
 	Map* CurrentMap;
 	Vector CellPos;
@@ -1475,14 +1486,14 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 			Index.GetPositionX(), 
 			Index.GetPositionY() + 1));
 
-		if (AltMovementCell && AltMovementCell->GetCellType() != Cell::Floor)
+		if (AltMovementCell && AltMovementCell->OnCollision(Entity))
 		{
 			CellPos = Vector(CellPos.getX() + m_CellWidth, CellPos.getY());
 			CurrCell = AltMovementCell;
 		}
 		if((!CurrCell && DistanceCell) || 
 			(DistanceCell && CurrCell && 
-			(CurrCell->GetCellType() != Cell::Floor)))
+			CurrCell->OnCollision(Entity)))
 		{
 			// Get the cell prior to the movement
 			Vector DistanceCellPos(CellPos.getX(), CellPos.getY() + m_CellHeight);
@@ -1491,7 +1502,7 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 			// Then find the distance from the pos w/o movement to the edge of the cell
 			int CurrentDistanceUntilCollision = abs((int)Movement.getY()) - DistanceWithinWall;
 			// Create the collision reflecting this situation
-			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Verti, (CurrentDistanceUntilCollision));
+			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Verti, CurrentDistanceUntilCollision);
 		}
 	
 		break;
@@ -1501,14 +1512,14 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 			Index.GetPositionX() - 1, 
 			Index.GetPositionY()));
 					
-		if (AltMovementCell && AltMovementCell->GetCellType() != Cell::Floor)
+		if (AltMovementCell && AltMovementCell->OnCollision(Entity))
 		{
 			CellPos = Vector(CellPos.getX(), CellPos.getY() + m_CellHeight);
 			CurrCell = AltMovementCell;
 		}
 		if ((!CurrCell && DistanceCell) ||
 			(DistanceCell && CurrCell &&
-			(CurrCell->GetCellType() != Cell::Floor)))
+			CurrCell->OnCollision(Entity)))
 		{
 			// Get the cell prior to the movement
 			Vector DistanceCellPos(CellPos.getX(), CellPos.getY());
@@ -1517,7 +1528,7 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 			// Then find the distance from the pos w/o movement to the edge of the cell
 			int CurrentDistanceUntilCollision = abs((int)Movement.getX()) - DistanceWithinWall;
 			// Create the collision reflecting this situation
-			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Horiz, (CurrentDistanceUntilCollision));
+			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Horiz, CurrentDistanceUntilCollision);
 		}
 		break;
 	case MapDirection::South:
@@ -1526,14 +1537,14 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 			Index.GetPositionX(), 
 			Index.GetPositionY() - 1));
 		
-		if (AltMovementCell && AltMovementCell->GetCellType() != Cell::Floor)
+		if (AltMovementCell && AltMovementCell->OnCollision(Entity))
 		{
 			CellPos = Vector(CellPos.getX() + m_CellWidth, CellPos.getY());
 			CurrCell = AltMovementCell;
 		}
 		if ((!CurrCell && DistanceCell) ||
 			(DistanceCell && CurrCell &&
-			(CurrCell->GetCellType() != Cell::Floor)))
+			CurrCell->OnCollision(Entity)))
 		{
 			// Get the cell prior to the movement
 			Vector DistanceCellPos(CellPos.getX(), CellPos.getY());
@@ -1542,7 +1553,7 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 			// Then find the distance from the pos w/o movement to the edge of the cell
 			int CurrentDistanceUntilCollision = abs((int)Movement.getY()) - DistanceWithinWall;
 			// Create the collision reflecting this situation
-			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Verti, (CurrentDistanceUntilCollision));
+			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Verti, CurrentDistanceUntilCollision);
 		}
 		break;
 	case MapDirection::West:
@@ -1551,14 +1562,14 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 			Index.GetPositionX() + 1, 
 			Index.GetPositionY()));
 
-		if (AltMovementCell && AltMovementCell->GetCellType() != Cell::Floor)
+		if (AltMovementCell && AltMovementCell->OnCollision(Entity))
 		{
 			CellPos = Vector(CellPos.getX(), CellPos.getY() + m_CellHeight);
 			CurrCell = AltMovementCell;
 		}
 		if ((!CurrCell && DistanceCell) ||
 			(DistanceCell && CurrCell &&
-			(CurrCell->GetCellType() != Cell::Floor)))
+			CurrCell->OnCollision(Entity)))
 		{
 			// Get the cell prior to the movement
 			Vector DistanceCellPos(CellPos.getX() + m_CellWidth, CellPos.getY());
@@ -1567,7 +1578,7 @@ Collision* MapManager::CheckCellForCollision(Vector Position, MapCollisionDir Di
 			// Then find the distance from the pos w/o movement to the edge of the cell
 			int CurrentDistanceUntilCollision = abs((int)Movement.getX()) - DistanceWithinWall;
 			// Create the collision reflecting this situation
-			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Horiz, (CurrentDistanceUntilCollision));
+			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Horiz, CurrentDistanceUntilCollision);
 		}
 		break;
 	default:

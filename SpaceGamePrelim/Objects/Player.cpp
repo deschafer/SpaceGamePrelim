@@ -15,6 +15,5 @@ Player::Player(std::string RedTexture, TextureProperties* Prop, std::string Type
 	Vector InitPosition, Vector InitVelocity, Vector InitAccel) :
 	GameEntity(RedTexture, Prop, TypeID, SpecID, InitPosition, InitVelocity, InitAccel)
 {
-
 }
 
