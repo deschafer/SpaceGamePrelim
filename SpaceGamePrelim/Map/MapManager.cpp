@@ -253,16 +253,11 @@ MapManager::~MapManager()
 //
 void MapManager::ComputeStartingOffsets()
 {
-
 	MapCoordinate Coord = m_ActiveMap->GetFloorCellCoord();
 
 	// Then set the offsets so they reflect this
-
-	m_PixelOffsetX = -Coord.GetPositionX() * m_CellWidth;// +m_ActiveWndWidth / 2;
-	m_PixelOffsetY = -Coord.GetPositionY()* m_CellHeight;// +m_ActiveWndWidth / 2;
-
-	//m_PixelOffsetX = -3 * m_CellWidth;
-
+	m_PixelOffsetX = -Coord.GetPositionX() * m_CellWidth + m_ActiveWndWidth / 2;
+	m_PixelOffsetY = -Coord.GetPositionY() * m_CellHeight + m_ActiveWndHeight / 2;
 }
 
 //

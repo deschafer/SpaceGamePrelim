@@ -739,15 +739,10 @@ MapCoordinate Map::GetFloorCellCoord()
 
 	if (PickedCell)
 	{
-		if (!PickedCell->IsCollidableType())
-		{
-			// The picked coordinate is good
-		}
-		else
+		if (PickedCell->IsCollidableType())
 		{
 			cout << "Picked cell was incorrect" << endl;
 			PickedCoordinate = MapCoordinate(50, 50);
-
 		}
 
 	}
