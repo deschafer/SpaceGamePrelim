@@ -33,7 +33,6 @@ int main(int argc, char* argv[])
 	srand((unsigned int)duration);
 	//srand(1);
 
-
 	MainApplication* Application = MainApplication::Instance();	// Getting the app instance
 	// 1408 x 896
 	if (Application->Initialize("SpaceGamePrelim", 100, 100, 1440, 900, false))

@@ -44,14 +44,10 @@ bool MapScene::Enter()
 	SceneFactory::Instance()->RegisterNewComponent("PlayerMapMovement", new PlayerMapMovementCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("CenteredPos", new CenterPosCompCreator());
 
-
-
-
-	SceneFactory::Instance()->LoadNewScene("XML/Scenes/Test.xml", this);
-
-
+	SceneFactory::Instance()->LoadNewScene("./XML/Scenes/Test.xml", this);
 
 #ifdef _DEBUG
+
 	std::cout << "Entering a gamescene\n";
 #endif // DEBUG
 
@@ -97,5 +93,5 @@ void MapScene::Render()
 //
 void MapScene::s_ButtonHandler()
 {
-	MapManager::Instance()->ResetMap();
+	//MapManager::Instance()->ResetMap();
 }

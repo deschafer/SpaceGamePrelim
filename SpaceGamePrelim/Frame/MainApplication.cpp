@@ -91,8 +91,12 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
 
-	InitFactory::Instance()->LoadRoomDefinitions("XML/Map/Room.xml");
-	InitFactory::Instance()->LoadTextures("XML/Textures/Textures.xml");
+
+	InitFactory::Instance()->LoadRoomDefinitions("./XML/Map/Room.xml");
+	InitFactory::Instance()->LoadTextures("./XML/Textures/Textures.xml");
+
+
+	
 
 
 	InitializeScenes();
