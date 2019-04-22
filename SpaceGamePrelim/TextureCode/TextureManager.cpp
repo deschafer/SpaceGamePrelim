@@ -62,6 +62,9 @@ bool TextureManager::SetTexture(std::string Pathname, std::string TextureID, SDL
 // texture or sprite sheet that corresponds to a single
 // meaningful section of that texture.
 //
+// Use this overload when the texture being drawn is exactly as defined in 
+// the reduced texture.
+//
 void TextureManager::SetReducedTexture(std::string ID, TextureProperties* Properties)
 {
 
@@ -78,6 +81,7 @@ void TextureManager::SetReducedTexture(std::string ID, TextureProperties* Proper
 	}
 
 }
+
 void TextureManager::DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFlip Flip,
 	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
 {
@@ -108,11 +112,49 @@ void TextureManager::DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFl
 
 }
 
+// Use this overload when the texture being drawn is different in dest. size then the
+// the reduced texture.
+void TextureManager::DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFlip Flip, 
+	SDL_Renderer *pRenderer, Rect DestinRect, int CurrentRow, int CurrentFrame)
+{
+
+	TextureProperties* Properties = m_RedTextures[RedIndex];
+	if (!Properties)
+	{
+#ifdef _DEBUG
+		cout << "No reduced texture formatted for this ID " << RedIndex << endl;
+#endif // DEBUG
+		return;
+	}
+
+	Rect Dim = Properties->GetDimensions();
+	SDL_Rect SourceRect;
+	SDL_Rect DestRect;
+
+	// Setting information to draw this frame correctly
+	SourceRect.x = Dim.Width() * CurrentFrame;
+	SourceRect.y = Dim.Height() * (CurrentRow - 1);
+	SourceRect.w = Dim.Width();
+	SourceRect.h = Dim.Height();
+	DestRect.h = DestinRect.Height();
+	DestRect.w = DestinRect.Width();
+	DestRect.x = X;
+	DestRect.y = Y;
+
+	SDL_RenderCopyEx(pRenderer, m_SourceTextures[Properties->GetTextureIndex()], &SourceRect,
+		&DestRect, 0, 0, Flip);
+
+}
+
+
 //
 // DrawStaticFrame() 
 // A simplified function for drawing textures that stay in a static state
 // and do not flip, changed position in the sprite sheet, and have
 // a reduced texture definition.
+//
+// Use this overload when the texture being drawn is exactly as defined in 
+// the reduced texture.
 //
 void TextureManager::DrawStaticFrame(int X, int Y, int RedIndex, SDL_Renderer *pRenderer)
 {
@@ -143,6 +185,8 @@ void TextureManager::DrawStaticFrame(int X, int Y, int RedIndex, SDL_Renderer *p
 		
 }
 
+// Use this overload when the texture being drawn is different in dest. size then the
+// the reduced texture.
 void TextureManager::DrawStaticFrame(int X, int Y, int RedIndex, Rect DestDimesnions, SDL_Renderer *pRenderer)
 {
 	TextureProperties* Properties = m_RedTextures[RedIndex];

@@ -35,8 +35,35 @@ GameEntity::GameEntity(std::string ReducedTexture,
 
 	m_ReducedTextureID = ReducedTexture;
 	m_Dimensions = Properties->GetDimensions();
+	m_DestDimensions = Properties->GetDimensions();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
 	m_NumberFrames = Properties->GetNumberFrames();
+
+	m_RedTextureIndex = TextureManager::Instance()->GetRedTextureIndex(m_ReducedTextureID);
+}
+
+GameEntity::GameEntity(std::string ReducedTexture,
+	TextureProperties* Prop,
+	std::string TypeID,
+	std::string SpecTypeID,
+	Rect DestRect,
+	Vector InitPosition,
+	Vector InitVelocity,
+	Vector InitAccel) :
+	GameEntity()
+{
+	m_Acceleration = InitAccel;
+	m_Velocity = InitVelocity;
+	m_Position = InitPosition;
+
+	m_SpecTypeID = SpecTypeID;
+	m_TypeID = TypeID;
+	m_DestDimensions = DestRect;
+
+	m_ReducedTextureID = ReducedTexture;
+	m_Dimensions = Prop->GetDimensions();
+	m_AnimationSpeed = Prop->GetAnimationSpeed();
+	m_NumberFrames = Prop->GetNumberFrames();
 
 	m_RedTextureIndex = TextureManager::Instance()->GetRedTextureIndex(m_ReducedTextureID);
 }
@@ -52,6 +79,7 @@ GameEntity::GameEntity(std::string ReducedTexture,
 	m_ReducedTextureID = ReducedTexture;
 	m_Dimensions = Properties->GetDimensions();
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
+	m_DestDimensions = Properties->GetDimensions();
 	m_NumberFrames = Properties->GetNumberFrames();
 
 	m_RedTextureIndex = TextureManager::Instance()->GetRedTextureIndex(m_ReducedTextureID);
@@ -70,6 +98,7 @@ bool GameEntity::Load(
 	TextureProperties* Properties,
 	std::string TypeID,
 	std::string SpecTypeID,
+	Rect DestRect,
 	Vector InitVelocity,
 	Vector InitAccel,
 	Vector InitPosition,
@@ -86,6 +115,7 @@ bool GameEntity::Load(
 	m_CurrentRow = 1;
 
 	m_Dimensions = Properties->GetDimensions();
+	(DestRect.Height()) ? m_DestDimensions = DestRect : m_DestDimensions = m_Dimensions;
 	m_AnimationSpeed = Properties->GetAnimationSpeed();
 	m_NumberFrames = Properties->GetNumberFrames();
 	m_ReducedTextureID = Properties->GetTextureID();
@@ -139,6 +169,7 @@ void GameEntity::Draw()
 		m_RedTextureIndex,
 		SDL_FLIP_NONE,
 		MainApplication::Instance()->GetRenderer(), 
+		m_DestDimensions,
 		m_CurrentRow, 
 		m_CurrentFrame);
 }

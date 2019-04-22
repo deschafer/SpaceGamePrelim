@@ -222,6 +222,12 @@ bool SceneFactory::LoadNewScene(std::string Filename, Scene* LoadingScene)
 					AnimSpeed),
 					TypeID,
 					SpecID,
+					Rect(
+						DimX,
+						DimY,
+						DimW,
+						DimH
+					),
 					Vector((float)VelX, (float)VelY),
 					Vector((float)AccelX, (float)AccelY),
 					Vector((float)PosX, (float)PosY),

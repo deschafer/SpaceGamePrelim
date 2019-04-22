@@ -46,18 +46,22 @@ void Corridor::AddCell(MapCoordinate CellPosition, MapCell* Cell)
 			// Add the texture to the list to draw with the other textures here
 			for (size_t i = 0; i < Textures.size(); i++)
 			{
-				m_Cells[X][Y]->AddRedTexture(Textures[i]);
-				if (Cell->GetCellType() == Cell::Wall_Top)
+				if (m_Cells[X][Y]->GetCellType() != Cell::Floor)
 				{
-					m_Cells[X][Y]->SetCellType(Cell::Wall_Top);
-				}
-				else if (Cell->GetCellType() == Cell::Floor)
-				{
-					MapCell* Temp = m_Cells[X][Y];
-					m_Cells[X][Y] = Cell;
-					Cell->ChangeRedTextures(*Temp->ReturnRedTextures());
-					m_Cells[X][Y]->SetCellType(Cell::Floor);
-					delete Temp;
+					m_Cells[X][Y]->AddRedTexture(Textures[i]);
+
+					if (Cell->GetCellType() == Cell::Wall_Top)
+					{
+						m_Cells[X][Y]->SetCellType(Cell::Wall_Top);
+					}
+					else if (Cell->GetCellType() == Cell::Floor)
+					{
+						MapCell* Temp = m_Cells[X][Y];
+						m_Cells[X][Y] = Cell;
+						Cell->ChangeRedTextures(*Temp->ReturnRedTextures());
+						m_Cells[X][Y]->SetCellType(Cell::Floor);
+						delete Temp;
+					}
 				}
 			}
 		}

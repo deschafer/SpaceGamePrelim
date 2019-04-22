@@ -6,7 +6,7 @@
 #include <iostream>
 
 static int MovementSpeed = 2;
-static float MovementAccel = 0.30F;
+static float MovementAccel = 0.20F;
 static float MovementDeaccel = 0.10F;
 static int MovementMax = 4;
 
@@ -21,31 +21,32 @@ PlayerMovementComp::PlayerMovementComp(GameEntity* Owner) :
 
 PlayerMovementComp::~PlayerMovementComp() 
 {
-
 }
 
-
+//
+//
+//
+//
 void PlayerMovementComp::Execute()
 {
 	Vector CurrentVelocity = m_Owner->GetVelocity();
 	Vector Velocity(0,0);
 	EntityDirection HorizComp = EntityDirection::None;
 	EntityDirection VertiComp = EntityDirection::None;;
-
 	float MovementMagnitudeY = (abs(CurrentVelocity.getY()) + MovementAccel);
 	float MovementMagnitudeX = (abs(CurrentVelocity.getX()) + MovementAccel);
-
 	float LeftMovement = CurrentVelocity.getX() - MovementAccel;
 	float RightMovement = CurrentVelocity.getX() + MovementAccel;
 	float NorthMovement = CurrentVelocity.getY() - MovementAccel;
 	float SouthMovement = CurrentVelocity.getY() + MovementAccel;
 
-
+	// Getting the input we are looking for
 	bool W = InputManager::Instance()->IsKeyDown(SDL_SCANCODE_W);
 	bool A = InputManager::Instance()->IsKeyDown(SDL_SCANCODE_A);
 	bool S = InputManager::Instance()->IsKeyDown(SDL_SCANCODE_S);
 	bool D = InputManager::Instance()->IsKeyDown(SDL_SCANCODE_D);
 
+	// Looking for directions of movement
 	if (W && !S)
 	{
 		Velocity.setY(NorthMovement <= -MovementMax ? -MovementMax : NorthMovement);
@@ -98,6 +99,7 @@ void PlayerMovementComp::Execute()
 		VertiComp = EntityDirection::North;
 	}
 
+	// Setting the final movement 
 	m_Owner->SetDirection(HorizComp, VertiComp);
 	m_Owner->SetVelocity(Velocity);
 }

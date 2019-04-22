@@ -24,12 +24,21 @@ public:
 		TextureProperties* Prop,
 		std::string TypeID,
 		std::string SpecTypeID,
+		Rect DestRect,
+		Vector InitPosition,
+		Vector InitVelocity,
+		Vector InitAccel);
+	GameEntity(std::string ReducedTexture,
+		TextureProperties* Prop,
+		std::string TypeID,
+		std::string SpecTypeID,
 		Vector InitPosition);
 	virtual ~GameEntity();
 	virtual bool Load(
 		TextureProperties* Properties,
 		std::string TypeID,
 		std::string SpecTypeID,
+		Rect DestRect,
 		Vector InitVelocity,
 		Vector InitAccel,
 		Vector InitPosition,
@@ -65,7 +74,8 @@ protected:
 	EntityDirection m_HorizMovement;
 	EntityDirection m_VertiMovement;
 
-	Rect m_Dimensions;
+	Rect m_Dimensions;		// Same as the red. text. dimensions
+	Rect m_DestDimensions;	// If the entity is diff than the red. texture
 
 	// Animation properties
 	int m_CurrentFrame;

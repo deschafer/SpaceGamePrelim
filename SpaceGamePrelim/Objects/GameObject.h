@@ -15,6 +15,7 @@ public:
 		TextureProperties *Properties,
 		std::string TypeID,
 		std::string SpecTypeID,
+		Rect DestRect,
 		Vector Velocity,
 		Vector Accel,
 		Vector Position,

@@ -3,8 +3,6 @@
 #include "../BasicTypes/EntityDirection.h"
 #include "../Collision/MapCollision.h"
 
-#include <iostream>
-
 CollisionComp::CollisionComp()
 {
 }
@@ -82,18 +80,19 @@ void CollisionComp::HandleMapCollisions(MapCollision* NewCollision, Vector &SetV
 		CollisionAngleVerti = true;
 	}
 
+	int Distance = NewCollision->GetDistance();
+	if (abs(Distance) == 1) Distance = 0;
+
 	if (CollisionAngleHoriz)
 	{
 		if (Horiz == EntityDirection::East && (SetVelocity.getX() > 0))
 		{
 			// Set this to the distance we can travel until we collide
-			int Distance = NewCollision->GetDistance();
 			SetVelocity.setX(Distance);
 		}
 		else if (Horiz == EntityDirection::West && (SetVelocity.getX() < 0))
 		{
 			// Set this to the distance we can travel until we collide
-			int Distance = NewCollision->GetDistance();
 			SetVelocity.setX(-Distance);
 		}
 	}
@@ -102,13 +101,11 @@ void CollisionComp::HandleMapCollisions(MapCollision* NewCollision, Vector &SetV
 		if (Verti == EntityDirection::South && (SetVelocity.getY() > 0))
 		{
 			// Set this to the distance we can travel until we collide
-			int Distance = NewCollision->GetDistance();
 			SetVelocity.setY(Distance);
 		}
 		else if (Verti == EntityDirection::North && (SetVelocity.getY() < 0))
 		{
 			// Set this to the distance we can travel until we collide
-			int Distance = NewCollision->GetDistance();
 			SetVelocity.setY(-Distance);
 		}
 	}

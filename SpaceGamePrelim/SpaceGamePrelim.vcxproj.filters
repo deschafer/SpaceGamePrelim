@@ -209,7 +209,9 @@
     <ClCompile Include="Components\PlayerMapMovementComp.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Components\CenterPosComp.cpp" />
+    <ClCompile Include="Components\CenterPosComp.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -357,7 +359,7 @@
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Components\CenterPosComp.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
