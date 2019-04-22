@@ -18,8 +18,8 @@ using namespace std;
 
 typedef pair<MapCoordinate, MapCoordinate> SideA;
 
-static const int CellWidthSrc = 16;		// Source for entire project's cell sizes
-static const int CellHeightSrc = 16;
+static const int CellWidthSrc = 42;		// Source for entire project's cell sizes
+static const int CellHeightSrc = 42;
 static const int MapSizeW = 100;
 static const int MapSizeH = 100;
 static const int MapWidthPixels = CellWidthSrc * MapSizeW;

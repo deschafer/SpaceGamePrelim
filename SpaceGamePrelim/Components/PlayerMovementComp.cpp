@@ -28,33 +28,39 @@ PlayerMovementComp::~PlayerMovementComp()
 void PlayerMovementComp::Execute()
 {
 	Vector CurrentVelocity = m_Owner->GetVelocity();
-	Vector Velocity;
+	Vector Velocity(0,0);
 	EntityDirection HorizComp = EntityDirection::None;
 	EntityDirection VertiComp = EntityDirection::None;;
-
-	Velocity.setX(0);
-	Velocity.setY(0);
 
 	float MovementMagnitudeY = (abs(CurrentVelocity.getY()) + MovementAccel);
 	float MovementMagnitudeX = (abs(CurrentVelocity.getX()) + MovementAccel);
 
+	float LeftMovement = CurrentVelocity.getX() - MovementAccel;
+	float RightMovement = CurrentVelocity.getX() + MovementAccel;
+	float NorthMovement = CurrentVelocity.getY() - MovementAccel;
+	float SouthMovement = CurrentVelocity.getY() + MovementAccel;
 
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_W))
-	{
-		Velocity.setY(-(MovementMagnitudeY >= MovementMax ? MovementMax : MovementMagnitudeY));
-	}
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_A))
-	{
-		Velocity.setX(-(MovementMagnitudeX >= MovementMax ? MovementMax : MovementMagnitudeX));
-	}
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_S))
-	{
-		Velocity.setY((MovementMagnitudeY >= MovementMax ? MovementMax : MovementMagnitudeY));
-	}
-	if (InputManager::Instance()->IsKeyDown(SDL_SCANCODE_D))
-	{
-		Velocity.setX((MovementMagnitudeX >= MovementMax ? MovementMax : MovementMagnitudeX));
 
+	bool W = InputManager::Instance()->IsKeyDown(SDL_SCANCODE_W);
+	bool A = InputManager::Instance()->IsKeyDown(SDL_SCANCODE_A);
+	bool S = InputManager::Instance()->IsKeyDown(SDL_SCANCODE_S);
+	bool D = InputManager::Instance()->IsKeyDown(SDL_SCANCODE_D);
+
+	if (W && !S)
+	{
+		Velocity.setY(NorthMovement <= -MovementMax ? -MovementMax : NorthMovement);
+	}
+	if (A && !D)
+	{
+		Velocity.setX(LeftMovement <= -MovementMax ? -MovementMax : LeftMovement);
+	}
+	if (S && !W)
+	{
+		Velocity.setY((SouthMovement >= MovementMax ? MovementMax : SouthMovement));
+	}
+	if (D && !A)
+	{
+		Velocity.setX(RightMovement >= MovementMax ? MovementMax : RightMovement);
 	}
 
 	// If there is not input,
