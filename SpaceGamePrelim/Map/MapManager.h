@@ -96,6 +96,7 @@ public:
 		else return m_Instance;
 	}
 
+	void HandleMapZoom();
 	void DrawGrid();
 	void Draw();
 	void Update();

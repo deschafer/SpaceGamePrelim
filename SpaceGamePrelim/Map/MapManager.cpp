@@ -1697,3 +1697,14 @@ MapCell* MapManager::GetCellFromMaps(Map* CurrentMap, MapCoordinate RequestedCel
 		StandardPos.GetPositionX(),
 		StandardPos.GetPositionY()));
 }
+
+//
+// HandleMapZoom()
+//
+//
+void MapManager::HandleMapZoom()
+{
+
+
+
+}

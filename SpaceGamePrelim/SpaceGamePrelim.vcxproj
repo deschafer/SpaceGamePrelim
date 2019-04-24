@@ -32,6 +32,7 @@
     <ClCompile Include="Frame\InputManager.cpp" />
     <ClCompile Include="Frame\Main.cpp" />
     <ClCompile Include="Frame\MainApplication.cpp" />
+    <ClCompile Include="Frame\ZoomManager.cpp" />
     <ClCompile Include="Map\Corridor.cpp" />
     <ClCompile Include="Map\CorridorHoriz.cpp" />
     <ClCompile Include="Map\CorridorVertical.cpp" />
@@ -83,6 +84,7 @@
     <ClInclude Include="Frame\InputManager.h" />
     <ClInclude Include="Frame\MainApplication.h" />
     <ClInclude Include="Frame\Threads.h" />
+    <ClInclude Include="Frame\ZoomManager.h" />
     <ClInclude Include="Map\Corridor.h" />
     <ClInclude Include="Map\CorridorHoriz.h" />
     <ClInclude Include="Map\CorridorVertical.h" />

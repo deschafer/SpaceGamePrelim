@@ -212,6 +212,7 @@
     <ClCompile Include="Components\CenterPosComp.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Frame\ZoomManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -360,6 +361,9 @@
     </ClInclude>
     <ClInclude Include="Components\CenterPosComp.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\ZoomManager.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

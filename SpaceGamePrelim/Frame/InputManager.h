@@ -48,7 +48,7 @@ public:
 
 	Vector* GetCurrentMousePosition() { return m_MousePosition; }
 	bool GetMouseButtonState(MouseInput MouseButton) { return m_MosueButtonStates[static_cast<int>(MouseButton)]; }
-	int GetMouseMovement() { return m_MouseWheelMovement; }
+	int GetMouseWheelMovement() { return m_MouseWheelMovement; }
 	bool IsKeyDown(SDL_Scancode Key);
 
 	void HandleEvents();
