@@ -23,11 +23,14 @@ private:
 	void OnMouseMove(SDL_Event& event);
 	void OnMouseButtonDown(SDL_Event& event);
 	void OnMouseButtonUp(SDL_Event& event);
+	void OnMouseWheel(SDL_Event& Event);
 
 	// Event containers
 	std::vector<bool> m_MosueButtonStates;
 	Vector* m_MousePosition;
 	const Uint8* m_KeyStates;
+	int m_MouseWheelMovement;
+	
 
 public:
 	
@@ -45,6 +48,7 @@ public:
 
 	Vector* GetCurrentMousePosition() { return m_MousePosition; }
 	bool GetMouseButtonState(MouseInput MouseButton) { return m_MosueButtonStates[static_cast<int>(MouseButton)]; }
+	int GetMouseMovement() { return m_MouseWheelMovement; }
 	bool IsKeyDown(SDL_Scancode Key);
 
 	void HandleEvents();

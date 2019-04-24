@@ -6,14 +6,16 @@
 InputManager* InputManager::m_Instance = nullptr;
 
 
-InputManager::InputManager() : m_MousePosition(new Vector())
+InputManager::InputManager() : 
+	m_MousePosition(new Vector()),
+	m_MouseWheelMovement(0)
 {
 
 	for (int i = 0; i < 3; i++) m_MosueButtonStates.push_back(false);
 
 }
 
-InputManager::~InputManager()
+InputManager::~InputManager() 
 {
 }
 
@@ -83,8 +85,17 @@ bool InputManager::IsKeyDown(SDL_Scancode Key)
 	return false;
 }
 
+void InputManager::OnMouseWheel(SDL_Event& Event)
+{
+	m_MouseWheelMovement = (int)Event.wheel.y;
+	std::cout << "move " << m_MouseWheelMovement << std::endl;
+
+}
+
 void InputManager::HandleEvents()
 {
+	Reset(); // Reset events that are change based, like the mouse wheel
+
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
@@ -114,6 +125,10 @@ void InputManager::HandleEvents()
 			OnKeyUp();
 			break;
 
+		case SDL_MOUSEWHEEL:
+			OnMouseWheel(event);
+			break;
+
 		default:
 			break;
 		}
@@ -121,9 +136,8 @@ void InputManager::HandleEvents()
 }
 void InputManager::Clean()
 {
-
 }
 void InputManager::Reset()
 {
-
+	m_MouseWheelMovement = 0;
 }
