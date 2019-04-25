@@ -27,7 +27,7 @@
              dimY="0" 
              dimW="30" 
              dimH="30" 
-             txtID="ExplosionWhite" 
+             txtID="Explosion" 
              animSpeed="100" 
              numFrames="3" 
              velX="0" 
@@ -37,13 +37,11 @@
              posX="500" 
              posY="500" 
              handlerID="" >
+      <COMP compID="Zoom"/>
       <COMP compID="PlayerMovement"/>
       <COMP compID="Collision"/>
       <COMP compID="PlayerMapMovement"/>
       <COMP compID="CenteredPos"/>
-      
-
-
     </OBJECT>
              
     

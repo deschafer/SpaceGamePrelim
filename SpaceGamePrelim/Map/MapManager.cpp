@@ -1,6 +1,7 @@
 
 #include "MapManager.h"
 #include "..\Frame\MainApplication.h"
+#include "..\Frame\ZoomManager.h"
 #include "MapInactive.h"
 #include "GenRoomComp.h"
 #include "Map.h"
@@ -325,6 +326,9 @@ void MapManager::Draw()
 //
 void MapManager::Update()
 {
+	// First handle zoom
+	//Zoom();
+
 	// Checks if the current map has no neighbooring maps
 	// If it is not completely surrounded, generate new maps
 	if (!m_ActiveMap->IsSurrounded())
@@ -893,6 +897,20 @@ void MapManager::MoveMap()
 	{
 		FirstMap = false;
 	}
+}
+
+//
+// Zoom()
+// Handles zooming for the map manager
+// Will correct the offset so the player and map does not appear to 
+// move in the top left position
+//
+void MapManager::Zoom()
+{
+
+	m_CellHeight = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
+	m_CellWidth = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
+
 }
 
 //

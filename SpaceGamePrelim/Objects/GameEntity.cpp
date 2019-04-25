@@ -184,26 +184,46 @@ void GameEntity::Delete()
 
 }
 
+//
+//
+//
+//
 void GameEntity::OnCollision()
 {
 
 }
 
+//
+//
+//
+//
 void GameEntity::OnDamaged()
 {
 
 }
 
+//
+//
+//
+//
 void GameEntity::OnMovement()
 {
 
 }
 
+//
+//
+//
+//
 void GameEntity::OnInteraction()
 {
 
 }
 
+//
+//
+//
+//
 void GameEntity::SetFrame(int FrameNumber)
 {
 	if (m_CurrentFrame < m_NumberFrames)

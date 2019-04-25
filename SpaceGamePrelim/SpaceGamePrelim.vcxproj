@@ -29,6 +29,7 @@
     <ClCompile Include="Components\Component.cpp" />
     <ClCompile Include="Components\PlayerMapMovementComp.cpp" />
     <ClCompile Include="Components\PlayerMovementComp.cpp" />
+    <ClCompile Include="Components\ZoomComp.cpp" />
     <ClCompile Include="Frame\InputManager.cpp" />
     <ClCompile Include="Frame\Main.cpp" />
     <ClCompile Include="Frame\MainApplication.cpp" />
@@ -81,6 +82,7 @@
     <ClInclude Include="Components\Component.h" />
     <ClInclude Include="Components\PlayerMapMovementComp.h" />
     <ClInclude Include="Components\PlayerMovementComp.h" />
+    <ClInclude Include="Components\ZoomComp.h" />
     <ClInclude Include="Frame\InputManager.h" />
     <ClInclude Include="Frame\MainApplication.h" />
     <ClInclude Include="Frame\Threads.h" />

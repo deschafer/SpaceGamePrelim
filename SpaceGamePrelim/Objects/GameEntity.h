@@ -56,9 +56,12 @@ public:
 	virtual void SetComponent(Component* NewComp) { m_Components.push_back(NewComp); }
 	virtual void SetDirection(EntityDirection Horiz, EntityDirection Verti) { m_HorizMovement = Horiz, m_VertiMovement = Verti; }
 	virtual void SetPosition(Vector NewPos) { m_Position = NewPos; }
+	virtual void EnglargeDestination(int Number) { m_DestDimensions.Enlarge(Number); }
+
 
 	virtual Vector GetPosition() { return m_Position; }
 	virtual Rect GetDimensions() { return m_Dimensions; }
+	virtual Rect GetDestDimensions() { return m_DestDimensions; }
 	virtual EntityDirection GetDirectionHoriz() { return m_HorizMovement; }
 	virtual EntityDirection GetDirectionVerti() { return m_VertiMovement; }
 	virtual Vector GetVelocity() { return m_Velocity; }

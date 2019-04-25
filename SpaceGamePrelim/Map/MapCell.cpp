@@ -1,6 +1,6 @@
 #include "MapCell.h"
 #include "..\Frame\MainApplication.h"
-
+#include "..\Frame\ZoomManager.h"
 
 #include <iostream>
 
@@ -152,6 +152,8 @@ void MapCell::DrawStatic(MapCoordinate Coords)
 {
 	static TextureManager* Instance = TextureManager::Instance();
 
+	Zoom();
+
 	if (m_RedTextureIDs->empty())
 	{
 		std::cout << "textures are empty";
@@ -210,4 +212,18 @@ void MapCell::ChangeRedTextures(std::vector<std::string> NewTextures)
 bool MapCell::OnCollision(GameEntity* Enitity)
 {
 	return false;	// Base object has no affect on the player
+}
+
+//
+// Zoom() 
+//
+//
+void MapCell::Zoom() 
+{
+	int Offset = 0;
+
+	if (Offset = ZoomManager::Instance()->GetPixelOffset())
+	{
+		m_DestRect.Enlarge(Offset);
+	}
 }

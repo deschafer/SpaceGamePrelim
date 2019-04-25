@@ -62,6 +62,7 @@ public:
 	Cell GetCellType() { return m_CellType; }
 	MapCoordinate GetPosition() { return m_Position; }
 	void SetCellType(Cell CellType) { m_CellType = CellType; }
+	void Zoom();
 
 	virtual void Draw(MapCoordinate Coords);
 	virtual bool OnCollision(GameEntity* Enitity);

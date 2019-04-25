@@ -8,6 +8,7 @@
 #include "../Components/PlayerMapMovementComp.h"
 #include "../Components/CollisionComp.h"
 #include "../Components/CenterPosComp.h"
+#include "../Components/ZoomComp.h"
 
 #include <iostream>
 
@@ -43,6 +44,7 @@ bool MapScene::Enter()
 	SceneFactory::Instance()->RegisterNewComponent("Collision", new CollisionCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("PlayerMapMovement", new PlayerMapMovementCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("CenteredPos", new CenterPosCompCreator());
+	SceneFactory::Instance()->RegisterNewComponent("Zoom", new ZoomCompCreator());
 
 	SceneFactory::Instance()->LoadNewScene("./XML/Scenes/Test.xml", this);
 

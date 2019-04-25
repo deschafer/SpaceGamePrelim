@@ -1,5 +1,6 @@
 
 #include "MainApplication.h"
+#include "ZoomManager.h"
 #include "..\Parsing\InitFactory.h"
 #include "..\Parsing\SceneFactory.h"
 #include "..\Scene\MapScene.h"
@@ -87,17 +88,11 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	// everything succeeded lets draw the window
 	std::cout << "SDL intiialization was successful" << std::endl;
 
-	
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
 
-
 	InitFactory::Instance()->LoadRoomDefinitions("./XML/Map/Room.xml");
 	InitFactory::Instance()->LoadTextures("./XML/Textures/Textures.xml");
-
-
-	
-
 
 	InitializeScenes();
 
@@ -122,8 +117,8 @@ void MainApplication::HandleEvents()
 //
 void MainApplication::Update()
 {
-	// First update the map objects
-	
+	// Call the Zoom Manager to handle all Zooming
+	ZoomManager::Instance()->Update();
 
 
 	// Then update other objects on top of the map objects

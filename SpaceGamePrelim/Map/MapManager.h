@@ -70,6 +70,7 @@ private:
 	void CullMap();
 	void MoveMap();
 	void UpdateCells();
+	void Zoom();
 	void CheckPhysicalConnections();
 	Collision* CheckCellForCollision(
 		Vector Position, 
