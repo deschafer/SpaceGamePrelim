@@ -13,3 +13,5 @@ void Rect::Enlarge(int Number)
 	m_Width += Number;
 	m_Height += Number;
 }
+
+

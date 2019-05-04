@@ -23,10 +23,17 @@ ZoomComp::~ZoomComp()
 void ZoomComp::Execute()
 {
 	int Offset = 0;
+	int NewWidth = 0;
+	int NewHeight = 0;	
+	static Rect CurrDim = m_Owner->GetDestDimensions();
 
-	if (Offset = ZoomManager::Instance()->GetPixelOffset())
+	if (ZoomManager::Instance()->IsChange())
 	{
-		m_Owner->EnglargeDestination(Offset);
+		Offset = ZoomManager::Instance()->GetPixelOffset();
+		NewWidth = CurrDim.Width() + Offset;
+		NewHeight = CurrDim.Height() + Offset;
+
+		m_Owner->SetDestinationRect(Rect(0, 0, NewWidth, NewHeight));
 	}
 
 }

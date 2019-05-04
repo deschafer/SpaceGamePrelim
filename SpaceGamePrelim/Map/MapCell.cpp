@@ -109,6 +109,8 @@ MapCell::~MapCell()
 //
 void MapCell::Draw(MapCoordinate Coords)
 {
+	Zoom();
+
 	if (!m_Animated)
 	{
 		DrawStatic(Coords);
@@ -137,6 +139,7 @@ void MapCell::Draw(MapCoordinate Coords)
 //
 void MapCell::Update()
 {
+
 	// Only updates animated textures
 	for (size_t i = 0; i < m_CurrentFrame.size(); i++)
 	{
@@ -151,8 +154,6 @@ void MapCell::Update()
 void MapCell::DrawStatic(MapCoordinate Coords)
 {
 	static TextureManager* Instance = TextureManager::Instance();
-
-	Zoom();
 
 	if (m_RedTextureIDs->empty())
 	{
@@ -221,9 +222,21 @@ bool MapCell::OnCollision(GameEntity* Enitity)
 void MapCell::Zoom() 
 {
 	int Offset = 0;
+	int NewHeight = 0;
+	int NewWidth = 0;
+	static Rect CurrDim = m_DestRect;
 
 	if (Offset = ZoomManager::Instance()->GetPixelOffset())
 	{
-		m_DestRect.Enlarge(Offset);
+		//m_Owner->EnglargeDestination(Offset);
+		NewWidth = CurrDim.Width() + Offset;
+		NewHeight = CurrDim.Height() + Offset;
+
+		m_DestRect.SetHeight(NewHeight);
+		m_DestRect.SetWidth(NewWidth);
+	}
+	else
+	{
+		m_DestRect = CurrDim;
 	}
 }

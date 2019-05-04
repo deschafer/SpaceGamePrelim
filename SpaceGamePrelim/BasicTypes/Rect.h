@@ -26,6 +26,8 @@ public:
 
 	void SetOffset(int offsetX, int offsetY) { m_TopLeftX += offsetX; m_TopLeftY += offsetY; }
 	void Enlarge(int Number);
+	void SetWidth(int Width) { m_Width = Width; }
+	void SetHeight(int Height) { m_Height = Height; }
 
 	Rect();
 	~Rect();

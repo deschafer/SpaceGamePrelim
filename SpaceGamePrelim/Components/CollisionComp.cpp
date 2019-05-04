@@ -17,7 +17,7 @@ CollisionComp::CollisionComp(GameEntity* Owner) :
 }
 
 //
-//
+// Execute()
 //
 //
 void CollisionComp::Execute()

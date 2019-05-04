@@ -35,8 +35,8 @@ int main(int argc, char* argv[])
 
 	MainApplication* Application = MainApplication::Instance();	// Getting the app instance
 	// 1408 x 896
-	if (Application->Initialize("SpaceGamePrelim", 100, 100, 1440, 900, false))
-	//if (Application->Initialize("SpaceGamePrelim", 100, 100, 1920, 1080, true))
+	//if (Application->Initialize("SpaceGamePrelim", 100, 100, 1440, 900, false))
+	if (Application->Initialize("SpaceGamePrelim", 100, 100, 1920, 1080, true))
 	{
 
 		// Main event loop 

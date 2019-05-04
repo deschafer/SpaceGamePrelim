@@ -57,6 +57,7 @@ public:
 	virtual void SetDirection(EntityDirection Horiz, EntityDirection Verti) { m_HorizMovement = Horiz, m_VertiMovement = Verti; }
 	virtual void SetPosition(Vector NewPos) { m_Position = NewPos; }
 	virtual void EnglargeDestination(int Number) { m_DestDimensions.Enlarge(Number); }
+	virtual void SetDestinationRect(Rect Dest) { m_DestDimensions = Dest; }
 
 
 	virtual Vector GetPosition() { return m_Position; }

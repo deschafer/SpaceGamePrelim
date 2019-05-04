@@ -327,7 +327,7 @@ void MapManager::Draw()
 void MapManager::Update()
 {
 	// First handle zoom
-	//Zoom();
+	HandleMapZoom();
 
 	// Checks if the current map has no neighbooring maps
 	// If it is not completely surrounded, generate new maps
@@ -1032,16 +1032,16 @@ Cell MapManager::GetCellType(Vector ScreenPosition)
 		static_cast<float>(ScreenPosition.getY() - m_PixelOffsetY));
 	
 	Vector OriginPosition(
-		static_cast<float>(MapSizeW * CellWidthSrc + OffsettedPosition.getX()),
-		static_cast<float>(MapSizeH * CellHeightSrc + OffsettedPosition.getY()));
+		static_cast<float>(MapSizeW * m_CellWidth + OffsettedPosition.getX()),
+		static_cast<float>(MapSizeH * m_CellHeight + OffsettedPosition.getY()));
 
 	// Based on this offsetted position, get the mapcell out of the
 	// loaded maps
-	int Row = (int)OriginPosition.getY() / (MapSizeH * CellHeightSrc);
-	int Col = (int)OriginPosition.getX() / (MapSizeW * CellWidthSrc);
+	int Row = (int)OriginPosition.getY() / (MapSizeH * m_CellHeight);
+	int Col = (int)OriginPosition.getX() / (MapSizeW * m_CellWidth);
 	MapCoordinate CoordinateCell(
-		((int)OriginPosition.getX() / CellWidthSrc) % MapSizeW,
-		((int)OriginPosition.getY() / CellHeightSrc) % MapSizeH);
+		((int)OriginPosition.getX() / m_CellWidth) % MapSizeW,
+		((int)OriginPosition.getY() / m_CellHeight) % MapSizeH);
 	MapDirection VertiComp;
 	MapDirection HorizComp;
 	MapDirection ActDirection;
@@ -1152,16 +1152,16 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell)
 		static_cast<float>(ScreenPosition.getX() - m_PixelOffsetX),
 		static_cast<float>(ScreenPosition.getY() - m_PixelOffsetY));
 	Vector OriginPosition(
-		static_cast<float>(MapSizeW * CellWidthSrc + OffsettedPosition.getX()),
-		static_cast<float>(MapSizeH * CellHeightSrc + OffsettedPosition.getY()));
+		static_cast<float>(MapSizeW * m_CellWidth + OffsettedPosition.getX()),
+		static_cast<float>(MapSizeH * m_CellHeight + OffsettedPosition.getY()));
 
 	// Based on this offsetted position, get the mapcell out of the
 	// loaded maps
-	int Row = (int)OriginPosition.getY() / (MapSizeH * CellHeightSrc);
-	int Col = (int)OriginPosition.getX() / (MapSizeW * CellWidthSrc);
+	int Row = (int)OriginPosition.getY() / (MapSizeH * m_CellHeight);
+	int Col = (int)OriginPosition.getX() / (MapSizeW * m_CellWidth);
 	MapCoordinate CoordinateCell(
-		((int)OriginPosition.getX() / CellWidthSrc) % MapSizeW,
-		((int)OriginPosition.getY() / CellHeightSrc) % MapSizeH);
+		((int)OriginPosition.getX() / m_CellWidth) % MapSizeW,
+		((int)OriginPosition.getY() / m_CellHeight) % MapSizeH);
 	MapDirection VertiComp;
 	MapDirection HorizComp;
 	MapDirection ActDirection;
@@ -1267,19 +1267,19 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell,
 		static_cast<float>(ScreenPosition.getX() - m_PixelOffsetX),
 		static_cast<float>(ScreenPosition.getY() - m_PixelOffsetY));
 	Vector OriginPosition(
-		static_cast<float>(MapSizeW * CellWidthSrc + OffsettedPosition.getX()),
-		static_cast<float>(MapSizeH * CellHeightSrc + OffsettedPosition.getY()));
+		static_cast<float>(MapSizeW * m_CellWidth + OffsettedPosition.getX()),
+		static_cast<float>(MapSizeH * m_CellHeight + OffsettedPosition.getY()));
 	OriginPos = OriginPosition;
 	CellOriginTopLeftPosition = Vector(
 		OriginPosition.getX() - (int)OriginPosition.getX() % m_CellWidth,
 		OriginPosition.getY() - (int)OriginPosition.getY() % m_CellHeight);
 	// Based on this offsetted position, get the mapcell out of the
 	// loaded maps
-	int Row = (int)OriginPosition.getY() / (MapSizeH * CellHeightSrc);
-	int Col = (int)OriginPosition.getX() / (MapSizeW * CellWidthSrc);
+	int Row = (int)OriginPosition.getY() / (MapSizeH * m_CellHeight);
+	int Col = (int)OriginPosition.getX() / (MapSizeW * m_CellWidth);
 	MapCoordinate CoordinateCell(
-		((int)OriginPosition.getX() / CellWidthSrc) % MapSizeW,
-		((int)OriginPosition.getY() / CellHeightSrc) % MapSizeH);
+		((int)OriginPosition.getX() / m_CellWidth) % MapSizeW,
+		((int)OriginPosition.getY() / m_CellHeight) % MapSizeH);
 	MapDirection VertiComp;
 	MapDirection HorizComp;
 	MapDirection ActDirection =MapDirection::North;
@@ -1395,7 +1395,7 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			MapCollisionDir::Horiz,
 			(Additional) ? MapDirection::East : MapDirection::West,
 			Movement,
-			Object->GetDimensions(),
+			Object->GetDestDimensions(),
 			Object);
 
 		if (HorizCollision)
@@ -1417,7 +1417,7 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			MapCollisionDir::Verti,
 			(Additional) ? MapDirection::South : MapDirection::North,
 			Movement,
-			Object->GetDimensions(),
+			Object->GetDestDimensions(),
 			Object);
 		if (VertiCollision)
 			Collisions.push_back(VertiCollision);
@@ -1438,7 +1438,7 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			MapCollisionDir::Diagonal,
 			(AdditionalX) ? MapDirection::East : MapDirection::West,
 			Movement,
-			Object->GetDimensions(),
+			Object->GetDestDimensions(),
 			Object);
 		if (DiagonalCollision)
 			Collisions.push_back(DiagonalCollision);
@@ -1722,7 +1722,23 @@ MapCell* MapManager::GetCellFromMaps(Map* CurrentMap, MapCoordinate RequestedCel
 //
 void MapManager::HandleMapZoom()
 {
+	int OldCellWidth = m_CellWidth;
+	int OldCellHeight = m_CellHeight;
+	m_CellWidth = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
+	m_CellHeight = CellHeightSrc + ZoomManager::Instance()->GetPixelOffset();
+	
 
+	// Now we need to correct the pixel offset
 
+	if (ZoomManager::Instance()->IsChange())
+	{
+		int CorrectPixelOffsetX = m_PixelOffsetX - m_ActiveWndWidth / 2;
+		int CorrectPixelOffsetY = m_PixelOffsetY - m_ActiveWndHeight / 2;
+		float OldTotalCellsX = -(float)CorrectPixelOffsetX / OldCellWidth;
+		float OldTotalCellsY = -(float)CorrectPixelOffsetY / OldCellHeight;
 
+		m_PixelOffsetX = -(OldTotalCellsX * m_CellWidth - m_ActiveWndWidth / 2);
+		m_PixelOffsetY = -(OldTotalCellsY * m_CellHeight - m_ActiveWndHeight / 2);
+
+	}
 }

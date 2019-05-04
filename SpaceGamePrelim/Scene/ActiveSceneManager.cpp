@@ -128,7 +128,7 @@ void ActiveSceneManager::Update()
 	// Only update until a non paused screen
 	for (size_t i = 0; i < m_OpenScenes.size() && Update; i++)
 	{
-		m_OpenScenes[i]->Update();
+		if(m_OpenScenes[i] != m_ActiveScene) m_OpenScenes[i]->Update();
 		if (m_OpenScenes[i]->IsPauseScreen()) Update = false;
 	}
 
