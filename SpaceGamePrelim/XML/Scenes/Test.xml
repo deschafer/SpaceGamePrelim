@@ -27,7 +27,7 @@
              dimY="0" 
              dimW="30" 
              dimH="30" 
-             txtID="Explosion" 
+             txtID="ExplosionWhite" 
              animSpeed="100" 
              numFrames="3" 
              velX="0" 

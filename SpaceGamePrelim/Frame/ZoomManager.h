@@ -6,6 +6,7 @@ class ZoomManager
 private:
 
 	int m_CurrentPixelOffset;
+	double m_CurrentPercent;
 	bool m_Change;
 	
 	static ZoomManager* m_Instance;
@@ -25,6 +26,7 @@ public:
 
 	void Update();
 	int GetPixelOffset() { return m_CurrentPixelOffset; }
+	double GetScale();
 	bool IsChange() { return m_Change; }
 
 

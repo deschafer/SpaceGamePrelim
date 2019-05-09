@@ -25,15 +25,21 @@ void ZoomComp::Execute()
 	int Offset = 0;
 	int NewWidth = 0;
 	int NewHeight = 0;	
+	double Scale = 0.0;
 	static Rect CurrDim = m_Owner->GetDestDimensions();
 
 	if (ZoomManager::Instance()->IsChange())
 	{
-		Offset = ZoomManager::Instance()->GetPixelOffset();
-		NewWidth = CurrDim.Width() + Offset;
-		NewHeight = CurrDim.Height() + Offset;
+		//Offset = ZoomManager::Instance()->GetPixelOffset();
+		//NewWidth = CurrDim.Width() + Offset;
+		//NewHeight = CurrDim.Height() + Offset;
+
+		Scale = ZoomManager::Instance()->GetScale();
+
+		NewWidth = round((double)(CurrDim.Width() * Scale));
+		NewHeight = round((double)(CurrDim.Height() * Scale));
+
 
 		m_Owner->SetDestinationRect(Rect(0, 0, NewWidth, NewHeight));
 	}
-
 }

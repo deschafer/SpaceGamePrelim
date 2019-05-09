@@ -225,18 +225,19 @@ void MapCell::Zoom()
 	int NewHeight = 0;
 	int NewWidth = 0;
 	static Rect CurrDim = m_DestRect;
+	double Scale = ZoomManager::Instance()->GetScale();
 
-	if (Offset = ZoomManager::Instance()->GetPixelOffset())
-	{
+	
 		//m_Owner->EnglargeDestination(Offset);
-		NewWidth = CurrDim.Width() + Offset;
-		NewHeight = CurrDim.Height() + Offset;
+		//NewWidth = CurrDim.Width() + Offset;
+		//NewHeight = CurrDim.Height() + Offset;
+
+		//NewWidth = round((double)(CurrDim.Width() * Scale));
+		//NewHeight = round((double)(CurrDim.Height() * Scale));
+		NewWidth = MapManager::Instance()->GetCellWidth();
+		NewHeight = MapManager::Instance()->GetCellWidth();;
 
 		m_DestRect.SetHeight(NewHeight);
 		m_DestRect.SetWidth(NewWidth);
-	}
-	else
-	{
-		m_DestRect = CurrDim;
-	}
+
 }

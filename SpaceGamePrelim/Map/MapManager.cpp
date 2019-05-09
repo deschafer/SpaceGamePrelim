@@ -908,8 +908,8 @@ void MapManager::MoveMap()
 void MapManager::Zoom()
 {
 
-	m_CellHeight = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
-	m_CellWidth = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
+	//m_CellHeight = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
+	//m_CellWidth = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
 
 }
 
@@ -1724,9 +1724,13 @@ void MapManager::HandleMapZoom()
 {
 	int OldCellWidth = m_CellWidth;
 	int OldCellHeight = m_CellHeight;
-	m_CellWidth = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
-	m_CellHeight = CellHeightSrc + ZoomManager::Instance()->GetPixelOffset();
+	//m_CellWidth = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
+	//m_CellHeight = CellHeightSrc + ZoomManager::Instance()->GetPixelOffset();
 	
+	m_CellWidth = round((double)(CellWidthSrc * ZoomManager::Instance()->GetScale()));
+	m_CellHeight = round((double)(CellHeightSrc * ZoomManager::Instance()->GetScale()));
+
+	double Scale = ZoomManager::Instance()->GetScale();
 
 	// Now we need to correct the pixel offset
 

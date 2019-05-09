@@ -29,6 +29,8 @@ public:
 	void SetWidth(int Width) { m_Width = Width; }
 	void SetHeight(int Height) { m_Height = Height; }
 
+	bool Empty();
+
 	Rect();
 	~Rect();
 };

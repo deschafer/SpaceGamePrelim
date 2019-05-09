@@ -8,7 +8,8 @@
 
 GameEntity::GameEntity() :
 	m_CurrentFrame(1),
-	m_CurrentRow(1)
+	m_CurrentRow(1),
+	m_DestDimensions(0, 0, 0, 0)
 {
 }
 
@@ -218,6 +219,15 @@ void GameEntity::OnMovement()
 void GameEntity::OnInteraction()
 {
 
+}
+
+Rect GameEntity::GetDimensions()
+{
+	if (m_DestDimensions.Empty())
+	{
+		return m_Dimensions;
+	}
+	else return m_DestDimensions;
 }
 
 //

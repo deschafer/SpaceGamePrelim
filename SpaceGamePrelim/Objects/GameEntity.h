@@ -61,7 +61,7 @@ public:
 
 
 	virtual Vector GetPosition() { return m_Position; }
-	virtual Rect GetDimensions() { return m_Dimensions; }
+	virtual Rect GetDimensions();
 	virtual Rect GetDestDimensions() { return m_DestDimensions; }
 	virtual EntityDirection GetDirectionHoriz() { return m_HorizMovement; }
 	virtual EntityDirection GetDirectionVerti() { return m_VertiMovement; }
