@@ -1566,6 +1566,11 @@ Collision* MapManager::CheckCellForCollision(
 			// Then find the distance from the pos w/o movement to the edge of the cell
 			int CurrentDistanceUntilCollision = abs((int)Movement.getY()) - DistanceWithinWall;
 			// Create the collision reflecting this situation
+
+			// If the given location is not a cell wall, then create the collision
+
+			//  if()
+
 			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Verti, CurrentDistanceUntilCollision);
 		}
 		break;
@@ -1741,8 +1746,10 @@ void MapManager::HandleMapZoom()
 		float OldTotalCellsX = -(float)CorrectPixelOffsetX / OldCellWidth;
 		float OldTotalCellsY = -(float)CorrectPixelOffsetY / OldCellHeight;
 
-		m_PixelOffsetX = -(OldTotalCellsX * m_CellWidth - m_ActiveWndWidth / 2);
-		m_PixelOffsetY = -(OldTotalCellsY * m_CellHeight - m_ActiveWndHeight / 2);
+		m_PixelOffsetX = -ceil(((double)(OldTotalCellsX * m_CellWidth - (double)m_ActiveWndWidth / 2)));
+		m_PixelOffsetY = -ceil((double)((OldTotalCellsY * m_CellHeight - (double)m_ActiveWndHeight / 2)));
 
 	}
+
+	
 }

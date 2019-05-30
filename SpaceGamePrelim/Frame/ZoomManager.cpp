@@ -57,7 +57,7 @@ void ZoomManager::Update()
 	}
 
 
-	std::cout << "Current Zoom Offsets " << m_CurrentPercent << std::endl;
+	//std::cout << "Current Zoom Offsets " << m_CurrentPercent << std::endl;
 }
 
 //

@@ -2,6 +2,8 @@
 #include "PlayerMapMovementComp.h"
 #include "../Map/MapManager.h"
 
+#include <iostream>
+
 PlayerMapMovementComp::PlayerMapMovementComp()
 {
 }
@@ -25,4 +27,5 @@ void PlayerMapMovementComp::Execute()
 
 	Vector Velocity = m_Owner->GetVelocity();
 	MapManager::Instance()->OffsetMap(Velocity);
+	std::cout << "Velocity set " << Velocity.getX() << " " << Velocity.getY() << std::endl;
 }

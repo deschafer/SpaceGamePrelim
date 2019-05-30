@@ -89,6 +89,7 @@ void CollisionComp::HandleMapCollisions(MapCollision* NewCollision, Vector &SetV
 		{
 			// Set this to the distance we can travel until we collide
 			SetVelocity.setX(Distance);
+
 		}
 		else if (Horiz == EntityDirection::West && (SetVelocity.getX() < 0))
 		{
