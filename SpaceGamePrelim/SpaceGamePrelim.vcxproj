@@ -25,8 +25,9 @@
     <ClCompile Include="Collision\MapCollision.cpp" />
     <ClCompile Include="Components\ButtonInteractComp.cpp" />
     <ClCompile Include="Components\CenterPosComp.cpp" />
-    <ClCompile Include="Components\CollisionComp.cpp" />
+    <ClCompile Include="Components\MapCollisionComp.cpp" />
     <ClCompile Include="Components\Component.cpp" />
+    <ClCompile Include="Components\MapZoomComp.cpp" />
     <ClCompile Include="Components\PlayerMapMovementComp.cpp" />
     <ClCompile Include="Components\PlayerMovementComp.cpp" />
     <ClCompile Include="Components\ZoomComp.cpp" />
@@ -78,8 +79,9 @@
     <ClInclude Include="Collision\MapCollision.h" />
     <ClInclude Include="Components\ButtonInteractComp.h" />
     <ClInclude Include="Components\CenterPosComp.h" />
-    <ClInclude Include="Components\CollisionComp.h" />
+    <ClInclude Include="Components\MapCollisionComp.h" />
     <ClInclude Include="Components\Component.h" />
+    <ClInclude Include="Components\MapZoomComp.h" />
     <ClInclude Include="Components\PlayerMapMovementComp.h" />
     <ClInclude Include="Components\PlayerMovementComp.h" />
     <ClInclude Include="Components\ZoomComp.h" />

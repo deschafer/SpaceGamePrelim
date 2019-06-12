@@ -197,9 +197,6 @@
     <ClCompile Include="Collision\Collision.cpp">
       <Filter>Source Files\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Components\CollisionComp.cpp">
-      <Filter>Source Files\Collision</Filter>
-    </ClCompile>
     <ClCompile Include="Collision\CollisionManager.cpp">
       <Filter>Source Files\Collision</Filter>
     </ClCompile>
@@ -214,6 +211,10 @@
     </ClCompile>
     <ClCompile Include="Frame\ZoomManager.cpp" />
     <ClCompile Include="Components\ZoomComp.cpp" />
+    <ClCompile Include="Components\MapCollisionComp.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\MapZoomComp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -348,9 +349,6 @@
     <ClInclude Include="Collision\Collision.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Components\CollisionComp.h">
-      <Filter>Header Files\Collision</Filter>
-    </ClInclude>
     <ClInclude Include="Collision\CollisionManager.h">
       <Filter>Header Files\Collision</Filter>
     </ClInclude>
@@ -367,6 +365,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Components\ZoomComp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\MapCollisionComp.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\MapZoomComp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

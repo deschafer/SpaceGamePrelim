@@ -38,8 +38,9 @@
              posY="500" 
              handlerID="" >
       <COMP compID="Zoom"/>
+      <COMP compID="MapZoom"/>
       <COMP compID="PlayerMovement"/>
-      <COMP compID="Collision"/>
+      <COMP compID="MapCollision"/>
       <COMP compID="PlayerMapMovement"/>
       <COMP compID="CenteredPos"/>
     </OBJECT>

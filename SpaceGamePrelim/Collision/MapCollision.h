@@ -1,7 +1,7 @@
 #pragma once
 #include "Collision.h"
 
-enum class MapCollisionDir { Horiz, Verti, Diagonal };
+enum class MapCollisionDir { Horiz, Verti, Diagonal, CannotTell };
 
 
 class MapCollision : public Collision

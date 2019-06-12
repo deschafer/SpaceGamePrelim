@@ -6,15 +6,19 @@
 ZoomManager* ZoomManager::m_Instance = nullptr;
 
 static const int ZoomSpeed = 3;
-static const double PercentChange = .05;
+static const double PercentChange =  0.05000000000000000000;
 static const int ZoomOffsetMax = 20;
-static const double ZoomPercentMax = 1.500000001;
-static const double ZoomPercentMin = 0.499999999;
+static const double ZoomPercentMax = 1.50000000000000001;
+static const double ZoomPercentMin = 0.50000000000000000;
 
-ZoomManager::ZoomManager() : 
-	m_CurrentPixelOffset(0),
-	m_CurrentPercent(1.0),
-	m_Change(false)
+ZoomManager::ZoomManager() :
+	m_CurrentPixelOffset(0.05),
+	m_CurrentPercent(1.0),	// Needs to be exactly halfway between max and min
+	m_ZoomIntervals(round((ZoomPercentMax - ZoomPercentMin) / PercentChange)),
+	m_Change(false),
+	m_ZoomMax(ZoomPercentMax),
+	m_ZoomMin(ZoomPercentMin),
+	m_Increment(PercentChange)
 {
 }
 
@@ -40,7 +44,7 @@ void ZoomManager::Update()
 
 	// Handle floating point offsets
 	if ((m_CurrentPercent + OffsetPercentChange) < ZoomPercentMax && 
-		(m_CurrentPercent + OffsetPercentChange) >= ZoomPercentMin)
+		(m_CurrentPercent + OffsetPercentChange) > ZoomPercentMin)
 	{
 		m_CurrentPercent += OffsetPercentChange;
 	}

@@ -27,5 +27,4 @@ void PlayerMapMovementComp::Execute()
 
 	Vector Velocity = m_Owner->GetVelocity();
 	MapManager::Instance()->OffsetMap(Velocity);
-	std::cout << "Velocity set " << Velocity.getX() << " " << Velocity.getY() << std::endl;
 }

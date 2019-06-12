@@ -1,17 +1,18 @@
-#include "CollisionComp.h"
+#include "MapCollisionComp.h"
 #include "../Collision/CollisionManager.h"
 #include "../BasicTypes/EntityDirection.h"
 #include "../Collision/MapCollision.h"
+#include "../Frame/ZoomManager.h"
 
-CollisionComp::CollisionComp()
+MapCollisionComp::MapCollisionComp()
 {
 }
 
-CollisionComp::~CollisionComp()
+MapCollisionComp::~MapCollisionComp()
 {
 }
 
-CollisionComp::CollisionComp(GameEntity* Owner) :
+MapCollisionComp::MapCollisionComp(GameEntity* Owner) :
 	Component(Owner)
 {
 }
@@ -20,7 +21,7 @@ CollisionComp::CollisionComp(GameEntity* Owner) :
 // Execute()
 //
 //
-void CollisionComp::Execute()
+void MapCollisionComp::Execute()
 {
 	// Check if we have actually moved,
 	// if not then do not check for collisions
@@ -58,7 +59,7 @@ void CollisionComp::Execute()
 // HandleMapCollisions()
 //
 //
-void CollisionComp::HandleMapCollisions(MapCollision* NewCollision, Vector &SetVelocity) 
+void MapCollisionComp::HandleMapCollisions(MapCollision* NewCollision, Vector &SetVelocity)
 {
 	bool CollisionAngleHoriz = false;
 	bool CollisionAngleVerti = false;

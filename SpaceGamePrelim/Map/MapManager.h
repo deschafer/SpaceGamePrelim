@@ -28,16 +28,16 @@ private:
 	int m_Rows;
 	int m_Columns;
 	int m_CellWidth;
-	int m_CellHeight;	
-	int m_PixelOffsetY;
-	int m_PixelOffsetX;
+	int m_CellHeight;
+	double m_PixelOffsetY;
+	double m_PixelOffsetX;
 	int m_ActivelyLinkedCount;
 	bool m_MovementLeft;
 	bool m_MovementRight;
 	bool m_MovementNorth;
 	bool m_MovementSouth;
 	bool m_Init;
-	bool m_MapNeedsSwapping;		
+	bool m_MapNeedsSwapping;
 	bool m_MapsAreGenerating;
 	bool m_HorizMovementSwapped;
 	bool m_VertiMovementSwapped;
@@ -73,11 +73,11 @@ private:
 	void Zoom();
 	void CheckPhysicalConnections();
 	Collision* CheckCellForCollision(
-		Vector Position, 
+		Vector Position,
 		MapCollisionDir
-		Direction, 
-		MapDirection SpecDirection, 
-		Vector Movement, 
+		Direction,
+		MapDirection SpecDirection,
+		Vector Movement,
 		Rect ObjectDimensions,
 		GameEntity* Entity);
 
@@ -93,7 +93,7 @@ public:
 		{
 			m_Instance = new MapManager;
 			return m_Instance;
-		} 
+		}
 		else return m_Instance;
 	}
 
@@ -111,6 +111,6 @@ public:
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell);
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell, Vector &CellTopLeft, Vector &OriginPos);
 	std::vector<Collision*> CheckCollisions(Vector PosWithMovement, Vector PosWithoutMovement, GameEntity* Object);
+	Collision* CheckCollisingPoint(Vector Position);
 	~MapManager();
 };
-
