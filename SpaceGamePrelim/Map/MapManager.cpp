@@ -795,6 +795,18 @@ void MapManager::HandleExternalMovement()
 	}
 }
 
+//
+// CorrectZoom()
+//
+//
+void MapManager::CorrectZoom(Vector PixelOffsets)
+{
+
+	m_RequestedMovement = PixelOffsets;
+	HandleExternalMovement();
+
+}
+
 // 
 // CheckOffsets()
 //
@@ -1790,7 +1802,7 @@ void MapManager::HandleMapZoom()
 // Checks a single point to see if it is colliding with a mapwall or mapobject
 // returns the collision if it exists.
 //
-Collision* MapManager::CheckCollisingPoint(Vector Position)
+Collision* MapManager::CheckCollidingPoint(Vector Position)
 {
 	Map* CurrentMap;
 	Vector CellPos;

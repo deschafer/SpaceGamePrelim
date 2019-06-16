@@ -102,6 +102,7 @@ public:
 	void Draw();
 	void Update();
 	void OffsetMap(Vector PixelOffsets) { m_RequestedMovement = PixelOffsets; }
+	void CorrectZoom(Vector PixelOffsets);
 	void ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween);
 	void RemoveQueuedMap();
 	void ResetMap();
@@ -111,6 +112,6 @@ public:
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell);
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell, Vector &CellTopLeft, Vector &OriginPos);
 	std::vector<Collision*> CheckCollisions(Vector PosWithMovement, Vector PosWithoutMovement, GameEntity* Object);
-	Collision* CheckCollisingPoint(Vector Position);
+	Collision* CheckCollidingPoint(Vector Position);
 	~MapManager();
 };

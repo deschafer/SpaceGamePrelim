@@ -219,7 +219,7 @@ bool MapCell::OnCollision(GameEntity* Enitity)
 // Zoom() 
 //
 //
-void MapCell::Zoom() 
+void MapCell::Zoom()
 {
 	int Offset = 0;
 	int NewHeight = 0;
@@ -227,17 +227,9 @@ void MapCell::Zoom()
 	static Rect CurrDim = m_DestRect;
 	double Scale = ZoomManager::Instance()->GetScale();
 
-	
-		//m_Owner->EnglargeDestination(Offset);
-		//NewWidth = CurrDim.Width() + Offset;
-		//NewHeight = CurrDim.Height() + Offset;
+	NewWidth = MapManager::Instance()->GetCellWidth();
+	NewHeight = MapManager::Instance()->GetCellWidth();;
 
-		//NewWidth = round((double)(CurrDim.Width() * Scale));
-		//NewHeight = round((double)(CurrDim.Height() * Scale));
-		NewWidth = MapManager::Instance()->GetCellWidth();
-		NewHeight = MapManager::Instance()->GetCellWidth();;
-
-		m_DestRect.SetHeight(NewHeight);
-		m_DestRect.SetWidth(NewWidth);
-
+	m_DestRect.SetHeight(NewHeight);
+	m_DestRect.SetWidth(NewWidth);
 }

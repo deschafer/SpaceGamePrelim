@@ -7,7 +7,6 @@
 class MapZoomComp : public Component
 {
 private:
-	void HandleMapCollisions(MapCollision* NewCollision, Vector &Position);
 
 public:
 	virtual void Execute();
