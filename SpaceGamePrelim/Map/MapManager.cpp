@@ -7,6 +7,7 @@
 #include "Map.h"
 #include "MapManagerThreads.h"
 #include "MapConnector.h"
+#include "MapAssetManager.h"
 
 #include <iostream>
 #include <ctime>
@@ -201,6 +202,9 @@ MapManager::MapManager() :
 	m_ActiveMap(new Map("Default", MapSizeW, MapSizeH, MapCoordinate(0, 0)))
 {
 
+	// Initialize our other map management classes
+	MapAssetManager::Instance();
+
 	m_RoomManager = RoomManager::Instance();
 	m_ActiveWndHeight = MainApplication::Instance()->GetWndHeight();
 	m_ActiveWndWidth = MainApplication::Instance()->GetWndWidth();
@@ -274,6 +278,8 @@ void MapManager::Draw()
 	pair<int, int> Pair;
 	vector<string> txts;
 
+	static MapAsset* Asset = MapAssetManager::Instance()->CreateAsset(0);
+
 	//DrawGrid();	// Debugging gridlines
 
 	for (size_t CurrentMap = 0; CurrentMap < m_VisibleMapCells.size(); CurrentMap++)
@@ -313,6 +319,7 @@ void MapManager::Draw()
 						PositionY < m_ActiveWndHeight)
 					{
 						Object->Draw(MapCoordinate(round(PositionX), round(PositionY)));
+
 					}
 				}
 			}

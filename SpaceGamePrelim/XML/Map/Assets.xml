@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<ASSETS>
+
+  <!-- This is a proper definition that the AssetManager will
+       use to produce objects of this type.-->
+  <ASSET 
+    typeID ="Testing"
+    dstRectW="32"
+    dstRectH="31"
+    textureID="Explosion"
+    animSpeed="1"
+    numFrames="3"/>
+  
+  <!-- Asset lists are not defintions themselves, 
+       they are for organizing pre-defined lists
+       together to support randomization later.-->
+  
+  <ASSET_LIST ListID="TestingList">
+    <ITEM AssetID="Testing"/>
+    
+  </ASSET_LIST>
+  
+  
+</ASSETS>

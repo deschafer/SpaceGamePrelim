@@ -3,6 +3,9 @@
 #include "../Objects/Button.h"
 #include "../Objects/Player.h"
 #include "../Map/MapManager.h"
+#include "../Map/MapAssetManager.h"
+#include "../Map/MapAssets/TestingAsset.h"
+
 #include "../Components/PlayerMovementComp.h"
 #include "../Components/ButtonInteractComp.h"
 #include "../Components/PlayerMapMovementComp.h"
@@ -49,8 +52,18 @@ bool MapScene::Enter()
 	SceneFactory::Instance()->RegisterNewComponent("Zoom", new ZoomCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("MapZoom", new MapZoomCompCreator());
 
-
 	SceneFactory::Instance()->LoadNewScene("./XML/Scenes/Test.xml", this);
+
+	// Now setting up the associated assets with the map
+	// This should probably be moved somewhere into MapManager
+
+	// Register before parsing source file
+	MapAssetManager::Instance()->RegisterAsset("Testing", new TestingAsset());
+
+	// Then load in the file that contains the defs for the registered assets
+	MapAssetManager::Instance()->AddAssetSourceFile("./XML/Map/Assets.xml");
+
+
 
 #ifdef _DEBUG
 

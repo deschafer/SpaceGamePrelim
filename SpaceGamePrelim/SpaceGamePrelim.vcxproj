@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -40,6 +40,9 @@
     <ClCompile Include="Map\CorridorVertical.cpp" />
     <ClCompile Include="Map\GenRoomComp.cpp" />
     <ClCompile Include="Map\Map.cpp" />
+    <ClCompile Include="Map\MapAssetManager.cpp" />
+    <ClCompile Include="Map\MapAssets\MapAsset.cpp" />
+    <ClCompile Include="Map\MapAssets\TestingAsset.cpp" />
     <ClCompile Include="Map\MapCell.cpp" />
     <ClCompile Include="Map\MapConnector.cpp" />
     <ClCompile Include="Map\MapInactive.cpp" />
@@ -94,6 +97,9 @@
     <ClInclude Include="Map\CorridorVertical.h" />
     <ClInclude Include="Map\GenRoomComp.h" />
     <ClInclude Include="Map\Map.h" />
+    <ClInclude Include="Map\MapAssetManager.h" />
+    <ClInclude Include="Map\MapAssets\MapAsset.h" />
+    <ClInclude Include="Map\MapAssets\TestingAsset.h" />
     <ClInclude Include="Map\MapCell.h" />
     <ClInclude Include="Map\MapConnector.h" />
     <ClInclude Include="Map\MapCoordinate.h" />

@@ -72,6 +72,12 @@
     <Filter Include="Header Files\Collision">
       <UniqueIdentifier>{bb2a5bf3-080e-4b2b-ad71-cf6229d02689}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Map\Assets">
+      <UniqueIdentifier>{d8384ae8-a2ce-42e8-a15f-5a2a642446b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Map\Assets">
+      <UniqueIdentifier>{f4022a5e-ab91-4ced-8819-b868a5a9e6e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Map\MapCell.cpp">
@@ -209,12 +215,27 @@
     <ClCompile Include="Components\CenterPosComp.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Frame\ZoomManager.cpp" />
-    <ClCompile Include="Components\ZoomComp.cpp" />
     <ClCompile Include="Components\MapCollisionComp.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Components\MapZoomComp.cpp" />
+    <ClCompile Include="Map\MapAssetManager.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\MapZoomComp.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\ZoomComp.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Frame\ZoomManager.cpp">
+      <Filter>Source Files\Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\MapAssets\MapAsset.cpp">
+      <Filter>Source Files\Map\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\MapAssets\TestingAsset.cpp">
+      <Filter>Source Files\Map\Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -361,17 +382,26 @@
     <ClInclude Include="Components\CenterPosComp.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="Frame\ZoomManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Components\ZoomComp.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Components\MapCollisionComp.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Map\MapAssetManager.h">
+      <Filter>Header Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Frame\ZoomManager.h">
+      <Filter>Header Files\Frame</Filter>
+    </ClInclude>
     <ClInclude Include="Components\MapZoomComp.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\ZoomComp.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\MapAssets\MapAsset.h">
+      <Filter>Header Files\Map\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\MapAssets\TestingAsset.h">
+      <Filter>Header Files\Map\Assets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

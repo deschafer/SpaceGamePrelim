@@ -20,6 +20,7 @@ enum class Cell
 	Wall_Corner_Left_Bottom,
 	Wall_Corner_Right_Bottom,
 	Default,
+	Asset,
 	Empty
 };
 
