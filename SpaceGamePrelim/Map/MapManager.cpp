@@ -276,7 +276,6 @@ void MapManager::Draw()
 	int MapPositionOffsetX = 0;
 	int MapPositionOffsetY = 0;
 	pair<int, int> Pair;
-	vector<string> txts;
 
 	static MapAsset* Asset = MapAssetManager::Instance()->CreateAsset(0);
 
@@ -319,7 +318,11 @@ void MapManager::Draw()
 						PositionY < m_ActiveWndHeight)
 					{
 						Object->Draw(MapCoordinate(round(PositionX), round(PositionY)));
-
+						if (i % 20 == 0)
+						{
+							Asset->Update();
+							Asset->Draw(MapCoordinate(round(PositionX), round(PositionY)));
+						}
 					}
 				}
 			}

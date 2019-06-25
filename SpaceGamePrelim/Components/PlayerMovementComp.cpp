@@ -29,7 +29,8 @@ PlayerMovementComp::~PlayerMovementComp()
 //
 void PlayerMovementComp::Execute()
 {
-	Vector CurrentVelocity = m_Owner->GetVelocity();
+	static Vector LastVelocity(0.0, 0.0);
+	Vector CurrentVelocity = LastVelocity;
 	Vector Velocity(0,0);
 	EntityDirection HorizComp = EntityDirection::None;
 	EntityDirection VertiComp = EntityDirection::None;;
@@ -102,4 +103,5 @@ void PlayerMovementComp::Execute()
 	// Setting the final movement 
 	m_Owner->SetDirection(HorizComp, VertiComp);
 	m_Owner->SetVelocity(Velocity);
+	LastVelocity = Velocity;
 }

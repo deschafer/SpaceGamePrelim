@@ -32,6 +32,7 @@ protected:
 	bool m_Animated;
 	Cell m_CellType;		// Type of this cell object
 	Rect m_DestRect;		// Width and height of this individual object
+	Rect m_OriginSize;
 
 	// Texture Properties -- have to be list to support multiple textures
 	std::vector<int> m_CurrentFrame;
@@ -63,7 +64,7 @@ public:
 	Cell GetCellType() { return m_CellType; }
 	MapCoordinate GetPosition() { return m_Position; }
 	void SetCellType(Cell CellType) { m_CellType = CellType; }
-	void Zoom();
+	virtual void Zoom();
 
 	virtual void Draw(MapCoordinate Coords);
 	virtual bool OnCollision(GameEntity* Enitity);

@@ -13,6 +13,8 @@
 #include "../Components/CenterPosComp.h"
 #include "../Components/ZoomComp.h"
 #include "../Components/MapZoomComp.h"
+#include "../Components/ZoomMovementComp.h"
+
 
 
 #include <iostream>
@@ -51,6 +53,8 @@ bool MapScene::Enter()
 	SceneFactory::Instance()->RegisterNewComponent("CenteredPos", new CenterPosCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("Zoom", new ZoomCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("MapZoom", new MapZoomCompCreator());
+	SceneFactory::Instance()->RegisterNewComponent("ZoomMovement", new ZoomMovementCompCreator());
+
 
 	SceneFactory::Instance()->LoadNewScene("./XML/Scenes/Test.xml", this);
 

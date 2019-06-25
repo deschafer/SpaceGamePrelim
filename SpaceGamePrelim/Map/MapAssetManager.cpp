@@ -11,6 +11,7 @@ const static std::string DestWidthStr = "dstRectW";
 const static std::string DestHeightStr = "dstRectH";
 const static std::string TextureStr= "textureID";
 const static std::string AnimationStr = "animSpeed";
+const static std::string AnimationBoolStr = "anim";
 const static std::string NumberFramesStr = "numFrames";
 const static std::string TypeIDStr = "typeID";
 
@@ -123,18 +124,25 @@ void MapAssetManager::ParseAsset(TiXmlElement* Node)
 	std::string Texture;
 	int AnimationSpeed;
 	int NumberFrames;
+	std::string Animation;
 
 	bool Found = false;
 	int Index = -1;
 	const std::string *GetAttribute;
 	std::vector<std::string> Textures;
+	std::vector<int> AnimationSpeeds;
+	std::vector<int> NumbersOfFrames;
 
-	TypeID = CheckAndCopy(Node, TypeID);
+	TypeID = CheckAndCopy(Node, TypeIDStr);
+	Animation = CheckAndCopy(Node, AnimationBoolStr);
 	DestRect.SetWidth(stoi(CheckAndCopy(Node, DestWidthStr)));
 	DestRect.SetHeight(stoi(CheckAndCopy(Node, DestHeightStr)));
 	Texture = CheckAndCopy(Node, TextureStr);
+	Textures.push_back(Texture);
 	AnimationSpeed = stoi(CheckAndCopy(Node, AnimationStr));
+	AnimationSpeeds.push_back(AnimationSpeed);
 	NumberFrames = stoi(CheckAndCopy(Node, NumberFramesStr));
+	NumbersOfFrames.push_back(NumberFrames);
 
 	// Now we can define the base type for this data
 
@@ -152,13 +160,30 @@ void MapAssetManager::ParseAsset(TiXmlElement* Node)
 	// Then define the type with Load()
 	if (Found)
 	{
-		// m_AssetNames and m_Assets are parallel vectors
-		// We do not know the position, so it is not filled out for now
-		m_Assets[Index]->Load(
-			Textures,
-			MapCoordinate(0, 0),
-			DestRect,
-			Cell::Asset);
+		// Then we have an animation
+		if (Animation == "true")
+		{
+			// m_AssetNames and m_Assets are parallel vectors
+			// We do not know the position, so it is not filled out for now
+			m_Assets[Index]->Load(
+				Textures,
+				MapCoordinate(0, 0),
+				DestRect,
+				Cell::Asset,
+				NumbersOfFrames,
+				AnimationSpeeds);
+		}
+		// No animation
+		else
+		{
+			// m_AssetNames and m_Assets are parallel vectors
+			// We do not know the position, so it is not filled out for now
+			m_Assets[Index]->Load(
+				Textures,
+				MapCoordinate(0, 0),
+				DestRect,
+				Cell::Asset);
+		}
 	}
 	else
 	{

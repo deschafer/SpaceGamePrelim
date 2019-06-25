@@ -10,7 +10,8 @@
 // intialization
 MapCell::MapCell() : 
 	m_Animated(false),
-	m_RedTextureIDs(nullptr)
+	m_RedTextureIDs(nullptr),
+	m_OriginSize(m_DestRect)
 {
 }
 
@@ -47,8 +48,10 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProp
 	Cell CellType) :
 	m_CellType(CellType),
 	m_Animated(true),
-	m_DestRect(0, 0, 0, 0)
+	m_DestRect(0, 0, 0, 0),
+	m_OriginSize(m_DestRect)
 {
+
 
 	TextureProperties* CurrentProp;
 
@@ -77,6 +80,11 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProp
 
 }
 
+//
+// MapCell()
+// For a map cell using reduced textures and overriding those textures with its
+// own dimensions
+//
 MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	Rect DstDimen, Cell CellType) :
 	m_CellType(CellType),
@@ -126,6 +134,7 @@ void MapCell::Draw(MapCoordinate Coords)
 				m_RedTextureIndex[i],
 				SDL_FLIP_NONE,
 				MainApplication::Instance()->GetRenderer(),
+				m_DestRect,
 				m_CurrentRow[i],
 				m_CurrentFrame[i]
 			);
@@ -224,7 +233,9 @@ void MapCell::Zoom()
 	int Offset = 0;
 	int NewHeight = 0;
 	int NewWidth = 0;
-	static Rect CurrDim = m_DestRect;
+
+	// There is an issue with this static variable
+	Rect CurrDim = m_DestRect;
 	double Scale = ZoomManager::Instance()->GetScale();
 
 	NewWidth = MapManager::Instance()->GetCellWidth();

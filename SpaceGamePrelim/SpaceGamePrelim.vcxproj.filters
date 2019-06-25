@@ -236,6 +236,7 @@
     <ClCompile Include="Map\MapAssets\TestingAsset.cpp">
       <Filter>Source Files\Map\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="Components\ZoomMovementComp.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -402,6 +403,9 @@
     </ClInclude>
     <ClInclude Include="Map\MapAssets\TestingAsset.h">
       <Filter>Header Files\Map\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\ZoomMovementComp.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

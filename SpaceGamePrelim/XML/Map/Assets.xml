@@ -5,10 +5,11 @@
        use to produce objects of this type.-->
   <ASSET 
     typeID ="Testing"
-    dstRectW="32"
-    dstRectH="31"
+    dstRectW="100"
+    dstRectH="100"
     textureID="Explosion"
-    animSpeed="1"
+    anim="false"
+    animSpeed="100"
     numFrames="3"/>
   
   <!-- Asset lists are not defintions themselves, 

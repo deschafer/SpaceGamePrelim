@@ -40,6 +40,7 @@
       <COMP compID="Zoom"/>
       <COMP compID="MapZoom"/>
       <COMP compID="PlayerMovement"/>
+      <COMP compID="ZoomMovement"/>
       <COMP compID="MapCollision"/>
       <COMP compID="PlayerMapMovement"/>
       <COMP compID="CenteredPos"/>
