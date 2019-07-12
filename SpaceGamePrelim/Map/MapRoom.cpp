@@ -3,6 +3,7 @@
 #include "MapManager.h"
 #include "MapInactive.h"
 #include "GenRoomComp.h"
+#include "MapAssetManager.h"
 
 #include <vector>
 #include <map>
@@ -162,10 +163,7 @@ void MapRoom::Generate()
 	// Check if the definition was found prior to generating
 	if (Properties == nullptr)
 	{
-#ifndef _DEBUG
-		std::cout << "No room def found\n";
-#endif // !_DEBUG
-		abort();
+		_DEBUG_ERROR("No room def found\n");
 	}
 
 	// These indicate how extreme a room's length of inner sides will appear,
@@ -1153,6 +1151,8 @@ void MapRoom::Generate()
 	// Sets the floor tiles, a recursive function
 	SetFloorTiles(m_Cells, StartX, StartY, m_Width, m_Height);
 
+	PlaceAssets();
+
 	// Cleaning all memory
 	StaticSides.clear();
 	Sides.clear();	
@@ -1656,4 +1656,55 @@ bool MapRoom::ConnectedToRoom(Side side)
 		break;
 	}
 	return false;
+}
+
+//
+//
+//
+//
+void MapRoom::PlaceAssets()
+{
+	if (/*CellSpawnRate <= 0 ||*/ !m_AssetListIDs.size())
+		return;
+
+	MapCell* CurrentCell = nullptr;
+
+	for (int i = 0; i < m_Width; i++)
+	{
+		for (int j = 0; j < m_Height; j++)
+		{
+			CurrentCell = static_cast<MapCell*>(m_Cells[i][j]);
+			// If the current cell is not nullptr and is not a wall,
+			// then we may place an asset here
+			if (CurrentCell != nullptr &&
+				!CurrentCell->IsCollidableType())
+			{
+				/*
+				bool Chance;// = (rand() % 100) <= CellSpawnRate;
+
+				if (Chance)
+				{
+
+					// First select a list
+					int Selection = rand() % m_AssetListIDs.size();
+
+					// Choose an asset
+					MapAsset* NewAsset = MapAssetManager::Instance()->CreateAssetFromList(m_AssetListIDs[Selection]);
+
+					// Is it opaque or not
+
+					// Go cell by cell
+					// If the current cell is not near a wall, then place an asset here if its opaque
+					// Find a spot that fits
+
+					// Otherwise, grab a random cell floor in the map
+					// Verify that the location is large enough for the asset
+					// Place the asset, and save its location in the array
+
+
+				}
+				*/
+			}
+		}
+	}
 }

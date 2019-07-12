@@ -74,10 +74,13 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 	// Generating the array for this map
 	m_Cells = new MapObject**[m_Height];
 	m_CorridorCells = new MapObject**[m_Height];
+	m_Assets = new MapAsset**[m_Height];
+
 	for (int i = 0; i < m_Height; i++)
 	{
 		m_Cells[i] = new MapObject*[m_Width];
 		m_CorridorCells[i] = new MapObject*[m_Width];
+		m_Assets[i] = new MapAsset*[m_Width];
 	}
 
 	// Initializing all of the cells to nullptr
@@ -87,6 +90,7 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 		{
 			m_Cells[i][j] = nullptr;
 			m_CorridorCells[i][j] = nullptr;
+			m_Assets[i][j] = nullptr;
 		}
 	}
 

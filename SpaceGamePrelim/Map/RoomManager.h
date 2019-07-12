@@ -47,6 +47,7 @@ struct RoomProperties
 	std::vector<char> m_Turns;		// # of turns must equal # of sides
 	std::vector<bool> m_GreaterSideDefinition;
 	std::vector<int> m_StaticSides;	// Set certain sides as a static length
+	std::vector<unsigned> m_AssetLists;
 	
 	int m_MinWidth;			// Minimum User-set recommended width for this room
 	int m_MinHeight;		// Minimum User-set recommended height for this room
@@ -60,6 +61,7 @@ struct RoomProperties
 	// CTOR of RoomProperties w/o static sides
 	RoomProperties(std::vector<bool> GreaterSides, std::vector<char> Turns,
 		float Variation, float InnerX, float InnerY, bool DynamicRandomFlag,
+		std::vector<unsigned int> AssetLists,
 		std::pair<int, int> WidthHeigth = std::pair<int, int>(8, 8)) :
 		m_Variation(Variation),
 		m_StaticSidesFlag(false),
@@ -67,7 +69,8 @@ struct RoomProperties
 		m_MinHeight(WidthHeigth.second),
 		m_DynamicRandomFlag(DynamicRandomFlag),
 		m_InnerSizeX(InnerX),
-		m_InnerSizeY(InnerY)
+		m_InnerSizeY(InnerY),
+		m_AssetLists(AssetLists)
 	{
 		if (GreaterSides.size() != Turns.size())
 		{
@@ -84,6 +87,7 @@ struct RoomProperties
 	// CTOR of RoomProperties w/ static sides
 	RoomProperties(std::vector<bool> GreaterSides, std::vector<char> Turns,
 		std::vector<int> StaticSides, float Variation, float InnerX, float InnerY,
+		std::vector<unsigned int> AssetLists,
 		std::pair<int, int> WidthHeigth = std::pair<int, int>(8, 8)) :
 		m_Variation(Variation),
 		m_StaticSidesFlag(true),
@@ -91,7 +95,8 @@ struct RoomProperties
 		m_MinHeight(WidthHeigth.second),
 		m_DynamicRandomFlag(false),
 		m_InnerSizeX(InnerX),
-		m_InnerSizeY(InnerY)
+		m_InnerSizeY(InnerY),
+		m_AssetLists(AssetLists)
 	{
 		if (GreaterSides.size() != Turns.size() || GreaterSides.size() != StaticSides.size())
 		{

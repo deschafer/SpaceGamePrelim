@@ -5,6 +5,7 @@
 #include "..\BasicTypes\BasicTypes.h"
 #include "..\TextureCode\TextureManager.h"
 #include "..\Frame\MainApplication.h"
+#include "..\Map\MapAssetManager.h"
 
 #include <iostream>
 #include <vector>
@@ -36,6 +37,7 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 	std::vector<bool> ParsedGSides;
 	std::vector<char> ParsedTurns;
 	std::vector<int> ParsedStaticSides;
+	std::vector<unsigned> ListIDs;
 
 	TiXmlDocument Document;
 
@@ -65,6 +67,7 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 	std::string DynStr;
 	std::string InnerXStr;
 	std::string InnerYStr;
+	std::string ListID;
 
 	float InnerY;
 	float InnerX;
@@ -88,7 +91,7 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 			DynStr.clear();
 			InnerXStr.clear();
 			InnerYStr.clear();
-
+			ListIDs.clear();
 
 			// Getting the definition name
 			DefName = Current->Attribute("name");
@@ -117,8 +120,15 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 				InnerYStr = Current->Attribute("innerY");
 			}
 
-			// Getting the definitions turns
+			// Getting the static side definition if it exists
 			Current = Current->FirstChildElement();
+			while (Current != nullptr &&
+				(temp = Current->Value()) == "Asset_List")
+			{
+				ListID = Current->Attribute("ListID");
+				Current = Current->NextSiblingElement();
+				ListIDs.push_back(MapAssetManager::Instance()->StringToListID(ListID));
+			}
 
 			if (Current != nullptr &&
 				(temp = Current->Value()) == "Turns")
@@ -231,7 +241,8 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 							Variance, 
 							InnerX,
 							InnerY,
-							DynamicSides
+							DynamicSides,
+							ListIDs
 						), 
 						DefName);
 				}
@@ -245,6 +256,7 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 							InnerX,
 							InnerY,
 							DynamicSides,
+							ListIDs,
 							std::pair<int, int>(
 								std::stoi(MinWidth),
 								std::stoi(MinHeight))
@@ -265,7 +277,8 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 							ParsedStaticSides, 
 							Variance,
 							InnerX,
-							InnerY
+							InnerY,
+							ListIDs
 						), 
 						DefName);
 				}
@@ -279,6 +292,7 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 							Variance, 
 							InnerX,
 							InnerY,
+							ListIDs,
 							std::pair<int, int>(
 								std::stoi(MinWidth),
 								std::stoi(MinHeight))

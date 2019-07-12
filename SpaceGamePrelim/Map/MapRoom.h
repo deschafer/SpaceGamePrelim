@@ -2,6 +2,7 @@
 
 #include "RoomManager.h"
 #include "MapCell.h"
+#include "MapAssets\MapAsset.h"
 
 #include <string>
 
@@ -14,6 +15,7 @@ private:
 	RoomProperties* m_Properties;
 
 	MapObject*** m_Cells;
+	MapAsset*** m_Assets;
 
 	std::string m_RoomType;
 
@@ -28,6 +30,7 @@ private:
 	std::vector<MapRoom*> m_BottomLinkedRooms;	// ..
 	std::vector<MapRoom*> m_LeftLinkedRooms;	// ..
 		
+	std::vector<unsigned> m_AssetListIDs;	// All of the possible assets that may be able to spawn in this room
 
 	int m_CellWidth;
 	int m_CellHeight;
@@ -36,6 +39,7 @@ private:
 	int m_Height;
 
 	void AddCandidate(Side CurrentSide, MapCoordinate Start, MapCoordinate End);
+	void PlaceAssets();
 public:
 
 	void Generate(); // Generates this room

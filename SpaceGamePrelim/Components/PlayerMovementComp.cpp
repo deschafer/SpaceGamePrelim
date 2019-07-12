@@ -31,6 +31,10 @@ void PlayerMovementComp::Execute()
 {
 	static Vector LastVelocity(0.0, 0.0);
 	Vector CurrentVelocity = LastVelocity;
+
+	if (abs(CurrentVelocity.getX()) < 0.00001) CurrentVelocity.setX(0.0);
+	if (abs(CurrentVelocity.getY()) < 0.00001) CurrentVelocity.setY(0.0);
+
 	Vector Velocity(0,0);
 	EntityDirection HorizComp = EntityDirection::None;
 	EntityDirection VertiComp = EntityDirection::None;;

@@ -21,8 +21,10 @@ private:
 
 	std::vector<MapAsset*> m_Assets;		// Parallel vectors that contain information regarding the base asset type
 	std::vector<std::string> m_AssetNames;  // And the actual name of the asset, for creation and XML parsing
-	std::vector<std::vector<MapAsset*>> m_TypeLists;
+	std::vector<std::vector<std::pair<unsigned int, unsigned short int>>> m_TypeLists;
 	std::vector<std::string> m_TypeListNames;
+	std::vector<std::vector<std::pair<int, int>>> m_ListAssetRegions;
+	std::vector<unsigned> m_ListAssetRegionsMaximums;
 
 	std::string m_ParsingFile;
 
@@ -31,6 +33,9 @@ private:
 	void ParseFile();
 	void ParseAsset(TiXmlElement* Node);
 	void ParseList(TiXmlElement* Node);
+
+	typedef std::pair<unsigned int, unsigned short int> ListPair;
+
 
 public:
 
@@ -45,8 +50,12 @@ public:
 
 	
 	MapAsset* CreateAsset(unsigned AssetID);	
+	int StringToAssetID(std::string AssetName);
 	void RegisterAsset(std::string, MapAsset* Asset);
 	void AddAssetSourceFile(std::string Filename);
+	MapAsset* CreateAssetFromList(unsigned ListID);
+	int StringToListID(std::string ListName);
+
 
 
 	~MapAssetManager();

@@ -10,6 +10,7 @@
     textureID="Explosion"
     anim="false"
     animSpeed="100"
+    collidable="true"
     numFrames="3"/>
   
   <!-- Asset lists are not defintions themselves, 
@@ -17,7 +18,7 @@
        together to support randomization later.-->
   
   <ASSET_LIST ListID="TestingList">
-    <ITEM AssetID="Testing"/>
+    <ITEM AssetID="Testing" SpawnRate="50"/>
     
   </ASSET_LIST>
   

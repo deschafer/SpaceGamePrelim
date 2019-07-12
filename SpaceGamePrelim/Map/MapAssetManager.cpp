@@ -14,6 +14,11 @@ const static std::string AnimationStr = "animSpeed";
 const static std::string AnimationBoolStr = "anim";
 const static std::string NumberFramesStr = "numFrames";
 const static std::string TypeIDStr = "typeID";
+const static std::string ListItemStr = "ITEM";
+const static std::string InvalidResultStr = "Empty";
+const static std::string SpawnRateStr = "SpawnRate";
+const static std::string CollidableStr = "collidable";
+
 
 std::string CheckAndCopy(TiXmlElement* Node, std::string Comparison)
 {
@@ -125,6 +130,7 @@ void MapAssetManager::ParseAsset(TiXmlElement* Node)
 	int AnimationSpeed;
 	int NumberFrames;
 	std::string Animation;
+	std::string Collidable;
 
 	bool Found = false;
 	int Index = -1;
@@ -135,6 +141,7 @@ void MapAssetManager::ParseAsset(TiXmlElement* Node)
 
 	TypeID = CheckAndCopy(Node, TypeIDStr);
 	Animation = CheckAndCopy(Node, AnimationBoolStr);
+	Collidable = CheckAndCopy(Node, CollidableStr);
 	DestRect.SetWidth(stoi(CheckAndCopy(Node, DestWidthStr)));
 	DestRect.SetHeight(stoi(CheckAndCopy(Node, DestHeightStr)));
 	Texture = CheckAndCopy(Node, TextureStr);
@@ -171,7 +178,8 @@ void MapAssetManager::ParseAsset(TiXmlElement* Node)
 				DestRect,
 				Cell::Asset,
 				NumbersOfFrames,
-				AnimationSpeeds);
+				AnimationSpeeds,
+				Collidable == "true");
 		}
 		// No animation
 		else
@@ -182,7 +190,8 @@ void MapAssetManager::ParseAsset(TiXmlElement* Node)
 				Textures,
 				MapCoordinate(0, 0),
 				DestRect,
-				Cell::Asset);
+				Cell::Asset,
+				Collidable == "true");
 		}
 	}
 	else
@@ -199,7 +208,112 @@ void MapAssetManager::ParseAsset(TiXmlElement* Node)
 //
 void MapAssetManager::ParseList(TiXmlElement* Node)
 {
+	std::string ListName;
+	std::string Asset;
+	unsigned short int SpawnRate;
+	int Index = 0;
+
+	 
+	ListName = CheckAndCopy(Node, ListIDStr);	// Parse the list name
+
+	// Check if ListName was a valid result
+	if (ListName == InvalidResultStr)
+	{
+		_DEBUG_ERROR("Asset during list parsing was not found!");
+		return;
+	}
 
 	// Create a new list and add the items within it to the list data structure
+	m_TypeListNames.push_back(ListName);
+	m_TypeLists.push_back(std::vector<ListPair>());
+	Index = m_TypeListNames.size() - 1;
 
+	// Now search the assets for each asset, and add its corresponding ID to the
+	// vector above
+	for (Node = Node->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement())
+	{
+		if (Node->ValueStr() == ListItemStr)
+		{
+			Asset = CheckAndCopy(Node, AssetIDStr);
+			SpawnRate = stoi(CheckAndCopy(Node, SpawnRateStr));
+			m_TypeLists[Index].push_back(ListPair(StringToAssetID(Asset), SpawnRate));
+		}
+	}
+
+	int CurrentNumber = 0;
+	int MinRange = 0;
+	int MaxRange = 0;
+	std::vector<std::pair<int, int>> AssetRegions;
+	std::vector<ListPair>* List = &m_TypeLists[Index];
+
+	for (size_t i = 0; i < List->size(); i++)
+	{
+		MinRange = CurrentNumber;
+		CurrentNumber += (*List)[i].second;
+		MaxRange = CurrentNumber;
+
+		AssetRegions.push_back(std::pair<int, int>(MinRange, MaxRange));
+	}
+
+	m_ListAssetRegions.push_back(AssetRegions);
+	m_ListAssetRegionsMaximums.push_back(CurrentNumber);
+
+}
+
+//
+// StringToAssetID()
+//
+//
+int MapAssetManager::StringToAssetID(std::string AssetName)
+{
+	// First search for the name of the asset
+	for (size_t i = 0; i < m_AssetNames.size(); i++)
+	{
+		if (m_AssetNames[i] == AssetName)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+//
+// CreateAssetFromList()
+//
+//
+MapAsset* MapAssetManager::CreateAssetFromList(unsigned ListID)
+{
+	// Now select a random number within our range
+	int Selection = rand() % m_ListAssetRegionsMaximums[ListID];
+	std::vector<std::pair<int, int>> AssetRegions = m_ListAssetRegions[ListID];
+
+	for (size_t i = 0; i < AssetRegions.size(); i++)
+	{
+		if (Selection >= AssetRegions[i].first && Selection < AssetRegions[i].second)
+		{
+			// Found the asset we have chosen randomly
+			return m_Assets[m_TypeLists[ListID][i].first];
+
+		}
+	}
+	
+	std::cout << "Failed to find an asset for list " << ListID << std::endl;
+	return nullptr;
+}
+
+// 
+// StringToListID()
+//
+//
+int MapAssetManager::StringToListID(std::string ListName)
+{
+	// First search for the name of the list
+	for (size_t i = 0; i < m_TypeListNames.size(); i++)
+	{
+		if (m_TypeListNames[i] == ListName)
+		{
+			return i;
+		}
+	}
+	return -1;
 }

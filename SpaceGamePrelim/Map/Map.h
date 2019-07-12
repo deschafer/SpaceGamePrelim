@@ -2,6 +2,7 @@
 
 #include "MapObject.h"
 #include "MapRoom.h"
+#include "MapAssets\MapAsset.h"
 #include "Corridor.h"
 
 #include <string>
@@ -38,6 +39,8 @@ private:
 
 	MapObject*** m_Cells;				// Cells of this map
 	MapObject*** m_CorridorCells;		// Cells of the corridors of this map. allows for corridor combinations
+	MapAsset*** m_Assets;				// The assets of the map based off their location
+
 
 	bool m_PhysicallyLinkedNorth;
 	bool m_PhysicallyLinkedEast;

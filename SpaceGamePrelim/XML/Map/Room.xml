@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <ROOM>
   
-  <DEF name="Rect" minwidth="4" minheight="4" >
+  <DEF name="Rect" minwidth="4" minheight="4" SpawnRate="2" MaxAssets="5">
+    <Asset_List ListID="TestingList"/>
     <Turns>
       <T t="R"/>
       <T t="R"/>
