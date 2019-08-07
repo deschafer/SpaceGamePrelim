@@ -10,6 +10,7 @@
 #include "Map.h"
 #include "RoomManager.h"
 #include "..\Collision\MapCollision.h"
+#include "MapAssetManager.h"
 
 class GameEntity;
 
@@ -58,6 +59,8 @@ private:
 	Vector m_RequestedMovement;
 	MapDirection m_RequestedHorizMovement;
 	MapDirection m_RequestedVertiMovement;
+	MapAssetManager* m_AssetManager;
+	MapFactory* m_MapFactory;
 
 	MapCell* GetCellFromMaps(Map* CurrentMap, MapCoordinate RequestedCell);
 	void SetLink(Map* NewMap);

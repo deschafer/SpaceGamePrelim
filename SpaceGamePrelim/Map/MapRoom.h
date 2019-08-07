@@ -31,6 +31,7 @@ private:
 	std::vector<MapRoom*> m_LeftLinkedRooms;	// ..
 		
 	std::vector<unsigned> m_AssetListIDs;	// All of the possible assets that may be able to spawn in this room
+	//std::vector<unsigned>
 
 	int m_CellWidth;
 	int m_CellHeight;

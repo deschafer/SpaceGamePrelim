@@ -49,7 +49,6 @@ bool MapConnector::ConnectMapVerti()
 	MapRoom* AboveRoom;
 	MapRoom* BelowRoom;
 	SideA* AboveSide;
-	SideA* BelowSide;
 	MapCoordinate BeginningPos;
 	MapCoordinate EndingPos;
 	MapCoordinate UnStdEnding;
@@ -217,8 +216,6 @@ bool MapConnector::ConnectMapHoriz()
 	MapRoom* RightRoom;
 	MapRoom* LeftRoom;
 	vector<MapCoordinate> RoomOffsets;
-	SideA* RightSide;
-	SideA* LeftSide;
 	MapCoordinate BeginningPos;
 	MapCoordinate EndingPos;
 	MapCoordinate UnStdEnding;

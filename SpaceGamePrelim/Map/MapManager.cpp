@@ -41,6 +41,7 @@ static const int ActiveCellsWidth = 1000;
 static const int ActiveCellsHeight = 1000;
 
 static const string DefaultMapStr = "Default";
+static const string MapTypeXMLPath = "./XML/Map/MapTypes.xml";
 
 typedef std::pair<int, int> Coord;
 
@@ -202,10 +203,28 @@ MapManager::MapManager() :
 	m_ActiveMap(new Map("Default", MapSizeW, MapSizeH, MapCoordinate(0, 0)))
 {
 
-	// Initialize our other map management classes
-	MapAssetManager::Instance();
+	// Initializing our Map Type management
+	m_MapFactory = MapFactory::Instance();
+	m_MapFactory->LoadFile(MapTypeXMLPath);	// Loads in the file that contains our
+											// map type defintions
 
+	// FOR TESING ONLY
+	// MapFactTesting
+
+	// Lookup each of the stored maps and inspect their contents
+	MapTypeProperties* Prop = m_MapFactory->GetMapType(0);
+	Prop = m_MapFactory->GetMapType(1);
+	Prop = m_MapFactory->GetMapType(2);
+	Prop = m_MapFactory->GetMapType(3);
+	Prop = m_MapFactory->GetMapType(4);
+
+
+	int Test = 0;
+
+	// Initialize our other map management classes
+	m_AssetManager = MapAssetManager::Instance();
 	m_RoomManager = RoomManager::Instance();
+
 	m_ActiveWndHeight = MainApplication::Instance()->GetWndHeight();
 	m_ActiveWndWidth = MainApplication::Instance()->GetWndWidth();
 

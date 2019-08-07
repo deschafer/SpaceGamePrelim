@@ -2,6 +2,7 @@
 
 #include "MapObject.h"
 #include "MapRoom.h"
+#include "MapFactory.h"
 #include "MapAssets\MapAsset.h"
 #include "Corridor.h"
 
@@ -41,6 +42,7 @@ private:
 	MapObject*** m_CorridorCells;		// Cells of the corridors of this map. allows for corridor combinations
 	MapAsset*** m_Assets;				// The assets of the map based off their location
 
+	std::vector<unsigned> m_GlobalAssetIDs;	// The assets that can spawn in any room of this map
 
 	bool m_PhysicallyLinkedNorth;
 	bool m_PhysicallyLinkedEast;

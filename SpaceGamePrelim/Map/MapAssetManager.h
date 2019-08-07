@@ -7,6 +7,8 @@
 #include <vector>
 #include <list>
 
+std::string CheckAndCopy(TiXmlElement* Node, std::string Comparison);
+
 //
 // This class manages the base types of all map assets within the game.
 // The idea is to be able to separate assets into named lists to support
@@ -24,7 +26,7 @@ private:
 	std::vector<std::vector<std::pair<unsigned int, unsigned short int>>> m_TypeLists;
 	std::vector<std::string> m_TypeListNames;
 	std::vector<std::vector<std::pair<int, int>>> m_ListAssetRegions;
-	std::vector<unsigned> m_ListAssetRegionsMaximums;
+	std::vector<unsigned> m_ListAssetRegionsMaximums ;
 
 	std::string m_ParsingFile;
 
