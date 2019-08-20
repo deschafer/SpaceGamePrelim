@@ -9,6 +9,7 @@
 //
 
 #include <vector>
+#include <list>
 #include <map>
 #include <iostream>
 
@@ -21,23 +22,6 @@
 //
 
 enum class Columns { WIDTH1 = 6, WIDTH2 = 8, WIDTH3 = 10, WIDTH4 = 12, WIDTH5 = 14, SIZE = 5};
-
-
-/*
-struct Columns
-{
-	std::vector<int> m_Columns;
-
-	Columns();
-
-	int GetColumn(int Index) { return m_Columns.at(Index); }
-	int GetRandomColumn(int Index)	// Index marks the largest possible, all smaller work
-	{
-
-	}
-
-};
-*/
 
 //
 // This struct defines a room for MapRoom::Generate().
@@ -126,6 +110,8 @@ private:
 
 	std::map<std::string, RoomProperties*> m_RegisteredTypes;	// Contains the registered room definitions
 	std::map<Columns, std::vector<std::pair<RoomProperties*,std::string>>> m_WidthGroups;
+	std::vector<RoomProperties*> m_FallbackRooms;
+	std::list<std::pair<RoomProperties*, std::string>> m_QueuedFallbackRooms;
 
 	static RoomManager* s_pInstance; 
 
@@ -155,11 +141,13 @@ public:
 	int GetAbsoluteMinHeight() const { return m_AbsMinH; }
 
 
-
+	void RegisterFallbackRoom(std::string);
 	void RegisterRoomType(RoomProperties *Properties, std::string RoomID);
+	void AddFallbackRoom(RoomProperties* Properties) { m_FallbackRooms.push_back(Properties); }
 	RoomProperties* GetTypeDefinition(std::string RoomID);
 	RoomProperties* GetRandomTypeDefinition(std::string  &roomType);
 	RoomProperties* GetRandomTypeThatFits(std::string  &roomType, int MaxWidth, int MaxHeight);
+	RoomProperties* GetRandomFallbackRoomThatFits(std::string  &roomType, int Width, int Height);
 
 	
 	~RoomManager();

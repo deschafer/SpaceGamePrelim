@@ -392,6 +392,42 @@
       <G g="1"/>
     </GSideDef>
   </DEF>
+  <DEF name="Shifted_Room"  minwidth="7" minheight="7" variance="0.4">
+    <Turns>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+      
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      
+      <G g="1"/>
+    </GSideDef>
+  </DEF>
     <!--
     <DEF name="Static_Complex" minwidth="22" minheight="22" >
     <Turns>
@@ -516,5 +552,71 @@
     </StaticSides>
   </DEF>
   -->
+
+  <DEF name="Misc_Room_1"  minwidth="7" minheight="7"  >
+    <Turns>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+      
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+      
+      <G g="1"/>
+    </GSideDef>
+  </DEF>
   
+  <DEF name="Misc_Room_2"  minwidth="7" minheight="7"  >
+    <Turns>
+      <T t="R"/>
+      <T t="L"/>
+      <T t="L"/>
+      <T t="R"/>
+      <T t="R"/>
+
+      <T t="R"/>
+
+      <T t="R"/>
+      <T t="L"/>
+      <T t="R"/>
+
+      <T t="R"/>
+    </Turns>
+    <GSideDef>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+
+      <G g="1"/>
+
+      <G g="0"/>
+      <G g="0"/>
+      <G g="1"/>
+
+      <G g="1"/>
+    </GSideDef>
+  </DEF>
+
 </ROOM>

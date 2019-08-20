@@ -107,3 +107,5 @@ void MapFactory::ParseMap(TiXmlElement* Node)
 
 	m_Maps.push_back(Properties);
 }
+
+

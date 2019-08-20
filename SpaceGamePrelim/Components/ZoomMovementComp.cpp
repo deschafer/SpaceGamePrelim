@@ -36,8 +36,8 @@ void ZoomMovementComp::Execute()
 	if (abs(NewVelocity.getY()) < 0.00001) NewVelocity.setY(0.0);
 
 
-	std::cout << "Old velocity " << CurrentVelocity.getX() << " " << CurrentVelocity.getY() << std::endl;
-	std::cout << "New velocity " << NewVelocity.getX() << " " << NewVelocity.getY() << std::endl;
+	//std::cout << "Old velocity " << CurrentVelocity.getX() << " " << CurrentVelocity.getY() << std::endl;
+	//std::cout << "New velocity " << NewVelocity.getX() << " " << NewVelocity.getY() << std::endl;
 
 
 	m_Owner->SetVelocity(NewVelocity);

@@ -42,7 +42,7 @@ private:
 	MapObject*** m_CorridorCells;		// Cells of the corridors of this map. allows for corridor combinations
 	MapAsset*** m_Assets;				// The assets of the map based off their location
 
-	std::vector<unsigned> m_GlobalAssetIDs;	// The assets that can spawn in any room of this map
+	MapTypeProperties* m_MapProperties;	// Prop. that define the exact type of this map
 
 	bool m_PhysicallyLinkedNorth;
 	bool m_PhysicallyLinkedEast;
@@ -97,6 +97,7 @@ public:
 		MapCell* NewCell);
 	void SetNewCorridorCell(MapCoordinate CellPosition,
 		MapCell* NewCell, bool LastCell);
+	void SetMapType(MapTypeProperties* Prop) { m_MapProperties = Prop; }
 	void AddCorridor(Corridor* NewCorridor) { m_Corridors.push_back(NewCorridor); }
 	MapCoordinate* GetRoomOffsetsFromLastRow(int X);
 	std::vector<MapRoom*> GetRoomsFromColumnX(int X, bool Last = false);
@@ -108,6 +109,8 @@ public:
 
 	Map();
 	Map(std::string MapType, int Width, int Height, MapCoordinate Coords);
+	Map(std::string MapType, int Width, int Height, MapCoordinate Coords, MapTypeProperties *Prop);
+
 	~Map();
 };
 

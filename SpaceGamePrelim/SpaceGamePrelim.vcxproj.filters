@@ -239,7 +239,9 @@
     <ClCompile Include="Components\ZoomMovementComp.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Map\MapFactory.cpp" />
+    <ClCompile Include="Map\MapFactory.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\InitFactory.h">
@@ -411,7 +413,7 @@
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="Map\MapFactory.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

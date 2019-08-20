@@ -30,6 +30,7 @@ static const int ColumnWidth2 = 8;
 static const int ColumnWidth3 = 10;
 static const int ColumnWidth4 = 12;
 static const int ColumnWidth5 = 14;
+static const int ColumnWidthMax = 14;
 static const int ColumnSeparatorMax = 3;
 static const int ColumnSeparatorMin = 1;
 static const int ComparisonSideWidth = 6;
@@ -99,6 +100,13 @@ Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 		m_NeighboringMaps[i] = nullptr;
 	}
 }
+
+Map::Map(std::string MapType, int Width, int Height, MapCoordinate Coords, MapTypeProperties* Prop) : 
+	Map(MapType, Width, Height, Coords)
+{
+	m_MapProperties = Prop;
+}
+
 
 Map::~Map()
 {
@@ -177,10 +185,13 @@ void Map::Generate()
 // Generate rooms column-wise, so it only moves downwards.
 //
 void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
-{			
+{
 	RoomProperties* Properties;
 	string RoomType;
-	int RoomWidth = MinRoomWidth + rand() % RoomWidthDiff;
+	//int RoomWidth = MinRoomWidth + rand() % RoomWidthDiff;
+	//int RoomWidth = MapPropRoomMinWidth + rand() % (ColumnWidthMax - MapPropRoomMinWidth);
+	int RoomWidth = MaxWidth;
+	int MapPropRoomMinWidth = m_MapProperties->GetMinWidth();
 	int RoomHeight = 0;
 	MapRoom* Room;
 	MapRoom* RoomAbove = (m_Rooms[ColNumber].size()) ? m_Rooms[ColNumber][m_Rooms[ColNumber].size() - 1] : nullptr;
@@ -192,36 +203,37 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 		RoomHeight++;
 	}
 
-	// Checking the vertical space to fit this room
-	// within this map
+	// First find a room from the list given that can fit in the space
+	// Search the list of map-specific rooms
+	Properties = m_MapProperties->GetRandomRoomThatFits(RoomType, RoomWidth, RoomHeight);
+
+	if (!Properties)
+	{
+		// If there is not a room available, then get a fallback one
+		Properties = RoomManager::Instance()->GetRandomFallbackRoomThatFits(RoomType, RoomWidth, RoomHeight);
+	}
+	if (Properties == nullptr)
+	{
+		// Do not generate a room
+		return;
+	}
+
+	// Adding random variation to the size
 	if (RoomHeight != MaxRoomHeight)
 	{
-		Properties = RoomManager::Instance()->GetRandomTypeThatFits(RoomType, RoomWidth, RoomHeight);
-
-		if (Properties == nullptr)
+		const int SelectedRoomMinHeight = Properties->m_MinHeight;
+		if (RoomHeight > SelectedRoomMinHeight)
 		{
-			// Do not generate a room
-			return;
+			RoomHeight -= rand() % (RoomHeight - SelectedRoomMinHeight);
 		}
-		// Adding random variation to the size
-		if(RoomHeight > 8) RoomHeight -= rand() % RoomSizeVolatility;
 	}
 	else
 	{
-		Properties = RoomManager::Instance()->GetRandomTypeThatFits(RoomType, RoomWidth, MaxRoomHeight);
-		
-		if (Properties == nullptr)
-		{
-		#ifdef _DEBUG
-			cout << "No Room received for " << RoomType << endl;
-		#endif // _DEBUG
-			return;
-		}
-		else
-		{
-			RoomHeight = Properties->m_MinHeight + rand() % 5;
-		}
+		RoomHeight = Properties->m_MinHeight + rand() % (MaxRoomHeight - Properties->m_MinHeight);
 	}
+
+	// Add randomization to the selected room's width
+	RoomWidth = Properties->m_MinWidth + rand() % (MaxWidth - Properties->m_MinWidth);
 
 	// Creating the new room
 	Room = new MapRoom(RoomType, RoomWidth, RoomHeight);

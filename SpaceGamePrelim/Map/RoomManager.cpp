@@ -152,3 +152,72 @@ RoomProperties* RoomManager::GetRandomTypeThatFits(std::string  &roomType, int M
 
 	return nullptr;
 }
+
+//
+// RegisterFallbackRoom()
+//
+//
+void RoomManager::RegisterFallbackRoom(std::string RoomID)
+{
+
+	// Convert from the string to a properties object
+	RoomProperties* Properties = m_RegisteredTypes[RoomID];
+	if (Properties)
+	{
+		m_FallbackRooms.push_back(Properties);
+		m_QueuedFallbackRooms.push_back(std::pair<RoomProperties*, std::string>(Properties, RoomID));
+	}
+
+}
+
+//
+// GetRandomFallbackRoomThatFits()
+//
+//
+RoomProperties* RoomManager::GetRandomFallbackRoomThatFits(std::string &RoomType, int RoomWidth, int RoomHeight)
+{
+	// Need mutual exclusion here to verify no entry
+
+	static bool Entry = false;
+
+	while (Entry);
+
+	Entry = true;
+	size_t ListSize = m_QueuedFallbackRooms.size();
+	RoomProperties* Properties = nullptr;
+	int Random = rand() % ListSize;
+	std::pair<RoomProperties*, std::string> CurrentSet;
+
+	// Randomize the list
+	for (size_t i = 0; i < Random; i++)
+	{
+		// pop the current room from the beginning
+		CurrentSet = m_QueuedFallbackRooms.front();
+		m_QueuedFallbackRooms.pop_front();
+
+		// Before we look at it, return it to the back of the list
+		m_QueuedFallbackRooms.push_back(CurrentSet);
+	}
+
+	for (size_t i = 0; i < ListSize; i++)
+	{
+		// pop the current room from the beginning
+		CurrentSet = m_QueuedFallbackRooms.front();
+		m_QueuedFallbackRooms.pop_front();
+		Properties = CurrentSet.first;
+
+		// Before we look at it, return it to the back of the list
+		m_QueuedFallbackRooms.push_back(CurrentSet);
+
+		// Inspect it and see if it will fit the space available
+		if (Properties->m_MinHeight <= RoomHeight &&
+			Properties->m_MinWidth <= RoomWidth)
+		{
+			Entry = false;
+			RoomType = CurrentSet.second;
+			return Properties;
+		}
+	}
+	Entry = false;
+	return nullptr;
+}

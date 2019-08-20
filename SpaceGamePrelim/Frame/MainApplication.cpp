@@ -93,6 +93,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	InitFactory::Instance()->LoadRoomDefinitions("./XML/Map/Room.xml");
 	InitFactory::Instance()->LoadTextures("./XML/Textures/Textures.xml");
+	InitFactory::Instance()->LoadFallbackRooms("./XML/Map/Fallback.xml");
 
 	InitializeScenes();
 

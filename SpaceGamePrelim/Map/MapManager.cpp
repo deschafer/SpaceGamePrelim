@@ -39,6 +39,7 @@ static const int ColumnWidth5 = 14;
 static const int NumberColumns = MapSizeW / ColumnWidth5;
 static const int ActiveCellsWidth = 1000;
 static const int ActiveCellsHeight = 1000;
+static const int InitialMapID = 0;
 
 static const string DefaultMapStr = "Default";
 static const string MapTypeXMLPath = "./XML/Map/MapTypes.xml";
@@ -199,7 +200,7 @@ MapManager::MapManager() :
 	m_RequestedMovement(0, 0),
 	m_PixelOffsetX(0.0),
 	m_PixelOffsetY(0.0),
-	m_ActivelyLinkedCount(0),
+	m_ActivelyLinkedCount(0)//,	\
 	m_ActiveMap(new Map("Default", MapSizeW, MapSizeH, MapCoordinate(0, 0)))
 {
 
@@ -207,19 +208,13 @@ MapManager::MapManager() :
 	m_MapFactory = MapFactory::Instance();
 	m_MapFactory->LoadFile(MapTypeXMLPath);	// Loads in the file that contains our
 											// map type defintions
-
-	// FOR TESING ONLY
-	// MapFactTesting
-
-	// Lookup each of the stored maps and inspect their contents
-	MapTypeProperties* Prop = m_MapFactory->GetMapType(0);
-	Prop = m_MapFactory->GetMapType(1);
-	Prop = m_MapFactory->GetMapType(2);
-	Prop = m_MapFactory->GetMapType(3);
-	Prop = m_MapFactory->GetMapType(4);
-
-
-	int Test = 0;
+	// Create our active map
+	m_ActiveMap =
+		new Map("Default",
+			MapSizeW,
+			MapSizeH,
+			MapCoordinate(0, 0),
+			MapFactory::Instance()->GetMapType(InitialMapID));	// Gets the intial map type
 
 	// Initialize our other map management classes
 	m_AssetManager = MapAssetManager::Instance();
@@ -242,7 +237,10 @@ MapManager::MapManager() :
 	int ResolutionY = MainApplication::Instance()->GetWndHeight();
 
 	m_Instance = this;
-	m_ActiveMap->Generate();
+
+	m_ActiveMap->Generate();									// Create this map so we have a starting point
+
+	// All later maps get created by other threads
 
 	// However, to surrounding maps need to be loaded into the array
 	// So we set this to be accomplished when possible
@@ -683,8 +681,16 @@ void MapManager::GenerateNeighbors()
 //
 void MapManager::GenerateNeighbor(std::string MapType, MapDirection ActiveMapDir, MapDirection NewMapDir, MapCoordinate NewMapCoord)
 {
+	static int MapTotals = m_MapFactory->MapTypeQuantity();
+
+	// Generate a key to get the new map
+	// This key will be generated randomly
+	// The further away this map is from 0,0, the more maps it may be.
+	int Key = (NewMapCoord.GetPositionX() > NewMapCoord.GetPositionY()) ? NewMapCoord.GetPositionX() : NewMapCoord.GetPositionY();
+	Key = (MapTotals > Key) ? MapTotals : Key;
+
 	// Create the new map
-	Map* NewMap = new Map(MapType, MapSizeW, MapSizeH, NewMapCoord);
+	Map* NewMap = new Map(MapType, MapSizeW, MapSizeH, NewMapCoord, m_MapFactory->GetMapType(rand() % Key));
 
 	// Set the link from the active map to this map
 	// so we do not generate this map again in this place for the activemap
@@ -979,7 +985,7 @@ void MapManager::CullMap()
 	if (m_MovementRight)
 	{
 		// If the map is updated and it is time to switch the active map
-		if ((-m_PixelOffsetX >= MapWidthPixels) && !m_MapNeedsSwapping)
+		if ((-m_PixelOffsetX >= MapWidthPixels / 2) && !m_MapNeedsSwapping)
 		{
 			// Set the active map to the map to the left
 			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::East);
@@ -1005,7 +1011,7 @@ void MapManager::CullMap()
 	if (m_MovementSouth)
 	{
 		// If the map is updated and it is time to switch the active map
-		if ((-m_PixelOffsetY >= MapHeightPixels) && !m_MapNeedsSwapping)
+		if ((-m_PixelOffsetY >= MapHeightPixels / 2) && !m_MapNeedsSwapping)
 		{
 			// Set the active map to the map to the left
 			m_ActiveMap = m_ActiveMap->GetNeighbor(MapDirection::North);

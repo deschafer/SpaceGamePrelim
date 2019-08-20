@@ -2,25 +2,56 @@
 <MAPS>
 
   <MAP MapType="Testing" GlobalAssetList="TestingList">
+    <ROOM RoomID="Shifted_Room" AssetList="TestingList"/>
     <ROOM RoomID="Rect" AssetList="TestingList"/>
     <ROOM RoomID="L_Rect" AssetList="TestingList"/>
+    <ROOM RoomID="Stair_Down" AssetList="TestingList"/>
+    <ROOM RoomID="Stair_Down_Reflected" AssetList="TestingList"/>
+    <ROOM RoomID="Misc_Room_2" AssetList="TestingList"/>
+    <ROOM RoomID="Misc_Room_1" AssetList="TestingList"/>
   
   </MAP>
 
   <MAP MapType="Testing2" GlobalAssetList="TestingList">
+    <ROOM RoomID="Complex_Left_Right" AssetList="TestingList"/>
+    <ROOM RoomID="Shifted_Room" AssetList="TestingList"/>
     <ROOM RoomID="L_Rect" AssetList="TestingList"/>
+    <ROOM RoomID="Complex_Top" AssetList="TestingList"/>
+    <ROOM RoomID="Misc_Room_1" AssetList="TestingList"/>
   </MAP>
 
   <MAP MapType="Testing3" GlobalAssetList="TestingList">
-    <ROOM RoomID="Complex" AssetList="TestingList"/>
+    <ROOM RoomID="Complex_Top" AssetList="TestingList"/>
+    <ROOM RoomID="Shifted_Room" AssetList="TestingList"/>
+    <ROOM RoomID="L_Rect" AssetList="TestingList"/>
+    <ROOM RoomID="Stair_Down" AssetList="TestingList"/>
+    <ROOM RoomID="Stair_Down_Reflected" AssetList="TestingList"/>
+    <ROOM RoomID="Misc_Room_2" AssetList="TestingList"/>
   </MAP>
 
   <MAP MapType="Testing4" GlobalAssetList="TestingList">
-    <ROOM RoomID="Inv_L_Rect" AssetList="TestingList"/>
+    <ROOM RoomID="Complex_Bottom" AssetList="TestingList"/>
+    <ROOM RoomID="Complex_Top" AssetList="TestingList"/>
+    <ROOM RoomID="Shifted_Room" AssetList="TestingList"/>
+    <ROOM RoomID="L_Rect" AssetList="TestingList"/>
+    <ROOM RoomID="Stair_Down" AssetList="TestingList"/>
+    <ROOM RoomID="Stair_Down_Reflected" AssetList="TestingList"/>
+    <ROOM RoomID="Misc_Room_2" AssetList="TestingList"/>
+    <ROOM RoomID="L_Rect_Static" AssetList="TestingList"/>
   </MAP>
 
   <MAP MapType="Testing5" GlobalAssetList="TestingList">
     <ROOM RoomID="Complex_Right" AssetList="TestingList"/>
+    <ROOM RoomID="Complex_Bottom" AssetList="TestingList"/>
+    <ROOM RoomID="Complex" AssetList="TestingList"/>
+    <ROOM RoomID="Complex_Left" AssetList="TestingList"/>
+    <ROOM RoomID="Complex_Top" AssetList="TestingList"/>
+    <ROOM RoomID="Shifted_Room" AssetList="TestingList"/>
+    <ROOM RoomID="L_Rect" AssetList="TestingList"/>
+    <ROOM RoomID="Stair_Down" AssetList="TestingList"/>
+    <ROOM RoomID="Stair_Down_Reflected" AssetList="TestingList"/>
+    <ROOM RoomID="Misc_Room_2" AssetList="TestingList"/>
+    <ROOM RoomID="L_Rect_Static" AssetList="TestingList"/>
   </MAP>
   
 </MAPS>

@@ -26,6 +26,7 @@ public:
 
 	bool LoadRoomDefinitions(std::string File);
 	bool LoadTextures(std::string File);
+	bool LoadFallbackRooms(std::string File);
 
 	~InitFactory();
 };
