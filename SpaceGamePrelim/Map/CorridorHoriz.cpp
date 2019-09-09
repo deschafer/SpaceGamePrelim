@@ -222,7 +222,7 @@ Corridor* CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLoca
 	}
 	else if (CorridorLocaleMartrix[CurrentX + 1][CurrentY])
 	{
-		cout << "Double Corridor" << endl;
+		cout << "Corridor Horiz: Anomoly detected, a Double Corridor has been generated." << endl;
 	}
 
 	// Adjusting the y transition 
@@ -336,7 +336,7 @@ Corridor* CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLoca
 
 	if (CurrentX != End.GetPositionX() || CurrentY != End.GetPositionY())
 	{
-		cout << "Did not find the end." << endl;
+		cout << "Potential Error: CorridorVertical was unable to find an ending point" << endl;
 		return nullptr;
 	}
 

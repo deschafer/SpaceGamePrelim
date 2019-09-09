@@ -16,6 +16,7 @@ private:
 
 	MapObject*** m_Cells;
 	MapAsset*** m_Assets;
+	bool*** m_Doorways;
 
 	std::string m_RoomType;
 
@@ -35,12 +36,22 @@ private:
 
 	int m_CellWidth;
 	int m_CellHeight;
+	int m_CountCells;
 
 	int m_Width;
 	int m_Height;
 
+	int m_CellSpawnRate;
+	int m_CellSpawnGroupSize;	// the max number of cells where a asset can spawn in per asset spawn chance
+
+	bool m_BorderingRoom;	// Is this room on one of the 4 outer sides of this map
+
 	void AddCandidate(Side CurrentSide, MapCoordinate Start, MapCoordinate End);
-	void PlaceAssets();
+	MapAsset* PlaceAsset();
+	void PlaceOpaqueAsset(MapAsset* Asset);
+	void PlaceTransparentAsset(MapAsset* Asset);
+
+	MapCoordinate FindAssetPlacement(MapCoordinate Coord, MapAsset* Asset, int Width, int Height);
 public:
 
 	void Generate(); // Generates this room
@@ -51,10 +62,14 @@ public:
 	int GetWidth() { return m_Width; }
 	std::string GetRoomType() { return m_RoomType; }
 	void AddLinkedRoom(Side side, MapRoom* LinkedRoom);
+	void AddDoorWayPosition(MapCoordinate RoomRelativeCoordinate);
 	bool ConnectedToRoom(Side side);
+	std::vector<MapAsset*> PlaceAssets();
 
 	std::pair<MapCoordinate, MapCoordinate>* GetFacingFromSide(Side side);
 	std::pair<MapCoordinate, MapCoordinate>* GetFacingFromSideIndexed(Side side, int Index);
+
+	void SetBorderingRoom() { m_BorderingRoom = true; }
 
 	MapRoom();
 	MapRoom(std::string RoomType, int Width, int Height); // Known room

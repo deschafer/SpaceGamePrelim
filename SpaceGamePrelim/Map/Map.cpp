@@ -168,6 +168,21 @@ void Map::Generate()
 		Index++;
 	}
 
+	
+
+	// Pot.Asset.Placement -- search term. this is being considered for asset placement
+	// if we place assets here, we can consider doorways
+	// however, we have to consider the border rooms of this map that are not
+	// connected to the other maps yet.
+
+	// Adding assets to every room
+	// For each room where assets are added, get that position and add them to the map
+
+	// PlaceAssets();
+
+	// At this point in time, the entire map has been generated and all 
+	// of the rooms have been made and connected together.
+
 	// Set this map as generated
 	m_Generated = true;
 	
@@ -177,6 +192,108 @@ void Map::Generate()
 	auto duration = duration_cast<milliseconds>(t2 - t1).count();
 	cout << duration << endl;
 #endif // _DEBUG
+}
+
+//
+// PlaceAssets()
+// Responsible for calling AddAssets for each of the MapRooms in this map
+//
+void Map::PlaceAssets()
+{
+	size_t NumberOfColumns = m_ColumnOffsetsX.size();
+	size_t RoomsInColumn = 0;
+
+	int RoomPosX = 0;
+	int RoomPosY = 0;
+
+	MapRoom* CurrentRoom = nullptr;
+
+	bool BorderingRoomCol = false;	// Leftmost or rightmost columns bordering rooms, rooms that will be connected to other maps
+	bool BorderingRoomRow = false;	// First or last row bordering rooms
+
+
+	// Go column by column
+	for (size_t Col = 0; Col < NumberOfColumns; Col++)
+	{
+		BorderingRoomCol = false;	// Reset every iteration
+
+		RoomsInColumn = m_ColumnOffsetsX[Col].size();
+
+		// If we are the first or last column
+		if (Col == 0 || Col == NumberOfColumns - 1)
+		{
+			BorderingRoomCol = true;
+		}
+
+		// Then for each of the rooms in this column
+		for (size_t Row = 0; Row < RoomsInColumn; Row++)
+		{
+			BorderingRoomRow = false;
+
+			if (Row == 0 || Row == RoomsInColumn - 1)
+			{
+				BorderingRoomRow = true;
+			}
+
+			RoomPosX = m_ColumnOffsetsX[Col][Row] + Col * ColumnWidthMax;	// Add the individual x offset within the column to the column's x offset
+			RoomPosY = m_ColumnOffsetsY[Col][Row];							// Just one y offset
+			CurrentRoom = m_Rooms[Col][Row];								// Get the room itself
+
+			AddAssets(CurrentRoom, MapCoordinate(RoomPosX, RoomPosY), BorderingRoomCol || BorderingRoomRow);
+		}
+
+	}
+
+	// For each and every room in this map
+	// we need to find the x position
+	// then find the y position
+	// then find the room itself
+	// and determine if its a bordering room
+	// then call AddAssets()
+}
+
+//
+// AddAssets()
+// Gets the room to create assets and place them, then gets the placed assets and
+// adds them to the map's asset array to be drawn
+//
+void Map::AddAssets(MapRoom* Room, MapCoordinate TopLeftPoint, bool BorderingRoom)
+{
+	// Place the assets in this room
+	vector<MapAsset*> RoomAssets = Room->PlaceAssets();
+	int AssetWidth = 0;
+	int AssetHeight = 0;
+	MapCoordinate RoomReferenceAssetTopLeft;	// Where the asset is in reference to the room
+	MapCoordinate MapReferenceAssetTopLeft;		// Where the asset is in reference to the entire map
+
+	// Set this room as bordering or not for future actions
+	if (BorderingRoom) Room->SetBorderingRoom();
+
+	// Then get these assets and add them to the asset array
+	for (size_t i = 0; i < RoomAssets.size(); i++)
+	{
+		// Get the top left of each asset in the room
+		RoomReferenceAssetTopLeft = RoomAssets[i]->GetPosition();
+		// Then get the position in the map
+		MapReferenceAssetTopLeft = MapCoordinate(TopLeftPoint.GetPositionX(), TopLeftPoint.GetPositionY());
+
+		// and get the assets integer width/height
+		AssetWidth = RoomAssets[i]->GetIntegerWidth();
+		AssetHeight = RoomAssets[i]->GetIntegerHeight();
+
+		// and add all these locations in the array
+		for (size_t x = MapReferenceAssetTopLeft.GetPositionX() + RoomReferenceAssetTopLeft.GetPositionX(); x < AssetWidth; x++)
+		{
+			for (size_t y = MapReferenceAssetTopLeft.GetPositionY() + RoomReferenceAssetTopLeft.GetPositionY(); y < AssetHeight; y++)
+			{
+				m_Assets[x][y] = RoomAssets[i];
+			}
+		}
+
+		// also add the assets to the general list of map assets 
+		m_AssetsList.push_back(RoomAssets[i]);
+	}
+
 }
 
 //
@@ -447,6 +564,18 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 			m_Corridors.push_back(HorizCorrridor);
 
 			Corridor* Pass = dynamic_cast<CorridorHoriz*>(HorizCorrridor);
+
+			// Setting the doorways positions for each of the two rooms
+			MapRoom* BaseRoom = HorizConnector.GetBaseRoom();
+			MapRoom* OtherRoom = HorizConnector.GetOtherRoom();
+			MapCoordinate BaseRoomPosition = HorizConnector.GetBaseRoomPosition();
+			MapCoordinate OtherRoomPosition = HorizConnector.GetOtherRoomPosition();
+
+			MapCoordinate BaseRoomRelDoorway = MapCoordinate(Beginning - BaseRoomPosition);
+			MapCoordinate OtherRoomRelDoorway = MapCoordinate(Ending - OtherRoomPosition);
+
+			BaseRoom->AddDoorWayPosition(BaseRoomRelDoorway);
+			OtherRoom->AddDoorWayPosition(OtherRoomRelDoorway);
 
 			// Generate this new corridor and place it within the array
 			GenerateAndPlaceCorridor(

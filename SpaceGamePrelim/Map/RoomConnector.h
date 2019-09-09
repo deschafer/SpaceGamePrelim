@@ -36,7 +36,10 @@ public:
 	DeterminedRoomPositions* FindRoomPositionsHoriz();
 	DeterminedRoomPositions* FindRoomPositionsVerti();
 
+	MapCoordinate GetBaseRoomPosition() { return m_BaseRoomPosition; }
 	MapCoordinate GetOtherRoomPosition() { return m_OtherRoomPosition; }
+	MapRoom* GetBaseRoom() { return m_BaseRoom; }
+	MapRoom* GetOtherRoom() { return m_OtherRoom; }
 
 	~RoomConnector();
 };

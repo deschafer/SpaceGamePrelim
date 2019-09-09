@@ -42,6 +42,8 @@ private:
 	MapObject*** m_CorridorCells;		// Cells of the corridors of this map. allows for corridor combinations
 	MapAsset*** m_Assets;				// The assets of the map based off their location
 
+	std::vector<MapAsset*> m_AssetsList;// The list of all the assets
+
 	MapTypeProperties* m_MapProperties;	// Prop. that define the exact type of this map
 
 	bool m_PhysicallyLinkedNorth;
@@ -59,6 +61,8 @@ private:
 	int m_NeighborMapsSize;
 
 	void GenerateRoom(int OffsetX, int OffsetY, int ColumnWidth, int Index);
+	void PlaceAssets();
+	void AddAssets(MapRoom* Room, MapCoordinate TopLeftPoint, bool BorderingRoom);
 	void GenerateAndPlaceCorridor(Corridor* NewCorridor, MapCoordinate TopLeft, MapCoordinate BottomRight, MapCoordinate BegPos, 
 		MapCoordinate EndPos, int DistX, int DistY, int MajorDistance);
 	void SetUpVertiCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* BottomRoom);
@@ -71,6 +75,7 @@ public:
 	MapObject* GetCorridorCell(int X, int Y);
 	MapObject*** GetCellArray() { return m_Cells; }
 	MapObject**** GetCellArrayAddress() { return &m_Cells; }
+	MapAsset**** GetAssetArrayAddress() { return &m_Assets; }
 	MapCoordinate GetCoordinate() { return m_MapCoordinates; }
 	MapRoom* GetRoomXFromColumnY(int RowX, int ColumnY, int& OffsetX, int& OffsetY, bool Last = false);
 	MapObject** GetColumn(int ZeroIndexedColumn);

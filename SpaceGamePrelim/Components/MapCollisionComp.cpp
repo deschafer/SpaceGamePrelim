@@ -26,8 +26,6 @@ void MapCollisionComp::Execute()
 	// Check if we have actually moved,
 	// if not then do not check for collisions
 	bool CollisionPresent = false;
-	MapCollision* CurrMapCollision;
-
 	Vector CurrentPosition = m_Owner->GetPosition();
 	Vector SetVelocity = m_Owner->GetVelocity();
 	Vector PositionAfterMovement = Vector(
@@ -89,13 +87,13 @@ void MapCollisionComp::HandleMapCollisions(MapCollision* NewCollision, Vector &S
 		if (Horiz == EntityDirection::East && (SetVelocity.getX() > 0))
 		{
 			// Set this to the distance we can travel until we collide
-			SetVelocity.setX(Distance);
+			SetVelocity.setX((float)Distance);
 
 		}
 		else if (Horiz == EntityDirection::West && (SetVelocity.getX() < 0))
 		{
 			// Set this to the distance we can travel until we collide
-			SetVelocity.setX(-Distance);
+			SetVelocity.setX((float)-Distance);
 		}
 	}
 	if (CollisionAngleVerti)
@@ -103,12 +101,12 @@ void MapCollisionComp::HandleMapCollisions(MapCollision* NewCollision, Vector &S
 		if (Verti == EntityDirection::South && (SetVelocity.getY() > 0))
 		{
 			// Set this to the distance we can travel until we collide
-			SetVelocity.setY(Distance);
+			SetVelocity.setY((float)Distance);
 		}
 		else if (Verti == EntityDirection::North && (SetVelocity.getY() < 0))
 		{
 			// Set this to the distance we can travel until we collide
-			SetVelocity.setY(-Distance);
+			SetVelocity.setY((float)-Distance);
 		}
 	}
 }

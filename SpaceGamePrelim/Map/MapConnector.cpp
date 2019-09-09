@@ -48,7 +48,6 @@ bool MapConnector::ConnectMapVerti()
 	typedef pair<MapCoordinate, MapCoordinate> SideA;
 	MapRoom* AboveRoom;
 	MapRoom* BelowRoom;
-	SideA* AboveSide;
 	MapCoordinate BeginningPos;
 	MapCoordinate EndingPos;
 	MapCoordinate UnStdEnding;

@@ -200,8 +200,8 @@ MapManager::MapManager() :
 	m_RequestedMovement(0, 0),
 	m_PixelOffsetX(0.0),
 	m_PixelOffsetY(0.0),
-	m_ActivelyLinkedCount(0)//,	\
-	m_ActiveMap(new Map("Default", MapSizeW, MapSizeH, MapCoordinate(0, 0)))
+	m_ActivelyLinkedCount(0)//,	
+	//m_ActiveMap(new Map("Default", MapSizeW, MapSizeH, MapCoordinate(0, 0)))
 {
 
 	// Initializing our Map Type management
@@ -256,8 +256,19 @@ MapManager::MapManager() :
 	m_VisibleMapCells.push_back(nullptr);
 	m_VisibleMapCells.push_back(nullptr);
 	m_VisibleMapCells.push_back(nullptr);
-
 	m_VisibleMapCells[CenterMapArrayIndex] = m_ActiveMap->GetCellArrayAddress();
+
+	// Add the indices for the VisibleMapArray
+	m_VisibleAssetCells.push_back(nullptr);
+	m_VisibleAssetCells.push_back(nullptr);
+	m_VisibleAssetCells.push_back(nullptr);
+	m_VisibleAssetCells.push_back(nullptr);
+	m_VisibleAssetCells.push_back(nullptr);
+	m_VisibleAssetCells.push_back(nullptr);
+	m_VisibleAssetCells.push_back(nullptr);
+	m_VisibleAssetCells.push_back(nullptr);
+	m_VisibleAssetCells.push_back(nullptr);
+	m_VisibleAssetCells[CenterMapArrayIndex] = m_ActiveMap->GetAssetArrayAddress();
 
 	ComputeStartingOffsets();
 }
@@ -290,11 +301,12 @@ void MapManager::ComputeStartingOffsets()
 void MapManager::Draw()
 {
 	MapObject* Object;
+	MapAsset* Asset;
 	int MapPositionOffsetX = 0;
 	int MapPositionOffsetY = 0;
 	pair<int, int> Pair;
 
-	static MapAsset* Asset = MapAssetManager::Instance()->CreateAsset(0);
+	//static MapAsset* Asset = MapAssetManager::Instance()->CreateAsset(0);
 
 	//DrawGrid();	// Debugging gridlines
 
@@ -319,11 +331,12 @@ void MapManager::Draw()
 				MapPositionOffsetY = 0;
 			}
 
+			// Drawing all the map cells
 			for (int i = 0; i < MapSizeW; i++)
 			{
 				for (int j = 0; j < MapSizeH; j++)
 				{
-					Object = m_VisibleObjectArray[i][j];
+					if (!(Object = m_VisibleObjectArray[i][j])) continue;
 
 					double PositionX = (i)* m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
 					double PositionY = (j)* m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
@@ -334,12 +347,28 @@ void MapManager::Draw()
 						PositionY + m_CellHeight >= 0 &&
 						PositionY < m_ActiveWndHeight)
 					{
-						Object->Draw(MapCoordinate(round(PositionX), round(PositionY)));
-						if (i % 20 == 0)
-						{
-							Asset->Update();
-							Asset->Draw(MapCoordinate(round(PositionX), round(PositionY)));
-						}
+						Object->Draw(MapCoordinate((int)round(PositionX), (int)round(PositionY)));
+					}
+				}
+			}
+
+			// Then we need to draw the map assets on top
+			for (int i = 0; i < MapSizeW; i++)
+			{
+				for (int j = 0; j < MapSizeH; j++)
+				{
+					if (!(Asset = m_VisibleAssetArray[i][j])) continue;
+
+					double PositionX = (i)* m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
+					double PositionY = (j)* m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+
+					if (Asset &&
+						PositionX + m_CellWidth >= 0 &&
+						PositionX < m_ActiveWndWidth &&
+						PositionY + m_CellHeight >= 0 &&
+						PositionY < m_ActiveWndHeight)
+					{
+						Asset->Draw(MapCoordinate((int)round(PositionX), (int)round(PositionY)));
 					}
 				}
 			}
@@ -397,6 +426,7 @@ void MapManager::Update()
 void MapManager::UpdateCells()
 {
 	MapObject* Object;
+	MapAsset* Asset;
 	int MapPositionOffsetX = 0;
 	int MapPositionOffsetY = 0;
 	pair<int, int> Pair;
@@ -405,7 +435,9 @@ void MapManager::UpdateCells()
 	{
 		if (m_VisibleMapCells[CurrentMap])
 		{
+			// Get all the cells and assets of the active map
 			m_VisibleObjectArray = *m_VisibleMapCells[CurrentMap];
+			m_VisibleAssetArray = *m_VisibleAssetCells[CurrentMap];
 
 			// Then get the approp. offsets for these cells
 			if (CurrentMap != CenterMapArrayIndex)
@@ -425,6 +457,7 @@ void MapManager::UpdateCells()
 				for (int j = 0; j < MapSizeH; j++)
 				{
 					Object = m_VisibleObjectArray[i][j];
+					Asset = m_VisibleAssetArray[i][j];
 
 					int PositionX = (i)* m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
 					int PositionY = (j)* m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
@@ -436,6 +469,15 @@ void MapManager::UpdateCells()
 						PositionY < m_ActiveWndHeight)
 					{
 						Object->Update();
+					}
+
+					if (Asset &&
+						PositionX + m_CellWidth >= 0 &&
+						PositionX < m_ActiveWndWidth &&
+						PositionY + m_CellHeight >= 0 &&
+						PositionY < m_ActiveWndHeight)
+					{
+						Asset->Update();
 					}
 				}
 			}
@@ -897,7 +939,19 @@ void MapManager::MoveMap()
 	m_VisibleMapCells[(int)MapDirection::West] = m_ActiveMap->GetNeighbor(MapDirection::West)->GetCellArrayAddress();
 	m_VisibleMapCells[(int)MapDirection::Northwest] = m_ActiveMap->GetNeighbor(MapDirection::Northwest)->GetCellArrayAddress();
 	// Finally set the cells for the new active map
-	m_VisibleMapCells[CenterMapArrayIndex] = m_ActiveMap->GetCellArrayAddress();;
+	m_VisibleMapCells[CenterMapArrayIndex] = m_ActiveMap->GetCellArrayAddress();
+
+	// Do the same for the map assets
+	m_VisibleAssetCells[(int)MapDirection::North] = m_ActiveMap->GetNeighbor(MapDirection::North)->GetAssetArrayAddress();
+	m_VisibleAssetCells[(int)MapDirection::Northeast] = m_ActiveMap->GetNeighbor(MapDirection::Northeast)->GetAssetArrayAddress();
+	m_VisibleAssetCells[(int)MapDirection::East] = m_ActiveMap->GetNeighbor(MapDirection::East)->GetAssetArrayAddress();
+	m_VisibleAssetCells[(int)MapDirection::Southeast] = m_ActiveMap->GetNeighbor(MapDirection::Southeast)->GetAssetArrayAddress();
+	m_VisibleAssetCells[(int)MapDirection::South] = m_ActiveMap->GetNeighbor(MapDirection::South)->GetAssetArrayAddress();
+	m_VisibleAssetCells[(int)MapDirection::Southwest] = m_ActiveMap->GetNeighbor(MapDirection::Southwest)->GetAssetArrayAddress();
+	m_VisibleAssetCells[(int)MapDirection::West] = m_ActiveMap->GetNeighbor(MapDirection::West)->GetAssetArrayAddress();
+	m_VisibleAssetCells[(int)MapDirection::Northwest] = m_ActiveMap->GetNeighbor(MapDirection::Northwest)->GetAssetArrayAddress();
+	// Finally set the cells for the new active map
+	m_VisibleAssetCells[CenterMapArrayIndex] = m_ActiveMap->GetAssetArrayAddress();
 
 	// Map no longer needs swapping
 	m_MapNeedsSwapping = false;
@@ -1644,11 +1698,6 @@ Collision* MapManager::CheckCellForCollision(
 			// Then find the distance from the pos w/o movement to the edge of the cell
 			int CurrentDistanceUntilCollision = abs((int)Movement.getY()) - DistanceWithinWall;
 			// Create the collision reflecting this situation
-
-			// If the given location is not a cell wall, then create the collision
-
-			//  if()
-
 			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Verti, CurrentDistanceUntilCollision);
 		}
 		break;
@@ -1792,7 +1841,10 @@ MapCell* MapManager::GetCellFromMaps(Map* CurrentMap, MapCoordinate RequestedCel
 		NewMap = CurrentMap->GetNeighbor(MapDirection::West);
 	}
 
-	if (!NewMap) _DEBUG_ERROR("Map in collision management was nullptr");
+	if (!NewMap)
+	{
+		return nullptr;
+	}
 
 	return static_cast<MapCell*>(NewMap->GetCell(
 		StandardPos.GetPositionX(),
@@ -1807,16 +1859,13 @@ void MapManager::HandleMapZoom()
 {
 	int OldCellWidth = m_CellWidth;
 	int OldCellHeight = m_CellHeight;
-	//m_CellWidth = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
-	//m_CellHeight = CellHeightSrc + ZoomManager::Instance()->GetPixelOffset();
 
-	m_CellWidth = round((double)(CellWidthSrc * ZoomManager::Instance()->GetScale()));
-	m_CellHeight = round((double)(CellHeightSrc * ZoomManager::Instance()->GetScale()));
+	m_CellWidth = (int)round((double)(CellWidthSrc * ZoomManager::Instance()->GetScale()));
+	m_CellHeight = (int)round((double)(CellHeightSrc * ZoomManager::Instance()->GetScale()));
 
 	double Scale = ZoomManager::Instance()->GetScale();
 
 	// Now we need to correct the pixel offset
-
 	if (ZoomManager::Instance()->IsChange())
 	{
 		double CorrectPixelOffsetX = m_PixelOffsetX - m_ActiveWndWidth / 2;
@@ -1826,9 +1875,6 @@ void MapManager::HandleMapZoom()
 
 		m_PixelOffsetX = -(double)(OldTotalCellsX * m_CellWidth - (double)m_ActiveWndWidth / 2);
 		m_PixelOffsetY = -(double)((OldTotalCellsY * m_CellHeight - (double)m_ActiveWndHeight / 2));
-
-
-
 	}
 }
 

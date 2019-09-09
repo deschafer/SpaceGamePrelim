@@ -328,7 +328,7 @@ Corridor* CorridorVertical::GenerateCorridor(Array BoundsMatrix, Array CorridorL
 
 	if (CurrentX != End.GetPositionX() || CurrentY != End.GetPositionY())
 	{
-		cout << "Did not find the end." << endl;
+		cout << "Potential Error: CorridorVertical was unable to find an ending point" << endl;
 		/*
 		vector<string> Textures;
 		Textures.push_back("Test");

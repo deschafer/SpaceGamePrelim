@@ -219,7 +219,7 @@ void MapAssetManager::ParseList(TiXmlElement* Node)
 	// Check if ListName was a valid result
 	if (ListName == InvalidResultStr)
 	{
-		_DEBUG_ERROR("Asset during list parsing was not found!");
+		abort(); //_DEBUG_ERROR("Asset during list parsing was not found!");
 		return;
 	}
 

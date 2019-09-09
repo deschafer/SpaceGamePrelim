@@ -47,6 +47,7 @@ private:
 	bool m_NoMovementXFlag;
 	bool m_NoMovementYFlag;
 	MapObject*** m_VisibleObjectArray;	// 2D array of pointers to mapobjects visible
+	MapAsset*** m_VisibleAssetArray;	// 2D array of pointers to visible assets that get drawn on top of the base map
 	Map* m_ActiveMap;					// Active map pointer
 	RoomManager* m_RoomManager;
 	std::vector<Map*> m_LoadedMaps;
@@ -54,6 +55,7 @@ private:
 	std::vector<Map*> m_GeneratingMaps;	// Holds maps that need to be linked in the coordinate map structure
 	std::vector <std::pair<MapDirection, bool>> m_SwappingMovement;	// Which direction to map needs to move towards when swapping
 	std::vector<MapObject****> m_VisibleMapCells;
+	std::vector<MapAsset****> m_VisibleAssetCells;
 	std::list<std::pair<Map*, Map*>> m_QueuedEastConnections;
 	std::list<std::pair<Map*, Map*>> m_QueuedNorthConnections;
 	Vector m_RequestedMovement;

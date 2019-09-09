@@ -55,11 +55,11 @@ public:
 	RoomProperties* GetRandomRoomThatFits(std::string &RoomType, int RoomWidth, int RoomHeight)
 	{
 		static bool Entry = false;
-		while (Entry);
 
+		// Preventing access from multiple threads
+		while (Entry);
 		Entry = true;
 
-		size_t ListSize;
 		RoomProperties* Properties = nullptr;
 
 		int Random = rand() % (m_QueuedPossibleRooms.size());

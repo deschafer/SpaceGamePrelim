@@ -36,6 +36,7 @@ const static string WallBottom = "Wall_Bottom";
 const static string Default = "Wall";
 const static string WallTopGroup = "Wall_Top";
 const static string FloorGroup = "Floors";
+const static MapCoordinate ErrorCoord = MapCoordinate(-1, -1);
 
 const static int MinCandidateSideLength = 2;
 const static int ReflectionChance = 2;
@@ -54,7 +55,11 @@ MapRoom::~MapRoom()
 //
 MapRoom::MapRoom(std::string RoomType, int Width, int Height) :
 	m_CellWidth(MapManager::Instance()->GetCellWidth()),
-	m_CellHeight(MapManager::Instance()->GetCellHeight())
+	m_CellHeight(MapManager::Instance()->GetCellHeight()),
+	m_CellSpawnRate(10),
+	m_CountCells(0),
+	m_CellSpawnGroupSize(10),		// An asset can spawn every tens cells if the chance is selected
+	m_BorderingRoom(false)
 {
 	// Getting the properties assoc with this room type
 	m_Properties = RoomManager::Instance()->GetTypeDefinition(RoomType);
@@ -72,9 +77,13 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height) :
 
 	// Generating the array for this room
 	m_Cells = new MapObject**[m_Width];
+	m_Assets = new MapAsset**[m_Width];
+	m_Doorways = new bool**[m_Width];
 	for (int i = 0; i < m_Width; i++)
 	{
 		m_Cells[i] = new MapObject*[m_Height];
+		m_Assets[i] = new MapAsset*[m_Height];
+		m_Doorways[i] = new bool*[m_Height];
 	}
 
 	// Initializing all of the cells to nullptr
@@ -83,6 +92,8 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height) :
 		for (int j = 0; j < m_Height; j++)
 		{
 			m_Cells[i][j] = nullptr;
+			m_Assets[i][j] = nullptr;
+			m_Doorways[i][j] = nullptr;
 		}
 	} 
 }
@@ -163,7 +174,8 @@ void MapRoom::Generate()
 	// Check if the definition was found prior to generating
 	if (Properties == nullptr)
 	{
-		_DEBUG_ERROR("No room def found\n");
+		assert("No room def found");
+		abort();
 	}
 
 	// These indicate how extreme a room's length of inner sides will appear,
@@ -1042,6 +1054,9 @@ void MapRoom::Generate()
 				tempStr.push_back(WallSideRight);
 
 				m_Cells[Start][0] = new MapWall(tempStr, MapCoordinate(TempX, TempY), Rect(0, 0, m_CellWidth, m_CellHeight), Cell::Wall_Right);
+
+				// Then update the cell counter
+				m_CountCells++;
 			}
 
 			complete = true;
@@ -1089,6 +1104,9 @@ void MapRoom::Generate()
 
 			// Finally, creating a new map cell representing the outer walls of this room
 			m_Cells[TempX][TempY] = new MapWall(tempStr, MapCoordinate(TempX, TempY), Rect(0, 0, m_CellWidth, m_CellHeight), CellType);
+
+			// Update the cells counter
+			m_CountCells++;
 		}
 
 		// Decrementing the length
@@ -1150,8 +1168,6 @@ void MapRoom::Generate()
 
 	// Sets the floor tiles, a recursive function
 	SetFloorTiles(m_Cells, StartX, StartY, m_Width, m_Height);
-
-	PlaceAssets();
 
 	// Cleaning all memory
 	StaticSides.clear();
@@ -1658,53 +1674,235 @@ bool MapRoom::ConnectedToRoom(Side side)
 	return false;
 }
 
+
+
+//
+// PlaceAssets()
 //
 //
-//
-//
-void MapRoom::PlaceAssets()
+std::vector<MapAsset*> MapRoom::PlaceAssets()
 {
-	if (/*CellSpawnRate <= 0 ||*/ !m_AssetListIDs.size())
-		return;
+	vector<MapAsset*> Assets;
+	MapAsset* CurrentAsset = nullptr;
 
-	MapCell* CurrentCell = nullptr;
+	// Generate by chance the asset that will be generated
+		// larger rooms have more potential for assets
+		// create a function/equ for this.
 
-	for (int i = 0; i < m_Width; i++)
+	// Then create this asset
+	// Call this asset to place itself
+		// pass in map cells, asset positions, and doorway positions
+		// pass in boundary room status
+
+	// If it suceeded, then we save its placement,
+	// and save the asset so we can return it later
+		// save the asset to this room's asset position array
+		// and save it to the general asset array
+
+
+	// If we cannot place the asset, then try again with 2 
+	// additional and different assets
+		// then stop and void this chance
+
+	int MaxNumberAssets = round(m_CountCells / m_CellSpawnGroupSize);	// the maximum number of assets that can be placed
+
+
+	for (int i = 0; i < MaxNumberAssets; i++)
 	{
-		for (int j = 0; j < m_Height; j++)
+		// For each of the potential assets, check by chance if it will be placed
+		bool Chance = (rand() % 100) <= m_CellSpawnRate;
+
+		// If we need to place an asset
+		if (Chance)
 		{
-			CurrentCell = static_cast<MapCell*>(m_Cells[i][j]);
-			// If the current cell is not nullptr and is not a wall,
-			// then we may place an asset here
-			if (CurrentCell != nullptr &&
-				!CurrentCell->IsCollidableType())
+			CurrentAsset = PlaceAsset();
+			if (CurrentAsset) 
 			{
-				/*
-				bool Chance;// = (rand() % 100) <= CellSpawnRate;
-
-				if (Chance)
-				{
-
-					// First select a list
-					int Selection = rand() % m_AssetListIDs.size();
-
-					// Choose an asset
-					MapAsset* NewAsset = MapAssetManager::Instance()->CreateAssetFromList(m_AssetListIDs[Selection]);
-
-					// Is it opaque or not
-
-					// Go cell by cell
-					// If the current cell is not near a wall, then place an asset here if its opaque
-					// Find a spot that fits
-
-					// Otherwise, grab a random cell floor in the map
-					// Verify that the location is large enough for the asset
-					// Place the asset, and save its location in the array
-
-
-				}
-				*/
+				Assets.push_back(CurrentAsset);
+			}
+			else
+			{
+				cout << "Potential Error: MapRoom ultimately failed placing an asset." << endl;
 			}
 		}
 	}
+
+	return Assets;
+}
+
+//
+// PlaceAsset()
+// Creates and attempts to place a single asset
+// somewhere in this room
+//
+MapAsset* MapRoom::PlaceAsset()
+{
+	// First select a list
+	int Selection = rand() % m_AssetListIDs.size();
+	MapCoordinate SelPosition;
+	MapAsset* NewAsset = nullptr;
+	int NumberTries = 3;
+	int Try = 0;
+	bool Retry = false;
+
+	while (NewAsset == nullptr && Try < NumberTries)
+	{
+		// Choose an asset from this selected list
+		NewAsset = MapAssetManager::Instance()->CreateAssetFromList(m_AssetListIDs[Selection]);
+
+		// Is this a boundary room or not
+		if (m_BorderingRoom)
+		{
+			NewAsset->PlaceAssetBorderingRoom(m_Cells, m_Assets);
+		}
+		else
+		{
+			NewAsset->PlaceAsset(m_Cells, m_Assets, m_Doorways);
+		}
+
+		// Check if the asset succeeded
+		if (SelPosition.GetPositionX() < 0)
+		{
+			// Then the placement failed, delete the asset we wanted to place
+			// and set it as nullptr
+			delete NewAsset;
+			NewAsset = nullptr;
+		}
+		else
+		{
+			// Save the position of the asset by modifying the m_Assets array;
+
+			for (int i = SelPosition.GetPositionX(), AssetWidth = NewAsset->GetIntegerWidth();
+				i < m_Width && i < AssetWidth;
+				i++)
+			{
+				for (int j = SelPosition.GetPositionY(), AssetHeight = NewAsset->GetIntegerHeight();
+					j < m_Height && j < AssetHeight;
+					j++)
+				{
+					// First check if there already is an asset here
+					if (m_Assets[i][j])
+					{
+						cout << "MapAsset Error: Selected placement for map asset was already occupied" << endl;
+					}
+					else
+					{
+						m_Assets[i][j] = NewAsset;	// Save the location of this asset
+					}
+				}
+			}
+		}
+
+		Try++;	// We have tried once to place an asset with this iteration
+	}
+
+	return NewAsset;
+}
+
+//
+// PlaceOpaqueAsset()
+//
+//
+void MapRoom::PlaceOpaqueAsset(MapAsset* Asset)
+{
+	// Find a location in the map that is not surrounded by any walls
+}
+
+//
+// PlaceTransparentAsset()
+//
+//
+void MapRoom::PlaceTransparentAsset(MapAsset* Asset)
+{
+
+	// Find a position with enough room within the map
+	MapCoordinate AssetPlacement = 
+		FindAssetPlacement(MapCoordinate(0, 0), 
+			Asset, 
+			Asset->GetIntegerWidth(), 
+			Asset->GetIntegerHeight());
+
+	// Check if it succeeded
+	if (AssetPlacement != ErrorCoord)
+	{
+		// Then place the asset here in this location
+	}
+	else
+	{
+		cout << "There is no room to place the asset with size w*h " 
+			<< Asset->GetIntegerWidth() 
+			<< "*" 
+			<< Asset->GetIntegerHeight() 
+			<< endl;
+	}
+}
+
+//
+// FindAssetPlacement()
+//
+//
+MapCoordinate MapRoom::FindAssetPlacement(MapCoordinate Coord, MapAsset* Asset, int IntegerWidth, int IntegerHeight)
+{
+
+	MapCell* CurrentCell;
+
+	// Check if the current cell is a floor
+	// Also check the boundaries of the map
+
+	bool Transition = (Coord.GetPositionX() + 1) == m_Width;
+	MapCoordinate NextCell = MapCoordinate
+	((Coord.GetPositionX() + 1) % m_Width,
+		Coord.GetPositionY() + static_cast<int>(Transition));
+
+	if (Coord.GetPositionY() >= m_Height) return ErrorCoord;
+
+	if (Coord.GetPositionX() < m_Width &&
+		Coord.GetPositionY() < m_Height &&
+		!(CurrentCell = static_cast<MapCell*>(m_Cells[Coord.GetPositionX()][Coord.GetPositionY()]))->IsCollidableType())
+	{
+		// Then the current cell itself is not collidable
+
+		// Now we can check if the base size of the asset is available
+
+		for (int X = 0, Y = 0;
+			(Coord.GetPositionX() + X < m_Width) &&
+			(Coord.GetPositionY() + Y < m_Height) &&
+			(X != IntegerWidth && Y != IntegerHeight);)
+		{
+			// Check the current cell
+			if (static_cast<MapCell*>(m_Cells[Coord.GetPositionX() + X][Coord.GetPositionY() + Y])->IsCollidableType())
+			{
+				// Then we cannot place a cell here, and move to the next available position
+				FindAssetPlacement(NextCell, Asset, IntegerWidth, IntegerHeight);
+			}
+
+			// Otherwise we keep looking
+			// Move to the next cell
+			X++;
+
+			// Check if we need to move down a row
+			// Check this as the end so we can guarantee we are still within 
+			// the selected region
+			if ((X %= m_Width) == 0)
+			{
+				X = 0;
+				Y++;
+			}
+		}
+
+		// The selected region is free and able to be taken
+		// Return the topleft corner of this rectangle
+		return Coord;
+	}
+
+	return FindAssetPlacement(NextCell, Asset, IntegerWidth, IntegerHeight);
+}
+
+//
+// AddDoorWayPosition()
+//
+//
+void MapRoom::AddDoorWayPosition(MapCoordinate Coord)
+{
+	m_Doorways[Coord.GetPositionX()][Coord.GetPositionY()] = new bool(true);
 }

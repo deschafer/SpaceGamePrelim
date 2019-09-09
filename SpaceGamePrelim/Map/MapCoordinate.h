@@ -21,6 +21,19 @@ public:
 		return true;
 	}
 
+	bool operator !=(MapCoordinate Other)
+	{
+		return !(*this == Other);
+	}
+
+
+	MapCoordinate operator -(MapCoordinate Other)
+	{
+		return MapCoordinate(
+			GetPositionX() - Other.GetPositionX(),
+			GetPositionY() - Other.GetPositionY());
+	}
+
 	int GetPositionX() { return m_PositionX; }
 	int GetPositionY() { return m_PositionY; }
 };

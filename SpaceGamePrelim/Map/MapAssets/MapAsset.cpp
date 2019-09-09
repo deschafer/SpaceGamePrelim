@@ -1,5 +1,6 @@
 #include "MapAsset.h"
 #include "../../Frame/ZoomManager.h"
+#include "../MapManager.h"
 
 
 MapAsset::MapAsset()
@@ -16,6 +17,7 @@ MapAsset::MapAsset(std::vector<std::string> RedTextureIDs,
 	Cell CellType) :
 	MapCell(RedTextureIDs, Position, DestRect, CellType)
 {
+	m_Updated = false;
 }
 
 //
@@ -31,7 +33,7 @@ void MapAsset::Load(
 	Rect DestRect,
 	Cell CellType,
 	std::vector<int> NumberFrames,
-	std::vector<int> AnimationSpeed)
+	std::vector<int> AnimationSpeed) 
 {
 	m_CellType = CellType;
 	m_Position = Position;
@@ -167,6 +169,30 @@ void MapAsset::Load(std::vector<std::string> RedTextureIDs, // Function used to 
 }
 
 //
+// Draw()
+//
+//
+void MapAsset::Draw(MapCoordinate Coords)
+{
+	MapCell::Draw(Coords);
+
+	m_Updated = false; // end of this game loop, so we can be updated again
+}
+
+//
+// Update()
+//
+//
+void MapAsset::Update()
+{
+	if (m_Updated) return;
+
+	MapCell::Update();
+
+	m_Updated = true;
+}
+
+//
 // Zoom()
 //
 //
@@ -182,9 +208,53 @@ void MapAsset::Zoom()
 	{
 		Scale = ZoomManager::Instance()->GetScale();
 
-		NewWidth = round((double)(CurrDim.Width() * Scale));
-		NewHeight = round((double)(CurrDim.Height() * Scale));
+		NewWidth = (int)round(CurrDim.Width() * Scale);
+		NewHeight = (int)round(CurrDim.Height() * Scale);
 
 		m_DestRect = Rect(0, 0, NewWidth, NewHeight);
 	}
 }
+
+//
+//
+//
+//
+int MapAsset::GetIntegerWidth() 
+{ 
+	return m_DestRect.Width() % MapManager::Instance()->GetCellWidth(); 
+}
+
+//
+//
+//
+//
+int MapAsset::GetIntegerHeight()
+{ 
+	return m_DestRect.Height() % MapManager::Instance()->GetCellHeight(); 
+}
+
+//
+// PlaceAsset()
+// Finds an appropriate spot in this room to place this object. Will return the 
+// top left coord of the desired place if it was found
+//
+MapCoordinate MapAsset::PlaceAsset(MapObject*** RoomCells, MapAsset*** RoomAssets, bool*** Doorways)
+{
+
+	return MapCoordinate(0, 0);
+}
+
+//
+// PlaceAssetBoundaryRoom()
+// Finds an appropriate spot in this boundary room to place this object. Will return the 
+// top left coord of the desired place if it was found
+// Boundary room is important because it means we cannot appropriatly judge the exact location of all doorways
+// and therefore we do not even look at the doorways
+//
+MapCoordinate MapAsset::PlaceAssetBorderingRoom(MapObject*** RoomCells, MapAsset*** RoomAssets)
+{
+
+	return MapCoordinate(0, 0);
+}
+
+

@@ -25,6 +25,6 @@ void CenterPosComp::Execute()
 	//	MainApplication::Instance()->GetWndHeight() / 2 - round((double)(Dim.Height() / 2))));
 
 	m_Owner->SetPosition(Vector(
-		MainApplication::Instance()->GetWndWidth() / 2,
-		MainApplication::Instance()->GetWndHeight() / 2 ));
+		(float)MainApplication::Instance()->GetWndWidth() / 2,
+		(float)MainApplication::Instance()->GetWndHeight() / 2 ));
 }

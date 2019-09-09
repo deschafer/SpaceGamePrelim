@@ -9,7 +9,6 @@
     <ROOM RoomID="Stair_Down_Reflected" AssetList="TestingList"/>
     <ROOM RoomID="Misc_Room_2" AssetList="TestingList"/>
     <ROOM RoomID="Misc_Room_1" AssetList="TestingList"/>
-  
   </MAP>
 
   <MAP MapType="Testing2" GlobalAssetList="TestingList">
