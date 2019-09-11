@@ -178,7 +178,7 @@ void Map::Generate()
 	// Adding assets to every room
 	// For each room where assets are added, get that position and add them to the map
 
-	// PlaceAssets();
+	PlaceAssets();
 
 	// At this point in time, the entire map has been generated and all 
 	// of the rooms have been made and connected together.
@@ -282,9 +282,9 @@ void Map::AddAssets(MapRoom* Room, MapCoordinate TopLeftPoint, bool BorderingRoo
 		AssetHeight = RoomAssets[i]->GetIntegerHeight();
 
 		// and add all these locations in the array
-		for (size_t x = MapReferenceAssetTopLeft.GetPositionX() + RoomReferenceAssetTopLeft.GetPositionX(); x < AssetWidth; x++)
+		for (size_t x = MapReferenceAssetTopLeft.GetPositionX() + RoomReferenceAssetTopLeft.GetPositionX(), Width = 0; Width < (size_t)AssetWidth && x < m_Width; x++, Width++)
 		{
-			for (size_t y = MapReferenceAssetTopLeft.GetPositionY() + RoomReferenceAssetTopLeft.GetPositionY(); y < AssetHeight; y++)
+			for (size_t y = MapReferenceAssetTopLeft.GetPositionY() + RoomReferenceAssetTopLeft.GetPositionY(), Height = 0; Height < (size_t)AssetHeight && y < m_Height; y++, Height++)
 			{
 				m_Assets[x][y] = RoomAssets[i];
 			}
@@ -313,6 +313,10 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	MapRoom* Room;
 	MapRoom* RoomAbove = (m_Rooms[ColNumber].size()) ? m_Rooms[ColNumber][m_Rooms[ColNumber].size() - 1] : nullptr;
 	int xOffset;
+	vector<unsigned> GlobalAssets;
+	unsigned LocalAssets = 0;
+	vector<unsigned> AssetLists;
+	
 
 	// We need to get a room height, first check if there is a boundary within 20 cells
 	for (size_t i = OffsetY, Count = 0; i < (size_t)(m_Height - 1) && Count < (size_t)MaxRoomHeight; i++, Count++)
@@ -322,7 +326,7 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 
 	// First find a room from the list given that can fit in the space
 	// Search the list of map-specific rooms
-	Properties = m_MapProperties->GetRandomRoomThatFits(RoomType, RoomWidth, RoomHeight);
+	Properties = m_MapProperties->GetRandomRoomThatFits(RoomType, RoomWidth, RoomHeight, GlobalAssets, LocalAssets);
 
 	if (!Properties)
 	{
@@ -352,8 +356,11 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	// Add randomization to the selected room's width
 	RoomWidth = Properties->m_MinWidth + rand() % (MaxWidth - Properties->m_MinWidth);
 
+	// Formatting the assets -- adding the local assets to our asset list, we re-use the global list for this
+	GlobalAssets.push_back(LocalAssets);
+
 	// Creating the new room
-	Room = new MapRoom(RoomType, RoomWidth, RoomHeight);
+	Room = new MapRoom(RoomType, RoomWidth, RoomHeight, GlobalAssets);
 	Room->Generate();
 
 	// Adding a offset within the column so all the rooms

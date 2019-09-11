@@ -35,6 +35,7 @@ public:
 			if (Properties)
 			{
 				m_QueuedPossibleRooms.push_back(std::pair<RoomProperties*, std::string>(Properties, m_PossibleRooms[i]));
+				m_QueuedAssetListIDs.push_back(AssetListIDs[i]);
 
 				if (Properties->m_MinWidth < m_MinRoomWidth) 
 					m_MinRoomWidth = Properties->m_MinWidth;
@@ -52,18 +53,24 @@ public:
 	std::vector<std::string> GetRooms() { return m_PossibleRooms; }
 	std::vector<unsigned> GetAssetIDs() { return m_PossibleAssetLists; }
 	std::vector<unsigned> GetGlobalAssetIDs() { return m_GlobalAssetListIDs; }
-	RoomProperties* GetRandomRoomThatFits(std::string &RoomType, int RoomWidth, int RoomHeight)
+	RoomProperties* GetRandomRoomThatFits(
+		std::string &RoomType, 
+		int RoomWidth, 
+		int RoomHeight, 
+		std::vector<unsigned> &GlobalAssets, 
+		unsigned &LocalAssets)
 	{
 		static bool Entry = false;
 
 		// Preventing access from multiple threads
 		while (Entry);
-		Entry = true;
+			Entry = true;
 
 		RoomProperties* Properties = nullptr;
-
 		int Random = rand() % (m_QueuedPossibleRooms.size());
-		std::pair<RoomProperties*, std::string> CurrentSet;
+		std::pair<RoomProperties*, std::string> CurrentSet;	
+		unsigned CurrentAssetList;
+
 
 		// Randomize the list
 		for (int i = 0; i < Random; i++)
@@ -74,6 +81,12 @@ public:
 
 			// Before we look at it, return it to the back of the list
 			m_QueuedPossibleRooms.push_back(CurrentSet);
+
+			// Randomize the assets as well
+			CurrentAssetList = m_QueuedAssetListIDs.front();
+			m_QueuedAssetListIDs.pop_front();
+
+			m_QueuedAssetListIDs.push_back(CurrentAssetList);
 		}
 
 		for (size_t i = 0; i < m_QueuedPossibleRooms.size(); i++)
@@ -83,8 +96,13 @@ public:
 			m_QueuedPossibleRooms.pop_front();
 			Properties = CurrentSet.first;
 
+			// Do the same for the assets
+			CurrentAssetList = m_QueuedAssetListIDs.front();
+			m_QueuedAssetListIDs.pop_front();
+
 			// Before we look at it, return it to the back of the list
 			m_QueuedPossibleRooms.push_back(CurrentSet);
+			m_QueuedAssetListIDs.push_back(CurrentAssetList);
 
 			// Inspect it and see if it will fit the space available
 			if (Properties->m_MinHeight <= RoomHeight &&
@@ -92,6 +110,9 @@ public:
 			{
 				Entry = false;
 				RoomType = CurrentSet.second;
+				GlobalAssets = m_GlobalAssetListIDs;
+				LocalAssets = CurrentAssetList;
+				
 				return Properties;
 			}
 		}
@@ -105,6 +126,8 @@ private:
 	std::list<std::pair<RoomProperties*, std::string>> m_QueuedPossibleRooms;
 	std::vector<unsigned> m_PossibleAssetLists;
 	std::vector<unsigned> m_GlobalAssetListIDs;
+	std::list<unsigned> m_QueuedAssetListIDs;		// local assets only
+
 	std::string m_MapTypeName;
 
 	int m_MinRoomWidth;

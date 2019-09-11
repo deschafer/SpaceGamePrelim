@@ -18,6 +18,17 @@ MapAsset::MapAsset(std::vector<std::string> RedTextureIDs,
 	MapCell(RedTextureIDs, Position, DestRect, CellType)
 {
 	m_Updated = false;
+	m_Drawn = false;
+}
+
+//
+// Reset()
+// should be called by derived classes when this object is copied
+//
+void MapAsset::Reset()
+{
+	m_Drawn = false;
+	m_Updated = false;
 }
 
 //
@@ -174,9 +185,12 @@ void MapAsset::Load(std::vector<std::string> RedTextureIDs, // Function used to 
 //
 void MapAsset::Draw(MapCoordinate Coords)
 {
+	if (m_Drawn) return;
+
 	MapCell::Draw(Coords);
 
 	m_Updated = false; // end of this game loop, so we can be updated again
+	m_Drawn = true;
 }
 
 //
@@ -190,6 +204,7 @@ void MapAsset::Update()
 	MapCell::Update();
 
 	m_Updated = true;
+	m_Drawn = false;
 }
 
 //
@@ -221,7 +236,7 @@ void MapAsset::Zoom()
 //
 int MapAsset::GetIntegerWidth() 
 { 
-	return m_DestRect.Width() % MapManager::Instance()->GetCellWidth(); 
+	return ceil(m_DestRect.Width() / MapManager::Instance()->GetCellWidth()); 
 }
 
 //
@@ -230,7 +245,7 @@ int MapAsset::GetIntegerWidth()
 //
 int MapAsset::GetIntegerHeight()
 { 
-	return m_DestRect.Height() % MapManager::Instance()->GetCellHeight(); 
+	return ceil(m_DestRect.Height() / MapManager::Instance()->GetCellHeight());
 }
 
 //
@@ -240,6 +255,8 @@ int MapAsset::GetIntegerHeight()
 //
 MapCoordinate MapAsset::PlaceAsset(MapObject*** RoomCells, MapAsset*** RoomAssets, bool*** Doorways)
 {
+
+
 
 	return MapCoordinate(0, 0);
 }
@@ -256,5 +273,3 @@ MapCoordinate MapAsset::PlaceAssetBorderingRoom(MapObject*** RoomCells, MapAsset
 
 	return MapCoordinate(0, 0);
 }
-
-

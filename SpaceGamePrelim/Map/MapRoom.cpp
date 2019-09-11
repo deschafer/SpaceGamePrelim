@@ -100,6 +100,19 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height) :
 
 //
 // MapRoom()
+//
+//
+MapRoom::MapRoom(std::string RoomType, int Width, int Height, std::vector<unsigned> AssetLists) : 
+	MapRoom(RoomType, Width, Height)
+{
+	for (size_t i = 0; i < AssetLists.size(); i++)
+	{
+		m_AssetListIDs.push_back(AssetLists[i]);
+	}
+}
+
+//
+// MapRoom()
 // CTOR that should be used to create a MapRoom with an unknown type
 // NOTE: May not be staying in final version due to min room size complications
 //
@@ -1737,6 +1750,9 @@ std::vector<MapAsset*> MapRoom::PlaceAssets()
 //
 MapAsset* MapRoom::PlaceAsset()
 {
+	if (!m_AssetListIDs.size()) 
+		return nullptr;
+
 	// First select a list
 	int Selection = rand() % m_AssetListIDs.size();
 	MapCoordinate SelPosition;
@@ -1753,15 +1769,15 @@ MapAsset* MapRoom::PlaceAsset()
 		// Is this a boundary room or not
 		if (m_BorderingRoom)
 		{
-			NewAsset->PlaceAssetBorderingRoom(m_Cells, m_Assets);
+			SelPosition = NewAsset->PlaceAssetBorderingRoom(m_Cells, m_Assets);
 		}
 		else
 		{
-			NewAsset->PlaceAsset(m_Cells, m_Assets, m_Doorways);
+			SelPosition = NewAsset->PlaceAsset(m_Cells, m_Assets, m_Doorways);
 		}
 
 		// Check if the asset succeeded
-		if (SelPosition.GetPositionX() < 0)
+		if (SelPosition == ErrorCoord)
 		{
 			// Then the placement failed, delete the asset we wanted to place
 			// and set it as nullptr
@@ -1797,44 +1813,6 @@ MapAsset* MapRoom::PlaceAsset()
 	}
 
 	return NewAsset;
-}
-
-//
-// PlaceOpaqueAsset()
-//
-//
-void MapRoom::PlaceOpaqueAsset(MapAsset* Asset)
-{
-	// Find a location in the map that is not surrounded by any walls
-}
-
-//
-// PlaceTransparentAsset()
-//
-//
-void MapRoom::PlaceTransparentAsset(MapAsset* Asset)
-{
-
-	// Find a position with enough room within the map
-	MapCoordinate AssetPlacement = 
-		FindAssetPlacement(MapCoordinate(0, 0), 
-			Asset, 
-			Asset->GetIntegerWidth(), 
-			Asset->GetIntegerHeight());
-
-	// Check if it succeeded
-	if (AssetPlacement != ErrorCoord)
-	{
-		// Then place the asset here in this location
-	}
-	else
-	{
-		cout << "There is no room to place the asset with size w*h " 
-			<< Asset->GetIntegerWidth() 
-			<< "*" 
-			<< Asset->GetIntegerHeight() 
-			<< endl;
-	}
 }
 
 //

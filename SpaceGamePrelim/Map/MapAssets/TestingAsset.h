@@ -8,7 +8,6 @@ class TestingAsset : public MapAsset
 
 public:
 	TestingAsset();
-	TestingAsset(TestingAsset*);
 	virtual ~TestingAsset();
 
 	virtual MapAsset* Copy();	// Returns a copy of this object

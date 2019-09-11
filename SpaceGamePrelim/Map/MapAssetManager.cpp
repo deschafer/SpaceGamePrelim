@@ -292,7 +292,7 @@ MapAsset* MapAssetManager::CreateAssetFromList(unsigned ListID)
 		if (Selection >= AssetRegions[i].first && Selection < AssetRegions[i].second)
 		{
 			// Found the asset we have chosen randomly
-			return m_Assets[m_TypeLists[ListID][i].first];
+			return CreateAsset(m_TypeLists[ListID][i].first);
 
 		}
 	}

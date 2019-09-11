@@ -17,7 +17,7 @@
     </GSideDef>
   </DEF>
   <DEF name="Complex" minwidth="13" minheight="15" dynamic="0" innerX="0.25" innerY="0.25">
-    <Turns>
+	<Turns>
       <T t="R"/>
       <T t="L"/>
       <T t="L"/>
@@ -102,7 +102,7 @@
   </DEF>
 
   <DEF name="L_Rect" >
-    <Turns>
+	<Turns>
       <T t="R"/>
       <T t="R"/>
       <T t="L"/>

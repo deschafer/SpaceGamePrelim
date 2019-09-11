@@ -48,9 +48,6 @@ private:
 
 	void AddCandidate(Side CurrentSide, MapCoordinate Start, MapCoordinate End);
 	MapAsset* PlaceAsset();
-	void PlaceOpaqueAsset(MapAsset* Asset);
-	void PlaceTransparentAsset(MapAsset* Asset);
-
 	MapCoordinate FindAssetPlacement(MapCoordinate Coord, MapAsset* Asset, int Width, int Height);
 public:
 
@@ -73,6 +70,7 @@ public:
 
 	MapRoom();
 	MapRoom(std::string RoomType, int Width, int Height); // Known room
+	MapRoom(std::string RoomType, int Width, int Height, std::vector<unsigned> AssetLists);
 	MapRoom(int Width, int Height);						  // Random room
 	~MapRoom();	
 };

@@ -317,6 +317,7 @@ void MapManager::Draw()
 		if (m_VisibleMapCells[CurrentMap])
 		{
 			m_VisibleObjectArray = *m_VisibleMapCells[CurrentMap];
+			m_VisibleAssetArray = *m_VisibleAssetCells[CurrentMap];
 
 			// Then get the approp. offsets for these cells
 			if (CurrentMap != CenterMapArrayIndex)
@@ -369,6 +370,14 @@ void MapManager::Draw()
 						PositionY < m_ActiveWndHeight)
 					{
 						Asset->Draw(MapCoordinate((int)round(PositionX), (int)round(PositionY)));
+
+						/*
+						if (i % 20 == 0)
+						{
+							Asset->Update();
+							Asset->Draw(MapCoordinate(round(PositionX), round(PositionY)));
+						}
+						*/
 					}
 				}
 			}

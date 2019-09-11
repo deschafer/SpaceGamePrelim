@@ -13,15 +13,6 @@ TestingAsset::TestingAsset()
 //
 //
 //
-TestingAsset::TestingAsset(TestingAsset* Asset) :
-	TestingAsset(*Asset)
-{
-}
-
-//
-//
-//
-//
 TestingAsset::~TestingAsset()
 {
 }
@@ -32,7 +23,9 @@ TestingAsset::~TestingAsset()
 //
 MapAsset* TestingAsset::Copy()
 {
-	TestingAsset* NewAsset = new TestingAsset(this);
+	TestingAsset* NewAsset = new TestingAsset;
+	*NewAsset = *this;
+	NewAsset->Reset();
 	return NewAsset;
 }
 
