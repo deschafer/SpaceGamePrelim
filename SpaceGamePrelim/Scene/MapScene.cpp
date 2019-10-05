@@ -15,7 +15,9 @@
 #include "../Components/MapZoomComp.h"
 #include "../Components/ZoomMovementComp.h"
 
-#include "../Parsing/InitFactory.h"
+#include "../Parsing/RoomDefinitionParser.h"
+#include "../Parsing/FallbackRoomParser.h"
+
 
 #include <iostream>
 
@@ -55,7 +57,6 @@ bool MapScene::Enter()
 	SceneFactory::Instance()->RegisterNewComponent("MapZoom", new MapZoomCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("ZoomMovement", new ZoomMovementCompCreator());
 
-
 	SceneFactory::Instance()->LoadNewScene("./XML/Scenes/Test.xml", this);
 
 	// Now setting up the associated assets with the map
@@ -68,9 +69,10 @@ bool MapScene::Enter()
 	MapAssetManager::Instance()->AddAssetSourceFile("./XML/Map/Assets.xml");
 
 	// Need to create the room definitions first
-	InitFactory::Instance()->LoadRoomDefinitions("./XML/Map/Room.xml");
+	RoomDefinitionParser::Instance()->LoadRoomDefinitions("./XML/Map/Room.xml");
+
 	// Then we can decide which of this are going to be fallbacks
-	InitFactory::Instance()->LoadFallbackRooms("./XML/Map/Fallback.xml");
+	FallbackRoomParser::Instance()->LoadFallbackRooms("./XML/Map/Fallback.xml");
 
 #ifdef _DEBUG
 

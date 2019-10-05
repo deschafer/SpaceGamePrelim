@@ -1,7 +1,7 @@
 
 #include "MainApplication.h"
 #include "ZoomManager.h"
-#include "..\Parsing\InitFactory.h"
+#include "..\Parsing\TextureParser.h"
 #include "..\Parsing\SceneFactory.h"
 #include "..\Scene\MapScene.h"
 #include "..\Objects\Button.h"
@@ -93,8 +93,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	// Register before parsing source file
 
-	InitFactory::Instance()->LoadTextures("./XML/Textures/Textures.xml");
-
+	TextureParser::Instance()->LoadTextures("./XML/Textures/Textures.xml");
 	InitializeScenes();
 
 	return true;

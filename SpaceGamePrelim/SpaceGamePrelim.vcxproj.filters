@@ -134,9 +134,6 @@
     <ClCompile Include="Objects\Button.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Parsing\InitFactory.cpp">
-      <Filter>Source Files\Parsing</Filter>
-    </ClCompile>
     <ClCompile Include="Parsing\SceneFactory.cpp">
       <Filter>Source Files\Parsing</Filter>
     </ClCompile>
@@ -242,11 +239,17 @@
     <ClCompile Include="Map\MapFactory.cpp">
       <Filter>Source Files\Map</Filter>
     </ClCompile>
+    <ClCompile Include="Parsing\FallbackRoomParser.cpp">
+      <Filter>Source Files\Parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="Parsing\RoomDefinitionParser.cpp">
+      <Filter>Source Files\Parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="Parsing\TextureParser.cpp">
+      <Filter>Source Files\Parsing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Parsing\InitFactory.h">
-      <Filter>Header Files\Parsing</Filter>
-    </ClInclude>
     <ClInclude Include="Parsing\SceneFactory.h">
       <Filter>Header Files\Parsing</Filter>
     </ClInclude>
@@ -414,6 +417,15 @@
     </ClInclude>
     <ClInclude Include="Map\MapFactory.h">
       <Filter>Header Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Parsing\FallbackRoomParser.h">
+      <Filter>Header Files\Parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="Parsing\RoomDefinitionParser.h">
+      <Filter>Header Files\Parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="Parsing\TextureParser.h">
+      <Filter>Header Files\Parsing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

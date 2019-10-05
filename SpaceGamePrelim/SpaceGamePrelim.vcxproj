@@ -59,8 +59,10 @@
     <ClCompile Include="Objects\GameEntity.cpp" />
     <ClCompile Include="Objects\GameObject.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
-    <ClCompile Include="Parsing\InitFactory.cpp" />
+    <ClCompile Include="Parsing\FallbackRoomParser.cpp" />
+    <ClCompile Include="Parsing\RoomDefinitionParser.cpp" />
     <ClCompile Include="Parsing\SceneFactory.cpp" />
+    <ClCompile Include="Parsing\TextureParser.cpp" />
     <ClCompile Include="Parsing\TinyXML\tinystr.cpp" />
     <ClCompile Include="Parsing\TinyXML\tinyxml.cpp" />
     <ClCompile Include="Parsing\TinyXML\tinyxmlerror.cpp" />
@@ -120,8 +122,10 @@
     <ClInclude Include="Objects\GameEntity.h" />
     <ClInclude Include="Objects\GameObject.h" />
     <ClInclude Include="Objects\Player.h" />
-    <ClInclude Include="Parsing\InitFactory.h" />
+    <ClInclude Include="Parsing\FallbackRoomParser.h" />
+    <ClInclude Include="Parsing\RoomDefinitionParser.h" />
     <ClInclude Include="Parsing\SceneFactory.h" />
+    <ClInclude Include="Parsing\TextureParser.h" />
     <ClInclude Include="Parsing\TinyXML\tinystr.h" />
     <ClInclude Include="Parsing\TinyXML\tinyxml.h" />
     <ClInclude Include="Scene\ActiveSceneManager.h" />

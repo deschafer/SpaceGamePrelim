@@ -1,38 +1,25 @@
-
-#include "InitFactory.h"
-#include "..\Parsing\TinyXML\tinyxml.h"
-#include "..\Map\RoomManager.h"
-#include "..\BasicTypes\BasicTypes.h"
-#include "..\TextureCode\TextureManager.h"
-#include "..\Frame\MainApplication.h"
+#include "RoomDefinitionParser.h"
+#include "TinyXML\tinyxml.h"
 #include "..\Map\MapAssetManager.h"
+#include "..\Map\RoomManager.h"
 
-#include <iostream>
 #include <vector>
+#include <iostream>
 
-#include <string.h>
+RoomDefinitionParser* RoomDefinitionParser::m_Instance = nullptr;
 
 const static std::string RoomStr = "ROOM";
 const static std::string RoomIDStr = "RoomID";
 
-InitFactory* InitFactory::m_Instance = nullptr;
-
-
-InitFactory::InitFactory()
+RoomDefinitionParser::RoomDefinitionParser()
 {
 }
 
-InitFactory::~InitFactory()
+RoomDefinitionParser::~RoomDefinitionParser()
 {
 }
 
-//
-// LoadRoomDefinitions()
-// Loads in all the room definitions from the xml file that contains them.
-// Each definition describes its turns and greater sides, and it may or may 
-// not have static sides.
-//
-bool InitFactory::LoadRoomDefinitions(std::string File)
+bool RoomDefinitionParser::LoadRoomDefinitions(std::string File)
 {
 	const float DefaultVariance = 0.5;
 
@@ -99,7 +86,7 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 			DefName = Current->Attribute("name");
 			if (Current->Attribute("minwidth"))
 			{
-				 MinWidth = Current->Attribute("minwidth");
+				MinWidth = Current->Attribute("minwidth");
 			}
 			if (Current->Attribute("minheight"))
 			{
@@ -238,14 +225,14 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 				{
 					RoomManager::Instance()->RegisterRoomType(
 						new RoomProperties(
-							ParsedGSides, 
-							ParsedTurns, 
-							Variance, 
+							ParsedGSides,
+							ParsedTurns,
+							Variance,
 							InnerX,
 							InnerY,
 							DynamicSides,
 							ListIDs
-						), 
+						),
 						DefName);
 				}
 				else
@@ -253,8 +240,8 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 					RoomManager::Instance()->RegisterRoomType(
 						new RoomProperties(
 							ParsedGSides,
-							ParsedTurns, 
-							Variance, 
+							ParsedTurns,
+							Variance,
 							InnerX,
 							InnerY,
 							DynamicSides,
@@ -274,14 +261,14 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 				{
 					RoomManager::Instance()->RegisterRoomType(
 						new RoomProperties(
-							ParsedGSides, 
-							ParsedTurns, 
-							ParsedStaticSides, 
+							ParsedGSides,
+							ParsedTurns,
+							ParsedStaticSides,
 							Variance,
 							InnerX,
 							InnerY,
 							ListIDs
-						), 
+						),
 						DefName);
 				}
 				else
@@ -289,9 +276,9 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 					RoomManager::Instance()->RegisterRoomType(
 						new RoomProperties(
 							ParsedGSides,
-							ParsedTurns, 
+							ParsedTurns,
 							ParsedStaticSides,
-							Variance, 
+							Variance,
 							InnerX,
 							InnerY,
 							ListIDs,
@@ -309,155 +296,6 @@ bool InitFactory::LoadRoomDefinitions(std::string File)
 			ParsedTurns.clear();
 			ParsedStaticSides.clear();
 
-		}
-	}
-
-	return true;
-}
-
-//
-// LoadFallbackRooms()
-// 
-//
-bool InitFactory::LoadFallbackRooms(std::string File)
-{
-	// Parse the given file
-	TiXmlDocument Document;
-
-	// Load the input file
-	if (!Document.LoadFile(File.c_str()))
-	{
-		std::cout << Document.ErrorDesc() << std::endl;
-		return false;
-	}
-
-	TiXmlElement* Node = Document.RootElement();
-
-	for (Node = Node->FirstChildElement(); Node != nullptr; Node = Node->NextSiblingElement())
-	{
-		// Determine the kind of Node that we have
-
-		// If we have the start of a map def
-		if (Node->ValueStr() == RoomStr)
-		{
-			std::string ID = CheckAndCopy(Node, RoomIDStr);
-
-			// Then we register a new fallback room
-			RoomManager::Instance()->RegisterFallbackRoom(ID);
-		}
-	}
-	return true;
-}
-
-//
-// LoadTextures()
-// Loads in both reduced textures and textures from a given xml file
-//
-bool InitFactory::LoadTextures(std::string File)
-{
-
-	TiXmlDocument Document;
-
-	// Load the input file
-	if (!Document.LoadFile(File.c_str()))
-	{
-		std::cout << Document.ErrorDesc() << std::endl;
-		return false;
-	}
-
-	// Gets the root element
-	TiXmlElement* Root = Document.RootElement();
-
-	if (Root == nullptr)
-	{
-		std::cout << "Root nullptr" << std::endl;
-		return false;
-	}
-
-	// declare the states root node
-	TiXmlElement* NextChildNode = nullptr;
-	std::string temp;
-	std::string ReducedTextureName;
-	std::string TextureName;
-	std::string TexturePath;
-	Rect SourceDimensions;
-
-	// Parsing the file
-	for (TiXmlElement* Current = Root->FirstChildElement();
-		Current != nullptr;
-		Current = NextChildNode->NextSiblingElement())
-	{
-		// Looking for the start of a texture definition
-		if ((Current != nullptr &&
-			(temp = Current->Value()) == "TEXTURE"))
-		{
-			NextChildNode = Current;
-
-			// Getting the definition name
-			TextureName = Current->Attribute("name");
-			TexturePath = Current->Attribute("path");
-
-			// Add the new texture
-			TextureManager::Instance()->SetTexture(
-				TexturePath, 
-				TextureName, 
-				MainApplication::Instance()->GetRenderer());
-
-		}
-		// Looking for the start of a reduced texture definition
-		else if ((Current != nullptr &&
-			(temp = Current->Value()) == "RED_TEXTURE"))
-		{
-			NextChildNode = Current;
-
-			// Getting the definition name
-			ReducedTextureName = Current->Attribute("name");
-			TextureName = Current->Attribute("assoc_name");
-
-			// Getting the dimensions
-			temp = Current->Attribute("x");
-			int X = std::stoi(temp);
-			temp = Current->Attribute("y");
-			int Y = std::stoi(temp);
-			temp = Current->Attribute("width");
-			int Width = std::stoi(temp);
-			temp = Current->Attribute("height");
-			int Height = std::stoi(temp);
-
-			SourceDimensions = Rect(X, Y, Width, Height);
-
-			// Adds the new reduced texture
-			TextureManager::Instance()->SetReducedTexture(
-				ReducedTextureName, 
-				new TextureProperties(SourceDimensions, TextureName, 0, 0));
-		}
-		// Looking for the start of a texture group
-		else if ((Current != nullptr &&
-			(temp = Current->Value()) == "TEXTURE_GROUP"))
-		{
-
-			NextChildNode = Current;
-
-			std::vector<std::string> ParsedGroup;		// Storage for the textures of this group
-			std::string GroupName = Current->Attribute("name");
-
-			// Getting each group name
-			for (TiXmlElement* NextNode = Current->FirstChildElement();
-				NextNode != nullptr;
-				NextNode = NextNode->NextSiblingElement())
-			{
-				if (NextNode != nullptr)
-				{
-					// Getting the name of this texture
-					std::string Name = NextNode->Attribute("name");
-					if (!Name.empty())
-					{
-						ParsedGroup.push_back(Name);
-					}
-				}
-			}
-			// Finally adding to the manager
-			TextureManager::Instance()->AddTextureGroup(GroupName, ParsedGroup);
 		}
 	}
 

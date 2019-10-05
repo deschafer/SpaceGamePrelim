@@ -20,23 +20,23 @@ using namespace std;
 
 typedef pair<MapCoordinate, MapCoordinate> SideA;
 
-static const int CellWidthSrc = 42;		// Source for entire project's cell sizes
+static const int CellWidthSrc = 42;							// Source for entire project's cell sizes
 static const int CellHeightSrc = 42;
-static const int MapSizeW = 100;
-static const int MapSizeH = 100;
-static const int MapWidthPixels = CellWidthSrc * MapSizeW;
+static const int MapSizeW = 100;							// Width of the Map objects
+static const int MapSizeH = 100;							// Height of the Map objects
+static const int MapWidthPixels = CellWidthSrc * MapSizeW;  
 static const int MapHeightPixels = CellHeightSrc * MapSizeH;
 static const int HorizontalMovementSpeed = 8;
 static const int VerticalMovementSpeed = 8;
 static const int VisibleHorizonBufferSize = 2;
 static const int VisibleVerticalBufferSize = 2;
 static const int CenterMapArrayIndex = 8;
-static const int ColumnWidth1 = 6;
+static const int ColumnWidth1 = 6;							// Different possible widths for the defined columns of a map
 static const int ColumnWidth2 = 8;
 static const int ColumnWidth3 = 10;
 static const int ColumnWidth4 = 12;
 static const int ColumnWidth5 = 14;
-static const int NumberColumns = MapSizeW / ColumnWidth5;
+static const int NumberColumns = MapSizeW / ColumnWidth5;	
 static const int ActiveCellsWidth = 1000;
 static const int ActiveCellsHeight = 1000;
 static const int InitialMapID = 0;
@@ -48,6 +48,8 @@ static const string AssetsListTypeXMLPath = "./XML/Map/Assets.xml";
 typedef std::pair<int, int> Coord;
 
 MapManager* MapManager::m_Instance = nullptr;
+
+// External MapManager helper functions
 
 void ShiftAllArrayCellsLeft(MapObject*** Array, int X, int Y)
 {
@@ -1369,7 +1371,6 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell)
 			}
 		}
 	}
-
 	// Also return the map where this map was found
 	MapWithCell = ActualMap;
 
