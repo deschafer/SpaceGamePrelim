@@ -133,6 +133,9 @@
     <ClInclude Include="TextureCode\TextureManager.h" />
     <ClInclude Include="TextureCode\TextureProperties.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{272D3B36-FB14-4AE0-B4C6-C3CD05623C70}</ProjectGuid>

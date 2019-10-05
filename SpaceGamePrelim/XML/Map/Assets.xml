@@ -5,10 +5,10 @@
        use to produce objects of this type.-->
   <ASSET 
     typeID ="Testing"
-    dstRectW="100"
-    dstRectH="100"
+    dstRectW="80"
+    dstRectH="80"
     textureID="Explosion"
-    anim="false"
+    anim="true"
     animSpeed="100"
     collidable="true"
     numFrames="3"/>

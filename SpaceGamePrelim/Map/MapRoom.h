@@ -54,6 +54,7 @@ public:
 	void Generate(); // Generates this room
 
 	MapObject* GetCell(int X, int Y);
+	MapCell* GetMapCell(int X, int Y) { return static_cast<MapCell*>(GetCell(X, Y)); }
 	MapObject*** GetCellArray() { return m_Cells; }
 	int GetHeight() { return m_Height; }
 	int GetWidth() { return m_Width; }

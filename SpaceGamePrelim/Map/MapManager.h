@@ -102,6 +102,9 @@ public:
 		else return m_Instance;
 	}
 
+	static int GetCellSourceWidth();
+	static int GetCellSourceHeight();
+
 	void HandleMapZoom();
 	void DrawGrid();
 	void Draw();

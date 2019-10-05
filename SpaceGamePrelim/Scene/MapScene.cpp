@@ -15,7 +15,7 @@
 #include "../Components/MapZoomComp.h"
 #include "../Components/ZoomMovementComp.h"
 
-
+#include "../Parsing/InitFactory.h"
 
 #include <iostream>
 
@@ -67,7 +67,10 @@ bool MapScene::Enter()
 	// Then load in the file that contains the defs for the registered assets
 	MapAssetManager::Instance()->AddAssetSourceFile("./XML/Map/Assets.xml");
 
-
+	// Need to create the room definitions first
+	InitFactory::Instance()->LoadRoomDefinitions("./XML/Map/Room.xml");
+	// Then we can decide which of this are going to be fallbacks
+	InitFactory::Instance()->LoadFallbackRooms("./XML/Map/Fallback.xml");
 
 #ifdef _DEBUG
 

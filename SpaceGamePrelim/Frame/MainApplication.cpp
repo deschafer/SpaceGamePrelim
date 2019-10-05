@@ -91,9 +91,9 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 	// intialize joysticks/gamepads if supported
 	// initialize any other game structures here as well
 
-	InitFactory::Instance()->LoadRoomDefinitions("./XML/Map/Room.xml");
+	// Register before parsing source file
+
 	InitFactory::Instance()->LoadTextures("./XML/Textures/Textures.xml");
-	InitFactory::Instance()->LoadFallbackRooms("./XML/Map/Fallback.xml");
 
 	InitializeScenes();
 

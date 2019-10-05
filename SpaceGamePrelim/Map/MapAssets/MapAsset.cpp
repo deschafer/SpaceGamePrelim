@@ -3,7 +3,9 @@
 #include "../MapManager.h"
 
 
-MapAsset::MapAsset()
+MapAsset::MapAsset() :
+	m_IntegerHeight(ceil(m_DestRect.Height() / MapManager::GetCellSourceHeight())),
+	m_IntegerWidth(ceil(m_DestRect.Width() / MapManager::GetCellSourceWidth()))
 {
 }
 
@@ -46,6 +48,7 @@ void MapAsset::Load(
 	std::vector<int> NumberFrames,
 	std::vector<int> AnimationSpeed) 
 {
+
 	m_CellType = CellType;
 	m_Position = Position;
 	m_DestRect = DestRect;
@@ -54,6 +57,8 @@ void MapAsset::Load(
 
 	m_Animated = true;
 
+	m_IntegerHeight = ceil(m_DestRect.Height() / MapManager::GetCellSourceHeight());
+	m_IntegerWidth = ceil(m_DestRect.Width() / MapManager::GetCellSourceHeight());
 
 	// Transfer all vector contents
 	for (size_t i = 0; i < RedTextureIDs.size(); i++)
@@ -90,6 +95,9 @@ void MapAsset::Load(
 
 	m_Animated = false;
 
+	m_IntegerHeight = ceil(m_DestRect.Height() / MapManager::GetCellSourceHeight());
+	m_IntegerWidth = ceil(m_DestRect.Width() / MapManager::GetCellSourceHeight());
+
 
 	// Transfer all vector contents
 	for (size_t i = 0; i < RedTextureIDs.size(); i++)
@@ -123,6 +131,9 @@ void MapAsset::Load(std::vector<std::string> RedTextureIDs, // Function used to 
 	m_Position = Position;
 	m_DestRect = DestRect;
 	m_Collidable = Collidable;
+
+	m_IntegerHeight = ceil(m_DestRect.Height() / MapManager::GetCellSourceHeight());
+	m_IntegerWidth = ceil(m_DestRect.Width() / MapManager::GetCellSourceHeight());
 
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
 
@@ -165,6 +176,8 @@ void MapAsset::Load(std::vector<std::string> RedTextureIDs, // Function used to 
 
 	m_Animated = false;
 
+	m_IntegerHeight = ceil((float)m_DestRect.Height() / (float)MapManager::GetCellSourceHeight());
+	m_IntegerWidth = ceil((float)m_DestRect.Width() / (float)MapManager::GetCellSourceHeight());
 
 	// Transfer all vector contents
 	for (size_t i = 0; i < RedTextureIDs.size(); i++)
@@ -188,6 +201,24 @@ void MapAsset::Draw(MapCoordinate Coords)
 	if (m_Drawn) return;
 
 	MapCell::Draw(Coords);
+
+	std::cout << m_DestRect.Width() << std::endl; // TODO: Testing only for right now
+
+	m_Updated = false; // end of this game loop, so we can be updated again
+	m_Drawn = true;
+}
+
+//
+// Draw()
+//
+//
+void MapAsset::Draw(double X, double Y)
+{
+	if (m_Drawn) return;
+
+	MapCell::Draw(X, Y);
+
+	std::cout << m_DestRect.Width() << std::endl; // TODO: Testing only for right now
 
 	m_Updated = false; // end of this game loop, so we can be updated again
 	m_Drawn = true;
@@ -219,15 +250,12 @@ void MapAsset::Zoom()
 	double Scale = 0.0;
 	static Rect CurrDim = m_DestRect;
 
-	if (ZoomManager::Instance()->IsChange())
-	{
-		Scale = ZoomManager::Instance()->GetScale();
+	Scale = ZoomManager::Instance()->GetScale();
 
-		NewWidth = (int)round(CurrDim.Width() * Scale);
-		NewHeight = (int)round(CurrDim.Height() * Scale);
+	NewWidth = (int)round(CurrDim.Width() * Scale);
+	NewHeight = (int)round(CurrDim.Height() * Scale);
 
-		m_DestRect = Rect(0, 0, NewWidth, NewHeight);
-	}
+	m_DestRect = Rect(0, 0, NewWidth, NewHeight);
 }
 
 //
@@ -236,7 +264,7 @@ void MapAsset::Zoom()
 //
 int MapAsset::GetIntegerWidth() 
 { 
-	return ceil(m_DestRect.Width() / MapManager::Instance()->GetCellWidth()); 
+	return m_IntegerWidth;
 }
 
 //
@@ -245,7 +273,7 @@ int MapAsset::GetIntegerWidth()
 //
 int MapAsset::GetIntegerHeight()
 { 
-	return ceil(m_DestRect.Height() / MapManager::Instance()->GetCellHeight());
+	return m_IntegerHeight;
 }
 
 //

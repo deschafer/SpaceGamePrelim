@@ -174,7 +174,12 @@ void RoomManager::RegisterFallbackRoom(std::string RoomID)
 // GetRandomFallbackRoomThatFits()
 //
 //
-RoomProperties* RoomManager::GetRandomFallbackRoomThatFits(std::string &RoomType, int RoomWidth, int RoomHeight)
+RoomProperties* RoomManager::GetRandomFallbackRoomThatFits(
+	std::string &RoomType, 
+	int RoomWidth, 
+	int RoomHeight, 
+	std::vector<unsigned> &GlobalAssets,
+	unsigned &LocalAssets)
 {
 	// Need mutual exclusion here to verify no entry
 
@@ -218,6 +223,9 @@ RoomProperties* RoomManager::GetRandomFallbackRoomThatFits(std::string &RoomType
 			return Properties;
 		}
 	}
+
+
+
 	Entry = false;
 	return nullptr;
 }

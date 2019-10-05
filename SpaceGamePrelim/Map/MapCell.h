@@ -58,15 +58,18 @@ public:
 	MapCell();
 
 	void DrawStatic(MapCoordinate Coords);
+	void DrawStatic(int X, int Y);
 	void ChangeRedTextures(std::vector<std::string> NewTextures);
 	void AddRedTexture(std::string RedTextureID) { m_RedTextureIndex.push_back(TextureManager::Instance()->GetRedTextureIndex(RedTextureID)); m_RedTextureIDs->push_back(RedTextureID); }
 	std::vector<std::string>* ReturnRedTextures() { return m_RedTextureIDs; }
 	Cell GetCellType() { return m_CellType; }
 	MapCoordinate GetPosition() { return m_Position; }
+	void SetPosition(MapCoordinate Position) { m_Position = Position; }
 	void SetCellType(Cell CellType) { m_CellType = CellType; }
 	virtual void Zoom();
 
 	virtual void Draw(MapCoordinate Coords);
+	virtual void Draw(double X, double Y);
 	virtual bool OnCollision(GameEntity* Enitity);
 	virtual bool IsCollidableType() { return false; }
 	virtual void Update();

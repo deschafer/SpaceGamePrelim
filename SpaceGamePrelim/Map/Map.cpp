@@ -286,6 +286,10 @@ void Map::AddAssets(MapRoom* Room, MapCoordinate TopLeftPoint, bool BorderingRoo
 		{
 			for (size_t y = MapReferenceAssetTopLeft.GetPositionY() + RoomReferenceAssetTopLeft.GetPositionY(), Height = 0; Height < (size_t)AssetHeight && y < m_Height; y++, Height++)
 			{
+				if (Width == 0 && Height == 0)
+				{
+					RoomAssets[i]->SetPosition(MapCoordinate(x, y));
+				}
 				m_Assets[x][y] = RoomAssets[i];
 			}
 		}
@@ -331,8 +335,12 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	if (!Properties)
 	{
 		// If there is not a room available, then get a fallback one
-		Properties = RoomManager::Instance()->GetRandomFallbackRoomThatFits(RoomType, RoomWidth, RoomHeight);
+		Properties = RoomManager::Instance()->GetRandomFallbackRoomThatFits(RoomType, RoomWidth, RoomHeight, GlobalAssets, LocalAssets);
+		// Then we need to populate the assets with the global assets only
+		GlobalAssets.clear();
+		GlobalAssets = m_MapProperties->GetGlobalAssetIDs();
 	}
+	// If even a fallback room doesnt fit
 	if (Properties == nullptr)
 	{
 		// Do not generate a room
@@ -363,6 +371,8 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	Room = new MapRoom(RoomType, RoomWidth, RoomHeight, GlobalAssets);
 	Room->Generate();
 
+	GlobalAssets.clear();
+
 	// Adding a offset within the column so all the rooms
 	// do not start at the same x position
 	if (RoomWidth < MaxRoomWidth)
@@ -379,6 +389,7 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	m_ColumnOffsetsY[ColNumber].push_back(OffsetY);
 
 	MapCell* Place = nullptr;
+	MapCell* Current = nullptr;
 	// Now since the space has been allocated, and the room has been 
 	// generated, let's place the object in the array
 	for (size_t IndexX = OffsetX + xOffset, MagX = 0;
@@ -389,15 +400,20 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 			MagY < (size_t)RoomHeight;
 			MagY++, IndexY++)
 		{
+			// Set the position of this cell
+			Current = Room->GetMapCell(MagX, MagY);
+			if(Current) Current->SetPosition(MapCoordinate(IndexX, IndexY));
+
+			// Checkin if there is a cell here
 			Place = (MapCell*)m_Cells[IndexX][IndexY];
 			if (!Place)
 			{
-				m_Cells[IndexX][IndexY] = Room->GetCell(MagX, MagY);
+				m_Cells[IndexX][IndexY] = Current;
 			}
 			else
 			{
 				vector<string>* Textures = Place->ReturnRedTextures();
-				m_Cells[IndexX][IndexY] = Room->GetCell(MagX, MagY);
+				m_Cells[IndexX][IndexY] = Current;
 
 				MapCell* ChangeCell = dynamic_cast<MapCell*>(m_Cells[IndexX][IndexY]);
 				if (ChangeCell)

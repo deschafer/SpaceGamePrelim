@@ -147,7 +147,7 @@ public:
 	RoomProperties* GetTypeDefinition(std::string RoomID);
 	RoomProperties* GetRandomTypeDefinition(std::string  &roomType);
 	RoomProperties* GetRandomTypeThatFits(std::string  &roomType, int MaxWidth, int MaxHeight);
-	RoomProperties* GetRandomFallbackRoomThatFits(std::string  &roomType, int Width, int Height);
+	RoomProperties* GetRandomFallbackRoomThatFits(std::string  &roomType, int Width, int Height, std::vector<unsigned> &GlobalAssets, unsigned &LocalAssets);
 
 	
 	~RoomManager();

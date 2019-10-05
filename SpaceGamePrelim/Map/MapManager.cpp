@@ -43,6 +43,7 @@ static const int InitialMapID = 0;
 
 static const string DefaultMapStr = "Default";
 static const string MapTypeXMLPath = "./XML/Map/MapTypes.xml";
+static const string AssetsListTypeXMLPath = "./XML/Map/Assets.xml";
 
 typedef std::pair<int, int> Coord;
 
@@ -183,6 +184,20 @@ bool IsVertiLink(MapDirection Link)
 	return false;
 }
 
+int MapManager::GetCellSourceWidth()
+{
+	if (!m_Instance) return CellWidthSrc;
+
+	return m_Instance->GetCellWidth();
+}
+
+int MapManager::GetCellSourceHeight()
+{
+	if (!m_Instance) return CellHeightSrc;
+
+	return m_Instance->GetCellWidth();
+}
+
 MapManager::MapManager() :
 	m_ActiveWndHeight(0),
 	m_ActiveWndWidth(0),
@@ -200,10 +215,8 @@ MapManager::MapManager() :
 	m_RequestedMovement(0, 0),
 	m_PixelOffsetX(0.0),
 	m_PixelOffsetY(0.0),
-	m_ActivelyLinkedCount(0)//,	
-	//m_ActiveMap(new Map("Default", MapSizeW, MapSizeH, MapCoordinate(0, 0)))
+	m_ActivelyLinkedCount(0)
 {
-
 	// Initializing our Map Type management
 	m_MapFactory = MapFactory::Instance();
 	m_MapFactory->LoadFile(MapTypeXMLPath);	// Loads in the file that contains our
@@ -230,9 +243,9 @@ MapManager::MapManager() :
 	m_Rows = MapSizeH;			// Get a count of columns
 	m_Columns = MapSizeW;		// Get a count of rows
 
-								// Visible object array is the cells that fill the screen
-								// and is therefore the appropriate size of the screen, plus a buffer of 2 cells
-								// on for all the sides.
+	// Visible object array is the cells that fill the screen
+	// and is therefore the appropriate size of the screen, plus a buffer of 2 cells
+	// on for all the sides.
 	int ResolutionX = MainApplication::Instance()->GetWndWidth();
 	int ResolutionY = MainApplication::Instance()->GetWndHeight();
 
@@ -358,26 +371,36 @@ void MapManager::Draw()
 			{
 				for (int j = 0; j < MapSizeH; j++)
 				{
-					if (!(Asset = m_VisibleAssetArray[i][j])) continue;
+					if (!(Asset = m_VisibleAssetArray[i][j])) 
+						continue;
 
+					// convert to pixel coordinates based off the camera offset
 					double PositionX = (i)* m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
 					double PositionY = (j)* m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+
+					double ThisMapOffsetX = m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
+					double ThisMapOffsetY = m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
 
 					if (Asset &&
 						PositionX + m_CellWidth >= 0 &&
 						PositionX < m_ActiveWndWidth &&
 						PositionY + m_CellHeight >= 0 &&
 						PositionY < m_ActiveWndHeight)
-					{
-						Asset->Draw(MapCoordinate((int)round(PositionX), (int)round(PositionY)));
+					{	
+						// if this asset is in the map as some location
 
-						/*
-						if (i % 20 == 0)
-						{
-							Asset->Update();
-							Asset->Draw(MapCoordinate(round(PositionX), round(PositionY)));
-						}
-						*/
+						// Note: Assets may be multiple cells in size, so we cannot draw them as
+						// we draw the normal map cells. We draw then at there top left position only.
+
+						// get the assets top left position,
+						// we only want to draw it at its top left position.
+
+						MapCoordinate AssetTopLeftPosition = Asset->GetPosition();
+
+						double TopLeftPixelsX = AssetTopLeftPosition.GetPositionX() * m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
+						double TopLeftPixelsY = AssetTopLeftPosition.GetPositionY() * m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+
+						Asset->Draw(MapCoordinate((int)round(TopLeftPixelsX), (int)round(TopLeftPixelsY)));
 					}
 				}
 			}
@@ -789,7 +812,7 @@ void MapManager::CheckGeneratingMaps()
 
 //
 // HandleInput()
-//
+// Deprecated.
 //
 void MapManager::HandleInput()
 {
@@ -887,10 +910,8 @@ void MapManager::HandleExternalMovement()
 //
 void MapManager::CorrectZoom(Vector PixelOffsets)
 {
-
 	m_RequestedMovement = PixelOffsets;
 	HandleExternalMovement();
-
 }
 
 // 
@@ -1017,10 +1038,6 @@ void MapManager::MoveMap()
 //
 void MapManager::Zoom()
 {
-
-	//m_CellHeight = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
-	//m_CellWidth = CellWidthSrc + ZoomManager::Instance()->GetPixelOffset();
-
 }
 
 //
@@ -1860,6 +1877,7 @@ MapCell* MapManager::GetCellFromMaps(Map* CurrentMap, MapCoordinate RequestedCel
 		StandardPos.GetPositionY()));
 }
 
+
 //
 // HandleMapZoom()
 //
@@ -1888,7 +1906,7 @@ void MapManager::HandleMapZoom()
 }
 
 //
-// CheckColli+singPoint()
+// CheckCollidingPoint()
 // Checks a single point to see if it is colliding with a mapwall or mapobject
 // returns the collision if it exists.
 //
@@ -1906,5 +1924,4 @@ Collision* MapManager::CheckCollidingPoint(Vector Position)
 		return new MapCollision(CollisionType::MapWall, MapCollisionDir::CannotTell);
 	}
 	else return nullptr;
-
 }

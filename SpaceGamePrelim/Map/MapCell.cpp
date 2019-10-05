@@ -141,6 +141,36 @@ void MapCell::Draw(MapCoordinate Coords)
 		}
 	}
 }
+//
+// Draw()
+// Given the offset of the map where this asset is,
+// this draw uses the coordinates of the asset to draw it
+//
+void MapCell::Draw(double X, double Y)
+{
+
+	if (!m_Animated)
+	{
+		DrawStatic(X, Y);
+	}
+	else
+	{
+		// Drawing each texture with its respective properties
+		for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
+		{
+			TextureManager::Instance()->DrawCurrentFrame(
+				X,
+				Y,
+				m_RedTextureIndex[i],
+				SDL_FLIP_NONE,
+				MainApplication::Instance()->GetRenderer(),
+				m_DestRect,
+				m_CurrentRow[i],
+				m_CurrentFrame[i]
+			);
+		}
+	}
+}
 
 // 
 // Update()
@@ -193,6 +223,15 @@ void MapCell::DrawStatic(MapCoordinate Coords)
 				MainApplication::Instance()->GetRenderer());
 		}
 	}
+}
+
+// 
+// DrawStatic() 
+// Called to draw a map cell with one or more reduced textures
+//
+void MapCell::DrawStatic(int X, int Y)
+{
+	DrawStatic(MapCoordinate(X, Y));
 }
 
 //

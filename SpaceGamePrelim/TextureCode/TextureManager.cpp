@@ -143,7 +143,6 @@ void TextureManager::DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFl
 
 	SDL_RenderCopyEx(pRenderer, m_SourceTextures[Properties->GetTextureIndex()], &SourceRect,
 		&DestRect, 0, 0, Flip);
-
 }
 
 
