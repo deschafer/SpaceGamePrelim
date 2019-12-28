@@ -23,5 +23,7 @@ std::vector<Collision*> CollisionManager::CheckPosition(Vector PositionAfter, Ve
 	// Get collisions from the map
 	Collisions = MapManager::Instance()->CheckCollisions(PositionAfter, PositionBefore, Entity);
 
+	// check collisions for entities
+
 	return Collisions;
 }

@@ -134,7 +134,6 @@ void MapAssetManager::ParseAsset(TiXmlElement* Node)
 
 	bool Found = false;
 	int Index = -1;
-	const std::string *GetAttribute;
 	std::vector<std::string> Textures;
 	std::vector<int> AnimationSpeeds;
 	std::vector<int> NumbersOfFrames;

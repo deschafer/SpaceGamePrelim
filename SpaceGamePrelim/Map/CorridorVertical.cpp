@@ -1,11 +1,12 @@
 
 #include "CorridorVertical.h"
 #include "../TextureCode/TextureDefinitions.h"
+#include "MapAssetManager.h"
 
 using namespace std;
 
-CorridorVertical::CorridorVertical(int Width, int Height) :
-	Corridor(Width, Height)
+CorridorVertical::CorridorVertical(int Width, int Height, MapRoom* RoomOne, MapRoom* RoomTwo) :
+	Corridor(Width, Height, RoomOne, RoomTwo)
 {
 }
 
@@ -45,6 +46,11 @@ void CorridorVertical::AddBeginningCell(MapCoordinate Pos)
 			MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY()),
 			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Floor));
+
+	// then we also add a door at this position
+	MapAsset* Door = MapAssetManager::Instance()->CreateAsset(MapAssetManager::Instance()->StringToAssetID("Door"));
+	Door->SetParentRoom(m_RoomAboveOrRight);
+	AddAsset(MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY()), Door);
 }
 
 //
@@ -346,6 +352,13 @@ Corridor* CorridorVertical::GenerateCorridor(Array BoundsMatrix, Array CorridorL
 		*/
 
 		return nullptr;
+	}
+	else 
+	{
+		// place a door at the ending position
+		MapAsset* Door = MapAssetManager::Instance()->CreateAsset(MapAssetManager::Instance()->StringToAssetID("Door"));
+		Door->SetParentRoom(m_RoomAboveOrRight);
+		AddAsset(MapCoordinate(CurrentX, CurrentY), Door);
 	}
 
 	return this;

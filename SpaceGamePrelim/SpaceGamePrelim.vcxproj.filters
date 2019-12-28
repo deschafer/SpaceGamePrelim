@@ -78,6 +78,18 @@
     <Filter Include="Header Files\Map\Assets">
       <UniqueIdentifier>{f4022a5e-ab91-4ced-8819-b868a5a9e6e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Interactions">
+      <UniqueIdentifier>{50e3ee06-d8f5-48f5-a1ec-a9beb4519b74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Interactions">
+      <UniqueIdentifier>{fd1e61bf-5229-40da-8fca-82f5c0bc9f1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Time">
+      <UniqueIdentifier>{d193d3e6-5f8d-4d9d-a42f-88f5944adaa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Time">
+      <UniqueIdentifier>{ff805c78-7cc4-4034-b8ad-7c032a698506}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Map\MapCell.cpp">
@@ -247,6 +259,21 @@
     </ClCompile>
     <ClCompile Include="Parsing\TextureParser.cpp">
       <Filter>Source Files\Parsing</Filter>
+    </ClCompile>
+    <ClCompile Include="Map\MapAssets\Door.cpp">
+      <Filter>Source Files\Map\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Interactions\InteractionManager.cpp">
+      <Filter>Source Files\Interactions</Filter>
+    </ClCompile>
+    <ClCompile Include="Interactions\Interactable.cpp">
+      <Filter>Source Files\Interactions</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\PlayerInteractComp.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Time\Time.cpp">
+      <Filter>Source Files\Time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -426,6 +453,21 @@
     </ClInclude>
     <ClInclude Include="Parsing\TextureParser.h">
       <Filter>Header Files\Parsing</Filter>
+    </ClInclude>
+    <ClInclude Include="Map\MapAssets\Door.h">
+      <Filter>Header Files\Map\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Interactions\InteractionManager.h">
+      <Filter>Header Files\Interactions</Filter>
+    </ClInclude>
+    <ClInclude Include="Interactions\Interactable.h">
+      <Filter>Header Files\Interactions</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\PlayerInteractComp.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Time\Time.h">
+      <Filter>Header Files\Time</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

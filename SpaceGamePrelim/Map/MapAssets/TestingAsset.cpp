@@ -34,6 +34,7 @@ MapAsset* TestingAsset::Copy()
 // Overridden function that allows for each object to determine what happens 
 // when an entity interacts with this object.
 //
-void TestingAsset::OnInteraction(GameEntity* Entity)
+bool TestingAsset::OnInteraction(GameEntity* Entity)
 {
+	return false;
 }

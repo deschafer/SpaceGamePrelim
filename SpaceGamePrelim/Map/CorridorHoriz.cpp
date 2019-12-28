@@ -1,11 +1,12 @@
 #include "CorridorHoriz.h"
 #include "..\TextureCode\TextureDefinitions.h"
+#include "..\Map\MapAssetManager.h";
 
 
 using namespace std;
 
-CorridorHoriz::CorridorHoriz(int Width, int Height) :
-	Corridor(Width, Height)
+CorridorHoriz::CorridorHoriz(int Width, int Height, MapRoom* LeftRoom, MapRoom* RightRoom) :
+	Corridor(Width, Height, LeftRoom, RightRoom)
 {
 }
 
@@ -42,6 +43,11 @@ void CorridorHoriz::AddBeginningCell(MapCoordinate Pos)
 			MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY()),
 			Rect(0, 0, m_CellWidth, m_CellHeight),
 			Cell::Floor));
+
+	// then we also add a door at this position
+	MapAsset* Door = MapAssetManager::Instance()->CreateAsset(MapAssetManager::Instance()->StringToAssetID("Door"));
+	Door->SetParentRoom(m_RoomAboveOrRight);
+	AddAsset(MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY()), Door);
 }
 
 //
@@ -338,6 +344,13 @@ Corridor* CorridorHoriz::GenerateCorridor(Array BoundsMatrix, Array CorridorLoca
 	{
 		cout << "Potential Error: CorridorVertical was unable to find an ending point" << endl;
 		return nullptr;
+	}
+	else 
+	{
+		// place a door at the ending position
+		MapAsset* Door = MapAssetManager::Instance()->CreateAsset(MapAssetManager::Instance()->StringToAssetID("Door"));
+		Door->SetParentRoom(m_RoomAboveOrRight);
+		AddAsset(MapCoordinate(CurrentX, CurrentY), Door);
 	}
 
 	return this;

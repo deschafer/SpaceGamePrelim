@@ -7,20 +7,26 @@ Corridor::Corridor()
 {
 }
 
-Corridor::Corridor(int Width, int Height) :
+Corridor::Corridor(int Width, int Height, MapRoom* RoomOne, MapRoom* RoomTwo) :
 	m_Width(Width),
 	m_Height(Height),
 	m_CellWidth(MapManager::Instance()->GetCellWidth()),
-	m_CellHeight(MapManager::Instance()->GetCellHeight())
+	m_CellHeight(MapManager::Instance()->GetCellHeight()),
+	m_RoomAboveOrRight(RoomOne),
+	m_RoomBelowOrLeft(RoomTwo)
 {
 	// Create the array
 	m_Cells = new MapCell**[Width];
+	m_Assets = new MapAsset**[Width];
 	for (int i = 0; i < Width; i++)
 	{
 		m_Cells[i] = new MapCell*[Height];
+		m_Assets[i] = new MapAsset*[Height];
+
 		for (int j = 0; j < Height; j++)
 		{
 			m_Cells[i][j] = nullptr;
+			m_Assets[i][j] = nullptr;
 		}
 	}
 }
@@ -67,5 +73,24 @@ void Corridor::AddCell(MapCoordinate CellPosition, MapCell* Cell)
 		}
 		else
 			m_Cells[X][Y] = Cell;
+	}
+}
+
+// 
+// AddAsset()
+// Checks bounds and adds to resident array
+//
+void Corridor::AddAsset(MapCoordinate CellPosition, MapAsset* Cell)
+{
+	int X = CellPosition.GetPositionX();
+	int Y = CellPosition.GetPositionY();
+
+	if ((X < m_Width) && (Y < m_Height) && (Y >= 0) && (X >= 0))
+	{
+		if (m_Cells[X][Y]) {
+			delete m_Cells[X][Y];
+		}
+
+		m_Cells[X][Y] = Cell;
 	}
 }

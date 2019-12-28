@@ -51,8 +51,6 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProp
 	m_DestRect(0, 0, 0, 0),
 	m_OriginSize(m_DestRect)
 {
-
-
 	TextureProperties* CurrentProp;
 
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
@@ -151,7 +149,7 @@ void MapCell::Draw(double X, double Y)
 
 	if (!m_Animated)
 	{
-		DrawStatic(X, Y);
+		DrawStatic((int)X, (int)Y);
 	}
 	else
 	{
@@ -159,8 +157,8 @@ void MapCell::Draw(double X, double Y)
 		for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
 		{
 			TextureManager::Instance()->DrawCurrentFrame(
-				X,
-				Y,
+				(int)X,
+				(int)Y,
 				m_RedTextureIndex[i],
 				SDL_FLIP_NONE,
 				MainApplication::Instance()->GetRenderer(),
@@ -278,7 +276,7 @@ void MapCell::Zoom()
 	double Scale = ZoomManager::Instance()->GetScale();
 
 	NewWidth = MapManager::Instance()->GetCellWidth();
-	NewHeight = MapManager::Instance()->GetCellWidth();;
+	NewHeight = MapManager::Instance()->GetCellHeight();
 
 	m_DestRect.SetHeight(NewHeight);
 	m_DestRect.SetWidth(NewWidth);

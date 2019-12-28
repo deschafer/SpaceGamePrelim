@@ -13,7 +13,7 @@ private:
 	void NormalMinorAxisMovement(MapCoordinate Pos);
 
 public:
-	CorridorVertical(int Width, int Height);
+	CorridorVertical(int Width, int Height, MapRoom* RoomOne, MapRoom* RoomTwo);
 	virtual ~CorridorVertical();
 	virtual Corridor* GenerateCorridor(Array BoundsMatrix, Array CorridorLocaleMartrix, MapCoordinate Beg, MapCoordinate End, int DistanceBetween);
 };

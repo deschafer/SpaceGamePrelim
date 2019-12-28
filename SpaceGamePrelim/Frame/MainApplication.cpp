@@ -4,6 +4,7 @@
 #include "..\Parsing\TextureParser.h"
 #include "..\Parsing\SceneFactory.h"
 #include "..\Scene\MapScene.h"
+#include "..\Time\Time.h"
 #include "..\Objects\Button.h"
 
 // init static member
@@ -95,6 +96,7 @@ bool MainApplication::Initialize(const char *WindowTitle, int TopLeftXPos, int T
 
 	TextureParser::Instance()->LoadTextures("./XML/Textures/Textures.xml");
 	InitializeScenes();
+	Time::Instance();
 
 	return true;
 }
@@ -120,6 +122,8 @@ void MainApplication::Update()
 	// Call the Zoom Manager to handle all Zooming
 	ZoomManager::Instance()->Update();
 
+	// call the time class to set up the delta time
+	Time::Instance()->Update();
 
 	// Then update other objects on top of the map objects
 	try {
@@ -129,6 +133,8 @@ void MainApplication::Update()
 	{
 
 	}
+
+	std::cout << "Delta time " << Time::Instance()->GetDeltaTime() << std::endl;
 
 }
 

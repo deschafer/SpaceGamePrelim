@@ -30,11 +30,14 @@ int main(int argc, char* argv[])
 	std::chrono::milliseconds dur(duration);
 	std::chrono::time_point<std::chrono::system_clock> dt(dur);
 
+	// TODO: remove this
+	//int* error = nullptr;
+	//*error = 0;
+
 	srand((unsigned int)duration);
-	//srand(1);
 
 	MainApplication* Application = MainApplication::Instance();	// Getting the app instance
-	// 1408 x 896
+
 	if (Application->Initialize("SpaceGamePrelim", 100, 100, 1440, 900, false))
 	//if (Application->Initialize("SpaceGamePrelim", 100, 100, 1920, 1080, true))
 	{

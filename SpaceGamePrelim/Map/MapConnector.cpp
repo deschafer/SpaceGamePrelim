@@ -169,7 +169,7 @@ bool MapConnector::ConnectMapVerti()
 			}
 
 			// Create corridor
-			CorridorVertical *NewCorridor = new CorridorVertical(DistanceX, DistanceY);
+			CorridorVertical *NewCorridor = new CorridorVertical(DistanceX, DistanceY, AboveRoom, BelowRoom);
 
 			// Generate corridor
 			if (NewCorridor->GenerateCorridor(BoundsMatrix, CorridorLocaleMatrix, BoundedTop, BoundedBottom, MajorDistance))
@@ -360,7 +360,7 @@ bool MapConnector::ConnectMapHoriz()
 			}
 
 			// Create corridor
-			CorridorHoriz *NewCorridor = new CorridorHoriz(DistanceX, DistanceY);
+			CorridorHoriz *NewCorridor = new CorridorHoriz(DistanceX, DistanceY, RightRoom, LeftRoom);
 
 			if (BoundedLeft.GetPositionX() > BoundedRight.GetPositionX())
 			{

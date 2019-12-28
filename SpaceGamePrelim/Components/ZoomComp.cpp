@@ -36,8 +36,8 @@ void ZoomComp::Execute()
 
 		Scale = ZoomManager::Instance()->GetScale();
 
-		NewWidth = round((double)(CurrDim.Width() * Scale));
-		NewHeight = round((double)(CurrDim.Height() * Scale));
+		NewWidth = (int)round((double)(CurrDim.Width() * Scale));
+		NewHeight = (int)round((double)(CurrDim.Height() * Scale));
 
 
 		m_Owner->SetDestinationRect(Rect(0, 0, NewWidth, NewHeight));

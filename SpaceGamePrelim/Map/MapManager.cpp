@@ -1,4 +1,3 @@
-
 #include "MapManager.h"
 #include "..\Frame\MainApplication.h"
 #include "..\Frame\ZoomManager.h"
@@ -18,34 +17,10 @@
 
 using namespace std;
 
-typedef pair<MapCoordinate, MapCoordinate> SideA;
-
-static const int CellWidthSrc = 42;							// Source for entire project's cell sizes
-static const int CellHeightSrc = 42;
-static const int MapSizeW = 100;							// Width of the Map objects
-static const int MapSizeH = 100;							// Height of the Map objects
-static const int MapWidthPixels = CellWidthSrc * MapSizeW;  
-static const int MapHeightPixels = CellHeightSrc * MapSizeH;
-static const int HorizontalMovementSpeed = 8;
-static const int VerticalMovementSpeed = 8;
-static const int VisibleHorizonBufferSize = 2;
-static const int VisibleVerticalBufferSize = 2;
-static const int CenterMapArrayIndex = 8;
-static const int ColumnWidth1 = 6;							// Different possible widths for the defined columns of a map
-static const int ColumnWidth2 = 8;
-static const int ColumnWidth3 = 10;
-static const int ColumnWidth4 = 12;
-static const int ColumnWidth5 = 14;
-static const int NumberColumns = MapSizeW / ColumnWidth5;	
-static const int ActiveCellsWidth = 1000;
-static const int ActiveCellsHeight = 1000;
-static const int InitialMapID = 0;
-
 static const string DefaultMapStr = "Default";
 static const string MapTypeXMLPath = "./XML/Map/MapTypes.xml";
 static const string AssetsListTypeXMLPath = "./XML/Map/Assets.xml";
-
-typedef std::pair<int, int> Coord;
+typedef pair<MapCoordinate, MapCoordinate> SideA;
 
 MapManager* MapManager::m_Instance = nullptr;
 
@@ -91,28 +66,28 @@ pair<int, int> GetMapOffsets(MapDirection Direction)
 	switch (Direction)
 	{
 	case MapDirection::North:
-		return Pair(0, MapSizeH);
+		return Pair(0, MapManager::MapSizeH);
 		break;
 	case MapDirection::Northeast:
-		return Pair(MapSizeW, MapSizeH);
+		return Pair(MapManager::MapSizeW, MapManager::MapSizeH);
 		break;
 	case MapDirection::East:
-		return Pair(MapSizeW, 0);
+		return Pair(MapManager::MapSizeW, 0);
 		break;
 	case MapDirection::Southeast:
-		return Pair(MapSizeW, -MapSizeH);
+		return Pair(MapManager::MapSizeW, -MapManager::MapSizeH);
 		break;
 	case MapDirection::South:
-		return Pair(0, -MapSizeH);
+		return Pair(0, -MapManager::MapSizeH);
 		break;
 	case MapDirection::Southwest:
-		return Pair(-MapSizeW, -MapSizeH);
+		return Pair(-MapManager::MapSizeW, -MapManager::MapSizeH);
 		break;
 	case MapDirection::West:
-		return Pair(-MapSizeW, 0);
+		return Pair(-MapManager::MapSizeW, 0);
 		break;
 	case MapDirection::Northwest:
-		return Pair(-MapSizeW, MapSizeH);
+		return Pair(-MapManager::MapSizeW, MapManager::MapSizeH);
 		break;
 	default:
 		break;
@@ -203,8 +178,8 @@ int MapManager::GetCellSourceHeight()
 MapManager::MapManager() :
 	m_ActiveWndHeight(0),
 	m_ActiveWndWidth(0),
-	m_CellHeight(CellWidthSrc),
-	m_CellWidth(CellHeightSrc),
+	m_CellHeight(CellHeightSrc),
+	m_CellWidth(CellWidthSrc),
 	m_Init(true),
 	m_MapNeedsSwapping(false),
 	m_MapsAreGenerating(false),
@@ -493,8 +468,8 @@ void MapManager::UpdateCells()
 					Object = m_VisibleObjectArray[i][j];
 					Asset = m_VisibleAssetArray[i][j];
 
-					int PositionX = (i)* m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
-					int PositionY = (j)* m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+					int PositionX = (i)* m_CellWidth + (int)m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
+					int PositionY = (j)* m_CellHeight + (int)m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
 
 					if (Object &&
 						PositionX + m_CellWidth >= 0 &&
@@ -1925,4 +1900,30 @@ Collision* MapManager::CheckCollidingPoint(Vector Position)
 		return new MapCollision(CollisionType::MapWall, MapCollisionDir::CannotTell);
 	}
 	else return nullptr;
+}
+
+
+
+Vector MapManager::ConvertMapPositionToScreenPosition(MapCoordinate Position, Map* CurrentMap) 
+{
+	MapCell* CurrCell = GetCellFromMaps(CurrentMap, Position);
+
+
+	static Map* ActiveMap = m_ActiveMap;
+
+	if (!m_MapNeedsSwapping)
+	{
+		ActiveMap = m_ActiveMap;
+	}
+
+	Vector OriginPosition(Position.GetPositionX() * m_CellWidth,
+		Position.GetPositionY() * m_CellHeight);
+
+	Vector OffsetPosition(OriginPosition.getX() - MapSizeW * m_CellWidth,
+		OriginPosition.getY() - MapSizeH * m_CellHeight);
+
+	Vector ScreenPosition(OffsetPosition.getX() + (float)m_PixelOffsetX,
+		OffsetPosition.getY() + (float)m_PixelOffsetY);
+
+	return ScreenPosition;
 }

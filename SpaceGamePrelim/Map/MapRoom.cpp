@@ -53,7 +53,7 @@ MapRoom::~MapRoom()
 // MapRoom()
 // CTOR that should be used to create a MapRoom with a known type
 //
-MapRoom::MapRoom(std::string RoomType, int Width, int Height) :
+MapRoom::MapRoom(std::string RoomType, int Width, int Height, Map* ParentMap) :
 	m_CellWidth(MapManager::Instance()->GetCellWidth()),
 	m_CellHeight(MapManager::Instance()->GetCellHeight()),
 	m_CellSpawnRate(100),
@@ -102,8 +102,8 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height) :
 // MapRoom()
 //
 //
-MapRoom::MapRoom(std::string RoomType, int Width, int Height, std::vector<unsigned> AssetLists) : 
-	MapRoom(RoomType, Width, Height)
+MapRoom::MapRoom(std::string RoomType, int Width, int Height, Map* ParentMap, std::vector<unsigned> AssetLists) :
+	MapRoom(RoomType, Width, Height, ParentMap)
 {
 	for (size_t i = 0; i < AssetLists.size(); i++)
 	{
@@ -163,6 +163,18 @@ MapObject* MapRoom::GetCell(int X, int Y)
 	if (X < m_Width && Y < m_Height)
 	{
 		return m_Cells[X][Y];
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+MapAsset * MapRoom::GetAsset(int X, int Y)
+{
+	if (X < m_Width && Y < m_Height)
+	{
+		return m_Assets[X][Y];
 	}
 	else
 	{
@@ -835,8 +847,6 @@ void MapRoom::Generate()
 					}
 				}
 			}
-
-
 
 			TempComplete = true;
 		}
@@ -1687,8 +1697,6 @@ bool MapRoom::ConnectedToRoom(Side side)
 	return false;
 }
 
-
-
 //
 // PlaceAssets()
 //
@@ -1717,7 +1725,7 @@ std::vector<MapAsset*> MapRoom::PlaceAssets()
 	// additional and different assets
 		// then stop and void this chance
 
-	int MaxNumberAssets = round(m_CountCells / m_CellSpawnGroupSize);	// the maximum number of assets that can be placed
+	int MaxNumberAssets = (int)round(m_CountCells / m_CellSpawnGroupSize);	// the maximum number of assets that can be placed
 
 
 	for (int i = 0; i < MaxNumberAssets; i++)
@@ -1765,11 +1773,12 @@ MapAsset* MapRoom::PlaceAsset()
 	{
 		// Choose an asset from this selected list
 		NewAsset = MapAssetManager::Instance()->CreateAssetFromList(m_AssetListIDs[Selection]);
+		NewAsset->SetParentRoom(this);
 
 		// Is this a boundary room or not
 		if (m_BorderingRoom)
 		{
-			SelPosition = NewAsset->PlaceAssetBorderingRoom(m_Cells, m_Assets);
+			SelPosition = NewAsset->PlaceAssetBorderingRoom((MapCell***)m_Cells, m_Assets);
 		}
 		else
 		{

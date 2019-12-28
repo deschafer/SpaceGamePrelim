@@ -13,6 +13,7 @@
 #include "MapAssetManager.h"
 
 class GameEntity;
+class MapCoordinate;
 
 //
 // Coordinate space of connected maps follows a traditonal cartesian coordinate space, pos X to the right, pos y to the top.
@@ -23,7 +24,7 @@ class MapManager
 {
 private:
 	static MapManager* m_Instance;
-
+	
 	int m_ActiveWndWidth;
 	int m_ActiveWndHeight;
 	int m_Rows;
@@ -92,6 +93,29 @@ private:
 
 public:
 
+	static const int CellWidthSrc = 64;							// Source for entire project's cell sizes
+	static const int CellHeightSrc = 64;
+	static const int MapSizeW = 100;							// Width of the Map objects
+	static const int MapManager::MapSizeH = 100;							// Height of the Map objects
+	static const int MapWidthPixels = CellWidthSrc * MapSizeW;
+	static const int MapHeightPixels = CellHeightSrc * MapSizeH;
+	static const int HorizontalMovementSpeed = 8;
+	static const int VerticalMovementSpeed = 8;
+	static const int VisibleHorizonBufferSize = 2;
+	static const int VisibleVerticalBufferSize = 2;
+	static const int CenterMapArrayIndex = 8;
+	static const int ColumnWidth1 = 6;							// Different possible widths for the defined columns of a map
+	static const int ColumnWidth2 = 8;
+	static const int ColumnWidth3 = 10;
+	static const int ColumnWidth4 = 12;
+	static const int ColumnWidth5 = 14;
+	static const int NumberColumns = MapSizeW / ColumnWidth5;
+	static const int ActiveCellsWidth = 1000;
+	static const int ActiveCellsHeight = 1000;
+	static const int InitialMapID = 0;
+
+	typedef std::pair<int, int> Coord;
+
 	static MapManager* Instance()
 	{
 		if (m_Instance == nullptr)
@@ -104,6 +128,26 @@ public:
 
 	static int GetCellSourceWidth();
 	static int GetCellSourceHeight();
+	static int GetCellWidth() {
+		if (!m_Instance) 
+		{
+			return CellWidthSrc;
+		}
+		else
+		{	
+			return m_Instance->m_CellWidth;
+		}
+	}
+	static int GetCellHeight() {
+		if (!m_Instance)
+		{
+			return CellHeightSrc;
+		}
+		else
+		{
+			return m_Instance->m_CellHeight;
+		}
+	}
 
 	void HandleMapZoom();
 	void DrawGrid();
@@ -114,12 +158,11 @@ public:
 	void ConnectTwoMaps(Map* Map1, Map* Map2, MapDirection LinkBetween);
 	void RemoveQueuedMap();
 	void ResetMap();
-	int GetCellWidth() { return m_CellWidth; }
-	int GetCellHeight() { return m_CellHeight; }
 	Cell GetCellType(Vector ScreenPosition);
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell);
 	MapCoordinate GetCellIndex(Vector ScreenPosition, Map* &MapWithCell, Vector &CellTopLeft, Vector &OriginPos);
 	std::vector<Collision*> CheckCollisions(Vector PosWithMovement, Vector PosWithoutMovement, GameEntity* Object);
 	Collision* CheckCollidingPoint(Vector Position);
+	Vector ConvertMapPositionToScreenPosition(MapCoordinate Position, Map* CurrentMap);
 	~MapManager();
 };

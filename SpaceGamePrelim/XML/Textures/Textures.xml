@@ -7,6 +7,8 @@
   <TEXTURE name="ExplosionWhite" path="Assets/expl.png"/>
   <TEXTURE name="Test" path="Assets/test.png"/>
   <TEXTURE name="Test2" path="Assets/test2.png"/>
+  <TEXTURE name="Room2" path="Assets/Tiles/sciFiRedTheme.png"/>
+
 
   <!-- Start of a reduced texture -->
   <RED_TEXTURE name="Test" assoc_name="Test" x="0" y="0" width="32" height="32" />
@@ -14,35 +16,26 @@
   <RED_TEXTURE name="Explosion" assoc_name="Explosion" x="0" y="0" width="32" height="32" />
   <RED_TEXTURE name="ExplosionWhite" assoc_name="ExplosionWhite" x="0" y="0" width="32" height="32" />
   <RED_TEXTURE name="Wall" assoc_name="Room" x="32" y="0" width="32" height="32" />
-  <RED_TEXTURE name="Wall_Top_1" assoc_name="Room" x="32" y="0" width="32" height="32" />
-  <RED_TEXTURE name="Wall_Top_2" assoc_name="Room" x="64" y="0" width="32" height="32" />
-  <RED_TEXTURE name="Wall_Top_3" assoc_name="Room" x="128" y="0" width="32" height="32" />
-  <RED_TEXTURE name="Wall_Side_Right" assoc_name="Room" x="0" y="0" width="32" height="32" />
-  <RED_TEXTURE name="Wall_Side_Left" assoc_name="Room" x="160" y="0" width="32" height="32" />
-  <RED_TEXTURE name="Wall_Bottom" assoc_name="Room" x="64" y="128" width="32" height="32" />
-  <RED_TEXTURE name="Wall_Corner_Right" assoc_name="Room" x="160" y="128" width="32" height="32" />
-  <RED_TEXTURE name="Wall_Corner_Left" assoc_name="Room" x="0" y="128" width="32" height="32" />
-  <RED_TEXTURE name="Floor_1" assoc_name="Room" x="64" y="36" width="32" height="32" />
-  <RED_TEXTURE name="Floor_2" assoc_name="Room" x="64" y="64" width="32" height="32" />
-  <RED_TEXTURE name="Floor_3" assoc_name="Room" x="96" y="64" width="32" height="32" />
-  <RED_TEXTURE name="Floor_4" assoc_name="Room" x="96" y="36" width="32" height="32" />
-  <RED_TEXTURE name="Floor_5" assoc_name="Room" x="126" y="64" width="32" height="32" />
-  <RED_TEXTURE name="Floor_6" assoc_name="Room" x="126" y="36" width="32" height="32" />
-  <RED_TEXTURE name="Floor_7" assoc_name="Room" x="126" y="92" width="32" height="32" />
+
+  <RED_TEXTURE name="Wall_Top_1" assoc_name="Room2" x="320" y="0" width="64" height="92" />
+  <RED_TEXTURE name="Wall_Top_2" assoc_name="Room2" x="384" y="0" width="64" height="92" />
+  <RED_TEXTURE name="Wall_Side_Right" assoc_name="Room2" x="256" y="0" width="64" height="92" />
+  <RED_TEXTURE name="Wall_Side_Left" assoc_name="Room2" x="128" y="0" width="64" height="92" />
+
+  <RED_TEXTURE name="Wall_Bottom" assoc_name="Room2" x="64" y="92" width="64" height="92" />
+  <RED_TEXTURE name="Wall_Corner_Right" assoc_name="Room2" x="128" y="92" width="64" height="92" />
+  <RED_TEXTURE name="Wall_Corner_Left" assoc_name="Room2"  x="192" y="92" width="64" height="92" />
+  <RED_TEXTURE name="Floor_1" assoc_name="Room2" x="0" y="0" width="64" height="92" />
+  <RED_TEXTURE name="Door_Open" assoc_name="Room2" x="384" y="92" width="64" height="92" />
+  <RED_TEXTURE name="Door" assoc_name="Room2" x="320" y="92" width="64" height="92" />
+
   <!-- Start of a texture group - All elements are added as the part of this named group -->
   <TEXTURE_GROUP name ="Floors">
-    <ELEMENT name="Floor_1" />
-    <ELEMENT name="Floor_2" />
-    <ELEMENT name="Floor_3" />
-    <ELEMENT name="Floor_4" />
-    <ELEMENT name="Floor_5" />
-    <ELEMENT name="Floor_6" />
-    <ELEMENT name="Floor_7" />
+	<ELEMENT name="Floor_1" />
   </TEXTURE_GROUP>
   <TEXTURE_GROUP name ="Wall_Top">
-    <ELEMENT name="Wall_Top_1" />
-    <ELEMENT name="Wall_Top_2" />
-    <ELEMENT name="Wall_Top_3" />
+	<ELEMENT name="Wall_Top_1" />
+	<ELEMENT name="Wall_Top_2" />
   </TEXTURE_GROUP>
 
 </TEXTURES>

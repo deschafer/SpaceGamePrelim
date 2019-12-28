@@ -64,7 +64,7 @@ private:
 	void PlaceAssets();
 	void AddAssets(MapRoom* Room, MapCoordinate TopLeftPoint, bool BorderingRoom);
 	void GenerateAndPlaceCorridor(Corridor* NewCorridor, MapCoordinate TopLeft, MapCoordinate BottomRight, MapCoordinate BegPos, 
-		MapCoordinate EndPos, int DistX, int DistY, int MajorDistance);
+		MapCoordinate EndPos, int DistX, int DistY, int MajorDistance, MapRoom* Room1, MapRoom* Room2);
 	void SetUpVertiCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* BottomRoom);
 	void SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int RoomOffsetX, MapRoom* Room);
 	
@@ -102,6 +102,7 @@ public:
 		MapCell* NewCell);
 	void SetNewCorridorCell(MapCoordinate CellPosition,
 		MapCell* NewCell, bool LastCell);
+	void Map::SetNewCorridorAsset(MapCoordinate CellPosition, MapAsset* NewCell);
 	void SetMapType(MapTypeProperties* Prop) { m_MapProperties = Prop; }
 	void AddCorridor(Corridor* NewCorridor) { m_Corridors.push_back(NewCorridor); }
 	MapCoordinate* GetRoomOffsetsFromLastRow(int X);

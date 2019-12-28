@@ -1,8 +1,9 @@
 #pragma once
 #include "..\MapCell.h"
 
+class MapRoom;
 
-class MapAsset : public MapCell
+class MapAsset : public MapCell, Interactable
 {
 
 private:
@@ -12,6 +13,9 @@ private:
 	bool m_Drawn;
 	int m_IntegerWidth;
 	int m_IntegerHeight;
+	MapRoom* m_ParentRoom;
+
+	virtual MapCoordinate CheckAssetPosition(MapCoordinate TopLeftPosition, MapCell*** Cells, MapAsset*** Assets);
 
 public:
 
@@ -38,28 +42,29 @@ public:
 		Cell CellType,
 		bool Collidable);
 
+	void SetParentRoom(MapRoom* Room) { m_ParentRoom = Room; }
+	bool IsDrawn() { return m_Drawn; }
 
 	virtual MapAsset* Copy() = 0;	// Returns a copy of this object
-	virtual void OnInteraction(GameEntity* Entity) = 0;
 	virtual void Zoom() override;
 	virtual bool IsCollidableType() override { return m_Collidable; }
 	virtual int GetIntegerWidth();
 	virtual int GetIntegerHeight();
 	virtual MapCoordinate PlaceAsset(MapObject*** RoomCells, MapAsset*** RoomAssets, bool*** Doorways);
-	virtual MapCoordinate PlaceAssetBorderingRoom(MapObject*** RoomCells, MapAsset*** RoomAssets);
+	virtual MapCoordinate PlaceAssetBorderingRoom(MapCell*** RoomCells, MapAsset*** RoomAssets);
 	virtual void Draw(MapCoordinate Coords) override;
 	virtual void Draw(double X, double Y) override;
 	virtual void Update() override;
 	virtual void Reset();	// should be called by derived classes when this object is copied
 
-	bool IsDrawn() { return m_Drawn; }
-
 	MapAsset();
 	MapAsset(std::vector<std::string> RedTextureIDs,
 		MapCoordinate Position,
 		Rect SrcRect,
-		Cell CellType);
-
+		Cell CellType,
+		MapRoom* Parent);
 	virtual ~MapAsset();
+
+	virtual Vector GetScreenPosition();
 };
 

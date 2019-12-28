@@ -4,6 +4,10 @@
 
 TextureProperties::TextureProperties()
 {
+	m_Color.a = 1;
+	m_Color.r = 1;
+	m_Color.g = 1;
+	m_Color.b = 1;
 }
 
 

@@ -12,7 +12,7 @@ static const double ZoomPercentMax = 1.50000000000000001;
 static const double ZoomPercentMin = 0.50000000000000000;
 
 ZoomManager::ZoomManager() :
-	m_CurrentPixelOffset(0.05),
+	m_CurrentPixelOffset(0),
 	m_CurrentPercent(1.0),	// Needs to be exactly halfway between max and min
 	m_ZoomIntervals(round((ZoomPercentMax - ZoomPercentMin) / PercentChange)),
 	m_Change(false),

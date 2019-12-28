@@ -61,8 +61,8 @@ Map::Map()
 Map::Map(string MapType, int Width, int Height, MapCoordinate Coords) :
 	m_Width(Width),
 	m_Height(Height),
-	m_CellWidth(48),
-	m_CellHeight(48),
+	m_CellWidth(MapManager::GetCellWidth()),
+	m_CellHeight(MapManager::GetCellHeight()),
 	m_MapType(MapType),
 	m_MapCoordinates(Coords),
 	m_NeighborMapsSize(NeighMapCount),
@@ -282,9 +282,9 @@ void Map::AddAssets(MapRoom* Room, MapCoordinate TopLeftPoint, bool BorderingRoo
 		AssetHeight = RoomAssets[i]->GetIntegerHeight();
 
 		// and add all these locations in the array
-		for (size_t x = MapReferenceAssetTopLeft.GetPositionX() + RoomReferenceAssetTopLeft.GetPositionX(), Width = 0; Width < (size_t)AssetWidth && x < m_Width; x++, Width++)
+		for (size_t x = MapReferenceAssetTopLeft.GetPositionX() + RoomReferenceAssetTopLeft.GetPositionX(), Width = 0; Width < (size_t)AssetWidth && x < (size_t)m_Width; x++, Width++)
 		{
-			for (size_t y = MapReferenceAssetTopLeft.GetPositionY() + RoomReferenceAssetTopLeft.GetPositionY(), Height = 0; Height < (size_t)AssetHeight && y < m_Height; y++, Height++)
+			for (size_t y = MapReferenceAssetTopLeft.GetPositionY() + RoomReferenceAssetTopLeft.GetPositionY(), Height = 0; Height < (size_t)AssetHeight && y < (size_t)m_Height; y++, Height++)
 			{
 				if (Width == 0 && Height == 0)
 				{
@@ -368,7 +368,7 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	GlobalAssets.push_back(LocalAssets);
 
 	// Creating the new room
-	Room = new MapRoom(RoomType, RoomWidth, RoomHeight, GlobalAssets);
+	Room = new MapRoom(RoomType, RoomWidth, RoomHeight, this, GlobalAssets);
 	Room->Generate();
 
 	GlobalAssets.clear();
@@ -390,6 +390,7 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 
 	MapCell* Place = nullptr;
 	MapCell* Current = nullptr;
+	MapAsset* Asset = nullptr;
 	// Now since the space has been allocated, and the room has been 
 	// generated, let's place the object in the array
 	for (size_t IndexX = OffsetX + xOffset, MagX = 0;
@@ -404,7 +405,7 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 			Current = Room->GetMapCell(MagX, MagY);
 			if(Current) Current->SetPosition(MapCoordinate(IndexX, IndexY));
 
-			// Checkin if there is a cell here
+			// Checking if there is a cell here
 			Place = (MapCell*)m_Cells[IndexX][IndexY];
 			if (!Place)
 			{
@@ -429,6 +430,11 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 				}
 				else m_Cells[IndexX][IndexY] = Place;
 			}
+
+			// also account for the map asset
+			Asset = Room->GetAsset(MagX, MagY);
+			m_Assets[IndexX][IndexY] = Asset;
+
 		}
 	}
 
@@ -500,7 +506,7 @@ void Map::SetUpVertiCorridor(int ColumnNumber, int ColumnOffsetX, int OffsetY, i
 			int DistanceY = abs(TopLeft.GetPositionY() - BottomRight.GetPositionY()) + 1;
 
 			// Create the corridor and generate it
-			CorridorVertical* VertiCorrridor = new CorridorVertical(DistanceX, DistanceY);
+			CorridorVertical* VertiCorrridor = new CorridorVertical(DistanceX, DistanceY, RoomAbove, BottomRoom);
 			m_Corridors.push_back(VertiCorrridor);
 
 			// Generate this new corridor and place it within the array
@@ -512,7 +518,9 @@ void Map::SetUpVertiCorridor(int ColumnNumber, int ColumnOffsetX, int OffsetY, i
 				CurrLocation,
 				DistanceX,
 				DistanceY,
-				Distance);
+				Distance,
+				RoomAbove,
+				BottomRoom);
 		}
 	}
 }
@@ -542,7 +550,6 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 
 	for (size_t i = 0; i < m_ColumnOffsetsX[ColumnNumber].size(); i++)
 		RoomOffsets.push_back(MapCoordinate(m_ColumnOffsetsX[ColumnNumber][i] + ColumnNumber * ColumnWidth5, m_ColumnOffsetsY[ColumnNumber][i]));
-
 
 	RoomConnector HorizConnector(Room, MapCoordinate(OffsetX + RoomOffsetX, OffsetY), m_Rooms[ColumnNumber], RoomOffsets);
 
@@ -581,16 +588,17 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 
 			int DistanceX = abs(TopLeft.GetPositionX() - BottomRight.GetPositionX()) + 1;
 			int DistanceY = abs(TopLeft.GetPositionY() - BottomRight.GetPositionY()) + 1;
+			MapRoom* BaseRoom = HorizConnector.GetBaseRoom();
+			MapRoom* OtherRoom = HorizConnector.GetOtherRoom();
 
 			// Create the corridor and generate it
-			CorridorHoriz* HorizCorrridor = new CorridorHoriz(DistanceX, DistanceY);
+			CorridorHoriz* HorizCorrridor = new CorridorHoriz(DistanceX, DistanceY, BaseRoom, OtherRoom);
 			m_Corridors.push_back(HorizCorrridor);
 
 			Corridor* Pass = dynamic_cast<CorridorHoriz*>(HorizCorrridor);
 
 			// Setting the doorways positions for each of the two rooms
-			MapRoom* BaseRoom = HorizConnector.GetBaseRoom();
-			MapRoom* OtherRoom = HorizConnector.GetOtherRoom();
+			
 			MapCoordinate BaseRoomPosition = HorizConnector.GetBaseRoomPosition();
 			MapCoordinate OtherRoomPosition = HorizConnector.GetOtherRoomPosition();
 
@@ -609,7 +617,9 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 				Ending,
 				DistanceX,
 				DistanceY,
-				Distance);
+				Distance,
+				BaseRoom,
+				OtherRoom);
 		}
 	}
 }
@@ -619,7 +629,7 @@ void Map::SetUpHorizCorridor(int ColumnNumber, int OffsetX, int OffsetY, int Roo
 //
 //
 void Map::GenerateAndPlaceCorridor(Corridor* NewCorridor, MapCoordinate TopLeft, MapCoordinate BottomRight, 
-	MapCoordinate Begin, MapCoordinate End, int DistanceX, int DistanceY, int MajorDistance)
+	MapCoordinate Begin, MapCoordinate End, int DistanceX, int DistanceY, int MajorDistance, MapRoom* RoomOne, MapRoom* RoomTwo)
 {
 	vector<vector<MapCell*>> BoundsMatrix;
 	vector<vector<MapCell*>> CorridorLocaleMatrix;
@@ -640,7 +650,7 @@ void Map::GenerateAndPlaceCorridor(Corridor* NewCorridor, MapCoordinate TopLeft,
 				BoundsMatrix[i].push_back(static_cast<MapCell*>(m_Cells[X][Y]));
 			}
 			else BoundsMatrix[i].push_back(nullptr);
-
+			
 			if (TempCell = m_CorridorCells[X][Y])
 			{
 				CorridorLocaleMatrix[i].push_back(static_cast<MapCell*>(m_CorridorCells[X][Y]));
@@ -653,6 +663,7 @@ void Map::GenerateAndPlaceCorridor(Corridor* NewCorridor, MapCoordinate TopLeft,
 
 	// Then place the corridor cells into the map
 	MapCell*** CorridorCells = NewCorridor->GetCells();
+	MapAsset*** CorridorAssets = NewCorridor->GetAssets();
 
 	// Create the bounds matrix and corridor locale matrix
 	for (int i = 0, X = TopLeft.GetPositionX(); i < DistanceX; i++, X++)
@@ -660,6 +671,7 @@ void Map::GenerateAndPlaceCorridor(Corridor* NewCorridor, MapCoordinate TopLeft,
 		for (int j = 0, Y = TopLeft.GetPositionY(); j < DistanceY; j++, Y++)
 		{
 			SetNewCorridorCell(MapCoordinate(X, Y), CorridorCells[i][j], (End == MapCoordinate(X, Y) ? true : false));
+			SetNewCorridorAsset(MapCoordinate(X, Y), CorridorAssets[i][j]);
 		}
 	}
 }
@@ -712,6 +724,21 @@ void Map::SetNewCorridorCell(MapCoordinate CellPosition, MapCell* NewCell, bool 
 			}
 		}
 		m_CorridorCells[X][Y] = m_Cells[X][Y];
+	}
+}
+
+//
+// SetNewCorridorCell()
+// 
+//
+void Map::SetNewCorridorAsset(MapCoordinate CellPosition, MapAsset* NewCell)
+{
+	int X = CellPosition.GetPositionX();
+	int Y = CellPosition.GetPositionY();
+
+	if ((X < m_Width) && (Y < m_Height) && (Y >= 0) && (X >= 0) && NewCell)
+	{
+		m_Assets[X][Y] = NewCell;
 	}
 }
 

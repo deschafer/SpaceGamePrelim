@@ -9,13 +9,15 @@
 GameEntity::GameEntity() :
 	m_CurrentFrame(1),
 	m_CurrentRow(1),
-	m_DestDimensions(0, 0, 0, 0)
+	m_DestDimensions(0, 0, 0, 0),
+	Interactable(true)
 {
 }
 
 GameEntity::~GameEntity()
 {
 }
+
 
 GameEntity::GameEntity(std::string ReducedTexture,
 	TextureProperties* Properties,
@@ -51,22 +53,9 @@ GameEntity::GameEntity(std::string ReducedTexture,
 	Vector InitPosition,
 	Vector InitVelocity,
 	Vector InitAccel) :
-	GameEntity()
+	GameEntity(ReducedTexture, Prop, TypeID, SpecTypeID, InitPosition, InitVelocity, InitAccel)
 {
-	m_Acceleration = InitAccel;
-	m_Velocity = InitVelocity;
-	m_Position = InitPosition;
-
-	m_SpecTypeID = SpecTypeID;
-	m_TypeID = TypeID;
 	m_DestDimensions = DestRect;
-
-	m_ReducedTextureID = ReducedTexture;
-	m_Dimensions = Prop->GetDimensions();
-	m_AnimationSpeed = Prop->GetAnimationSpeed();
-	m_NumberFrames = Prop->GetNumberFrames();
-
-	m_RedTextureIndex = TextureManager::Instance()->GetRedTextureIndex(m_ReducedTextureID);
 }
 
 GameEntity::GameEntity(std::string ReducedTexture,
@@ -74,20 +63,8 @@ GameEntity::GameEntity(std::string ReducedTexture,
 	std::string TypeID,
 	std::string SpecTypeID,
 	Vector InitPosition) :
-	GameEntity()
+	GameEntity(ReducedTexture, Properties, TypeID, SpecTypeID, InitPosition, Vector(0, 0), Vector(0, 0))
 {
-
-	m_ReducedTextureID = ReducedTexture;
-	m_Dimensions = Properties->GetDimensions();
-	m_AnimationSpeed = Properties->GetAnimationSpeed();
-	m_DestDimensions = Properties->GetDimensions();
-	m_NumberFrames = Properties->GetNumberFrames();
-
-	m_RedTextureIndex = TextureManager::Instance()->GetRedTextureIndex(m_ReducedTextureID);
-
-	m_Acceleration = Vector(0, 0);
-	m_Velocity = Vector(0, 0);
-	m_Position = InitPosition;
 }
 
 //
@@ -216,9 +193,9 @@ void GameEntity::OnMovement()
 //
 //
 //
-void GameEntity::OnInteraction()
+bool GameEntity::OnInteraction(GameEntity * InteractingEntity)
 {
-
+	return Interactable::OnInteraction(InteractingEntity);
 }
 
 Rect GameEntity::GetDimensions()
@@ -228,6 +205,11 @@ Rect GameEntity::GetDimensions()
 		return m_Dimensions;
 	}
 	else return m_DestDimensions;
+}
+
+Vector GameEntity::GetScreenPosition()
+{
+	return m_Position;
 }
 
 //

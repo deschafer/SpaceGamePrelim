@@ -1,4 +1,3 @@
-
 #include "InputManager.h"
 #include "MainApplication.h"
 
@@ -88,8 +87,6 @@ bool InputManager::IsKeyDown(SDL_Scancode Key)
 void InputManager::OnMouseWheel(SDL_Event& Event)
 {
 	m_MouseWheelMovement = (int)Event.wheel.y;
-	//std::cout << "move " << m_MouseWheelMovement << std::endl;
-
 }
 
 void InputManager::HandleEvents()

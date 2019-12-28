@@ -207,44 +207,42 @@ bool SceneFactory::LoadNewScene(std::string Filename, Scene* LoadingScene)
 
 				// First create this specefic object
 				GameObject* Object = m_ObjectCreators[TypeID]->CreateObject();
+				if (GameEntity* Entity = dynamic_cast<GameEntity*>(Object)) {
+					// Then load in its standard data
+					Entity->Load(
+						new TextureProperties(
+							Rect(
+								DimX,
+								DimY,
+								DimW,
+								DimH
+							),
+							TxtID,
+							NumFrames,
+							AnimSpeed),
+						TypeID,
+						SpecID,
+						Rect(
+							DimX,
+							DimY,
+							DimW,
+							DimH
+						),
+						Vector((float)VelX, (float)VelY),
+						Vector((float)AccelX, (float)AccelY),
+						Vector((float)PosX, (float)PosY),
+						LoadingScene->GetCallback(HandlerID));
 
-				// Then load in its standard data
-				Object->Load(
-					new TextureProperties(
-					Rect(
-						DimX,
-						DimY,
-						DimW,
-						DimH
-					),
-					TxtID,
-					NumFrames,
-					AnimSpeed),
-					TypeID,
-					SpecID,
-					Rect(
-						DimX,
-						DimY,
-						DimW,
-						DimH
-					),
-					Vector((float)VelX, (float)VelY),
-					Vector((float)AccelX, (float)AccelY),
-					Vector((float)PosX, (float)PosY),
-					LoadingScene->GetCallback(HandlerID));
-
-				GameEntity* Entity = static_cast<GameEntity*>(Object);
-
-				// Then creating all the components and adding them to the 
-				// owning object
-				for (size_t i = 0; i < ComponentIDs.size(); i++)
-				{
-					if (CompCreator = m_CompCreators[ComponentIDs[i]])
-					{	
-						Entity->SetComponent(CompCreator->Create(Entity));
+					// Then creating all the components and adding them to the 
+					// owning object
+					for (size_t i = 0; i < ComponentIDs.size(); i++)
+					{
+						if (CompCreator = m_CompCreators[ComponentIDs[i]])
+						{
+							Entity->SetComponent(CompCreator->Create(Entity));
+						}
 					}
 				}
-
 				// Adding this object to the parsed objects
 				ParsedObjects.push_back(Object);
 				ComponentIDs.clear();

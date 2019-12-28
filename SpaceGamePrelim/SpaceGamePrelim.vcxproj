@@ -28,6 +28,7 @@
     <ClCompile Include="Components\MapCollisionComp.cpp" />
     <ClCompile Include="Components\Component.cpp" />
     <ClCompile Include="Components\MapZoomComp.cpp" />
+    <ClCompile Include="Components\PlayerInteractComp.cpp" />
     <ClCompile Include="Components\PlayerMapMovementComp.cpp" />
     <ClCompile Include="Components\PlayerMovementComp.cpp" />
     <ClCompile Include="Components\ZoomComp.cpp" />
@@ -36,12 +37,15 @@
     <ClCompile Include="Frame\Main.cpp" />
     <ClCompile Include="Frame\MainApplication.cpp" />
     <ClCompile Include="Frame\ZoomManager.cpp" />
+    <ClCompile Include="Interactions\Interactable.cpp" />
+    <ClCompile Include="Interactions\InteractionManager.cpp" />
     <ClCompile Include="Map\Corridor.cpp" />
     <ClCompile Include="Map\CorridorHoriz.cpp" />
     <ClCompile Include="Map\CorridorVertical.cpp" />
     <ClCompile Include="Map\GenRoomComp.cpp" />
     <ClCompile Include="Map\Map.cpp" />
     <ClCompile Include="Map\MapAssetManager.cpp" />
+    <ClCompile Include="Map\MapAssets\Door.cpp" />
     <ClCompile Include="Map\MapAssets\MapAsset.cpp" />
     <ClCompile Include="Map\MapAssets\TestingAsset.cpp" />
     <ClCompile Include="Map\MapCell.cpp" />
@@ -75,6 +79,7 @@
     <ClCompile Include="TextureCode\TextureDefinitions.cpp" />
     <ClCompile Include="TextureCode\TextureManager.cpp" />
     <ClCompile Include="TextureCode\TextureProperties.cpp" />
+    <ClCompile Include="Time\Time.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicTypes\BasicTypes.h" />
@@ -89,6 +94,7 @@
     <ClInclude Include="Components\MapCollisionComp.h" />
     <ClInclude Include="Components\Component.h" />
     <ClInclude Include="Components\MapZoomComp.h" />
+    <ClInclude Include="Components\PlayerInteractComp.h" />
     <ClInclude Include="Components\PlayerMapMovementComp.h" />
     <ClInclude Include="Components\PlayerMovementComp.h" />
     <ClInclude Include="Components\ZoomComp.h" />
@@ -97,12 +103,15 @@
     <ClInclude Include="Frame\MainApplication.h" />
     <ClInclude Include="Frame\Threads.h" />
     <ClInclude Include="Frame\ZoomManager.h" />
+    <ClInclude Include="Interactions\Interactable.h" />
+    <ClInclude Include="Interactions\InteractionManager.h" />
     <ClInclude Include="Map\Corridor.h" />
     <ClInclude Include="Map\CorridorHoriz.h" />
     <ClInclude Include="Map\CorridorVertical.h" />
     <ClInclude Include="Map\GenRoomComp.h" />
     <ClInclude Include="Map\Map.h" />
     <ClInclude Include="Map\MapAssetManager.h" />
+    <ClInclude Include="Map\MapAssets\Door.h" />
     <ClInclude Include="Map\MapAssets\MapAsset.h" />
     <ClInclude Include="Map\MapAssets\TestingAsset.h" />
     <ClInclude Include="Map\MapCell.h" />
@@ -136,6 +145,7 @@
     <ClInclude Include="TextureCode\TextureDefinitions.h" />
     <ClInclude Include="TextureCode\TextureManager.h" />
     <ClInclude Include="TextureCode\TextureProperties.h" />
+    <ClInclude Include="Time\Time.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

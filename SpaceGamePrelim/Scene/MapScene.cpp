@@ -5,6 +5,7 @@
 #include "../Map/MapManager.h"
 #include "../Map/MapAssetManager.h"
 #include "../Map/MapAssets/TestingAsset.h"
+#include "../Map/MapAssets/Door.h"
 
 #include "../Components/PlayerMovementComp.h"
 #include "../Components/ButtonInteractComp.h"
@@ -64,6 +65,7 @@ bool MapScene::Enter()
 
 	// Register before parsing source file
 	MapAssetManager::Instance()->RegisterAsset("Testing", new TestingAsset());
+	MapAssetManager::Instance()->RegisterAsset("Door", new Door());
 
 	// Then load in the file that contains the defs for the registered assets
 	MapAssetManager::Instance()->AddAssetSourceFile("./XML/Map/Assets.xml");

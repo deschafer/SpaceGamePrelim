@@ -6,8 +6,8 @@
 #include <iostream>
 
 static int MovementSpeed = 2;
-static float MovementAccel = 0.20F;
-static float MovementDeaccel = 0.10F;
+static float MovementAccel = 0.50F;
+static float MovementDeaccel = 0.20F;
 static int MovementMax = 4;
 
 PlayerMovementComp::PlayerMovementComp()

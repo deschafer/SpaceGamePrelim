@@ -1,12 +1,11 @@
-#pragma once
+
 #include "MapAsset.h"
 
-
-class TestingAsset : public MapAsset
+class Door : public MapAsset
 {
 public:
-	TestingAsset();
-	virtual ~TestingAsset();
+	Door();
+	~Door();
 
 	virtual MapAsset* Copy();	// Returns a copy of this object
 	virtual bool OnInteraction(GameEntity* Entity);

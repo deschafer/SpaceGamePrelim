@@ -82,36 +82,6 @@ void TextureManager::SetReducedTexture(std::string ID, TextureProperties* Proper
 
 }
 
-void TextureManager::DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFlip Flip,
-	SDL_Renderer *pRenderer, int CurrentRow, int CurrentFrame)
-{
-	
-	TextureProperties* Properties = m_RedTextures[RedIndex];
-	if (!Properties)
-	{
-#ifdef _DEBUG
-		cout << "No reduced texture formatted for this ID " << RedIndex << endl;
-#endif // DEBUG
-		return;
-	}
-
-	Rect Dim = Properties->GetDimensions();
-	SDL_Rect SourceRect;
-	SDL_Rect DestRect;
-
-	// Setting information to draw this frame correctly
-	SourceRect.x = Dim.Width() * CurrentFrame;
-	SourceRect.y = Dim.Height() * (CurrentRow - 1);
-	SourceRect.w = DestRect.w = Dim.Width();
-	SourceRect.h = DestRect.h = Dim.Height();
-	DestRect.x = X;
-	DestRect.y = Y;
-	
-	SDL_RenderCopyEx(pRenderer, m_SourceTextures[Properties->GetTextureIndex()], &SourceRect,
-		&DestRect, 0, 0, Flip);
-
-}
-
 // Use this overload when the texture being drawn is different in dest. size then the
 // the reduced texture.
 void TextureManager::DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFlip Flip, 
@@ -216,25 +186,47 @@ void TextureManager::DrawStaticFrame(int X, int Y, int RedIndex, Rect DestDimesn
 		&DestRect, 0, 0, SDL_FLIP_NONE);
 }
 
-void TextureManager::FastDrawFrame(int X, int Y, TextureProperties* Properties, SDL_Texture* Texture, SDL_Renderer* Renderer)
+void TextureManager::DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFlip Flip, SDL_Renderer * pRenderer, Rect DestinRect, SDL_Color Color, int CurrentRow, int CurrentFrame)
 {
+	TextureProperties* Properties = m_RedTextures[RedIndex];
+	if (!Properties)
+	{
+#ifdef _DEBUG
+		cout << "No reduced texture formatted for this ID " << RedIndex << endl;
+#endif // DEBUG
+		return;
+	}
 
 	Rect Dim = Properties->GetDimensions();
 	SDL_Rect SourceRect;
 	SDL_Rect DestRect;
 
-
 	// Setting information to draw this frame correctly
-	SourceRect.x = Dim.TopLeftX();
-	SourceRect.y = Dim.TopLeftY();
-	SourceRect.w = DestRect.w = Dim.Width();
-	SourceRect.h = DestRect.h = Dim.Height();
+	SourceRect.x = Dim.Width() * CurrentFrame;
+	SourceRect.y = Dim.Height() * (CurrentRow - 1);
+	SourceRect.w = Dim.Width();
+	SourceRect.h = Dim.Height();
+	DestRect.h = DestinRect.Height();
+	DestRect.w = DestinRect.Width();
 	DestRect.x = X;
 	DestRect.y = Y;
 
-	SDL_RenderCopyEx(Renderer, Texture, &SourceRect,
-		&DestRect, 0, 0, SDL_FLIP_NONE);
+	// set the color before
+	SDL_SetTextureColorMod(m_SourceTextures[Properties->GetTextureIndex()], Color.r, Color.g, Color.b);
 
+	SDL_RenderCopyEx(pRenderer, m_SourceTextures[Properties->GetTextureIndex()], &SourceRect,
+		&DestRect, 0, 0, Flip);
+
+	// reset the color afterwards
+	SDL_SetTextureColorMod(m_SourceTextures[Properties->GetTextureIndex()], 1.0f, 1.0f, 1.0f);
+}
+
+void TextureManager::DrawStaticFrame(int X, int Y, int RedIndex, SDL_Renderer * pRenderer, SDL_Color Color)
+{
+}
+
+void TextureManager::DrawStaticFrame(int X, int Y, int RedIndex, Rect DestDimesnions, SDL_Renderer * pRenderer, SDL_Color Color)
+{
 }
 
 //

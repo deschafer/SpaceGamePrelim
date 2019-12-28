@@ -3,13 +3,14 @@
 #include "GameObject.h"
 #include "..\BasicTypes\BasicTypes.h"
 #include "..\BasicTypes\EntityDirection.h"
+#include "..\Interactions\Interactable.h"
 
 #include <string>
 #include <vector>
 
 class Component;
 
-class GameEntity : public GameObject
+class GameEntity : public GameObject, Interactable
 {
 public:
 	GameEntity();
@@ -34,7 +35,7 @@ public:
 		std::string SpecTypeID,
 		Vector InitPosition);
 	virtual ~GameEntity();
-	virtual bool Load(
+	virtual bool GameEntity::Load(
 		TextureProperties* Properties,
 		std::string TypeID,
 		std::string SpecTypeID,
@@ -49,7 +50,7 @@ public:
 	virtual void OnCollision();
 	virtual void OnDamaged();
 	virtual void OnMovement();
-	virtual void OnInteraction();
+	virtual bool OnInteraction(GameEntity * InteractingEntity) override;
 
 	virtual void SetFrame(int FrameNumber);
 	virtual void SetVelocity(Vector NewVel) { m_Velocity = NewVel; }
@@ -59,7 +60,6 @@ public:
 	virtual void EnglargeDestination(int Number) { m_DestDimensions.Enlarge(Number); }
 	virtual void SetDestinationRect(Rect Dest) { m_DestDimensions = Dest; }
 
-
 	virtual Vector GetPosition() { return m_Position; }
 	virtual Rect GetDimensions();
 	virtual Rect GetDestDimensions() { return m_DestDimensions; }
@@ -68,6 +68,9 @@ public:
 	virtual Vector GetVelocity() { return m_Velocity; }
 
 	virtual void ExecuteCallback() { m_Callback(); }
+
+	// Interactable overrides
+	virtual Vector GetScreenPosition() override;
 
 protected:
 

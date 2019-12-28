@@ -11,21 +11,18 @@ protected:
 
 public:
 
-	virtual bool Load(
-		TextureProperties *Properties,
-		std::string TypeID,
-		std::string SpecTypeID,
-		Rect DestRect,
-		Vector Velocity,
-		Vector Accel,
-		Vector Position,
-		Callback Handler) = 0;
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
 	virtual void Delete() = 0;
+	virtual bool Load(
+		TextureProperties* Properties,
+		std::string TypeID,
+		std::string SpecTypeID,
+		Rect DestRect,
+		Vector InitVelocity,
+		Vector InitAccel,
+		Vector InitPosition,
+		Callback Handler) = 0;
 
 	GameObject();
-
-
 };
-

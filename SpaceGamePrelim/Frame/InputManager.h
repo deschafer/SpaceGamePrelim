@@ -30,7 +30,6 @@ private:
 	Vector* m_MousePosition;
 	const Uint8* m_KeyStates;
 	int m_MouseWheelMovement;
-	
 
 public:
 	

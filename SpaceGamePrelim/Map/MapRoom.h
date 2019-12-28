@@ -7,18 +7,18 @@
 #include <string>
 
 enum class Side;
+class Map;
 
 class MapRoom
 {
 private:
 
 	RoomProperties* m_Properties;
-
 	MapObject*** m_Cells;
 	MapAsset*** m_Assets;
 	bool*** m_Doorways;
-
 	std::string m_RoomType;
+	Map* m_ParentMap;
 
 	// Contains a beginning point and an ending point
 	std::vector<std::pair<MapCoordinate, MapCoordinate>> m_TopFacingCandiates;		// Candidates are sides that are suitable for a corridor
@@ -54,6 +54,7 @@ public:
 	void Generate(); // Generates this room
 
 	MapObject* GetCell(int X, int Y);
+	MapAsset* GetAsset(int X, int Y);
 	MapCell* GetMapCell(int X, int Y) { return static_cast<MapCell*>(GetCell(X, Y)); }
 	MapObject*** GetCellArray() { return m_Cells; }
 	int GetHeight() { return m_Height; }
@@ -70,8 +71,8 @@ public:
 	void SetBorderingRoom() { m_BorderingRoom = true; }
 
 	MapRoom();
-	MapRoom(std::string RoomType, int Width, int Height); // Known room
-	MapRoom(std::string RoomType, int Width, int Height, std::vector<unsigned> AssetLists);
+	MapRoom(std::string RoomType, int Width, int Height, Map* ParentMap); // Known room
+	MapRoom(std::string RoomType, int Width, int Height, Map* ParentMap, std::vector<unsigned> AssetLists);
 	MapRoom(int Width, int Height);						  // Random room
 	~MapRoom();	
 };
