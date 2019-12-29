@@ -65,6 +65,6 @@ public:
 		MapRoom* Parent);
 	virtual ~MapAsset();
 
-	virtual Vector GetScreenPosition();
+	virtual Vector GetScreenPosition() override;
 };
 

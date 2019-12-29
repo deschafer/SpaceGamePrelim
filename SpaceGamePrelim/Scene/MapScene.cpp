@@ -15,6 +15,7 @@
 #include "../Components/ZoomComp.h"
 #include "../Components/MapZoomComp.h"
 #include "../Components/ZoomMovementComp.h"
+#include "../Components/PlayerInteractComp.h"
 
 #include "../Parsing/RoomDefinitionParser.h"
 #include "../Parsing/FallbackRoomParser.h"
@@ -57,6 +58,7 @@ bool MapScene::Enter()
 	SceneFactory::Instance()->RegisterNewComponent("Zoom", new ZoomCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("MapZoom", new MapZoomCompCreator());
 	SceneFactory::Instance()->RegisterNewComponent("ZoomMovement", new ZoomMovementCompCreator());
+	SceneFactory::Instance()->RegisterNewComponent("PlayerInteraction", new PlayerInteractCompCreator());
 
 	SceneFactory::Instance()->LoadNewScene("./XML/Scenes/Test.xml", this);
 

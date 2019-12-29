@@ -1,12 +1,13 @@
 #pragma once
 
 #include "MapCoordinate.h"
+#include "..\Objects\Colorable.h"
 
 // Map Object types -- not sure if it will be staying
 enum class MapObjectTypes{CELL_WALL, CELL_INACTIVE};
 
 // Base class for all map objects such as MapCells
-class MapObject
+class MapObject : public Colorable
 {
 protected:
 

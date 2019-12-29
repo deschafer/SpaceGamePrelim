@@ -2,7 +2,8 @@
 
 
 
-GameObject::GameObject()
+GameObject::GameObject() : 
+	Colorable()
 {
 }
 

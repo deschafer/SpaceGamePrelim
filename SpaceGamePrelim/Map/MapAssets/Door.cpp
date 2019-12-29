@@ -1,6 +1,10 @@
 
 #include "Door.h"
 
+#include <iostream>
+
+using namespace std;
+
 Door::Door()
 {
 }
@@ -25,5 +29,8 @@ MapAsset* Door::Copy()
 
 bool Door::OnInteraction(GameEntity* object) 
 {
+
+	cout << "Interaction made with door" << endl;
+
 	return false;
 }

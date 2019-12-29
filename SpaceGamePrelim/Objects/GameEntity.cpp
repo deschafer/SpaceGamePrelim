@@ -148,6 +148,7 @@ void GameEntity::Draw()
 		SDL_FLIP_NONE,
 		MainApplication::Instance()->GetRenderer(), 
 		m_DestDimensions,
+		m_Color,
 		m_CurrentRow, 
 		m_CurrentFrame);
 }

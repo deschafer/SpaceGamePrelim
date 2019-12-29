@@ -59,7 +59,8 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height, Map* ParentMap) :
 	m_CellSpawnRate(100),
 	m_CountCells(0),
 	m_CellSpawnGroupSize(10),		// An asset can spawn every tens cells if the chance is selected
-	m_BorderingRoom(false)
+	m_BorderingRoom(false),
+	m_ParentMap(ParentMap)
 {
 	// Getting the properties assoc with this room type
 	m_Properties = RoomManager::Instance()->GetTypeDefinition(RoomType);

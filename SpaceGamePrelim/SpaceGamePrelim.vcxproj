@@ -60,6 +60,7 @@
     <ClCompile Include="Map\RoomConnector.cpp" />
     <ClCompile Include="Map\RoomManager.cpp" />
     <ClCompile Include="Objects\Button.cpp" />
+    <ClCompile Include="Objects\Colorable.cpp" />
     <ClCompile Include="Objects\GameEntity.cpp" />
     <ClCompile Include="Objects\GameObject.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="Map\RoomManager.h" />
     <ClInclude Include="Objects\BaseCreator.h" />
     <ClInclude Include="Objects\Button.h" />
+    <ClInclude Include="Objects\Colorable.h" />
     <ClInclude Include="Objects\GameEntity.h" />
     <ClInclude Include="Objects\GameObject.h" />
     <ClInclude Include="Objects\Player.h" />

@@ -1,6 +1,6 @@
 #include "CorridorHoriz.h"
 #include "..\TextureCode\TextureDefinitions.h"
-#include "..\Map\MapAssetManager.h";
+#include "..\Map\MapAssetManager.h"
 
 
 using namespace std;

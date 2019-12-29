@@ -223,10 +223,72 @@ void TextureManager::DrawCurrentFrame(int X, int Y, int RedIndex, SDL_RendererFl
 
 void TextureManager::DrawStaticFrame(int X, int Y, int RedIndex, SDL_Renderer * pRenderer, SDL_Color Color)
 {
+	TextureProperties* Properties = m_RedTextures[RedIndex];
+	
+	if (!Properties)
+	{
+#ifdef _DEBUG
+		cout << "No reduced texture formatted for this ID " << RedIndex << endl;
+#endif // DEBUG
+		return;
+	}
+
+	Rect Dim = Properties->GetDimensions();
+	SDL_Rect SourceRect;
+	SDL_Rect DestRect;
+
+	// Setting information to draw this frame correctly
+	SourceRect.x = Dim.TopLeftX();
+	SourceRect.y = Dim.TopLeftY();
+	SourceRect.w = DestRect.w = Dim.Width();
+	SourceRect.h = DestRect.h = Dim.Height();
+	DestRect.x = X;
+	DestRect.y = Y;
+
+	// set the color before
+	SDL_SetTextureColorMod(m_SourceTextures[Properties->GetTextureIndex()], Color.r, Color.g, Color.b);
+
+	SDL_RenderCopyEx(pRenderer, m_SourceTextures[Properties->GetTextureIndex()], &SourceRect,
+		&DestRect, 0, 0, SDL_FLIP_NONE);
+
+	// reset the color afterwards
+	SDL_SetTextureColorMod(m_SourceTextures[Properties->GetTextureIndex()], 1.0f, 1.0f, 1.0f);
 }
 
 void TextureManager::DrawStaticFrame(int X, int Y, int RedIndex, Rect DestDimesnions, SDL_Renderer * pRenderer, SDL_Color Color)
 {
+	TextureProperties* Properties = m_RedTextures[RedIndex];
+
+	if (!Properties)
+	{
+#ifdef _DEBUG
+		cout << "No reduced texture formatted for this ID " << RedIndex << endl;
+#endif // DEBUG
+		return;
+	}
+
+	Rect Dim = Properties->GetDimensions();
+	SDL_Rect SourceRect;
+	SDL_Rect DestRect;
+
+	// Setting information to draw this frame correctly
+	SourceRect.x = Dim.TopLeftX();
+	SourceRect.y = Dim.TopLeftY();
+	SourceRect.w = Dim.Width();
+	SourceRect.h = Dim.Height();
+	DestRect.w = DestDimesnions.Width();
+	DestRect.h = DestDimesnions.Height();
+	DestRect.x = X;
+	DestRect.y = Y;
+
+	// set the color before
+	SDL_SetTextureColorMod(m_SourceTextures[Properties->GetTextureIndex()], Color.r, Color.g, Color.b);
+
+	SDL_RenderCopyEx(pRenderer, m_SourceTextures[Properties->GetTextureIndex()], &SourceRect,
+		&DestRect, 0, 0, SDL_FLIP_NONE);
+
+	// reset the color afterwards
+	SDL_SetTextureColorMod(m_SourceTextures[Properties->GetTextureIndex()], 1.0f, 1.0f, 1.0f);
 }
 
 //

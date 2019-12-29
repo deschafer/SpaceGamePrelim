@@ -60,6 +60,7 @@ public:
 	int GetHeight() { return m_Height; }
 	int GetWidth() { return m_Width; }
 	std::string GetRoomType() { return m_RoomType; }
+	Map* GetParentMap() { return m_ParentMap; }
 	void AddLinkedRoom(Side side, MapRoom* LinkedRoom);
 	void AddDoorWayPosition(MapCoordinate RoomRelativeCoordinate);
 	bool ConnectedToRoom(Side side);

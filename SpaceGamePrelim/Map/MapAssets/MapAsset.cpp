@@ -311,8 +311,12 @@ MapCoordinate MapAsset::CheckAssetPosition(MapCoordinate TopLeftPosition, MapCel
 //
 Vector MapAsset::GetScreenPosition()
 {
-	//Map* CurrentMap = m_ParentRoom->Get
+	if (m_ParentRoom) {
 
-	// this needs to convert this object's map position to its screen position
-	return MapManager::Instance()->ConvertMapPositionToScreenPosition(m_Position, nullptr);
+		Map* ParentMap = m_ParentRoom->GetParentMap();
+
+		// this needs to convert this object's map position to its screen position
+		return MapManager::Instance()->ConvertMapPositionToScreenPosition(m_Position, ParentMap);
+	}
+	return Vector(-1.0f, -1.0f);
 }

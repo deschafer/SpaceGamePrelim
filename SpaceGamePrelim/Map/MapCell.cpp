@@ -139,6 +139,7 @@ void MapCell::Draw(MapCoordinate Coords)
 		}
 	}
 }
+
 //
 // Draw()
 // Given the offset of the map where this asset is,
@@ -163,6 +164,7 @@ void MapCell::Draw(double X, double Y)
 				SDL_FLIP_NONE,
 				MainApplication::Instance()->GetRenderer(),
 				m_DestRect,
+				m_Color,
 				m_CurrentRow[i],
 				m_CurrentFrame[i]
 			);
@@ -206,7 +208,8 @@ void MapCell::DrawStatic(MapCoordinate Coords)
 				Coords.GetPositionY(),
 				m_RedTextureIndex[i],
 				m_DestRect,
-				MainApplication::Instance()->GetRenderer());
+				MainApplication::Instance()->GetRenderer(),
+				m_Color);
 		}
 	}
 	else
@@ -218,7 +221,8 @@ void MapCell::DrawStatic(MapCoordinate Coords)
 				Coords.GetPositionX(),
 				Coords.GetPositionY(),
 				m_RedTextureIndex[i],
-				MainApplication::Instance()->GetRenderer());
+				MainApplication::Instance()->GetRenderer(),
+				m_Color);
 		}
 	}
 }

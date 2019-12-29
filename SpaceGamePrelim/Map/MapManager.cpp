@@ -1916,10 +1916,10 @@ Vector MapManager::ConvertMapPositionToScreenPosition(MapCoordinate Position, Ma
 		ActiveMap = m_ActiveMap;
 	}
 
-	Vector OriginPosition(Position.GetPositionX() * m_CellWidth,
+	Vector OriginPosition((float)Position.GetPositionX() * m_CellWidth,
 		Position.GetPositionY() * m_CellHeight);
 
-	Vector OffsetPosition(OriginPosition.getX() - MapSizeW * m_CellWidth,
+	Vector OffsetPosition((float)OriginPosition.getX() - MapSizeW * m_CellWidth,
 		OriginPosition.getY() - MapSizeH * m_CellHeight);
 
 	Vector ScreenPosition(OffsetPosition.getX() + (float)m_PixelOffsetX,

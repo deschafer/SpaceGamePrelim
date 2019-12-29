@@ -44,6 +44,7 @@
       <COMP compID="MapCollision"/>
       <COMP compID="PlayerMapMovement"/>
       <COMP compID="CenteredPos"/>
+      <COMP compID="PlayerInteraction"/>
     </OBJECT>
              
     

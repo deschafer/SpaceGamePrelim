@@ -5,6 +5,11 @@ class GameEntity;
 
 class PlayerInteractComp : public Component
 {
+private:
+
+	double m_Timer = 0;
+	const double m_Time = 0.25;	// one quarter second
+
 public:
 	PlayerInteractComp();
 	PlayerInteractComp(GameEntity* Owner);

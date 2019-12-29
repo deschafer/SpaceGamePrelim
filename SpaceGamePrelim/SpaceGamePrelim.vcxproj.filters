@@ -275,6 +275,9 @@
     <ClCompile Include="Time\Time.cpp">
       <Filter>Source Files\Time</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\Colorable.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\SceneFactory.h">
@@ -468,6 +471,9 @@
     </ClInclude>
     <ClInclude Include="Time\Time.h">
       <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Colorable.h">
+      <Filter>Header Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

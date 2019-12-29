@@ -39,7 +39,7 @@ void InteractionManager::InteractWithSurroundings(GameEntity* InteractingEntity)
 		Vector Difference = InteractingEntity->GetPosition() - CurrentInteractable->GetScreenPosition();
 
 		// then get the magnitude of the difference vector
-		if (Difference.length() >= m_InteractionDistance) 
+		if (Difference.length() <= m_InteractionDistance) 
 		{
 			// then add this to the InteractingObjects vector
 			InteractingObjects.push_back(CurrentInteractable);

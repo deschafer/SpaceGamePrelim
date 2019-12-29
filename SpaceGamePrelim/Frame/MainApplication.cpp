@@ -133,9 +133,6 @@ void MainApplication::Update()
 	{
 
 	}
-
-	std::cout << "Delta time " << Time::Instance()->GetDeltaTime() << std::endl;
-
 }
 
 //

@@ -1,9 +1,10 @@
 #pragma once
 
 #include "..\BasicTypes\BasicTypes.h"
+#include ".\Colorable.h"
 
 // Basic, abstract object class
-class GameObject
+class GameObject : public Colorable
 {
 protected:
 
