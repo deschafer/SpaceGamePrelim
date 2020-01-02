@@ -2,6 +2,7 @@
 #include "..\MapCell.h"
 
 class MapRoom;
+class Map;
 
 class MapAsset : public MapCell, Interactable
 {
@@ -43,6 +44,8 @@ public:
 		bool Collidable);
 
 	void SetParentRoom(MapRoom* Room) { m_ParentRoom = Room; }
+	MapRoom* GetParentRoom() { return m_ParentRoom; }
+	Map* GetParentMap();
 	bool IsDrawn() { return m_Drawn; }
 
 	virtual MapAsset* Copy() = 0;	// Returns a copy of this object
@@ -65,6 +68,6 @@ public:
 		MapRoom* Parent);
 	virtual ~MapAsset();
 
-	virtual Vector GetScreenPosition() override;
+	virtual Vector GetInteractablePosition() override;
 };
 

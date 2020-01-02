@@ -12,10 +12,12 @@ Interactable::Interactable(bool IsInteractable) :
 	m_Interactable(IsInteractable)
 {
 	// add this interactable to the InteractionManager
-	try {
+	try 
+	{
 		InteractionManager::Instance()->AddInteractable(this);
 	}
-	catch (...) {
+	catch (...) 
+	{
 		std::cout << "Expection thrown, Interactable::Interactable(bool arg)\n";
 	}
 }

@@ -4,13 +4,14 @@
 #include "..\BasicTypes\BasicTypes.h"
 #include "..\BasicTypes\EntityDirection.h"
 #include "..\Interactions\Interactable.h"
+#include "Locatable.h"
 
 #include <string>
 #include <vector>
 
 class Component;
 
-class GameEntity : public GameObject, Interactable
+class GameEntity : public GameObject, protected Interactable, protected Locatable
 {
 public:
 	GameEntity();
@@ -69,8 +70,9 @@ public:
 
 	virtual void ExecuteCallback() { m_Callback(); }
 
-	// Interactable overrides
-	virtual Vector GetScreenPosition() override;
+	// Interactable and Locatable overrides
+	virtual Vector GetInteractablePosition() override { return m_Position; }
+	virtual Vector GetLocatableScreenPosition() override { return m_Position; }
 
 protected:
 

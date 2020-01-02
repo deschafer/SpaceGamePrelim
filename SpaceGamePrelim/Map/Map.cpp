@@ -738,6 +738,7 @@ void Map::SetNewCorridorAsset(MapCoordinate CellPosition, MapAsset* NewCell)
 
 	if ((X < m_Width) && (Y < m_Height) && (Y >= 0) && (X >= 0) && NewCell)
 	{
+		NewCell->SetPosition(CellPosition);
 		m_Assets[X][Y] = NewCell;
 	}
 }
@@ -750,7 +751,6 @@ void Map::SetNewCell(MapCoordinate CellPosition, MapCell* NewCell)
 {
 	int X = CellPosition.GetPositionX();
 	int Y = CellPosition.GetPositionY();
-
 
 	if ((X < m_Width) && (Y < m_Height) && (Y >= 0) && (X >= 0) && NewCell)
 	{
@@ -883,6 +883,15 @@ vector<MapRoom*> Map::GetRoomsFromColumnX(int X, bool Last)
 		return m_Rooms[Index];
 	else
 		return m_Rooms[X];
+}
+
+void Map::AddAssetToArray(MapAsset * Asset)
+{
+	if (Asset)
+	{
+		m_Assets[Asset->GetPosition().GetPositionX()][Asset->GetPosition().GetPositionY()] = Asset;
+		m_AssetsList.push_back(Asset);
+	}
 }
 
 //

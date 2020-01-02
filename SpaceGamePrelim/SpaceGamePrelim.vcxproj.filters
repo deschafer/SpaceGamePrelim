@@ -278,6 +278,9 @@
     <ClCompile Include="Objects\Colorable.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\Locatable.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\SceneFactory.h">
@@ -473,6 +476,9 @@
       <Filter>Header Files\Time</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Colorable.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Locatable.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>

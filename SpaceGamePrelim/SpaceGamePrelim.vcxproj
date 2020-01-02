@@ -63,6 +63,7 @@
     <ClCompile Include="Objects\Colorable.cpp" />
     <ClCompile Include="Objects\GameEntity.cpp" />
     <ClCompile Include="Objects\GameObject.cpp" />
+    <ClCompile Include="Objects\Locatable.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
     <ClCompile Include="Parsing\FallbackRoomParser.cpp" />
     <ClCompile Include="Parsing\RoomDefinitionParser.cpp" />
@@ -132,6 +133,7 @@
     <ClInclude Include="Objects\Colorable.h" />
     <ClInclude Include="Objects\GameEntity.h" />
     <ClInclude Include="Objects\GameObject.h" />
+    <ClInclude Include="Objects\Locatable.h" />
     <ClInclude Include="Objects\Player.h" />
     <ClInclude Include="Parsing\FallbackRoomParser.h" />
     <ClInclude Include="Parsing\RoomDefinitionParser.h" />
@@ -156,20 +158,20 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{272D3B36-FB14-4AE0-B4C6-C3CD05623C70}</ProjectGuid>
     <RootNamespace>SpaceGamePrelim</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>Static</UseOfMfc>
@@ -177,13 +179,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>

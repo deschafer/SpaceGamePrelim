@@ -2,6 +2,7 @@
 
 #include "MapCoordinate.h"
 #include "..\Objects\Colorable.h"
+#include "..\Objects\Locatable.h"
 
 // Map Object types -- not sure if it will be staying
 enum class MapObjectTypes{CELL_WALL, CELL_INACTIVE};

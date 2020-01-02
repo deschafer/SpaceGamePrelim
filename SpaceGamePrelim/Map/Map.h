@@ -107,6 +107,7 @@ public:
 	void AddCorridor(Corridor* NewCorridor) { m_Corridors.push_back(NewCorridor); }
 	MapCoordinate* GetRoomOffsetsFromLastRow(int X);
 	std::vector<MapRoom*> GetRoomsFromColumnX(int X, bool Last = false);
+	void AddAssetToArray(MapAsset* Asset);
 
 	bool operator ==(Map Other)
 	{

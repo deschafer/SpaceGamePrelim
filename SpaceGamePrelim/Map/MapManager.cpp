@@ -338,6 +338,8 @@ void MapManager::Draw()
 						PositionY + m_CellHeight >= 0 &&
 						PositionY < m_ActiveWndHeight)
 					{
+						// note that this MapCoordinate should be a vector. It refers to a location in the screen to draw the object
+
 						Object->Draw(MapCoordinate((int)round(PositionX), (int)round(PositionY)));
 					}
 				}
@@ -947,6 +949,7 @@ void MapManager::MoveMap()
 	m_VisibleMapCells[(int)MapDirection::Northwest] = m_ActiveMap->GetNeighbor(MapDirection::Northwest)->GetCellArrayAddress();
 	// Finally set the cells for the new active map
 	m_VisibleMapCells[CenterMapArrayIndex] = m_ActiveMap->GetCellArrayAddress();
+
 
 	// Do the same for the map assets
 	m_VisibleAssetCells[(int)MapDirection::North] = m_ActiveMap->GetNeighbor(MapDirection::North)->GetAssetArrayAddress();
@@ -1902,12 +1905,9 @@ Collision* MapManager::CheckCollidingPoint(Vector Position)
 	else return nullptr;
 }
 
-
-
 Vector MapManager::ConvertMapPositionToScreenPosition(MapCoordinate Position, Map* CurrentMap) 
 {
 	MapCell* CurrCell = GetCellFromMaps(CurrentMap, Position);
-
 
 	static Map* ActiveMap = m_ActiveMap;
 

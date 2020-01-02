@@ -14,7 +14,6 @@ private:
 public:
 	CorridorHoriz(int Width, int Height, MapRoom* LeftRoom, MapRoom* RightRoom);
 	virtual ~CorridorHoriz();
-
 	virtual Corridor* GenerateCorridor(Array BoundsMatrix, Array CorridorLocaleMartrix, MapCoordinate Beg, MapCoordinate End, int DistanceBetween);
 };
 

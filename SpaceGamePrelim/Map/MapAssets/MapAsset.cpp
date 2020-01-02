@@ -120,6 +120,14 @@ void MapAsset::Load(std::vector<std::string> RedTextureIDs, // Function used to 
 	}
 }
 
+Map* MapAsset::GetParentMap()
+{
+	if (m_ParentRoom && m_ParentRoom->GetParentMap()) {
+		return m_ParentRoom->GetParentMap();
+	}
+	return nullptr;
+}
+
 //
 // Draw()
 //
@@ -309,14 +317,7 @@ MapCoordinate MapAsset::CheckAssetPosition(MapCoordinate TopLeftPosition, MapCel
 // GetScreenPosition()
 // This gets the actual screen position where this object is located
 //
-Vector MapAsset::GetScreenPosition()
+Vector MapAsset::GetInteractablePosition()
 {
-	if (m_ParentRoom) {
-
-		Map* ParentMap = m_ParentRoom->GetParentMap();
-
-		// this needs to convert this object's map position to its screen position
-		return MapManager::Instance()->ConvertMapPositionToScreenPosition(m_Position, ParentMap);
-	}
-	return Vector(-1.0f, -1.0f);
+	return MapCell::Locatable::GetLocatableScreenPosition();
 }

@@ -10,14 +10,14 @@ GameEntity::GameEntity() :
 	m_CurrentFrame(1),
 	m_CurrentRow(1),
 	m_DestDimensions(0, 0, 0, 0),
-	Interactable(true)
+	Interactable(true),
+	Locatable(m_Position)
 {
 }
 
 GameEntity::~GameEntity()
 {
 }
-
 
 GameEntity::GameEntity(std::string ReducedTexture,
 	TextureProperties* Properties,
@@ -27,7 +27,6 @@ GameEntity::GameEntity(std::string ReducedTexture,
 	Vector InitVelocity,
 	Vector InitAccel) :
 	GameEntity() 
-
 {
 	m_Acceleration = InitAccel;
 	m_Velocity = InitVelocity;
@@ -88,6 +87,7 @@ bool GameEntity::Load(
 	m_Acceleration = InitAccel;
 	m_SpecTypeID = SpecTypeID;
 	m_TypeID = TypeID;
+	SetLocatableScreenPosition(m_Position);
 
 	m_CurrentFrame = 1;
 	m_CurrentRow = 1;
@@ -140,6 +140,7 @@ void GameEntity::Update()
 void GameEntity::Draw()
 {
 	SDL_Renderer* Temp = MainApplication::Instance()->GetRenderer();
+	SetLocatableScreenPosition(m_Position);
 	
 	TextureManager::Instance()->DrawCurrentFrame(
 		static_cast<int>(round(m_Position.getX())), 
@@ -206,11 +207,6 @@ Rect GameEntity::GetDimensions()
 		return m_Dimensions;
 	}
 	else return m_DestDimensions;
-}
-
-Vector GameEntity::GetScreenPosition()
-{
-	return m_Position;
 }
 
 //

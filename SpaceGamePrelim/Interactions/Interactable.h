@@ -13,7 +13,7 @@ private:
 public:
 
 	virtual bool OnInteraction(GameEntity* InteractingEntity);
-	virtual Vector GetScreenPosition() = 0;
+	virtual Vector GetInteractablePosition () = 0;
 
 	void SetInteractable(bool IsInteractable) { m_Interactable = IsInteractable; }
 	

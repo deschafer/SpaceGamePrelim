@@ -8,11 +8,12 @@
 
 // Default CTOR, used by all CTORs for some common
 // intialization
-MapCell::MapCell() : 
+MapCell::MapCell() :
 	m_Animated(false),
 	m_RedTextureIDs(nullptr),
 	m_OriginSize(m_DestRect)
 {
+	Colorable::Colorable();
 }
 
 //
@@ -51,6 +52,8 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProp
 	m_DestRect(0, 0, 0, 0),
 	m_OriginSize(m_DestRect)
 {
+	Colorable::Colorable();
+
 	TextureProperties* CurrentProp;
 
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
@@ -112,10 +115,15 @@ MapCell::~MapCell()
 // Draw()
 // Called to draw a mapobject, it will direct it accordingly
 // based on whether to use ReducedTextures for full Textures
+// NOTE: these coordinates do not refer to map position, instead 
+//		 it refers to its screen position
 //
 void MapCell::Draw(MapCoordinate Coords)
 {
 	Zoom();
+
+	// set this as our last screen position
+	SetLocatableScreenPosition(Vector(Coords.GetPositionX(), Coords.GetPositionY()));
 
 	if (!m_Animated)
 	{
@@ -133,6 +141,7 @@ void MapCell::Draw(MapCoordinate Coords)
 				SDL_FLIP_NONE,
 				MainApplication::Instance()->GetRenderer(),
 				m_DestRect,
+				m_Color,
 				m_CurrentRow[i],
 				m_CurrentFrame[i]
 			);
@@ -147,6 +156,8 @@ void MapCell::Draw(MapCoordinate Coords)
 //
 void MapCell::Draw(double X, double Y)
 {
+	// set this as our last screen position
+	SetLocatableScreenPosition(Vector(X, Y));
 
 	if (!m_Animated)
 	{

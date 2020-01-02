@@ -24,7 +24,7 @@ enum class Cell
 	Empty
 };
 
-class MapCell : public MapObject
+class MapCell : public MapObject, protected Locatable
 {
 protected:
 
@@ -66,8 +66,8 @@ public:
 	MapCoordinate GetPosition() { return m_Position; }
 	void SetPosition(MapCoordinate Position) { m_Position = Position; }
 	void SetCellType(Cell CellType) { m_CellType = CellType; }
-	virtual void Zoom();
 
+	virtual void Zoom();
 	virtual void Draw(MapCoordinate Coords);
 	virtual void Draw(double X, double Y);
 	virtual bool OnCollision(GameEntity* Enitity);
