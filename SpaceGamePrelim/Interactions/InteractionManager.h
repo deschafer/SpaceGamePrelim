@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mutex>
-#include <list>
+#include <vector>
 
 #include "..\Objects\GameEntity.h"
 #include "..\Map\MapManager.h"
@@ -18,7 +18,7 @@ private:
 
 	static const int m_InteractionDistance = MapManager::CellWidthSrc + MapManager::CellWidthSrc / 2;
 
-	std::list<Interactable*> m_Interactables;
+	std::vector<Interactable*> m_Interactables;
 
 	InteractionManager();
 
@@ -35,7 +35,7 @@ public:
 		return m_Instance;
 	}
 
-	int AddInteractable(Interactable* NewInteractable);
+	size_t AddInteractable(Interactable* NewInteractable);
 	void RemoveInteractable(size_t Index);
 	void InteractWithSurroundings(GameEntity* InteractingEntity);
 	

@@ -15,7 +15,6 @@ MapCell::MapCell() :
 	Interactable(true)
 {
 	Colorable::Colorable();
-	m_HasDerived = this;
 }
 
 //
@@ -58,7 +57,6 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProp
 {
 	Colorable::Colorable();
 	TextureProperties* CurrentProp;
-	m_HasDerived = this;
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
 
 	TextureManager* Manager = TextureManager::Instance();

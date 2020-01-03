@@ -23,18 +23,21 @@ InteractionManager::~InteractionManager()
 // Adds the given interactable to the master list so it can be interacted with
 // NOTE: The return value is the index of the storage list. This should be saved.
 //
-int InteractionManager::AddInteractable(Interactable* NewInteractable) {
+size_t InteractionManager::AddInteractable(Interactable* NewInteractable) {
+
 	m_GetMutex.lock();
-
-	// based on the screen position, we add it to a localized region
-
+	// add the new interactable
 	m_Interactables.push_back(NewInteractable);
+	size_t Size = m_Interactables.size() - 1;
 	m_GetMutex.unlock();
+	
+	// then return the index
+	return Size;
 }
 
 void InteractionManager::RemoveInteractable(size_t Index) {
 	m_GetMutex.lock();
-	//m_Interactables = nullptr;
+	m_Interactables[Index] = nullptr;
 	m_GetMutex.unlock();
 }
 
@@ -45,13 +48,16 @@ void InteractionManager::InteractWithSurroundings(GameEntity* InteractingEntity)
 	// we iterate through all of our interactables
 	for (Interactable* CurrentInteractable : m_Interactables)
 	{
-		Vector Difference = InteractingEntity->GetLocatableScreenPosition() - CurrentInteractable->GetInteractablePosition();
-		
-		// then get the magnitude of the difference vector
-		if (Difference.length() <= m_InteractionDistance && Difference.length() >= 0)
+		if (CurrentInteractable)
 		{
-			// then add this to the InteractingObjects vector
-			InteractingObjects.push_back(CurrentInteractable);
+			Vector Difference = InteractingEntity->GetLocatableScreenPosition() - CurrentInteractable->GetInteractablePosition();
+
+			// then get the magnitude of the difference vector
+			if (Difference.length() <= m_InteractionDistance && Difference.length() >= 0)
+			{
+				// then add this to the InteractingObjects vector
+				InteractingObjects.push_back(CurrentInteractable);
+			}
 		}
 	}
 

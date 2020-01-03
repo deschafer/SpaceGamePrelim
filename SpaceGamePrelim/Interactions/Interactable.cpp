@@ -14,7 +14,7 @@ Interactable::Interactable(bool IsInteractable) :
 	// add this interactable to the InteractionManager
 	try 
 	{
-		InteractionManager::Instance()->AddInteractable(this);
+		m_InteractableIndex = InteractionManager::Instance()->AddInteractable(this);
 	}
 	catch (...) 
 	{
@@ -24,5 +24,6 @@ Interactable::Interactable(bool IsInteractable) :
 
 Interactable::~Interactable()
 {
+	InteractionManager::Instance()->RemoveInteractable(m_InteractableIndex);
 }
  
