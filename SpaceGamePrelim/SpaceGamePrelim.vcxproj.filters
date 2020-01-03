@@ -90,6 +90,12 @@
     <Filter Include="Source Files\Time">
       <UniqueIdentifier>{ff805c78-7cc4-4034-b8ad-7c032a698506}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Objects\Actions">
+      <UniqueIdentifier>{968788f3-4966-47ff-aebc-877d55a57d8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Objects\Actions">
+      <UniqueIdentifier>{26714eba-9005-40c1-9669-d572dea88e86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Map\MapCell.cpp">
@@ -279,6 +285,15 @@
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="Objects\Locatable.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Action.cpp">
+      <Filter>Source Files\Objects\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\AnimationChangeAction.cpp">
+      <Filter>Source Files\Objects\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Drawable.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -479,6 +494,15 @@
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Locatable.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Action.h">
+      <Filter>Header Files\Objects\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\AnimationChangeAction.h">
+      <Filter>Header Files\Objects\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Drawable.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>

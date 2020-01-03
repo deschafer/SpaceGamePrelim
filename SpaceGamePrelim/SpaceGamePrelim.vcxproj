@@ -59,8 +59,11 @@
     <ClCompile Include="Map\MapWall.cpp" />
     <ClCompile Include="Map\RoomConnector.cpp" />
     <ClCompile Include="Map\RoomManager.cpp" />
+    <ClCompile Include="Objects\Action.cpp" />
+    <ClCompile Include="Objects\AnimationChangeAction.cpp" />
     <ClCompile Include="Objects\Button.cpp" />
     <ClCompile Include="Objects\Colorable.cpp" />
+    <ClCompile Include="Objects\Drawable.cpp" />
     <ClCompile Include="Objects\GameEntity.cpp" />
     <ClCompile Include="Objects\GameObject.cpp" />
     <ClCompile Include="Objects\Locatable.cpp" />
@@ -128,9 +131,12 @@
     <ClInclude Include="Map\MapWall.h" />
     <ClInclude Include="Map\RoomConnector.h" />
     <ClInclude Include="Map\RoomManager.h" />
+    <ClInclude Include="Objects\Action.h" />
+    <ClInclude Include="Objects\AnimationChangeAction.h" />
     <ClInclude Include="Objects\BaseCreator.h" />
     <ClInclude Include="Objects\Button.h" />
     <ClInclude Include="Objects\Colorable.h" />
+    <ClInclude Include="Objects\Drawable.h" />
     <ClInclude Include="Objects\GameEntity.h" />
     <ClInclude Include="Objects\GameObject.h" />
     <ClInclude Include="Objects\Locatable.h" />
