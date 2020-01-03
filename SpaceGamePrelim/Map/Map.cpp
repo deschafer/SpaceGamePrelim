@@ -150,6 +150,9 @@ MapObject* Map::GetCorridorCell(int X, int Y)
 //
 void Map::Generate()
 {
+
+	cout << "Generating\n";
+
 	int Width = 0;
 	int Index = 0;
 
@@ -168,7 +171,7 @@ void Map::Generate()
 		Index++;
 	}
 
-	
+	cout << "Generating phase two\n";
 
 	// Pot.Asset.Placement -- search term. this is being considered for asset placement
 	// if we place assets here, we can consider doorways
@@ -332,6 +335,8 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	// Search the list of map-specific rooms
 	Properties = m_MapProperties->GetRandomRoomThatFits(RoomType, RoomWidth, RoomHeight, GlobalAssets, LocalAssets);
 
+	cout << "StageOne\n";
+
 	if (!Properties)
 	{
 		// If there is not a room available, then get a fallback one
@@ -347,6 +352,9 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 		return;
 	}
 
+	cout << "StageTwo\n";
+
+
 	// Adding random variation to the size
 	if (RoomHeight != MaxRoomHeight)
 	{
@@ -361,6 +369,9 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 		RoomHeight = Properties->m_MinHeight + rand() % (MaxRoomHeight - Properties->m_MinHeight);
 	}
 
+	cout << "StageThree\n";
+
+
 	// Add randomization to the selected room's width
 	RoomWidth = Properties->m_MinWidth + rand() % (MaxWidth - Properties->m_MinWidth);
 
@@ -370,6 +381,9 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	// Creating the new room
 	Room = new MapRoom(RoomType, RoomWidth, RoomHeight, this, GlobalAssets);
 	Room->Generate();
+
+	cout << "StageFour\n";
+
 
 	GlobalAssets.clear();
 
@@ -387,6 +401,8 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	// Adding this rooms column offset to simplify corridor gen later on
 	m_ColumnOffsetsX[ColNumber].push_back(xOffset);
 	m_ColumnOffsetsY[ColNumber].push_back(OffsetY);
+
+	cout << "StageFive\n";
 
 	MapCell* Place = nullptr;
 	MapCell* Current = nullptr;
@@ -437,6 +453,8 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 
 		}
 	}
+
+	cout << "StageSix\n";
 
 	// Setting appropriate link to room above
 	if (RoomAbove)

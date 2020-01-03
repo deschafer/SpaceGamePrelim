@@ -16,7 +16,7 @@ private:
 	static std::mutex m_GetMutex;				// mut excl. usef for the Get methods
 	static InteractionManager* m_Instance;		
 
-	static const int m_InteractionDistance = MapManager::CellWidthSrc;
+	static const int m_InteractionDistance = MapManager::CellWidthSrc + MapManager::CellWidthSrc / 2;
 
 	std::list<Interactable*> m_Interactables;
 

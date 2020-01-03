@@ -58,8 +58,6 @@ public:
 	MapAsset* CreateAssetFromList(unsigned ListID);
 	int StringToListID(std::string ListName);
 
-
-
 	~MapAssetManager();
 };
 

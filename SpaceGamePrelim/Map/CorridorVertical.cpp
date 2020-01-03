@@ -50,6 +50,7 @@ void CorridorVertical::AddBeginningCell(MapCoordinate Pos)
 	// then we also add a door at this position
 	MapAsset* Door = MapAssetManager::Instance()->CreateAsset(MapAssetManager::Instance()->StringToAssetID("Door"));
 	Door->SetParentRoom(m_RoomAboveOrRight);
+	Door->SetParentMap(m_RoomAboveOrRight->GetParentMap());
 	AddAsset(MapCoordinate(Pos.GetPositionX(), Pos.GetPositionY()), Door);
 }
 
@@ -357,6 +358,7 @@ Corridor* CorridorVertical::GenerateCorridor(Array BoundsMatrix, Array CorridorL
 	{
 		// place a door at the ending position
 		MapAsset* Door = MapAssetManager::Instance()->CreateAsset(MapAssetManager::Instance()->StringToAssetID("Door"));
+		Door->SetParentMap(m_RoomAboveOrRight->GetParentMap());
 		Door->SetParentRoom(m_RoomAboveOrRight);
 		AddAsset(MapCoordinate(CurrentX, CurrentY), Door);
 	}

@@ -7,7 +7,8 @@ const static MapCoordinate ErrorCoord = MapCoordinate(-1, -1);
 MapAsset::MapAsset() :
 	m_IntegerHeight((int)ceil(m_DestRect.Height() / MapManager::GetCellSourceHeight())),
 	m_IntegerWidth((int)ceil(m_DestRect.Width() / MapManager::GetCellSourceWidth())),
-	Interactable(true)
+	m_ParentRoom(nullptr),
+	m_ParentMap(nullptr)
 {
 }
 
@@ -21,7 +22,10 @@ MapAsset::MapAsset(std::vector<std::string> RedTextureIDs,
 	Cell CellType,
 	MapRoom* Parent) :
 	MapCell(RedTextureIDs, Position, DestRect, CellType),
-	Interactable(true)
+	m_IntegerHeight((int)ceil(m_DestRect.Height() / MapManager::GetCellSourceHeight())),
+	m_IntegerWidth((int)ceil(m_DestRect.Width() / MapManager::GetCellSourceWidth())),
+	m_ParentRoom(nullptr),
+	m_ParentMap(nullptr)
 {
 	m_Updated = false;
 	m_Drawn = false;
@@ -122,10 +126,7 @@ void MapAsset::Load(std::vector<std::string> RedTextureIDs, // Function used to 
 
 Map* MapAsset::GetParentMap()
 {
-	if (m_ParentRoom && m_ParentRoom->GetParentMap()) {
-		return m_ParentRoom->GetParentMap();
-	}
-	return nullptr;
+	return m_ParentMap;
 }
 
 //
@@ -311,13 +312,4 @@ MapCoordinate MapAsset::CheckAssetPosition(MapCoordinate TopLeftPosition, MapCel
 	}
 
 	return TopLeftPosition;
-}
-
-// 
-// GetScreenPosition()
-// This gets the actual screen position where this object is located
-//
-Vector MapAsset::GetInteractablePosition()
-{
-	return MapCell::Locatable::GetLocatableScreenPosition();
 }

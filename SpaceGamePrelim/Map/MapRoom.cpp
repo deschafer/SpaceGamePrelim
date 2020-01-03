@@ -1775,6 +1775,7 @@ MapAsset* MapRoom::PlaceAsset()
 		// Choose an asset from this selected list
 		NewAsset = MapAssetManager::Instance()->CreateAssetFromList(m_AssetListIDs[Selection]);
 		NewAsset->SetParentRoom(this);
+		NewAsset->SetParentMap(m_ParentMap);
 
 		// Is this a boundary room or not
 		if (m_BorderingRoom)

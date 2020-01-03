@@ -85,8 +85,6 @@ void Corridor::AddAsset(MapCoordinate CellPosition, MapAsset* Cell)
 	int X = CellPosition.GetPositionX();
 	int Y = CellPosition.GetPositionY();
 
-
-
 	// set the position of the asset as well
 	Cell->SetPosition(CellPosition);
 

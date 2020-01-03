@@ -296,10 +296,6 @@ void MapManager::Draw()
 	int MapPositionOffsetY = 0;
 	pair<int, int> Pair;
 
-	//static MapAsset* Asset = MapAssetManager::Instance()->CreateAsset(0);
-
-	//DrawGrid();	// Debugging gridlines
-
 	for (size_t CurrentMap = 0; CurrentMap < m_VisibleMapCells.size(); CurrentMap++)
 	{
 		// Get the actual array of cells

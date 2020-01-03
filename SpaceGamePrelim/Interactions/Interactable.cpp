@@ -9,7 +9,8 @@ bool Interactable::OnInteraction(GameEntity * InteractingEntity)
 }
 
 Interactable::Interactable(bool IsInteractable) :
-	m_Interactable(IsInteractable)
+	m_Interactable(IsInteractable),
+	m_HasDerived(nullptr)
 {
 	// add this interactable to the InteractionManager
 	try 

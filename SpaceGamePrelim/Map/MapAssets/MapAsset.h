@@ -4,10 +4,9 @@
 class MapRoom;
 class Map;
 
-class MapAsset : public MapCell, Interactable
+class MapAsset : public MapCell
 {
-
-private:
+protected:
 
 	bool m_Collidable;
 	bool m_Updated;
@@ -15,6 +14,7 @@ private:
 	int m_IntegerWidth;
 	int m_IntegerHeight;
 	MapRoom* m_ParentRoom;
+	Map* m_ParentMap;
 
 	virtual MapCoordinate CheckAssetPosition(MapCoordinate TopLeftPosition, MapCell*** Cells, MapAsset*** Assets);
 
@@ -46,6 +46,7 @@ public:
 	void SetParentRoom(MapRoom* Room) { m_ParentRoom = Room; }
 	MapRoom* GetParentRoom() { return m_ParentRoom; }
 	Map* GetParentMap();
+	Map* SetParentMap(Map* NewMap) {  return m_ParentMap = NewMap;}
 	bool IsDrawn() { return m_Drawn; }
 
 	virtual MapAsset* Copy() = 0;	// Returns a copy of this object
@@ -68,6 +69,5 @@ public:
 		MapRoom* Parent);
 	virtual ~MapAsset();
 
-	virtual Vector GetInteractablePosition() override;
 };
 

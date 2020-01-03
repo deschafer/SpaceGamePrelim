@@ -42,7 +42,7 @@ void InteractionManager::InteractWithSurroundings(GameEntity* InteractingEntity)
 		Vector Difference = InteractingEntity->GetLocatableScreenPosition() - CurrentInteractable->GetInteractablePosition();
 		
 		// then get the magnitude of the difference vector
-		if (Difference.length() <= m_InteractionDistance && Difference.length() > 0)
+		if (Difference.length() <= m_InteractionDistance && Difference.length() >= 0)
 		{
 			// then add this to the InteractingObjects vector
 			InteractingObjects.push_back(CurrentInteractable);
@@ -53,27 +53,6 @@ void InteractionManager::InteractWithSurroundings(GameEntity* InteractingEntity)
 	// call the OnInteraction method for each object
 	for (Interactable* CurrentInteractable : InteractingObjects)
 	{
-		// then also get the map cell at this position
-		Door* NewDoor = (Door*)CurrentInteractable;
-
-		Map* AssetMap = NewDoor->GetParentMap();
-		MapCell* CurrentCell = nullptr;
-		MapCoordinate AssetMapPosition = NewDoor->GetPosition();
-
-		if (AssetMap && 
-			(CurrentCell = (MapCell*)AssetMap->GetCell(AssetMapPosition.GetPositionX(), AssetMapPosition.GetPositionY())))
-		{
-			// get the cell at this position if it exists
-			// highlight it 
-			CurrentCell->SetColor(255, 0, 0, 255);
-
-			AssetMap->SetCell(AssetMapPosition.GetPositionX(), AssetMapPosition.GetPositionY(), nullptr);
-		}
-
-		if (NewDoor) {
-			NewDoor->SetColor(255, 0, 0, 255);
-		}
-
 		CurrentInteractable->OnInteraction(InteractingEntity);
 	}
 }

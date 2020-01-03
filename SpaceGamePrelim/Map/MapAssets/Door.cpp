@@ -7,6 +7,7 @@ using namespace std;
 
 Door::Door()
 {
+	m_Collidable = false;
 }
 
 Door::~Door()
@@ -29,8 +30,12 @@ MapAsset* Door::Copy()
 
 bool Door::OnInteraction(GameEntity* object) 
 {
-
 	cout << "Interaction made with door" << endl;
+
+	m_Color.r = 255;
+	m_Color.g = 0;
+	m_Color.b = 0;
+	m_Color.a = 255;
 
 	return false;
 }

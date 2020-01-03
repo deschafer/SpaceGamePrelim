@@ -13,6 +13,7 @@ GameEntity::GameEntity() :
 	Interactable(true),
 	Locatable(m_Position)
 {
+	m_HasDerived = this;
 }
 
 GameEntity::~GameEntity()

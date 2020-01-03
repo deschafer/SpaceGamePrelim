@@ -11,9 +11,11 @@
 MapCell::MapCell() :
 	m_Animated(false),
 	m_RedTextureIDs(nullptr),
-	m_OriginSize(m_DestRect)
+	m_OriginSize(m_DestRect),
+	Interactable(true)
 {
 	Colorable::Colorable();
+	m_HasDerived = this;
 }
 
 //
@@ -24,7 +26,8 @@ MapCell::MapCell() :
 MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	Cell CellType) : 
 	m_CellType(CellType),
-	m_DestRect(0, 0, 0, 0)
+	m_DestRect(0, 0, 0, 0),
+	Interactable(true)
 {
 	MapCell();
 
@@ -50,12 +53,12 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProp
 	m_CellType(CellType),
 	m_Animated(true),
 	m_DestRect(0, 0, 0, 0),
-	m_OriginSize(m_DestRect)
+	m_OriginSize(m_DestRect),
+	Interactable(true)
 {
 	Colorable::Colorable();
-
 	TextureProperties* CurrentProp;
-
+	m_HasDerived = this;
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
 
 	TextureManager* Manager = TextureManager::Instance();
@@ -89,7 +92,8 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProp
 MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	Rect DstDimen, Cell CellType) :
 	m_CellType(CellType),
-	m_DestRect(DstDimen)
+	m_DestRect(DstDimen),
+	Interactable(true)
 {
 	MapCell();
 
@@ -295,4 +299,25 @@ void MapCell::Zoom()
 
 	m_DestRect.SetHeight(NewHeight);
 	m_DestRect.SetWidth(NewWidth);
+}
+
+// 
+// GetScreenPosition()
+// This gets the actual screen position where this object is located
+//
+Vector MapCell::GetInteractablePosition()
+{
+	return Locatable::GetLocatableScreenPosition();
+}
+
+bool MapCell::OnInteraction(GameEntity* Entity)
+{
+	std::cout << "Map Cell Interaction\n";
+
+	m_Color.r = 255;
+	m_Color.g = 0;
+	m_Color.b = 0;
+	m_Color.a = 255;
+
+	return false;
 }
