@@ -70,7 +70,6 @@ static int ThreadConnectMaps(void* Mem)
 // Thread used to generate a single map
 DWORD WINAPI ThreadGenerateMap(LPVOID lpParam)
 {
-
 	// Time seed generation
 	auto now = std::chrono::system_clock::now();
 	auto now_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(now);

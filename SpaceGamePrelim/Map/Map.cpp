@@ -150,7 +150,6 @@ MapObject* Map::GetCorridorCell(int X, int Y)
 //
 void Map::Generate()
 {
-
 	cout << "Generating\n";
 
 	int Width = 0;
@@ -312,8 +311,6 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 {
 	RoomProperties* Properties;
 	string RoomType;
-	//int RoomWidth = MinRoomWidth + rand() % RoomWidthDiff;
-	//int RoomWidth = MapPropRoomMinWidth + rand() % (ColumnWidthMax - MapPropRoomMinWidth);
 	int RoomWidth = MaxWidth;
 	int MapPropRoomMinWidth = m_MapProperties->GetMinWidth();
 	int RoomHeight = 0;
@@ -324,7 +321,6 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	unsigned LocalAssets = 0;
 	vector<unsigned> AssetLists;
 	
-
 	// We need to get a room height, first check if there is a boundary within 20 cells
 	for (size_t i = OffsetY, Count = 0; i < (size_t)(m_Height - 1) && Count < (size_t)MaxRoomHeight; i++, Count++)
 	{
@@ -334,8 +330,6 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	// First find a room from the list given that can fit in the space
 	// Search the list of map-specific rooms
 	Properties = m_MapProperties->GetRandomRoomThatFits(RoomType, RoomWidth, RoomHeight, GlobalAssets, LocalAssets);
-
-	cout << "StageOne\n";
 
 	if (!Properties)
 	{
@@ -352,9 +346,6 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 		return;
 	}
 
-	cout << "StageTwo\n";
-
-
 	// Adding random variation to the size
 	if (RoomHeight != MaxRoomHeight)
 	{
@@ -369,9 +360,6 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 		RoomHeight = Properties->m_MinHeight + rand() % (MaxRoomHeight - Properties->m_MinHeight);
 	}
 
-	cout << "StageThree\n";
-
-
 	// Add randomization to the selected room's width
 	RoomWidth = Properties->m_MinWidth + rand() % (MaxWidth - Properties->m_MinWidth);
 
@@ -381,9 +369,6 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	// Creating the new room
 	Room = new MapRoom(RoomType, RoomWidth, RoomHeight, this, GlobalAssets);
 	Room->Generate();
-
-	cout << "StageFour\n";
-
 
 	GlobalAssets.clear();
 
@@ -401,8 +386,6 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 	// Adding this rooms column offset to simplify corridor gen later on
 	m_ColumnOffsetsX[ColNumber].push_back(xOffset);
 	m_ColumnOffsetsY[ColNumber].push_back(OffsetY);
-
-	cout << "StageFive\n";
 
 	MapCell* Place = nullptr;
 	MapCell* Current = nullptr;
@@ -450,11 +433,8 @@ void Map::GenerateRoom(int OffsetX, int OffsetY, int MaxWidth, int ColNumber)
 			// also account for the map asset
 			Asset = Room->GetAsset(MagX, MagY);
 			m_Assets[IndexX][IndexY] = Asset;
-
 		}
 	}
-
-	cout << "StageSix\n";
 
 	// Setting appropriate link to room above
 	if (RoomAbove)
