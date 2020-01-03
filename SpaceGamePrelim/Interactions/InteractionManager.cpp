@@ -17,7 +17,13 @@ InteractionManager::~InteractionManager()
 {
 }
 
-void InteractionManager::AddInteractable(Interactable* NewInteractable) {
+
+//
+// AddInteractable
+// Adds the given interactable to the master list so it can be interacted with
+// NOTE: The return value is the index of the storage list. This should be saved.
+//
+int InteractionManager::AddInteractable(Interactable* NewInteractable) {
 	m_GetMutex.lock();
 
 	// based on the screen position, we add it to a localized region
@@ -26,9 +32,9 @@ void InteractionManager::AddInteractable(Interactable* NewInteractable) {
 	m_GetMutex.unlock();
 }
 
-void InteractionManager::RemoveInteractable(Interactable* Object) {
+void InteractionManager::RemoveInteractable(size_t Index) {
 	m_GetMutex.lock();
-	m_Interactables.remove(Object);
+	//m_Interactables = nullptr;
 	m_GetMutex.unlock();
 }
 

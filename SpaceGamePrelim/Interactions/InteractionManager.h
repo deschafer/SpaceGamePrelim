@@ -35,8 +35,8 @@ public:
 		return m_Instance;
 	}
 
-	void AddInteractable(Interactable* NewInteractable);
-	void RemoveInteractable(Interactable* Object);
+	int AddInteractable(Interactable* NewInteractable);
+	void RemoveInteractable(size_t Index);
 	void InteractWithSurroundings(GameEntity* InteractingEntity);
 	
 

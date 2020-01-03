@@ -9,8 +9,7 @@ bool Interactable::OnInteraction(GameEntity * InteractingEntity)
 }
 
 Interactable::Interactable(bool IsInteractable) :
-	m_Interactable(IsInteractable),
-	m_HasDerived(nullptr)
+	m_Interactable(IsInteractable)
 {
 	// add this interactable to the InteractionManager
 	try 
@@ -25,7 +24,5 @@ Interactable::Interactable(bool IsInteractable) :
 
 Interactable::~Interactable()
 {
-	// remove this interactable from the InteractionManager
-	InteractionManager::Instance()->RemoveInteractable(this);
 }
  
