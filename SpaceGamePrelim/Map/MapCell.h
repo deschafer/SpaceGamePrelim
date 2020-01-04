@@ -24,7 +24,10 @@ enum class Cell
 	Empty
 };
 
-class MapCell : public MapObject, protected Locatable, protected Interactable
+class MapCell : 
+	public MapObject, 
+	protected Locatable, 
+	protected Interactable
 {
 protected:
 

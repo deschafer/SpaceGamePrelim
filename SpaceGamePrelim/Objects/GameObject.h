@@ -9,6 +9,7 @@ class GameObject : public Colorable
 protected:
 
 	virtual ~GameObject();
+	Scene* m_ParentScene;
 
 public:
 
@@ -25,5 +26,6 @@ public:
 		Vector InitPosition,
 		Callback Handler) = 0;
 
-	GameObject();
+	//GameObject(Scene* Scene);
+	//GameObjec
 };

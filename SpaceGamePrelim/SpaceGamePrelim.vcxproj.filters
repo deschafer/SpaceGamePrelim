@@ -296,6 +296,9 @@
     <ClCompile Include="Objects\Drawable.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
+    <ClCompile Include="Objects\SimpleEntity.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parsing\SceneFactory.h">
@@ -503,6 +506,9 @@
       <Filter>Header Files\Objects\Actions</Filter>
     </ClInclude>
     <ClInclude Include="Objects\Drawable.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\SimpleEntity.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
   </ItemGroup>

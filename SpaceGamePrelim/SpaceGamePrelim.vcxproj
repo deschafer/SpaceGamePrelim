@@ -68,6 +68,7 @@
     <ClCompile Include="Objects\GameObject.cpp" />
     <ClCompile Include="Objects\Locatable.cpp" />
     <ClCompile Include="Objects\Player.cpp" />
+    <ClCompile Include="Objects\SimpleEntity.cpp" />
     <ClCompile Include="Parsing\FallbackRoomParser.cpp" />
     <ClCompile Include="Parsing\RoomDefinitionParser.cpp" />
     <ClCompile Include="Parsing\SceneFactory.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Objects\GameObject.h" />
     <ClInclude Include="Objects\Locatable.h" />
     <ClInclude Include="Objects\Player.h" />
+    <ClInclude Include="Objects\SimpleEntity.h" />
     <ClInclude Include="Parsing\FallbackRoomParser.h" />
     <ClInclude Include="Parsing\RoomDefinitionParser.h" />
     <ClInclude Include="Parsing\SceneFactory.h" />

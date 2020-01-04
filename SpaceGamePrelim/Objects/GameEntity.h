@@ -11,7 +11,10 @@
 
 class Component;
 
-class GameEntity : public GameObject, protected Interactable, protected Locatable
+class GameEntity : 
+	public GameObject, 
+	protected Interactable, 
+	protected Locatable
 {
 public:
 	GameEntity();
