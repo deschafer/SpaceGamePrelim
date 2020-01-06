@@ -2,9 +2,12 @@
 
 #include <string>
 #include <vector>
+#include <list>
 #include <map>
 
 #include "..\Objects\GameObject.h"
+
+class Drawable;
 
 class MapCell;
 
@@ -14,6 +17,7 @@ protected:
 
 	std::string m_SceneID;
 	std::vector<GameObject*> m_Objects;
+	std::list<Drawable*> m_Drawables;
 	std::map<std::string, Callback> m_Handlers;
 	
 	bool m_PauseScreen;	// Indicates that all other scenes in the 
@@ -31,6 +35,8 @@ public:
 		for (size_t i = 0; i < Objects.size(); i++)
 			m_Objects.push_back(Objects[i]);
 	}
+	void AddDrawable(Drawable* NewDrawable) { m_Drawables.push_back(NewDrawable); }
+	void RemoveDrawable(Drawable* SelDrawable) { m_Drawables.remove(SelDrawable); }
 
 	Callback GetCallback(std::string HandlerID) { return m_Handlers[HandlerID]; }
 

@@ -1,20 +1,20 @@
 #pragma once
 
 #include "..\BasicTypes\BasicTypes.h"
-#include ".\Colorable.h"
+#include ".\Drawable.h"
+
+class Scene;
 
 // Basic, abstract object class
-class GameObject : public Colorable
+class GameObject : public Drawable
 {
 protected:
 
 	virtual ~GameObject();
-	Scene* m_ParentScene;
 
 public:
 
 	virtual void Update() = 0;
-	virtual void Draw() = 0;
 	virtual void Delete() = 0;
 	virtual bool Load(
 		TextureProperties* Properties,
@@ -25,7 +25,6 @@ public:
 		Vector InitAccel,
 		Vector InitPosition,
 		Callback Handler) = 0;
-
-	//GameObject(Scene* Scene);
-	//GameObjec
+	GameObject(Scene* ParentScene);
+	GameObject() = delete;
 };

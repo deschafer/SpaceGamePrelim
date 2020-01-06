@@ -4,6 +4,7 @@
 
 #include "Colorable.h"
 #include "../BasicTypes/BasicTypes.h"
+class Scene;
 
 //
 // Purpose of this class is to provide an abstract interface to all drawn objects in the game.
@@ -19,24 +20,32 @@ protected:
 	// Texture properties
 	bool m_Visible;
 	Rect m_Dimensions;	// dimensions in the game space, not the source texture dimensions
+	Scene* m_ParentScene;
 
 public:
 
-	Drawable(Rect Dimensions);
+	Drawable(Rect Dimensions, Scene* ParentScene);
 	Drawable() = delete;
+	virtual ~Drawable();
 
 	// primary draw function
+	virtual bool Draw() { return Draw(0, 0); }
 	virtual bool Draw(double X, double Y);
+	virtual void Update() = 0;
 	// these methods offer a standardized way to get/add textures, but it is not the only way to do so
 	virtual void AddReducedTexture(std::string RedTextureID, int RedTextureIndex, int AnimationSpeed, int NumberFrames) = 0;
 	virtual std::vector<std::string> GetTextures() = 0;
 	virtual std::vector<int> GetTextureIndices() = 0;
+	virtual std::vector<int> GetAnimationSpeeds() = 0;
+	virtual std::vector<int> GetNumberFrames() = 0;
 	virtual void ClearTextures() = 0;
 
 	// all inheriting classes need to work with these variables
 	void SetVisible(bool Visible) { m_Visible = Visible; }
 	Rect GetDimensions() { return m_Dimensions; }
 	Rect SetDimensions(Rect Dim) { m_Dimensions = Dim; }
+	void SetParentScene(Scene* ParentScene);
+	Scene* GetParentScene() { return m_ParentScene; }
 
 	// same with color, classes need to implement this
 	SDL_Color GetColor() { return m_Color; }

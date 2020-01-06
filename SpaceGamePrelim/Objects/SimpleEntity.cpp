@@ -52,3 +52,13 @@ void SimpleEntity::ClearTextures()
 	m_AnimationSpeedSet.clear();
 	m_CurrentFrameSet.clear();
 }
+
+std::vector<int> SimpleEntity::GetAnimationSpeeds()
+{
+	return m_AnimationSpeedSet;
+}
+
+std::vector<int> SimpleEntity::GetNumberFrames()
+{
+	return m_NumberFramesSet;
+}

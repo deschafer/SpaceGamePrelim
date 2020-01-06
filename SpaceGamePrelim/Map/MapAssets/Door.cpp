@@ -5,9 +5,13 @@
 
 using namespace std;
 
-Door::Door()
+Door::Door() : 
+	MapAsset()
 {
-	m_Collidable = false;
+	Vector ScreenPosition = GetLocatableScreenPosition();
+
+	//m_DoorOpen = new SimpleEntity(Rect(ScreenPosition.getX(), ScreenPosition.getY(), m_DestRect.Width(), m_DestRect.Height()), )
+
 }
 
 Door::~Door()
@@ -32,10 +36,7 @@ bool Door::OnInteraction(GameEntity* object)
 {
 	cout << "Interaction made with door" << endl;
 
-	m_Color.r = 255;
-	m_Color.g = 0;
-	m_Color.b = 0;
-	m_Color.a = 255;
+
 
 	return false;
 }

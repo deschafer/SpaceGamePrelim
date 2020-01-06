@@ -10,19 +10,13 @@
 //	is the time taken from start to completion
 // Position refers to the top left position of this action in screen coordinates
 //
-Action::Action(Drawable* DrawableObject, std::string Name, double Duration, Rect Position) :
+Action::Action(Drawable* DrawableObject, std::string Name, double Duration, Rect Position, Scene* Parent) :
 	m_DrawableObject(DrawableObject),
 	m_Name(Name),
 	m_Duration(Duration),
 	m_Dimensions(Position),
 	m_Start(false),
-	m_CurrentFrame(0),
-	m_CurrentRow(0),
-	m_DrawnRectTextureIndex(-1),
-	m_DrawnRedTextureID("Empty"),
-	m_DrawnAnimationSpeed(0),
-	m_DrawnNumberFrames(0),
-	Drawable(Position)
+	Drawable(Position, Parent)
 {
 }
 
@@ -50,54 +44,46 @@ void Action::Stop()
 
 void Action::Update()
 {
-	m_CurrentFrame = int(((SDL_GetTicks() / m_DrawnAnimationSpeed) % m_DrawnNumberFrames));
+	m_CurrentImage->Update();
 }
 
 bool Action::Draw(double X, double Y)
 {
-	if (m_Visible && m_DrawnRectTextureIndex >= 0)
+	if (m_Visible && m_CurrentImage)
 	{
-		SDL_Renderer* Temp = MainApplication::Instance()->GetRenderer();
-
-		TextureManager::Instance()->DrawCurrentFrame(
-			m_Dimensions.TopLeftX(),
-			m_Dimensions.TopLeftX(),
-			m_DrawnRectTextureIndex,
-			SDL_FLIP_NONE,
-			MainApplication::Instance()->GetRenderer(),
-			m_Dimensions,
-			GetColor(),
-			m_CurrentRow,
-			m_CurrentFrame);
+		m_CurrentImage->Draw(X,Y);
 	}
 	return m_Visible;
 }
 
 void Action::AddReducedTexture(std::string RedTextureID, int RedTextureIndex, int AnimationSpeed, int NumberFrames)
 {
-	// this removes our current texture, and replaces it with a new one
-	m_DrawnRedTextureID = RedTextureID;
-	m_DrawnRectTextureIndex = RedTextureIndex;
-	m_DrawnAnimationSpeed = AnimationSpeed;
-	m_DrawnNumberFrames = NumberFrames;
-
-	m_CurrentFrame = 0;
-	m_CurrentRow = 0;
+	m_CurrentImage->AddReducedTexture(RedTextureID, RedTextureIndex, AnimationSpeed, NumberFrames);
 }
 
 void Action::ClearTextures()
 {
 	m_Visible = false;
 
-	// then proceeds to remove the textures
+	m_CurrentImage->ClearTextures();
 }
 
 std::vector<std::string> Action::GetTextures()
 {
-	return std::vector<std::string>();
+	return m_CurrentImage->GetTextures();
 }
 
 std::vector<int> Action::GetTextureIndices()
 {
-	return std::vector<int>();
+	return m_CurrentImage->GetTextureIndices();
+}
+
+std::vector<int> Action::GetAnimationSpeeds()
+{
+	return m_CurrentImage->GetAnimationSpeeds();
+}
+
+std::vector<int> Action::GetNumberFrames()
+{
+	return m_CurrentImage->GetNumberFrames();
 }

@@ -5,6 +5,7 @@
 
 #include "..\BasicTypes\BasicTypes.h"
 #include "Drawable.h"
+#include "SimpleEntity.h"
 
 class Action : public Drawable
 {
@@ -13,21 +14,21 @@ private:
 	std::string m_Name;
 	double m_Duration;
 	Rect m_Dimensions;
-	Drawable *m_DrawableObject;
 
+protected:
+	
+	static void DeleteObject(Action* Object) { delete Object; }
+
+	Drawable* m_DrawableObject;
+	
 	// drawn texture data
 	// NOTE: this object draws a single texture every frame
 	// it is manipulated by modifying the data of this texture by derived classes.
-	std::string m_DrawnRedTextureID;
-	int m_DrawnRectTextureIndex;
-	int m_DrawnAnimationSpeed;
-	int m_DrawnNumberFrames;
-	int m_CurrentFrame;
-	int m_CurrentRow;
+	SimpleEntity* m_CurrentImage;
 
 public:
 
-	Action(Drawable* DrawableObject, std::string Name, double Duration, Rect Dimensions);
+	Action(Drawable* DrawableObject, std::string Name, double Duration, Rect Dimensions, Scene* Parent);
 
 	std::string GetName() { return m_Name; }
 
@@ -44,6 +45,10 @@ public:
 	virtual void ClearTextures() override;
 	virtual std::vector<std::string> GetTextures() override;
 	virtual std::vector<int> GetTextureIndices() override;
+	virtual std::vector<int> GetAnimationSpeeds() override;
+	virtual std::vector<int> GetNumberFrames() override;
+
+	int GetDuration() { return m_Duration; }
 
 };
 

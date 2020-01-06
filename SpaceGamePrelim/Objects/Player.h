@@ -10,7 +10,7 @@ class Player : public GameEntity
 {
 public:
 
-	Player(std::string RedTexture, TextureProperties* Prop, std::string TypeID, std::string SpecID,
+	Player(Scene* ParentScene, std::string RedTexture, TextureProperties* Prop, std::string TypeID, std::string SpecID,
 		Vector InitPosition, Vector InitVelocity, Vector InitAccel);
 
 	Player();

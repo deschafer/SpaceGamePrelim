@@ -1,0 +1,795 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Corridor" Collapsed="true">
+    <Position X="16.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQgAQAAgAABgBAACAgAAAQAACAIKAABAAAAIAgQA=</HashCode>
+      <FileName>Map\Corridor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CorridorHoriz" Collapsed="true">
+    <Position X="15.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEIAAAAAAoAAUAABAAAEAAAAA=</HashCode>
+      <FileName>Map\CorridorHoriz.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CorridorVertical" Collapsed="true">
+    <Position X="17.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAIAAAAAAgAAUIABAAAEAAAAA=</HashCode>
+      <FileName>Map\CorridorVertical.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Map" Collapsed="true">
+    <Position X="21.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>RAEMSAISgBEgBBBhAMHQQSpASAAAYAKUBIAIQGICOiE=</HashCode>
+      <FileName>Map\Map.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapAssetManager" Collapsed="true">
+    <Position X="23.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIEQAAAAAIkAAQAAAABAgACBAAAAAoIQBAEAAARQAA=</HashCode>
+      <FileName>Map\MapAssetManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapCell" Collapsed="true">
+    <Position X="12.5" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAQAwIBAACIAAgEQMACIABACUAgIAgACIAAAgQABAAA=</HashCode>
+      <FileName>Map\MapCell.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapConnector" Collapsed="true">
+    <Position X="25.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQCAAAAgAAACAAAAIAAAAQAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Map\MapConnector.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapCoordinate" Collapsed="true">
+    <Position X="27" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAACAAAAAEAAAAAQAAAAAAAQAAAAAgAAAACAA=</HashCode>
+      <FileName>Map\MapCoordinate.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapTypeProperties" Collapsed="true">
+    <Position X="23.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAEEAABAEAACAAAAEAgQAEAAgAAICEAAAAAA=</HashCode>
+      <FileName>Map\MapFactory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapFactory" Collapsed="true">
+    <Position X="28.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAECIAAAAABAAAAAAAAAACAAAAAAAIQAgAAAAABEA=</HashCode>
+      <FileName>Map\MapFactory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapInactive" Collapsed="true">
+    <Position X="13.25" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Map\MapInactive.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapManager" Collapsed="true">
+    <Position X="30.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BA8kEQCEALYlRpIgtHiKgMkHAgABZJi8d0KAoIKgwAU=</HashCode>
+      <FileName>Map\MapManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapObject" Collapsed="true">
+    <Position X="12.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACACAgAAAAAAAAAAAAAgAAAAACAAAAAAAAA=</HashCode>
+      <FileName>Map\MapObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapRoom" Collapsed="true">
+    <Position X="21.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAIoEwBACYgIAFAFKAQEpACEBAEIKCAAAQAEYASAA=</HashCode>
+      <FileName>Map\MapRoom.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapWall" Collapsed="true">
+    <Position X="5" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAQAABAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Map\MapWall.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RoomConnector" Collapsed="true">
+    <Position X="27" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAEABAAAAkAAABAAAABAAAQAAAAAAwiAAAAEAEEEAA=</HashCode>
+      <FileName>Map\RoomConnector.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RoomManager" Collapsed="true">
+    <Position X="30.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAACEIAJgABAIEIABAQEAAAAAEAAAQAEACAAIgAA=</HashCode>
+      <FileName>Map\RoomManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Door" Collapsed="true">
+    <Position X="15.5" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAAgCAAAAAAIAAAAAAAAAEAAgAAAAAAACAAAAAAACA=</HashCode>
+      <FileName>Map\MapAssets\Door.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapAsset" Collapsed="true">
+    <Position X="16.75" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAQAgIkEAAAABwEQFAAACAAAAsCAMBAIAAAQAAAAAAA=</HashCode>
+      <FileName>Map\MapAssets\MapAsset.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TestingAsset" Collapsed="true">
+    <Position X="17.75" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAABAAAAAAAAAAAAgAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Map\MapAssets\TestingAsset.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rect" Collapsed="true">
+    <Position X="25.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAhAAAAAABgAIAAEAAwDSAAACAAAAAAAIAAAQ=</HashCode>
+      <FileName>BasicTypes\Rect.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Vector" Collapsed="true">
+    <Position X="25.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAEAOAQAAQAAAAgAAAEAgAGAAAAA=</HashCode>
+      <FileName>BasicTypes\Vector.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InputManager" Collapsed="true">
+    <Position X="27" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAIAACABACAAAAwAAAAABIEAAEJQBACYAAIQAA=</HashCode>
+      <FileName>Frame\InputManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainApplication" Collapsed="true">
+    <Position X="30.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQQAIAAAAAAACQBgggAYwAAAAACAACAIQNIEAQCAQAA=</HashCode>
+      <FileName>Frame\MainApplication.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ZoomManager" Collapsed="true">
+    <Position X="27" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABQAIABAACAAAEAgACAAAAAABAAAACAIYAAAABiAACI=</HashCode>
+      <FileName>Frame\ZoomManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FallbackRoomParser" Collapsed="true">
+    <Position X="25.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAgAAAAAAAAAAAAAEAAAIQAAAAAAAAAA=</HashCode>
+      <FileName>Parsing\FallbackRoomParser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RoomDefinitionParser" Collapsed="true">
+    <Position X="28.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAIQAAAAAAIABA=</HashCode>
+      <FileName>Parsing\RoomDefinitionParser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SceneFactory" Collapsed="true">
+    <Position X="21.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAEAAAACYQAAAAgAAIQA=</HashCode>
+      <FileName>Parsing\SceneFactory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextureParser" Collapsed="true">
+    <Position X="25.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAEAAAAIAAAAAAIQAAAAAAAAAA=</HashCode>
+      <FileName>Parsing\TextureParser.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextureManager" Collapsed="true">
+    <Position X="23.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAiAAAAAAQAAAFCAAAAACBCAAAQQIWAAEAAAAAFA=</HashCode>
+      <FileName>TextureCode\TextureManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TextureProperties" Collapsed="true">
+    <Position X="27" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAQgAAAAAASAAQAAAgAQAAAAAAAAAAIAgAAQgABIA=</HashCode>
+      <FileName>TextureCode\TextureProperties.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlString" Collapsed="true">
+    <Position X="11.5" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAIAAAAEAAAlAsICAQACAAEAAIIAiQExCAABAAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinystr.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlOutStream" Collapsed="true">
+    <Position X="11.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinystr.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlVisitor" Collapsed="true">
+    <Position X="8.5" Y="17.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAQAAAAAAAAAAAAAIAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlBase" Collapsed="true">
+    <Position X="7.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>JAgggBQAEAgEAAAQAgBhABASADAQAiAIAAAiAAAkAAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlNode" Collapsed="true">
+    <Position X="6.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKAgAAAIAEAEiiBAhEAAYQAEAAqBgCECAYtgAAtAIDA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlAttribute" Collapsed="true">
+    <Position X="14.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgQggAAAgAAQggAEAABAAQQAAAIEAGQAAABgQAIEEAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlAttributeSet" Collapsed="true">
+    <Position X="30.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAQAAQAAABAAAAAAJAAAAACAiQAAAAAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlElement" Collapsed="true">
+    <Position X="1" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAgAAAAACACQAAJAAAAIIEAgQSAAA0BCBAgAAAEIFE=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlComment" Collapsed="true">
+    <Position X="3.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAgAIAAAAAAAAAAAAAAAQAAAAAAAAEIAAAgAAAEIBA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlText" Collapsed="true">
+    <Position X="5.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AKAgAAAABAAAAAAAAEAAAABAAAABgAEAAAAgAAAEIBQ=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlDeclaration" Collapsed="true">
+    <Position X="7.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IIAgACCAAAQAAAAAAAAAAAAAgAAAAIEAAAIoAAAEKBA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlUnknown" Collapsed="true">
+    <Position X="10" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAgAAAAAEAAAAAAAAAAAAACAAAAAAEAAAAgAIAEIBA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlDocument" Collapsed="true">
+    <Position X="12.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAgAAAABBAQAQABAgEICAAAAAEQBAEBFAAgAEgUJBA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlHandle" Collapsed="true">
+    <Position X="21.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAEAAAAEAAAIAAAEgAIAABAAAAAAAAAIEoCAEAABA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlPrinter" Collapsed="true">
+    <Position X="8.5" Y="18.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAEABEhAQgBAAQAAAAMAAAAAAAAABQIBQAwAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ActiveSceneManager" Collapsed="true">
+    <Position X="21.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAQAAIAAAAAAgABABAAAAAAwAAAAQBAAAAAAAIQ=</HashCode>
+      <FileName>Scene\ActiveSceneManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameScene" Collapsed="true">
+    <Position X="0.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAABAAAAIAEAAAAIBAAAAAAAAA=</HashCode>
+      <FileName>Scene\GameScene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapScene" Collapsed="true">
+    <Position X="0.5" Y="19.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAgAAAAAAAAAAAAAAAAQAAAAAEAAAAIBAAAAAAgAA=</HashCode>
+      <FileName>Scene\MapScene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuScene" Collapsed="true">
+    <Position X="2.75" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQgAAAAAAAAAAAAAAAAAAAAAAAEAIAAIBAAAAAAAAA=</HashCode>
+      <FileName>Scene\MenuScene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Scene" Collapsed="true">
+    <Position X="1.75" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAwBAAAACAAIAAAAgAAAAABAQAIEAAAgIBAAAgAAQEA=</HashCode>
+      <FileName>Scene\Scene.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BaseCreator" Collapsed="true">
+    <Position X="1.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAQAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\BaseCreator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Button" Collapsed="true">
+    <Position X="11.25" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAACAAAAAAAAAAAAAAAAgAAAAAAEAAAA=</HashCode>
+      <FileName>Objects\Button.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ButtonCreator" Collapsed="true">
+    <Position X="2.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAABAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\Button.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Colorable" Collapsed="true">
+    <Position X="9" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAAAAAAAAAAgAAAAAAAAgAAAgAAAA=</HashCode>
+      <FileName>Objects\Colorable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Drawable" Collapsed="true">
+    <Position X="8" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAwgAAACAAAICmACFAIABQAAAAAAAACAgAgAAAAABIA=</HashCode>
+      <FileName>Objects\Drawable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameEntity" Collapsed="true">
+    <Position X="10.25" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABQgwCReFSAAC0iCoAiAAQAAQAmQAkRAIACAiUgBBIA=</HashCode>
+      <FileName>Objects\GameEntity.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameObject" Collapsed="true">
+    <Position X="10.25" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABQAgAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>Objects\GameObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Locatable" Collapsed="true">
+    <Position X="15" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABgAAAAAAAAAAAAAAAAABAAAAAAAAAAgAAACAA=</HashCode>
+      <FileName>Objects\Locatable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player" Collapsed="true">
+    <Position X="9" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAABA=</HashCode>
+      <FileName>Objects\Player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerCreator" Collapsed="true">
+    <Position X="0.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAABAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Objects\Player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SimpleEntity" Collapsed="true">
+    <Position X="5.75" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQgAAACEAAACkACAAAAAYAAEAAgAAAAAACCAAgAAAA=</HashCode>
+      <FileName>Objects\SimpleEntity.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Action" Collapsed="true">
+    <Position X="8" Y="13.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAQgAACyACAACkACAAIAAQAAAAAAAAAAIgAAAAAABBQ=</HashCode>
+      <FileName>Objects\Action.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AnimationChangeAction" Collapsed="true">
+    <Position X="8" Y="14.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABACAAABAACAAAAAAAAAAAAAgEIAAEAAAIAAA=</HashCode>
+      <FileName>Objects\AnimationChangeAction.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ButtonInteractComp" Collapsed="true">
+    <Position X="10.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAASAAAAAAAAAAAAAAAAkAAAAAAAAAAA=</HashCode>
+      <FileName>Components\ButtonInteractComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ButtonInteractCompCreator" Collapsed="true">
+    <Position X="12.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAIAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\ButtonInteractComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CenterPosComp" Collapsed="true">
+    <Position X="14.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAQAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\CenterPosComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CenterPosCompCreator" Collapsed="true">
+    <Position X="17" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAQAAAAAAAAAAA=</HashCode>
+      <FileName>Components\CenterPosComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapCollisionComp" Collapsed="true">
+    <Position X="19.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAQAAIAAAIAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\MapCollisionComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapCollisionCompCreator" Collapsed="true">
+    <Position X="1.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAEAAAAAA=</HashCode>
+      <FileName>Components\MapCollisionComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Component" Collapsed="true">
+    <Position X="10.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAQAAAAAAAAAAAAAAAAAAABAAACAAAA=</HashCode>
+      <FileName>Components\Component.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ComponentCreator" Collapsed="true">
+    <Position X="10.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAEAAAAAA=</HashCode>
+      <FileName>Components\Component.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapZoomComp" Collapsed="true">
+    <Position X="5.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAABAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Components\MapZoomComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapZoomCompCreator" Collapsed="true">
+    <Position X="8" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAABAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\MapZoomComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerInteractComp" Collapsed="true">
+    <Position X="8" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAgAAAAAAAAQAAAAAAAAAQAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Components\PlayerInteractComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerInteractCompCreator" Collapsed="true">
+    <Position X="10.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAACAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\PlayerInteractComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerMapMovementComp" Collapsed="true">
+    <Position X="12.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAEEAAA=</HashCode>
+      <FileName>Components\PlayerMapMovementComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerMapMovementCompCreator" Collapsed="true">
+    <Position X="14.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAUAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\PlayerMapMovementComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerMovementComp" Collapsed="true">
+    <Position X="17" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAgAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Components\PlayerMovementComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerMovementCompCreator" Collapsed="true">
+    <Position X="19.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAAA=</HashCode>
+      <FileName>Components\PlayerMovementComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ZoomComp" Collapsed="true">
+    <Position X="1.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAABAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\ZoomComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ZoomCompCreator" Collapsed="true">
+    <Position X="3.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAAAABAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\ZoomComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ZoomMovementComp" Collapsed="true">
+    <Position X="3.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAASAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\ZoomMovementComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ZoomMovementCompCreator" Collapsed="true">
+    <Position X="5.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAgAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\ZoomMovementComp.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Collision" Collapsed="true">
+    <Position X="5.5" Y="16.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAICAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Collision\Collision.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CollisionManager" Collapsed="true">
+    <Position X="23.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAIUAAAAACAAAA=</HashCode>
+      <FileName>Collision\CollisionManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapCollision" Collapsed="true">
+    <Position X="5.5" Y="17.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAIAAAAQACAAAAAAIAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Collision\MapCollision.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Interactable" Collapsed="true">
+    <Position X="17.25" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACACgABAAAAAQAAAAAAAAAAAACAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Interactions\Interactable.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InteractionManager" Collapsed="true">
+    <Position X="28.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIBAAAAACAAFAAAQACAACAAAAAIRAAAAAAAAAA=</HashCode>
+      <FileName>Interactions\InteractionManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Time" Collapsed="true">
+    <Position X="28.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAEAAAAACAAQAAAAAAAAAAAAAAAAAKQAAAAEAAAQA=</HashCode>
+      <FileName>Time\Time.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TiXmlParsingData" Collapsed="true">
+    <Position X="23.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAQABAAEAAAAAAAAAAEEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxmlparser.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="CorridorThreadInformation" Collapsed="true">
+    <Position X="21.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAgAAAAAAIAAAAAAAAAAAAABAgAAAAAAAAAAAA=</HashCode>
+      <FileName>Map\MapManagerThreads.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="DeterminedRoomPositions" Collapsed="true">
+    <Position X="23.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAABCAA=</HashCode>
+      <FileName>Map\RoomConnector.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="RoomProperties" Collapsed="true">
+    <Position X="25.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQCAAAAAAIAAQAhCAAAgAAARAACAAAA=</HashCode>
+      <FileName>Map\RoomManager.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="TiXmlCursor" Collapsed="true">
+    <Position X="27" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQACAAAAAAAAAAAABABAAAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="Array" Collapsed="true">
+    <Position X="21.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Map\Corridor.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="Callback" Collapsed="true">
+    <Position X="23.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BasicTypes\BasicTypes.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="SideA" Collapsed="true">
+    <Position X="25.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Map\MapManager.cpp</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="Direction" Collapsed="true">
+    <Position X="28.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAABAAAQAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Map\GenRoomComp.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Side" Collapsed="true">
+    <Position X="23.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAIAgAAABAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Map\GenRoomComp.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Event" Collapsed="true">
+    <Position X="21.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQAgAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Map\GenRoomComp.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MapDirection" Collapsed="true">
+    <Position X="25.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACCCABABAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAABAAQ=</HashCode>
+      <FileName>Map\Map.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Cell" Collapsed="true">
+    <Position X="23.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABCAEAEAAAgAAAIAIAAAAAAABAABAAAgAAQQAAA=</HashCode>
+      <FileName>Map\MapCell.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MapManagerThreadType" Collapsed="true">
+    <Position X="27" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAEAAAAACAAAAAAAAAAAA=</HashCode>
+      <FileName>Map\MapManagerThreads.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MapObjectTypes" Collapsed="true">
+    <Position X="28.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Map\MapObject.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Columns" Collapsed="true">
+    <Position X="27" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Map\RoomManager.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="EntityDirection" Collapsed="true">
+    <Position X="30.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAEBAAQ=</HashCode>
+      <FileName>BasicTypes\EntityDirection.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MouseInput" Collapsed="true">
+    <Position X="30.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAQAAAAAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Frame\InputManager.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="__unnamed_enum_006d_1" Collapsed="true">
+    <Position X="21.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAACABAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="TiXmlEncoding" Collapsed="true">
+    <Position X="25.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAgAAAAAAAAAAAAAAAAAAAABAAAAAAAABAAAA=</HashCode>
+      <FileName>Parsing\TinyXML\tinyxml.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SceneType" Collapsed="true">
+    <Position X="21.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scene\ActiveSceneManager.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="CollisionType" Collapsed="true">
+    <Position X="25.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAACAAAAAAAAAAAAAIAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Collision\Collision.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MapCollisionDir" Collapsed="true">
+    <Position X="23.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAAAEAAAAAAAAAABAAAAAAAAAAQAAA=</HashCode>
+      <FileName>Collision\MapCollision.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

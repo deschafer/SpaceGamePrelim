@@ -15,7 +15,8 @@ private:
 
 public:
 	Button();
-	Button(std::string RedTexture,
+	Button(Scene* Parent,
+		std::string RedTexture,
 		TextureProperties* Prop,
 		std::string TypeID,
 		std::string SpecID,

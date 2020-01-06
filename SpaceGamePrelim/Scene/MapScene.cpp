@@ -22,6 +22,7 @@
 
 
 #include <iostream>
+#include "../Objects/SimpleEntity.h"
 
 const std::string ButtonHandlerStr = "ButtonHandler";
 

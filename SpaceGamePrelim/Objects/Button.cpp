@@ -7,12 +7,14 @@
 using namespace std;
 
 Button::Button() : 
-m_Released(false),
-m_Clicked(false)
+	m_Released(false),
+	m_Clicked(false),
+	GameEntity(nullptr)
 {
 }
 
-Button::Button(std::string RedTexture, 
+Button::Button(Scene* Parent,
+	std::string RedTexture, 
 	TextureProperties* Prop,
 	std::string TypeID, 
 	std::string SpecID, 
@@ -20,7 +22,7 @@ Button::Button(std::string RedTexture,
 	Vector InitVelocity, 
 	Vector InitAccel, 
 	Callback callBack) :
-	GameEntity(RedTexture, Prop, TypeID, SpecID, InitPosition, InitVelocity, InitAccel),
+	GameEntity(Parent, RedTexture, Prop, TypeID, SpecID, InitPosition, InitVelocity, InitAccel),
 	m_Released(false),
 	m_Clicked(false)
 {

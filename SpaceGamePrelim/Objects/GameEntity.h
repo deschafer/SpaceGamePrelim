@@ -17,15 +17,17 @@ class GameEntity :
 	protected Locatable
 {
 public:
-	GameEntity();
-	GameEntity(std::string ReducedTexture,
+	GameEntity(Scene* Parent);
+	GameEntity(Scene* ParentScene, 
+		std::string ReducedTexture,
 		TextureProperties* Prop,
 		std::string TypeID, 
 		std::string SpecTypeID,
 		Vector InitPosition, 
 		Vector InitVelocity, 
 		Vector InitAccel);
-	GameEntity(std::string ReducedTexture,
+	GameEntity(Scene* ParentScene, 
+		std::string ReducedTexture,
 		TextureProperties* Prop,
 		std::string TypeID,
 		std::string SpecTypeID,
@@ -33,7 +35,8 @@ public:
 		Vector InitPosition,
 		Vector InitVelocity,
 		Vector InitAccel);
-	GameEntity(std::string ReducedTexture,
+	GameEntity(Scene* ParentScene, 
+		std::string ReducedTexture,
 		TextureProperties* Prop,
 		std::string TypeID,
 		std::string SpecTypeID,
@@ -49,7 +52,7 @@ public:
 		Vector InitPosition,
 		Callback Handler);
 	virtual void Update();
-	virtual void Draw();
+	virtual bool Draw();
 	virtual void Delete();
 	virtual void OnCollision();
 	virtual void OnDamaged();
@@ -76,6 +79,14 @@ public:
 	// Interactable and Locatable overrides
 	virtual Vector GetInteractablePosition() override { return m_Position; }
 	virtual Vector GetLocatableScreenPosition() override { return m_Position; }
+
+	// drawable implementation
+	virtual void AddReducedTexture(std::string RedTextureID, int RedTextureIndex, int AnimationSpeed, int NumberFrames);
+	virtual std::vector<std::string> GetTextures();
+	virtual std::vector<int> GetTextureIndices();
+	virtual std::vector<int> GetAnimationSpeeds();
+	virtual std::vector<int> GetNumberFrames();
+	virtual void ClearTextures();
 
 protected:
 

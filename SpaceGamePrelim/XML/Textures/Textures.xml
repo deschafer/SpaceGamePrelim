@@ -8,6 +8,8 @@
   <TEXTURE name="Test" path="Assets/test.png"/>
   <TEXTURE name="Test2" path="Assets/test2.png"/>
   <TEXTURE name="Room2" path="Assets/Tiles/sciFiRedTheme.png"/>
+  <TEXTURE name="DoorOpening" path="Assets/Tiles/DoorOpening.png"/>
+  <TEXTURE name="DoorClosing" path="Assets/Tiles/DoorClosing.png"/>
 
 
   <!-- Start of a reduced texture -->
@@ -28,6 +30,8 @@
   <RED_TEXTURE name="Floor_1" assoc_name="Room2" x="0" y="0" width="64" height="92" />
   <RED_TEXTURE name="Door_Open" assoc_name="Room2" x="384" y="92" width="64" height="92" />
   <RED_TEXTURE name="Door" assoc_name="Room2" x="320" y="92" width="64" height="92" />
+  <RED_TEXTURE name="Door_Opening" assoc_name="Room2" x="0" y="0" width="64" height="92" />
+  <RED_TEXTURE name="Door_Closing" assoc_name="Room2" x="0" y="0" width="64" height="92" />
 
   <!-- Start of a texture group - All elements are added as the part of this named group -->
   <TEXTURE_GROUP name ="Floors">

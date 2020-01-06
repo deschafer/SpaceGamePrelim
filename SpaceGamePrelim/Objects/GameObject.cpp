@@ -2,8 +2,8 @@
 
 
 
-GameObject::GameObject() : 
-	Colorable()
+GameObject::GameObject(Scene* ParentScene) : 
+	Drawable(Rect(0, 0, 0, 0), ParentScene)
 {
 }
 

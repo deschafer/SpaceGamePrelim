@@ -25,16 +25,6 @@ public:
 		Rect DestRect,
 		Cell CellType,
 		std::vector<int> NumberFrames,
-		std::vector<int> AnimationSpeed);
-	void Load(std::vector<std::string> RedTextureIDs, // Function used to create this object
-		MapCoordinate Position,
-		Rect DestRect,
-		Cell CellType);
-	void Load(std::vector<std::string> RedTextureIDs, // Function used to create this object
-		MapCoordinate Position,
-		Rect DestRect,
-		Cell CellType,
-		std::vector<int> NumberFrames,
 		std::vector<int> AnimationSpeed,
 		bool Collidable);
 	void Load(std::vector<std::string> RedTextureIDs, // Function used to create this object

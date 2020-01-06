@@ -243,6 +243,10 @@ bool SceneFactory::LoadNewScene(std::string Filename, Scene* LoadingScene)
 						}
 					}
 				}
+
+				// we also need to set the scene of the object
+				Object->SetParentScene(LoadingScene);
+
 				// Adding this object to the parsed objects
 				ParsedObjects.push_back(Object);
 				ComponentIDs.clear();
