@@ -1,6 +1,7 @@
 #include "MapInactive.h"
 
-MapInactive::MapInactive()
+MapInactive::MapInactive(Rect Dimensions, Scene* ParentScene) : 
+	MapCell(Dimensions, ParentScene)
 {
 	m_ObjType = MapObjectTypes::CELL_INACTIVE;
 }
@@ -9,22 +10,22 @@ MapInactive::~MapInactive()
 {
 }
 
-MapInactive::MapInactive(std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties,
+MapInactive::MapInactive(Rect Dimensions, Scene* ParentScene, std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties,
 	MapCoordinate Position, Cell CellType) :
-	MapCell(RedTextureIDs, Properties, Position, CellType)
+	MapCell(Dimensions, ParentScene, RedTextureIDs, Properties, Position, CellType)
 {
-	MapInactive();
+	MapInactive(Dimensions, ParentScene);
 }
 
-MapInactive::MapInactive(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell CellType) :
-	MapCell(RedTextureIDs, Position, CellType)
+MapInactive::MapInactive(Rect Dimensions, Scene* ParentScene, std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell CellType) :
+	MapCell(Dimensions, ParentScene, RedTextureIDs, Position, CellType)
 {
-	MapInactive();
+	MapInactive(Dimensions, ParentScene);
 }
 
-MapInactive::MapInactive(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Rect DestRect, Cell CellType) :
-	MapCell(RedTextureIDs, Position, DestRect, CellType)
+MapInactive::MapInactive(Rect Dimensions, Scene* ParentScene, std::vector<std::string> RedTextureIDs, MapCoordinate Position, Rect DestRect, Cell CellType) :
+	MapCell(Dimensions, ParentScene, RedTextureIDs, Position, DestRect, CellType)
 {
-	MapInactive();
+	MapInactive(Dimensions, ParentScene);
 }
 

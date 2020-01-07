@@ -3,15 +3,6 @@
 
   <!-- This is a proper definition that the AssetManager will
        use to produce objects of this type.-->
-  <ASSET 
-    typeID ="Testing"
-    dstRectW="0"
-    dstRectH="0"
-    textureID="Explosion"
-    anim="false"
-    animSpeed="100"
-    collidable="true"
-    numFrames="3"/>
   
   <ASSET 
     typeID ="Door"
@@ -28,7 +19,7 @@
        together to support randomization later.-->
   
   <ASSET_LIST ListID="TestingList">
-    <ITEM AssetID="Testing" SpawnRate="50"/>
+    <ITEM AssetID="Door" SpawnRate="0"/>
   </ASSET_LIST>
   
   

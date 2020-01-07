@@ -13,8 +13,7 @@ class Component;
 
 class GameEntity : 
 	public GameObject, 
-	protected Interactable, 
-	protected Locatable
+	protected Interactable
 {
 public:
 	GameEntity(Scene* Parent);

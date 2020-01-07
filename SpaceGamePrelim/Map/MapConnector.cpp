@@ -397,20 +397,40 @@ bool MapConnector::ConnectMapHoriz()
 				vector<string> Textures;
 				Textures.push_back("Explosion");
 
-				m_Map2->SetCell(BeginningPos.GetPositionX(), BeginningPos.GetPositionY(), new MapWall(Textures, MapCoordinate(0, 0), Cell::Default));
+				m_Map2->SetCell(BeginningPos.GetPositionX(), BeginningPos.GetPositionY(), new MapWall(Rect(0,0,MapManager::CellWidthSrc, 
+					MapManager::CellHeightSrc), 
+					MapManager::Instance()->GetParentScene(),
+					Textures, 
+					MapCoordinate(0, 0), 
+					Cell::Default));
 				Textures.clear();
 				Textures.push_back("Explosion");
 
-				m_Map1->SetCell(EndingPos.GetPositionX() - m_Map1->GetWidth(), EndingPos.GetPositionY(), new MapWall(Textures, MapCoordinate(0, 0), Cell::Default));
+				m_Map1->SetCell(EndingPos.GetPositionX() - m_Map1->GetWidth(), EndingPos.GetPositionY(), new MapWall(Rect(0, 0, MapManager::CellWidthSrc,
+					MapManager::CellHeightSrc), 
+					MapManager::Instance()->GetParentScene(), 
+					Textures, 
+					MapCoordinate(0, 0), 
+					Cell::Default));
 
 				Textures.clear();
 				Textures.push_back("Test");
 
-				m_Map2->SetCell(TopLeft.GetPositionX(), TopLeft.GetPositionY(), new MapWall(Textures, MapCoordinate(0, 0), Cell::Default));
+				m_Map2->SetCell(TopLeft.GetPositionX(), TopLeft.GetPositionY(), new MapWall(Rect(0, 0, MapManager::CellWidthSrc,
+					MapManager::CellHeightSrc), 
+					MapManager::Instance()->GetParentScene(), 
+					Textures, 
+					MapCoordinate(0, 0), Cell::Default));
 				Textures.clear();
 				Textures.push_back("Test");
 
-				m_Map1->SetCell(BottomRight.GetPositionX() - m_Map1->GetWidth(), BottomRight.GetPositionY(), new MapWall(Textures, MapCoordinate(0, 0), Cell::Default));
+				m_Map1->SetCell(BottomRight.GetPositionX() - m_Map1->GetWidth(), BottomRight.GetPositionY(), new MapWall(Rect(0, 0, 
+					MapManager::CellWidthSrc,
+					MapManager::CellHeightSrc), 
+					MapManager::Instance()->GetParentScene(), 
+					Textures, 
+					MapCoordinate(0, 0), 
+					Cell::Default));
 			}
 		}
 	}

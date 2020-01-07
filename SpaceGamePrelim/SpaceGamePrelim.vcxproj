@@ -47,7 +47,6 @@
     <ClCompile Include="Map\MapAssetManager.cpp" />
     <ClCompile Include="Map\MapAssets\Door.cpp" />
     <ClCompile Include="Map\MapAssets\MapAsset.cpp" />
-    <ClCompile Include="Map\MapAssets\TestingAsset.cpp" />
     <ClCompile Include="Map\MapCell.cpp" />
     <ClCompile Include="Map\MapConnector.cpp" />
     <ClCompile Include="Map\MapFactory.cpp" />
@@ -119,7 +118,6 @@
     <ClInclude Include="Map\MapAssetManager.h" />
     <ClInclude Include="Map\MapAssets\Door.h" />
     <ClInclude Include="Map\MapAssets\MapAsset.h" />
-    <ClInclude Include="Map\MapAssets\TestingAsset.h" />
     <ClInclude Include="Map\MapCell.h" />
     <ClInclude Include="Map\MapConnector.h" />
     <ClInclude Include="Map\MapCoordinate.h" />
@@ -162,6 +160,7 @@
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

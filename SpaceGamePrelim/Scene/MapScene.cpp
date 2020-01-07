@@ -4,7 +4,6 @@
 #include "../Objects/Player.h"
 #include "../Map/MapManager.h"
 #include "../Map/MapAssetManager.h"
-#include "../Map/MapAssets/TestingAsset.h"
 #include "../Map/MapAssets/Door.h"
 
 #include "../Components/PlayerMovementComp.h"
@@ -47,6 +46,7 @@ MapScene::MapScene(std::string SceneID, bool Paused) :
 //
 bool MapScene::Enter()
 {
+
 	// Registering the types assoc with this scene
 	SceneFactory::Instance()->RegisterNewObject("Button", new ButtonCreator());
 	SceneFactory::Instance()->RegisterNewComponent("ButtonInteract", new ButtonInteractCompCreator());
@@ -67,8 +67,7 @@ bool MapScene::Enter()
 	// This should probably be moved somewhere into MapManager
 
 	// Register before parsing source file
-	MapAssetManager::Instance()->RegisterAsset("Testing", new TestingAsset());
-	MapAssetManager::Instance()->RegisterAsset("Door", new Door());
+	MapAssetManager::Instance()->RegisterAsset("Door", new Door(Rect(0,0,0,0), nullptr));
 
 	// Then load in the file that contains the defs for the registered assets
 	MapAssetManager::Instance()->AddAssetSourceFile("./XML/Map/Assets.xml");
@@ -78,6 +77,10 @@ bool MapScene::Enter()
 
 	// Then we can decide which of this are going to be fallbacks
 	FallbackRoomParser::Instance()->LoadFallbackRooms("./XML/Map/Fallback.xml");
+
+
+	MapManager::Instance()->SetParentScene(this);
+
 
 #ifdef _DEBUG
 

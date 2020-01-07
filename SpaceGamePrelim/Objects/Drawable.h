@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Colorable.h"
+#include "Locatable.h"
 #include "../BasicTypes/BasicTypes.h"
 class Scene;
 
@@ -13,7 +14,9 @@ class Scene;
 // It only provides an interface to drawn elements, and has some minor modifications on those elements
 //
 
-class Drawable : private Colorable
+class Drawable : 
+	private Colorable,
+	public Locatable
 {
 protected:
 
@@ -40,10 +43,14 @@ public:
 	virtual std::vector<int> GetNumberFrames() = 0;
 	virtual void ClearTextures() = 0;
 
+	// locatable overrides
+	virtual Vector GetLocatableScreenPosition() override { return m_LocatableScreenPosition = Vector((float)m_Dimensions.TopLeftX(), (float)m_Dimensions.TopLeftY()); }
+	virtual void SetLocatableScreenPosition(Vector Position) override { m_Dimensions = Rect(m_LocatableScreenPosition = Position, m_Dimensions.Width(), m_Dimensions.Height()); }
+
 	// all inheriting classes need to work with these variables
 	void SetVisible(bool Visible) { m_Visible = Visible; }
 	Rect GetDimensions() { return m_Dimensions; }
-	Rect SetDimensions(Rect Dim) { m_Dimensions = Dim; }
+	Rect SetDimensions(Rect Dim) { m_Dimensions = Dim; m_LocatableScreenPosition = Vector(Dim.TopLeftX(), Dim.TopLeftY()); }
 	void SetParentScene(Scene* ParentScene);
 	Scene* GetParentScene() { return m_ParentScene; }
 

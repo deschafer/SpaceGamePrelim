@@ -3,12 +3,14 @@
 #include "MapCoordinate.h"
 #include "..\Objects\Colorable.h"
 #include "..\Objects\Locatable.h"
+#include "..\Objects\Drawable.h"
+#include "..\BasicTypes\BasicTypes.h"
 
 // Map Object types -- not sure if it will be staying
 enum class MapObjectTypes{CELL_WALL, CELL_INACTIVE};
 
 // Base class for all map objects such as MapCells
-class MapObject : public Colorable
+class MapObject : public Drawable
 {
 protected:
 
@@ -17,10 +19,9 @@ protected:
 
 public:
 
-	virtual void Draw(MapCoordinate Coords) = 0;
-	virtual void Update() = 0;
+	MapObject(Rect Dimensions, Scene* ParentScene);
+	MapObject() = delete;
 
-	MapObject();
 	virtual	~MapObject();
 };
 

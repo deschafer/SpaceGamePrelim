@@ -65,6 +65,8 @@ private:
 	MapAssetManager* m_AssetManager;
 	MapFactory* m_MapFactory;
 
+	Scene* m_ParentScene;
+
 	MapCell* GetCellFromMaps(Map* CurrentMap, MapCoordinate RequestedCell);
 	void SetLink(Map* NewMap);
 	void GenerateNeighbors();
@@ -149,6 +151,8 @@ public:
 		}
 	}
 
+	void SetParentScene(Scene* Parent) { m_ParentScene = Parent; }
+	Scene* GetParentScene() { return m_ParentScene; }
 	void HandleMapZoom();
 	void DrawGrid();
 	void Draw();

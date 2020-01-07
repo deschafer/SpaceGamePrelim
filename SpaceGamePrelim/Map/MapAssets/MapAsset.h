@@ -46,13 +46,13 @@ public:
 	virtual int GetIntegerHeight();
 	virtual MapCoordinate PlaceAsset(MapObject*** RoomCells, MapAsset*** RoomAssets, bool*** Doorways);
 	virtual MapCoordinate PlaceAssetBorderingRoom(MapCell*** RoomCells, MapAsset*** RoomAssets);
-	virtual void Draw(MapCoordinate Coords) override;
-	virtual void Draw(double X, double Y) override;
+	virtual bool Draw(double X, double Y) override;
 	virtual void Update() override;
 	virtual void Reset();	// should be called by derived classes when this object is copied
 
-	MapAsset();
-	MapAsset(std::vector<std::string> RedTextureIDs,
+	MapAsset(Rect Dimensions, Scene* Parent);
+	MapAsset(Rect Dimensions, Scene* ParentScene,
+		std::vector<std::string> RedTextureIDs,
 		MapCoordinate Position,
 		Rect SrcRect,
 		Cell CellType,

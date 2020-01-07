@@ -283,16 +283,15 @@ int MapAssetManager::StringToAssetID(std::string AssetName)
 MapAsset* MapAssetManager::CreateAssetFromList(unsigned ListID)
 {
 	// Now select a random number within our range
-	int Selection = rand() % m_ListAssetRegionsMaximums[ListID];
+	int Maximum = m_ListAssetRegionsMaximums[ListID];
+	int Selection = rand() % (!Maximum ? 1 : Maximum);
 	std::vector<std::pair<int, int>> AssetRegions = m_ListAssetRegions[ListID];
-
 	for (size_t i = 0; i < AssetRegions.size(); i++)
 	{
-		if (Selection >= AssetRegions[i].first && Selection < AssetRegions[i].second)
+		if (Selection >= AssetRegions[i].first && Selection <= AssetRegions[i].second)
 		{
 			// Found the asset we have chosen randomly
 			return CreateAsset(m_TypeLists[ListID][i].first);
-
 		}
 	}
 	

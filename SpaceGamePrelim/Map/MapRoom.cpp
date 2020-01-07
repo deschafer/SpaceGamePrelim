@@ -1077,7 +1077,12 @@ void MapRoom::Generate()
 				// Finally, finish by setting the appropriate texture here
 				tempStr.push_back(WallSideRight);
 
-				m_Cells[Start][0] = new MapWall(tempStr, MapCoordinate(TempX, TempY), Rect(0, 0, m_CellWidth, m_CellHeight), Cell::Wall_Right);
+				m_Cells[Start][0] = new MapWall(Rect(0,0,m_CellWidth, m_CellHeight), 
+					MapManager::Instance()->GetParentScene(), 
+					tempStr,
+					MapCoordinate(TempX, TempY), 
+					Rect(0, 0, m_CellWidth, m_CellHeight), 
+					Cell::Wall_Right);
 
 				// Then update the cell counter
 				m_CountCells++;
@@ -1127,7 +1132,12 @@ void MapRoom::Generate()
 				CellType);
 
 			// Finally, creating a new map cell representing the outer walls of this room
-			m_Cells[TempX][TempY] = new MapWall(tempStr, MapCoordinate(TempX, TempY), Rect(0, 0, m_CellWidth, m_CellHeight), CellType);
+			m_Cells[TempX][TempY] = new MapWall(Rect(0, 0, m_CellWidth, m_CellHeight),
+				MapManager::Instance()->GetParentScene(), 
+				tempStr, 
+				MapCoordinate(TempX, TempY), 
+				Rect(0, 0, m_CellWidth, m_CellHeight), 
+				CellType);
 
 			// Update the cells counter
 			m_CountCells++;
@@ -1308,7 +1318,8 @@ void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax)
 	if (Cells[X][Y] == nullptr)
 	{
 		Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(FloorGroup));
-		Cells[X][Y] = new MapInactive(Strings, MapCoordinate(X * Width, Y * Height), Rect(0, 0, Width, Height), Cell::Floor);
+		Cells[X][Y] = new MapInactive(Rect(0, 0, MapManager::ActiveCellsWidth, MapManager::ActiveCellsHeight),
+			MapManager::Instance()->GetParentScene(), Strings, MapCoordinate(X * Width, Y * Height), Rect(0, 0, Width, Height), Cell::Floor);
 	}
 	// One cell to the east
 	if ((X + 1) < XMax &&
@@ -1773,56 +1784,57 @@ MapAsset* MapRoom::PlaceAsset()
 	while (NewAsset == nullptr && Try < NumberTries)
 	{
 		// Choose an asset from this selected list
-		NewAsset = MapAssetManager::Instance()->CreateAssetFromList(m_AssetListIDs[Selection]);
-		NewAsset->SetParentRoom(this);
-		NewAsset->SetParentMap(m_ParentMap);
+		if (NewAsset = MapAssetManager::Instance()->CreateAssetFromList(m_AssetListIDs[Selection]))
+		{
+			NewAsset->SetParentRoom(this);
+			NewAsset->SetParentMap(m_ParentMap);
 
-		// Is this a boundary room or not
-		if (m_BorderingRoom)
-		{
-			SelPosition = NewAsset->PlaceAssetBorderingRoom((MapCell***)m_Cells, m_Assets);
-		}
-		else
-		{
-			SelPosition = NewAsset->PlaceAsset(m_Cells, m_Assets, m_Doorways);
-		}
-
-		// Check if the asset succeeded
-		if (SelPosition == ErrorCoord)
-		{
-			// Then the placement failed, delete the asset we wanted to place
-			// and set it as nullptr
-			delete NewAsset;
-			NewAsset = nullptr;
-		}
-		else
-		{
-			// Save the position of the asset by modifying the m_Assets array;
-
-			for (int i = SelPosition.GetPositionX(), AssetWidth = NewAsset->GetIntegerWidth();
-				i < m_Width && i < AssetWidth;
-				i++)
+			// Is this a boundary room or not
+			if (m_BorderingRoom)
 			{
-				for (int j = SelPosition.GetPositionY(), AssetHeight = NewAsset->GetIntegerHeight();
-					j < m_Height && j < AssetHeight;
-					j++)
+				SelPosition = NewAsset->PlaceAssetBorderingRoom((MapCell***)m_Cells, m_Assets);
+			}
+			else
+			{
+				SelPosition = NewAsset->PlaceAsset(m_Cells, m_Assets, m_Doorways);
+			}
+
+			// Check if the asset succeeded
+			if (SelPosition == ErrorCoord)
+			{
+				// Then the placement failed, delete the asset we wanted to place
+				// and set it as nullptr
+				delete NewAsset;
+				NewAsset = nullptr;
+			}
+			else
+			{
+				// Save the position of the asset by modifying the m_Assets array;
+
+				for (int i = SelPosition.GetPositionX(), AssetWidth = NewAsset->GetIntegerWidth();
+					i < m_Width && i < AssetWidth;
+					i++)
 				{
-					// First check if there already is an asset here
-					if (m_Assets[i][j])
+					for (int j = SelPosition.GetPositionY(), AssetHeight = NewAsset->GetIntegerHeight();
+						j < m_Height && j < AssetHeight;
+						j++)
 					{
-						cout << "MapAsset Error: Selected placement for map asset was already occupied" << endl;
-					}
-					else
-					{
-						m_Assets[i][j] = NewAsset;	// Save the location of this asset
+						// First check if there already is an asset here
+						if (m_Assets[i][j])
+						{
+							cout << "MapAsset Error: Selected placement for map asset was already occupied" << endl;
+						}
+						else
+						{
+							m_Assets[i][j] = NewAsset;	// Save the location of this asset
+						}
 					}
 				}
 			}
+
+			Try++;	// We have tried once to place an asset with this iteration
 		}
-
-		Try++;	// We have tried once to place an asset with this iteration
 	}
-
 	return NewAsset;
 }
 

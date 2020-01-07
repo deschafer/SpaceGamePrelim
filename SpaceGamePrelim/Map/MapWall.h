@@ -5,13 +5,14 @@
 class MapWall : public MapCell
 {
 public:
-	MapWall();
+	MapWall(Rect Dimensions, Scene* Parent);
+	MapWall() = delete;
 	~MapWall();
 
-	MapWall(std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties, 
+	MapWall(Rect Dimensions, Scene* Parent,  std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties,
 		MapCoordinate Position, Cell CellType);
-	MapWall(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell MapCell);
-	MapWall(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Rect DestRect, Cell MapCell);
+	MapWall(Rect Dimensions, Scene* Parent, std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell MapCell);
+	MapWall(Rect Dimensions, Scene* Parent, std::vector<std::string> RedTextureIDs, MapCoordinate Position, Rect DestRect, Cell MapCell);
 
 
 	virtual bool OnCollision(GameEntity* Enitity) override;

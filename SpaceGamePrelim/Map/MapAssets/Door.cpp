@@ -1,12 +1,13 @@
 
 #include "Door.h"
 
+
 #include <iostream>
 
 using namespace std;
 
-Door::Door() : 
-	MapAsset()
+Door::Door(Rect Dimensions, Scene* ParentScene) : 
+	MapAsset(Dimensions, ParentScene)
 {
 	Vector ScreenPosition = GetLocatableScreenPosition();
 
@@ -21,7 +22,7 @@ Door::~Door()
 MapAsset* Door::Copy() 
 {
 	// create the new object
-	Door* NewDoor = new Door();
+	Door* NewDoor = new Door(GetDimensions(), GetParentScene());
 
 	// copy the data from this object
 	*NewDoor = *this;

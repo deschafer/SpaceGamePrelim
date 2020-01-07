@@ -1,10 +1,11 @@
 #include "Drawable.h"
 #include "..\Scene\Scene.h"
 
-Drawable::Drawable(Rect Dimensions, Scene* ParentScene) : 
+Drawable::Drawable(Rect Dimensions, Scene* ParentScene) :
 	m_Dimensions(Dimensions),
 	m_Visible(true),
-	m_ParentScene(ParentScene)
+	m_ParentScene(ParentScene),
+	Locatable(Vector(Dimensions.TopLeftX(), Dimensions.TopLeftY()))
 {
 	if (ParentScene)
 		ParentScene->AddDrawable(this);

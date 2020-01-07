@@ -9,7 +9,7 @@ private:
 public:
 	MapCoordinate(int X, int Y) : m_PositionX(X), m_PositionY(Y)
 	{}
-	MapCoordinate() {}
+	MapCoordinate() : m_PositionX(0), m_PositionY(0) {}
 	~MapCoordinate() {}
 
 	bool operator ==(MapCoordinate Other)

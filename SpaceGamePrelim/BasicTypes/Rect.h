@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Vector.h"
 
 class Rect
 {
@@ -11,12 +12,19 @@ private:
 	int m_Height;
 
 public:
-	Rect(int TopLeft, int TopRight, int Width, int Height)
+	Rect(int TopLeft, int TopRight, int NewWidth, int NewHeight)
 	{
 		m_TopLeftX = TopLeft;
 		m_TopLeftY = TopRight;
-		m_Width = Width;
-		m_Height = Height;
+		m_Width = NewWidth;
+		m_Height = NewHeight;
+	}
+	Rect(Vector Position, int NewWidth, int NewHeight)
+	{
+		m_TopLeftX = Position.getX();
+		m_TopLeftY = Position.getY();
+		m_Width = NewWidth;
+		m_Height = NewHeight;
 	}
 
 	int TopLeftX() { return m_TopLeftX; }
@@ -31,7 +39,7 @@ public:
 
 	bool Empty();
 
-	Rect();
+	Rect() : Rect(0,0,0,0) {}
 	~Rect();
 };
 

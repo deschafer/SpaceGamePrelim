@@ -5,7 +5,7 @@
 
 class Locatable
 {
-private:
+protected:
 
 	Vector m_LocatableScreenPosition;
 
@@ -15,7 +15,7 @@ public:
 	virtual void SetLocatableScreenPosition (Vector Position) { m_LocatableScreenPosition = Position; }
 
 	Locatable(Vector ScreenPosition);
-	Locatable();
+	Locatable() = delete;
 	virtual ~Locatable();
 };
 

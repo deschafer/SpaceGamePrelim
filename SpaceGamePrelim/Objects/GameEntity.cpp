@@ -11,7 +11,6 @@ GameEntity::GameEntity(Scene* ParentScene) :
 	m_CurrentRow(1),
 	m_DestDimensions(0, 0, 0, 0),
 	Interactable(true),
-	Locatable(m_Position),
 	GameObject(ParentScene)
 {
 }
@@ -135,7 +134,7 @@ void GameEntity::Update()
 		m_Velocity.setY(0);
 
 	// set the dimensions of the drawable class
-	Drawable::m_Dimensions = Rect(m_Dimensions.TopLeftX(), m_Dimensions.TopLeftY(), m_DestDimensions.Width(), m_DestDimensions.Height());
+	Drawable::m_Dimensions = Rect(m_Position.getX(), m_Position.getY(), m_DestDimensions.Width(), m_DestDimensions.Height());
 }
 
 

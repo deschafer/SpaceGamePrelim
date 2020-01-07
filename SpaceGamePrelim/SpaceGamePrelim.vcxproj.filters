@@ -248,9 +248,6 @@
     <ClCompile Include="Map\MapAssets\MapAsset.cpp">
       <Filter>Source Files\Map\Assets</Filter>
     </ClCompile>
-    <ClCompile Include="Map\MapAssets\TestingAsset.cpp">
-      <Filter>Source Files\Map\Assets</Filter>
-    </ClCompile>
     <ClCompile Include="Components\ZoomMovementComp.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
@@ -460,9 +457,6 @@
     <ClInclude Include="Map\MapAssets\MapAsset.h">
       <Filter>Header Files\Map\Assets</Filter>
     </ClInclude>
-    <ClInclude Include="Map\MapAssets\TestingAsset.h">
-      <Filter>Header Files\Map\Assets</Filter>
-    </ClInclude>
     <ClInclude Include="Components\ZoomMovementComp.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -515,5 +509,6 @@
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
     <None Include="ClassDiagram1.cd" />
+    <None Include="ClassDiagram2.cd" />
   </ItemGroup>
 </Project>

@@ -192,7 +192,8 @@ MapManager::MapManager() :
 	m_RequestedMovement(0, 0),
 	m_PixelOffsetX(0.0),
 	m_PixelOffsetY(0.0),
-	m_ActivelyLinkedCount(0)
+	m_ActivelyLinkedCount(0),
+	m_ParentScene(nullptr)
 {
 	// Initializing our Map Type management
 	m_MapFactory = MapFactory::Instance();
@@ -279,8 +280,8 @@ void MapManager::ComputeStartingOffsets()
 	MapCoordinate Coord = m_ActiveMap->GetFloorCellCoord();
 
 	// Then set the offsets so they reflect this
-	m_PixelOffsetX = -Coord.GetPositionX() * m_CellWidth + m_ActiveWndWidth / 2;
-	m_PixelOffsetY = -Coord.GetPositionY() * m_CellHeight + m_ActiveWndHeight / 2;
+	m_PixelOffsetX = (double)-Coord.GetPositionX() * m_CellWidth + m_ActiveWndWidth / 2;
+	m_PixelOffsetY = (double)-Coord.GetPositionY() * m_CellHeight + m_ActiveWndHeight / 2;
 }
 
 //
@@ -325,8 +326,8 @@ void MapManager::Draw()
 				{
 					if (!(Object = m_VisibleObjectArray[i][j])) continue;
 
-					double PositionX = (i)* m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
-					double PositionY = (j)* m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+					double PositionX = (double)(i)* m_CellWidth + m_PixelOffsetX + (double)MapPositionOffsetX * m_CellWidth;
+					double PositionY = (double)(j)* m_CellHeight + m_PixelOffsetY + (double)MapPositionOffsetY * m_CellHeight;
 
 					if (Object &&
 						PositionX + m_CellWidth >= 0 &&
@@ -336,7 +337,7 @@ void MapManager::Draw()
 					{
 						// note that this MapCoordinate should be a vector. It refers to a location in the screen to draw the object
 
-						Object->Draw(MapCoordinate((int)round(PositionX), (int)round(PositionY)));
+						Object->Draw(PositionX, PositionY);
 					}
 				}
 			}
@@ -350,11 +351,11 @@ void MapManager::Draw()
 						continue;
 
 					// convert to pixel coordinates based off the camera offset
-					double PositionX = (i)* m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
-					double PositionY = (j)* m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+					double PositionX = (i)* (double)m_CellWidth + m_PixelOffsetX + (double)MapPositionOffsetX * m_CellWidth;
+					double PositionY = (j)* (double)m_CellHeight + m_PixelOffsetY + (double)MapPositionOffsetY * m_CellHeight;
 
-					double ThisMapOffsetX = m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
-					double ThisMapOffsetY = m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+					double ThisMapOffsetX = m_PixelOffsetX + (double)MapPositionOffsetX * m_CellWidth;
+					double ThisMapOffsetY = m_PixelOffsetY + (double)MapPositionOffsetY * m_CellHeight;
 
 					if (Asset &&
 						PositionX + m_CellWidth >= 0 &&
@@ -372,10 +373,10 @@ void MapManager::Draw()
 
 						MapCoordinate AssetTopLeftPosition = Asset->GetPosition();
 
-						double TopLeftPixelsX = AssetTopLeftPosition.GetPositionX() * m_CellWidth + m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
-						double TopLeftPixelsY = AssetTopLeftPosition.GetPositionY() * m_CellHeight + m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+						double TopLeftPixelsX = (double)AssetTopLeftPosition.GetPositionX() * m_CellWidth + m_PixelOffsetX + (double)MapPositionOffsetX * m_CellWidth;
+						double TopLeftPixelsY = (double)AssetTopLeftPosition.GetPositionY() * m_CellHeight + m_PixelOffsetY + (double)MapPositionOffsetY * m_CellHeight;
 
-						Asset->Draw(MapCoordinate((int)round(TopLeftPixelsX), (int)round(TopLeftPixelsY)));
+						Asset->Draw(PositionX, PositionY);
 					}
 				}
 			}
@@ -967,13 +968,13 @@ void MapManager::MoveMap()
 	{
 		if (m_HorizMovementSwapped)
 		{
-			if (abs(m_PixelOffsetX) >= (MapSizeW * m_CellWidth))
+			if (abs(m_PixelOffsetX) >= ((double)MapSizeW * m_CellWidth))
 			{
 				m_PixelOffsetX = (int)floor(m_PixelOffsetX) % (MapSizeW * m_CellWidth);
 			}
 			else if (m_PixelOffsetX < 0)
 			{
-				m_PixelOffsetX = (MapSizeW * m_CellWidth) + m_PixelOffsetX;
+				m_PixelOffsetX = ((double)MapSizeW * m_CellWidth) + m_PixelOffsetX;
 			}
 			else if (m_PixelOffsetX > 0)
 			{
@@ -984,13 +985,13 @@ void MapManager::MoveMap()
 		}
 		if (m_VertiMovementSwapped)
 		{
-			if (abs(m_PixelOffsetY) >= (MapSizeH * m_CellHeight))
+			if (abs(m_PixelOffsetY) >= ((double)MapSizeH * m_CellHeight))
 			{
 				m_PixelOffsetY = (int)floor(m_PixelOffsetY) % (MapSizeH * m_CellHeight);
 			}
 			else if (m_PixelOffsetY < 0)
 			{
-				m_PixelOffsetY = (MapSizeH * m_CellHeight) + m_PixelOffsetY;
+				m_PixelOffsetY = ((double)MapSizeH * m_CellHeight) + m_PixelOffsetY;
 			}
 			else if (m_PixelOffsetY > 0)
 			{
@@ -1206,12 +1207,12 @@ Cell MapManager::GetCellType(Vector ScreenPosition)
 				ActDirection = MapDirection::Northwest;
 			}
 			// Bottom left corner
-			else if (Col = 2)
+			else if (Col == 2)
 			{
 				ActDirection = MapDirection::Southwest;
 			}
 		}
-		else if (Row = 2)
+		else if (Row == 2)
 		{
 			// Top Right corner
 			if (Col == 0)
@@ -1219,7 +1220,7 @@ Cell MapManager::GetCellType(Vector ScreenPosition)
 				ActDirection = MapDirection::Northeast;
 			}
 			// Bottom right corner
-			else if (Col = 2)
+			else if (Col == 2)
 			{
 				ActDirection = MapDirection::Southeast;
 			}
@@ -1326,12 +1327,12 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell)
 				ActDirection = MapDirection::Northwest;
 			}
 			// Bottom left corner
-			else if (Col = 2)
+			else if (Col == 2)
 			{
 				ActDirection = MapDirection::Southwest;
 			}
 		}
-		else if (Row = 2)
+		else if (Row == 2)
 		{
 			// Top Right corner
 			if (Col == 0)
@@ -1339,7 +1340,7 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell)
 				ActDirection = MapDirection::Northeast;
 			}
 			// Bottom right corner
-			else if (Col = 2)
+			else if (Col == 2)
 			{
 				ActDirection = MapDirection::Southeast;
 			}
@@ -1443,12 +1444,12 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell,
 				ActDirection = MapDirection::Southwest;
 			}
 			// Bottom left corner
-			else if (Col = 2)
+			else if (Col == 2)
 			{
 				ActDirection = MapDirection::Southeast;
 			}
 		}
-		else if (Row = 2)
+		else if (Row == 2)
 		{
 			// Top Right corner
 			if (Col == 0)
@@ -1456,7 +1457,7 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell,
 				ActDirection = MapDirection::Northwest;
 			}
 			// Bottom right corner
-			else if (Col = 2)
+			else if (Col == 2)
 			{
 				ActDirection = MapDirection::Northeast;
 			}
@@ -1913,7 +1914,7 @@ Vector MapManager::ConvertMapPositionToScreenPosition(MapCoordinate Position, Ma
 	}
 
 	Vector OriginPosition((float)Position.GetPositionX() * m_CellWidth,
-		Position.GetPositionY() * m_CellHeight);
+		(float)Position.GetPositionY() * m_CellHeight);
 
 	Vector OffsetPosition((float)OriginPosition.getX() - MapSizeW * m_CellWidth,
 		OriginPosition.getY() - MapSizeH * m_CellHeight);

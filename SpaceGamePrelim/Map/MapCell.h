@@ -1,7 +1,6 @@
 #pragma once
 
 #include "MapObject.h"
-#include "..\BasicTypes\BasicTypes.h"
 #include "..\TextureCode\TextureManager.h"
 #include "..\Objects\GameEntity.h"
 
@@ -26,7 +25,6 @@ enum class Cell
 
 class MapCell : 
 	public MapObject, 
-	protected Locatable, 
 	protected Interactable
 {
 protected:
@@ -44,24 +42,26 @@ protected:
 	std::vector<int> m_NumberFrames;
 	std::vector<int> m_RedTextureIndex;	// Indices for access of textures
 
-	MapCell::MapCell(std::vector<std::string> RedTextureIDs,
+	MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
+		std::vector<std::string> RedTextureIDs,
 		MapCoordinate Position,
 		Cell CellType);
-	MapCell::MapCell(std::vector<std::string> RedTextureIDs,
+	MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
+		std::vector<std::string> RedTextureIDs,
 		std::vector<TextureProperties*> Properties,
 		MapCoordinate Position,
 		Cell CellType);
-	MapCell::MapCell(std::vector<std::string> RedTextureIDs,
+	MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
+		std::vector<std::string> RedTextureIDs,
 		MapCoordinate Position,
 		Rect DstDimen,
 		Cell CellType);
 
 public:
 
-	MapCell();
+	MapCell() = delete;
+	MapCell(Rect Dimensions, Scene* ParentScene);
 
-	void DrawStatic(MapCoordinate Coords);
-	void DrawStatic(int X, int Y);
 	void ChangeRedTextures(std::vector<std::string> NewTextures);
 	void AddRedTexture(std::string RedTextureID) { m_RedTextureIndex.push_back(TextureManager::Instance()->GetRedTextureIndex(RedTextureID)); m_RedTextureIDs->push_back(RedTextureID); }
 	std::vector<std::string>* ReturnRedTextures() { return m_RedTextureIDs; }
@@ -73,11 +73,19 @@ public:
 	virtual bool OnInteraction(GameEntity* Entity) override;
 
 	virtual void Zoom();
-	virtual void Draw(MapCoordinate Coords);
-	virtual void Draw(double X, double Y);
+	virtual bool Draw(double X, double Y);
 	virtual bool OnCollision(GameEntity* Enitity);
 	virtual bool IsCollidableType() { return false; }
 	virtual void Update();
 	virtual ~MapCell();
+
+	// drawable implementation
+	virtual void AddReducedTexture(std::string RedTextureID, int RedTextureIndex, int AnimationSpeed, int NumberFrames);
+	virtual std::vector<std::string> GetTextures() { return *m_RedTextureIDs; }
+	virtual std::vector<int> GetTextureIndices() { return m_RedTextureIndex; }
+	virtual std::vector<int> GetAnimationSpeeds() { return m_AnimationSpeed; }
+	virtual std::vector<int> GetNumberFrames() { return m_NumberFrames; }
+	virtual void ClearTextures();
+	virtual void SetLocatableScreenPosition(Vector Position) override;
 };
 

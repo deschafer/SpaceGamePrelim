@@ -1,6 +1,7 @@
 #include "MapCell.h"
 #include "..\Frame\MainApplication.h"
 #include "..\Frame\ZoomManager.h"
+#include "..\BasicTypes\BasicTypes.h"
 
 #include <iostream>
 
@@ -8,13 +9,14 @@
 
 // Default CTOR, used by all CTORs for some common
 // intialization
-MapCell::MapCell() :
+MapCell::MapCell(Rect Dimensions, Scene* ParentScene) :
 	m_Animated(false),
 	m_RedTextureIDs(nullptr),
 	m_OriginSize(m_DestRect),
-	Interactable(true)
+	m_CellType(Cell::Empty),
+	Interactable(true),
+	MapObject(Rect(m_Position.GetPositionX(), m_Position.GetPositionY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene)
 {
-	Colorable::Colorable();
 }
 
 //
@@ -22,13 +24,15 @@ MapCell::MapCell() :
 // For a map cell using one or more reduced textures that do not have assoc properties
 // (Are not animated)
 //
-MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
+MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
+	std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	Cell CellType) : 
 	m_CellType(CellType),
 	m_DestRect(0, 0, 0, 0),
-	Interactable(true)
+	Interactable(true),
+	MapObject(Rect(m_Position.GetPositionX(), m_Position.GetPositionY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene)
 {
-	MapCell();
+	MapCell(Dimensions, ParentScene);
 
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
 
@@ -47,15 +51,16 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 // MapCell()
 // For a MapCell that has animated textures with assoc properties
 //
-MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties, MapCoordinate Position,
+MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
+	std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties, MapCoordinate Position,
 	Cell CellType) :
 	m_CellType(CellType),
 	m_Animated(true),
 	m_DestRect(0, 0, 0, 0),
 	m_OriginSize(m_DestRect),
-	Interactable(true)
+	Interactable(true),
+	MapObject(Rect(m_Position.GetPositionX(), m_Position.GetPositionY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene)
 {
-	Colorable::Colorable();
 	TextureProperties* CurrentProp;
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
 
@@ -87,13 +92,15 @@ MapCell::MapCell(std::vector<std::string> RedTextureIDs, std::vector<TextureProp
 // For a map cell using reduced textures and overriding those textures with its
 // own dimensions
 //
-MapCell::MapCell(std::vector<std::string> RedTextureIDs, MapCoordinate Position,
+MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
+	std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	Rect DstDimen, Cell CellType) :
 	m_CellType(CellType),
 	m_DestRect(DstDimen),
-	Interactable(true)
+	Interactable(true),
+	MapObject(Rect(m_Position.GetPositionX(), m_Position.GetPositionY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene)
 {
-	MapCell();
+	MapCell(Dimensions, ParentScene);
 
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
 
@@ -113,42 +120,28 @@ MapCell::~MapCell()
 {
 }
 
-//
-// Draw()
-// Called to draw a mapobject, it will direct it accordingly
-// based on whether to use ReducedTextures for full Textures
-// NOTE: these coordinates do not refer to map position, instead 
-//		 it refers to its screen position
-//
-void MapCell::Draw(MapCoordinate Coords)
+void MapCell::AddReducedTexture(std::string RedTextureID, int RedTextureIndex, int AnimationSpeed, int NumberFrames)
 {
-	Zoom();
+	m_RedTextureIDs->push_back(RedTextureID);
+	m_NumberFrames.push_back(NumberFrames);
+	m_RedTextureIndex.push_back(RedTextureIndex);
+	m_AnimationSpeed.push_back(AnimationSpeed);
+}
 
-	// set this as our last screen position
-	SetLocatableScreenPosition(Vector(Coords.GetPositionX(), Coords.GetPositionY()));
+void MapCell::ClearTextures()
+{
+	m_RedTextureIDs->clear();
+	m_NumberFrames.clear();
+	m_RedTextureIndex.clear();
+	m_AnimationSpeed.clear();
+}
 
-	if (!m_Animated)
-	{
-		DrawStatic(Coords);
-	}
-	else
-	{
-		// Drawing each texture with its respective properties
-		for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
-		{
-			TextureManager::Instance()->DrawCurrentFrame(
-				Coords.GetPositionX(),
-				Coords.GetPositionY(),
-				m_RedTextureIndex[i],
-				SDL_FLIP_NONE,
-				MainApplication::Instance()->GetRenderer(),
-				m_DestRect,
-				m_Color,
-				m_CurrentRow[i],
-				m_CurrentFrame[i]
-			);
-		}
-	}
+void MapCell::SetLocatableScreenPosition(Vector Position)
+{
+	MapObject::SetLocatableScreenPosition(Position);
+	
+	m_Dimensions.SetWidth(m_DestRect.Width());
+	m_Dimensions.SetHeight(m_DestRect.Height());
 }
 
 //
@@ -156,17 +149,12 @@ void MapCell::Draw(MapCoordinate Coords)
 // Given the offset of the map where this asset is,
 // this draw uses the coordinates of the asset to draw it
 //
-void MapCell::Draw(double X, double Y)
+bool MapCell::Draw(double X, double Y)
 {
-	// set this as our last screen position
-	SetLocatableScreenPosition(Vector(X, Y));
+	if (MapObject::Draw()) {
+		// set this as our last screen position
+		SetLocatableScreenPosition(Vector((float)X, (float)Y));
 
-	if (!m_Animated)
-	{
-		DrawStatic((int)X, (int)Y);
-	}
-	else
-	{
 		// Drawing each texture with its respective properties
 		for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
 		{
@@ -177,12 +165,13 @@ void MapCell::Draw(double X, double Y)
 				SDL_FLIP_NONE,
 				MainApplication::Instance()->GetRenderer(),
 				m_DestRect,
-				m_Color,
+				GetColor(),
 				m_CurrentRow[i],
 				m_CurrentFrame[i]
 			);
 		}
 	}
+	return m_Visible;
 }
 
 // 
@@ -191,62 +180,11 @@ void MapCell::Draw(double X, double Y)
 //
 void MapCell::Update()
 {
-
 	// Only updates animated textures
 	for (size_t i = 0; i < m_CurrentFrame.size(); i++)
 	{
 		m_CurrentFrame[i] = int(((SDL_GetTicks() / m_AnimationSpeed[i]) % m_NumberFrames[i]));
 	}
-}
-
-// 
-// DrawStatic() 
-// Called to draw a map cell with one or more reduced textures
-//
-void MapCell::DrawStatic(MapCoordinate Coords)
-{
-	static TextureManager* Instance = TextureManager::Instance();
-
-	if (m_RedTextureIDs->empty())
-	{
-		std::cout << "textures are empty";
-	}
-	if (m_DestRect.Height() != 0 && m_DestRect.Width() != 0)
-	{
-		// Draws each of the textures in the vector
-		for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
-		{
-			Instance->DrawStaticFrame(
-				Coords.GetPositionX(),
-				Coords.GetPositionY(),
-				m_RedTextureIndex[i],
-				m_DestRect,
-				MainApplication::Instance()->GetRenderer(),
-				m_Color);
-		}
-	}
-	else
-	{
-		// Draws each of the textures in the vector
-		for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
-		{
-			Instance->DrawStaticFrame(
-				Coords.GetPositionX(),
-				Coords.GetPositionY(),
-				m_RedTextureIndex[i],
-				MainApplication::Instance()->GetRenderer(),
-				m_Color);
-		}
-	}
-}
-
-// 
-// DrawStatic() 
-// Called to draw a map cell with one or more reduced textures
-//
-void MapCell::DrawStatic(int X, int Y)
-{
-	DrawStatic(MapCoordinate(X, Y));
 }
 
 //
@@ -312,10 +250,7 @@ bool MapCell::OnInteraction(GameEntity* Entity)
 {
 	std::cout << "Map Cell Interaction\n";
 
-	m_Color.r = 255;
-	m_Color.g = 0;
-	m_Color.b = 0;
-	m_Color.a = 255;
+	SetColor(255, 0, 0, 255);
 
 	return false;
 }

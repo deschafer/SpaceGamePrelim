@@ -5,13 +5,14 @@
 class MapInactive : public MapCell
 {
 public:
-	MapInactive();
+	MapInactive() = delete;
+	MapInactive(Rect Dimensions, Scene* ParentScene);
 	virtual ~MapInactive();
 
-	MapInactive(std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties,
+	MapInactive(Rect Dimensions, Scene* ParentScene, std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties,
 		MapCoordinate Position, Cell CellType);
-	MapInactive(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell CellType);
-	MapInactive(std::vector<std::string> RedTextureIDs, MapCoordinate Position, Rect DestRect, Cell MapCell);
+	MapInactive(Rect Dimensions, Scene* ParentScene, std::vector<std::string> RedTextureIDs, MapCoordinate Position, Cell CellType);
+	MapInactive(Rect Dimensions, Scene* ParentScene, std::vector<std::string> RedTextureIDs, MapCoordinate Position, Rect DestRect, Cell MapCell);
 
 };
 

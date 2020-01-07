@@ -4,11 +4,12 @@
 
 const static MapCoordinate ErrorCoord = MapCoordinate(-1, -1);
 
-MapAsset::MapAsset() :
+MapAsset::MapAsset(Rect Dimensions, Scene* Parent) :
 	m_IntegerHeight((int)ceil(m_DestRect.Height() / MapManager::GetCellSourceHeight())),
 	m_IntegerWidth((int)ceil(m_DestRect.Width() / MapManager::GetCellSourceWidth())),
 	m_ParentRoom(nullptr),
-	m_ParentMap(nullptr)
+	m_ParentMap(nullptr),
+	MapCell(Dimensions, Parent)
 {
 }
 
@@ -16,12 +17,13 @@ MapAsset::~MapAsset()
 {
 }
 
-MapAsset::MapAsset(std::vector<std::string> RedTextureIDs,
+MapAsset::MapAsset(Rect Dimensions, Scene* ParentScene,
+	std::vector<std::string> RedTextureIDs,
 	MapCoordinate Position,
 	Rect DestRect,
 	Cell CellType,
 	MapRoom* Parent) :
-	MapCell(RedTextureIDs, Position, DestRect, CellType),
+	MapCell(Dimensions, ParentScene, RedTextureIDs, Position, DestRect, CellType),
 	m_IntegerHeight((int)ceil(m_DestRect.Height() / MapManager::GetCellSourceHeight())),
 	m_IntegerWidth((int)ceil(m_DestRect.Width() / MapManager::GetCellSourceWidth())),
 	m_ParentRoom(nullptr),
@@ -133,28 +135,18 @@ Map* MapAsset::GetParentMap()
 // Draw()
 //
 //
-void MapAsset::Draw(MapCoordinate Coords)
+bool MapAsset::Draw(double X, double Y)
 {
-	if (m_Drawn) return;
+	if (MapCell::Draw(X, Y)) {
 
-	MapCell::Draw(Coords);
+		if (m_Drawn) return false;
 
-	m_Updated = false; // end of this game loop, so we can be updated again
-	m_Drawn = true;
-}
+		MapCell::Draw(X, Y);
 
-//
-// Draw()
-//
-//
-void MapAsset::Draw(double X, double Y)
-{
-	if (m_Drawn) return;
-
-	MapCell::Draw(X, Y);
-
-	m_Updated = false; // end of this game loop, so we can be updated again
-	m_Drawn = true;
+		m_Updated = false; // end of this game loop, so we can be updated again
+		m_Drawn = true;
+	}
+	return m_Visible;
 }
 
 //
