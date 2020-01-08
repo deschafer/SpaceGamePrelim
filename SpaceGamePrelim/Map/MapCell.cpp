@@ -14,7 +14,7 @@ MapCell::MapCell(Rect Dimensions, Scene* ParentScene) :
 	m_RedTextureIDs(nullptr),
 	m_OriginSize(m_DestRect),
 	m_CellType(Cell::Empty),
-	Interactable(true),
+	Interactable(false),
 	MapObject(Rect(m_Position.GetPositionX(), m_Position.GetPositionY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene)
 {
 }
@@ -31,7 +31,7 @@ MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
 	m_Animated(false),
 	m_OriginSize(m_DestRect),
 	m_DestRect(0, 0, 0, 0),
-	Interactable(true),
+	Interactable(false),
 	MapObject(Rect(m_Position.GetPositionX(), m_Position.GetPositionY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene)
 {
 	
@@ -60,8 +60,9 @@ MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
 	m_CellType(CellType),
 	m_DestRect(DstDimen),
 	m_Animated(false),
+	m_Collidable(true),
 	m_OriginSize(m_DestRect),
-	Interactable(true),
+	Interactable(false),
 	MapObject(Rect(m_Position.GetPositionX(), m_Position.GetPositionY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene)
 {
 
@@ -77,7 +78,6 @@ MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
 
 	MapObject::m_Position = Position;
 }
-
 
 MapCell::~MapCell()
 {
@@ -146,6 +146,11 @@ bool MapCell::Draw(double X, double Y)
 //
 void MapCell::Update()
 {
+	if (!m_ParentScene)
+	{
+		m_ParentScene = MapManager::GetParentScene();
+	}
+
 	// Only updates animated textures
 	for (size_t i = 0; i < m_CurrentFrame.size(); i++)
 	{
@@ -214,9 +219,5 @@ Vector MapCell::GetInteractablePosition()
 
 bool MapCell::OnInteraction(GameEntity* Entity)
 {
-	std::cout << "Map Cell Interaction\n";
-
-	SetColor(255, 0, 0, 255);
-
 	return false;
 }

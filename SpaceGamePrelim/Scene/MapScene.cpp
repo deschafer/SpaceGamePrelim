@@ -46,6 +46,7 @@ MapScene::MapScene(std::string SceneID, bool Paused) :
 //
 bool MapScene::Enter()
 {
+	MapManager::SetParentScene(this);
 
 	// Registering the types assoc with this scene
 	SceneFactory::Instance()->RegisterNewObject("Button", new ButtonCreator());
@@ -77,10 +78,6 @@ bool MapScene::Enter()
 
 	// Then we can decide which of this are going to be fallbacks
 	FallbackRoomParser::Instance()->LoadFallbackRooms("./XML/Map/Fallback.xml");
-
-
-	MapManager::Instance()->SetParentScene(this);
-
 
 #ifdef _DEBUG
 

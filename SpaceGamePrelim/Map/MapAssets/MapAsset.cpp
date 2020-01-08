@@ -9,7 +9,6 @@ MapAsset::MapAsset(Rect Dimensions, Scene* Parent) :
 	m_IntegerWidth((int)ceil(m_DestRect.Width() / MapManager::GetCellSourceWidth())),
 	m_ParentRoom(nullptr),
 	m_ParentMap(nullptr),
-	m_Collidable(true),
 	m_Drawn(false),
 	m_Updated(false),
 	MapCell(Dimensions, Parent)
@@ -31,7 +30,6 @@ MapAsset::MapAsset(Rect Dimensions, Scene* ParentScene,
 	m_IntegerWidth((int)ceil(m_DestRect.Width() / MapManager::GetCellSourceWidth())),
 	m_ParentRoom(nullptr),
 	m_ParentMap(nullptr), 
-	m_Collidable(true),
 	m_Drawn(false),
 	m_Updated(false)
 {
@@ -141,15 +139,14 @@ Map* MapAsset::GetParentMap()
 //
 bool MapAsset::Draw(double X, double Y)
 {
-	if (MapCell::Draw(X, Y)) {
+	if (m_Drawn) 
+		return false;
 
-		if (m_Drawn) return false;
+	MapCell::Draw(X, Y);
 
-		MapCell::Draw(X, Y);
-
-		m_Updated = false; // end of this game loop, so we can be updated again
-		m_Drawn = true;
-	}
+	m_Updated = false; // end of this game loop, so we can be updated again
+	m_Drawn = true;
+	
 	return m_Visible;
 }
 

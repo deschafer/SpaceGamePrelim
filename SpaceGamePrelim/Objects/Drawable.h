@@ -54,7 +54,7 @@ public:
 	// all inheriting classes need to work with these variables
 	void SetVisible(bool Visible) { m_Visible = Visible; }
 	Rect GetDimensions() { return m_Dimensions; }
-	Rect SetDimensions(Rect Dim) { m_Dimensions = Dim; m_LocatableScreenPosition = Vector((float)Dim.TopLeftX(), (float)Dim.TopLeftY()); }
+	Rect SetDimensions(Rect Dim) {  m_LocatableScreenPosition = Vector((float)Dim.TopLeftX(), (float)Dim.TopLeftY()); return m_Dimensions = Dim; }
 	void SetParentScene(Scene* ParentScene);
 	Scene* GetParentScene() { return m_ParentScene; }
 

@@ -23,6 +23,7 @@ static const string AssetsListTypeXMLPath = "./XML/Map/Assets.xml";
 typedef pair<MapCoordinate, MapCoordinate> SideA;
 
 MapManager* MapManager::m_Instance = nullptr;
+Scene* MapManager::m_ParentScene = nullptr;
 
 // External MapManager helper functions
 
@@ -192,8 +193,7 @@ MapManager::MapManager() :
 	m_RequestedMovement(0, 0),
 	m_PixelOffsetX(0.0),
 	m_PixelOffsetY(0.0),
-	m_ActivelyLinkedCount(0),
-	m_ParentScene(nullptr)
+	m_ActivelyLinkedCount(0)
 {
 	// Initializing our Map Type management
 	m_MapFactory = MapFactory::Instance();
@@ -326,8 +326,8 @@ void MapManager::Draw()
 				{
 					if (!(Object = m_VisibleObjectArray[i][j])) continue;
 
-					double PositionX = (double)(i)* m_CellWidth + m_PixelOffsetX + (double)MapPositionOffsetX * m_CellWidth;
-					double PositionY = (double)(j)* m_CellHeight + m_PixelOffsetY + (double)MapPositionOffsetY * m_CellHeight;
+					double PositionX = (double)(i)*m_CellWidth + m_PixelOffsetX + (double)MapPositionOffsetX * m_CellWidth;
+					double PositionY = (double)(j)*m_CellHeight + m_PixelOffsetY + (double)MapPositionOffsetY * m_CellHeight;
 
 					if (Object &&
 						PositionX + m_CellWidth >= 0 &&
@@ -347,12 +347,12 @@ void MapManager::Draw()
 			{
 				for (int j = 0; j < MapSizeH; j++)
 				{
-					if (!(Asset = m_VisibleAssetArray[i][j])) 
+					if (!(Asset = m_VisibleAssetArray[i][j]))
 						continue;
 
 					// convert to pixel coordinates based off the camera offset
-					double PositionX = (i)* (double)m_CellWidth + m_PixelOffsetX + (double)MapPositionOffsetX * m_CellWidth;
-					double PositionY = (j)* (double)m_CellHeight + m_PixelOffsetY + (double)MapPositionOffsetY * m_CellHeight;
+					double PositionX = (i) * (double)m_CellWidth + m_PixelOffsetX + (double)MapPositionOffsetX * m_CellWidth;
+					double PositionY = (j) * (double)m_CellHeight + m_PixelOffsetY + (double)MapPositionOffsetY * m_CellHeight;
 
 					double ThisMapOffsetX = m_PixelOffsetX + (double)MapPositionOffsetX * m_CellWidth;
 					double ThisMapOffsetY = m_PixelOffsetY + (double)MapPositionOffsetY * m_CellHeight;
@@ -362,7 +362,7 @@ void MapManager::Draw()
 						PositionX < m_ActiveWndWidth &&
 						PositionY + m_CellHeight >= 0 &&
 						PositionY < m_ActiveWndHeight)
-					{	
+					{
 						// if this asset is in the map as some location
 
 						// Note: Assets may be multiple cells in size, so we cannot draw them as
@@ -376,7 +376,7 @@ void MapManager::Draw()
 						double TopLeftPixelsX = (double)AssetTopLeftPosition.GetPositionX() * m_CellWidth + m_PixelOffsetX + (double)MapPositionOffsetX * m_CellWidth;
 						double TopLeftPixelsY = (double)AssetTopLeftPosition.GetPositionY() * m_CellHeight + m_PixelOffsetY + (double)MapPositionOffsetY * m_CellHeight;
 
-						Asset->Draw(PositionX, PositionY);
+						Asset->Draw(TopLeftPixelsX, TopLeftPixelsY);
 					}
 				}
 			}
@@ -467,8 +467,8 @@ void MapManager::UpdateCells()
 					Object = m_VisibleObjectArray[i][j];
 					Asset = m_VisibleAssetArray[i][j];
 
-					int PositionX = (i)* m_CellWidth + (int)m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
-					int PositionY = (j)* m_CellHeight + (int)m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
+					int PositionX = (i)*m_CellWidth + (int)m_PixelOffsetX + (MapPositionOffsetX * m_CellWidth);
+					int PositionY = (j)*m_CellHeight + (int)m_PixelOffsetY + (MapPositionOffsetY * m_CellHeight);
 
 					if (Object &&
 						PositionX + m_CellWidth >= 0 &&
@@ -1242,7 +1242,7 @@ Cell MapManager::GetCellType(Vector ScreenPosition)
 // GetCellIndex()
 //
 //
-MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell)
+MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map*& MapWithCell)
 {
 	static Map* ActiveMap = m_ActiveMap;
 
@@ -1356,7 +1356,7 @@ MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell)
 // GetCellIndex()
 //
 //
-MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map* &MapWithCell, Vector &CellOriginTopLeftPosition, Vector &OriginPos)
+MapCoordinate MapManager::GetCellIndex(Vector ScreenPosition, Map*& MapWithCell, Vector& CellOriginTopLeftPosition, Vector& OriginPos)
 {
 	static Map* ActiveMap = m_ActiveMap;
 
@@ -1506,6 +1506,23 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 		{
 			Collisions.push_back(HorizCollision);
 		}
+
+		HorizCollision = CheckAssetForCollision(
+			Vector(
+				PosWithoutMovement.getX() + Movement.getX(),
+				PosWithoutMovement.getY()
+			),
+			MapCollisionDir::Horiz,
+			(Additional) ? MapDirection::East : MapDirection::West,
+			Movement,
+			Object->GetDestDimensions(),
+			Object);
+
+		if (HorizCollision)
+		{
+			Collisions.push_back(HorizCollision);
+		}
+
 	}
 	// Do the same for vertical
 	if (Movement.getY())
@@ -1523,8 +1540,27 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			Movement,
 			Object->GetDestDimensions(),
 			Object);
+
 		if (VertiCollision)
+		{
 			Collisions.push_back(VertiCollision);
+		}
+
+		VertiCollision = CheckAssetForCollision(
+			Vector(
+				PosWithoutMovement.getX(),
+				PosWithoutMovement.getY() + Movement.getY() + Additional
+			),
+			MapCollisionDir::Verti,
+			(Additional) ? MapDirection::South : MapDirection::North,
+			Movement,
+			Object->GetDestDimensions(),
+			Object);
+
+		if (VertiCollision)
+		{
+			Collisions.push_back(VertiCollision);
+		}
 	}
 	// If no collisions found, then do diagonal if there is movement
 	if (Collisions.empty() && Movement.getY() && Movement.getX())
@@ -1544,8 +1580,27 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			Movement,
 			Object->GetDestDimensions(),
 			Object);
+
 		if (DiagonalCollision)
+		{
 			Collisions.push_back(DiagonalCollision);
+		}
+
+		DiagonalCollision = CheckAssetForCollision(
+			Vector(
+				PosWithoutMovement.getX() + Movement.getX() + AdditionalX,
+				PosWithoutMovement.getY() + Movement.getY() + AdditionalY
+			),
+			MapCollisionDir::Diagonal,
+			(AdditionalX) ? MapDirection::East : MapDirection::West,
+			Movement,
+			Object->GetDestDimensions(),
+			Object);
+
+		if (DiagonalCollision)
+		{
+			Collisions.push_back(DiagonalCollision);
+		}
 	}
 	// If no collisions found, then do diagonal if there is movement
 	if (!Movement.getY() && !Movement.getX())
@@ -1561,10 +1616,13 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			Movement,
 			Object->GetDestDimensions(),
 			Object);
-		if (ZoomCollision)
-			Collisions.push_back(ZoomCollision);
 
-		ZoomCollision = CheckCellForCollision(
+		if (ZoomCollision)
+		{
+			Collisions.push_back(ZoomCollision);
+		}
+
+		ZoomCollision = CheckAssetForCollision(
 			Vector(
 				PosWithoutMovement.getX(),
 				PosWithoutMovement.getY()
@@ -1574,8 +1632,11 @@ std::vector<Collision*> MapManager::CheckCollisions(Vector PosWithMovement, Vect
 			Movement,
 			Object->GetDestDimensions(),
 			Object);
+
 		if (ZoomCollision)
+		{
 			Collisions.push_back(ZoomCollision);
+		}
 	}
 
 	return Collisions;
@@ -1598,6 +1659,7 @@ Collision* MapManager::CheckCellForCollision(
 	Vector OriginPostion;
 	MapCoordinate Index = GetCellIndex(Position, CurrentMap, CellPos, OriginPostion);
 	MapCell* CurrCell = GetCellFromMaps(CurrentMap, Index);
+	MapAsset* CurrAsset = GetAssetFromMaps(CurrentMap, Index);
 	MapCell* DistanceCell;
 	MapCell* AltMovementCell = nullptr;
 	MapCollision* NewCollision = nullptr;
@@ -1642,6 +1704,7 @@ Collision* MapManager::CheckCellForCollision(
 			(DistanceCell && CurrCell &&
 				CurrCell->OnCollision(Entity)))
 		{
+			
 			// Get the cell prior to the movement
 			Vector DistanceCellPos(CellPos.getX(), CellPos.getY() + m_CellHeight);
 			// Get how far the distance is within its cell
@@ -1734,6 +1797,161 @@ Collision* MapManager::CheckCellForCollision(
 
 	return NewCollision;
 }
+
+//
+// CheckCellForCollision()
+//
+//
+Collision* MapManager::CheckAssetForCollision(
+	Vector Position,
+	MapCollisionDir Direction,
+	MapDirection SpecDirection,
+	Vector Movement,
+	Rect ObjectDimensions,
+	GameEntity* Entity)
+{
+	Map* CurrentMap;
+	Vector CellPos;
+	Vector OriginPostion;
+	MapCoordinate Index = GetCellIndex(Position, CurrentMap, CellPos, OriginPostion);
+	MapAsset* CurrAsset = GetAssetFromMaps(CurrentMap, Index);
+	MapAsset* DistanceCell;
+	MapAsset* AltMovementAsset = nullptr;
+	MapCollision* NewCollision = nullptr;
+	int CellAlt = 0;
+
+	// Get the correct position of the offsetted corners for the collision checks
+	if (Direction == MapCollisionDir::Horiz)
+	{
+		CellAlt = (int)OriginPostion.getY() % m_CellHeight + (ObjectDimensions.Height() - 1);
+		AltMovementAsset = GetAssetFromMaps(
+			CurrentMap,
+			MapCoordinate(
+				Index.GetPositionX(),
+				Index.GetPositionY() + CellAlt / m_CellWidth));
+	}
+	else if (Direction == MapCollisionDir::Verti)
+	{
+		// Get the approp surrounding cell information
+		CellAlt = (int)OriginPostion.getX() % m_CellWidth + (ObjectDimensions.Width() - 1);
+		AltMovementAsset = GetAssetFromMaps(
+			CurrentMap,
+			MapCoordinate(
+				Index.GetPositionX() + CellAlt / m_CellWidth,
+				Index.GetPositionY()));
+	}
+
+	// Based on direction, check if there is space available to move
+	switch (SpecDirection)
+	{
+	case MapDirection::North:
+
+		DistanceCell = CurrentMap->GetAsset(
+			Index.GetPositionX(),
+			Index.GetPositionY() + 1);
+
+		if (AltMovementAsset && AltMovementAsset->OnCollision(Entity))
+		{
+			CellPos = Vector(CellPos.getX() + m_CellWidth, CellPos.getY());
+			CurrAsset = AltMovementAsset;
+		}
+		if ((!CurrAsset && DistanceCell) ||
+			(DistanceCell && CurrAsset &&
+				CurrAsset->OnCollision(Entity)))
+		{
+			// Get the cell prior to the movement
+			Vector DistanceCellPos(CellPos.getX(), CellPos.getY() + m_CellHeight);
+			// Get how far the distance is within its cell
+			int DistanceWithinWall = (int)DistanceCellPos.getY() - (int)OriginPostion.getY();
+			// Then find the distance from the pos w/o movement to the edge of the cell
+			int CurrentDistanceUntilCollision = abs((int)Movement.getY()) - DistanceWithinWall;
+			// Create the collision reflecting this situation
+			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Verti, CurrentDistanceUntilCollision);
+		}
+
+		break;
+	case MapDirection::East:
+
+		DistanceCell = CurrentMap->GetAsset(		// The position prior to any movement
+			Index.GetPositionX() - 1,
+			Index.GetPositionY());
+
+		if (AltMovementAsset && AltMovementAsset->OnCollision(Entity))
+		{
+			CellPos = Vector(CellPos.getX(), CellPos.getY() + m_CellHeight);
+			CurrAsset = AltMovementAsset;
+		}
+		if ((!CurrAsset && DistanceCell) ||
+			(DistanceCell && CurrAsset &&
+				CurrAsset->OnCollision(Entity)))
+		{
+			// Get the cell prior to the movement
+			Vector DistanceCellPos(CellPos.getX(), CellPos.getY());
+			// Get how far the distance is within its cell
+			int DistanceWithinWall = (int)OriginPostion.getX() - (int)DistanceCellPos.getX();
+			// Then find the distance from the pos w/o movement to the edge of the cell
+			int CurrentDistanceUntilCollision = abs((int)Movement.getX()) - DistanceWithinWall;
+			// Create the collision reflecting this situation
+			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Horiz, CurrentDistanceUntilCollision);
+		}
+		break;
+	case MapDirection::South:
+
+		DistanceCell = CurrentMap->GetAsset(		// The position prior to any movement
+			Index.GetPositionX(),
+			Index.GetPositionY() - 1);
+
+		if (AltMovementAsset && AltMovementAsset->OnCollision(Entity))
+		{
+			CellPos = Vector(CellPos.getX() + m_CellWidth, CellPos.getY());
+			CurrAsset = AltMovementAsset;
+		}
+		if ((!CurrAsset && DistanceCell) ||
+			(DistanceCell && CurrAsset &&
+				CurrAsset->OnCollision(Entity)))
+		{
+			// Get the cell prior to the movement
+			Vector DistanceCellPos(CellPos.getX(), CellPos.getY());
+			// Get how far the distance is within its cell
+			int DistanceWithinWall = (int)OriginPostion.getY() - (int)DistanceCellPos.getY();
+			// Then find the distance from the pos w/o movement to the edge of the cell
+			int CurrentDistanceUntilCollision = abs((int)Movement.getY()) - DistanceWithinWall;
+			// Create the collision reflecting this situation
+			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Verti, CurrentDistanceUntilCollision);
+		}
+		break;
+	case MapDirection::West:
+
+		DistanceCell = CurrentMap->GetAsset(
+			Index.GetPositionX() + 1,
+			Index.GetPositionY());
+
+		if (AltMovementAsset && AltMovementAsset->OnCollision(Entity))
+		{
+			CellPos = Vector(CellPos.getX(), CellPos.getY() + m_CellHeight);
+			CurrAsset = AltMovementAsset;
+		}
+		if ((!CurrAsset && DistanceCell) ||
+			(DistanceCell && CurrAsset &&
+				CurrAsset->OnCollision(Entity)))
+		{
+			// Get the cell prior to the movement
+			Vector DistanceCellPos(CellPos.getX() + m_CellWidth, CellPos.getY());
+			// Get how far the distance is within its cell
+			int DistanceWithinWall = (int)DistanceCellPos.getX() - (int)OriginPostion.getX();
+			// Then find the distance from the pos w/o movement to the edge of the cell
+			int CurrentDistanceUntilCollision = abs((int)Movement.getX()) - DistanceWithinWall;
+			// Create the collision reflecting this situation
+			NewCollision = new MapCollision(CollisionType::MapWall, MapCollisionDir::Horiz, CurrentDistanceUntilCollision);
+		}
+		break;
+	default:
+		break;
+	}
+
+	return NewCollision;
+}
+
 
 //
 // GetCellFromMaps()
@@ -1853,6 +2071,120 @@ MapCell* MapManager::GetCellFromMaps(Map* CurrentMap, MapCoordinate RequestedCel
 		StandardPos.GetPositionY()));
 }
 
+MapAsset* MapManager::GetAssetFromMaps(Map* CurrentMap, MapCoordinate RequestedCell)
+{
+	int Width = CurrentMap->GetWidth();
+	int Height = CurrentMap->GetHeight();
+	MapCoordinate StandardPos = RequestedCell;
+	Map* NewMap = nullptr;
+
+	// Check if the requested cell is within the bounds of the map
+
+	if (RequestedCell.GetPositionX() < Width &&
+		RequestedCell.GetPositionX() >= 0 &&
+		RequestedCell.GetPositionY() < Height &&
+		RequestedCell.GetPositionY() >= 0)
+	{
+		return CurrentMap->GetAsset(
+			RequestedCell.GetPositionX(),
+			RequestedCell.GetPositionY());
+	}
+	// if not, get it from the appopriate map ...
+	// If in the top left corner
+	else if (RequestedCell.GetPositionX() < 0 &&
+		RequestedCell.GetPositionY() < 0)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() + MapSizeW,
+			RequestedCell.GetPositionY() + MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::Southwest);
+	}
+	// If in directly above this map
+	else if (RequestedCell.GetPositionX() >= 0 &&
+		RequestedCell.GetPositionX() < Width &&
+		RequestedCell.GetPositionY() < 0)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX(),
+			RequestedCell.GetPositionY() + MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::South);
+	}
+	// If in the top right corner
+	else if (RequestedCell.GetPositionX() >= Width &&
+		RequestedCell.GetPositionY() < 0)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() - MapSizeW,
+			RequestedCell.GetPositionY() + MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::Southeast);
+	}
+	// If on the right
+	else if (RequestedCell.GetPositionX() >= Width &&
+		RequestedCell.GetPositionY() >= 0 &&
+		RequestedCell.GetPositionY() < Height)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() - MapSizeW,
+			RequestedCell.GetPositionY());
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::East);
+	}
+	// If in the bottom right corner
+	else if (RequestedCell.GetPositionX() >= Width &&
+		RequestedCell.GetPositionY() >= Height)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() - MapSizeW,
+			RequestedCell.GetPositionY() - MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::Northeast);
+	}
+	// If on the bottom sides
+	else if (RequestedCell.GetPositionX() < Width &&
+		RequestedCell.GetPositionX() >= 0 &&
+		RequestedCell.GetPositionY() >= Height)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX(),
+			RequestedCell.GetPositionY() - MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::North);
+	}
+	// If on the bottom sides
+	else if (RequestedCell.GetPositionX() < 0 &&
+		RequestedCell.GetPositionY() >= Height)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() + MapSizeW,
+			RequestedCell.GetPositionY() - MapSizeH);
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::Northwest);
+	}
+	// If on the bottom sides
+	else if (RequestedCell.GetPositionX() < 0 &&
+		RequestedCell.GetPositionY() >= 0 &&
+		RequestedCell.GetPositionY() < Height)
+	{
+		StandardPos = MapCoordinate(
+			RequestedCell.GetPositionX() + MapSizeW,
+			RequestedCell.GetPositionY());
+
+		NewMap = CurrentMap->GetNeighbor(MapDirection::West);
+	}
+
+	if (!NewMap)
+	{
+		return nullptr;
+	}
+
+	return NewMap->GetAsset(
+		StandardPos.GetPositionX(),
+		StandardPos.GetPositionY());
+}
+
 
 //
 // HandleMapZoom()
@@ -1894,6 +2226,7 @@ Collision* MapManager::CheckCollidingPoint(Vector Position)
 
 	MapCoordinate Index = GetCellIndex(Position, CurrentMap, CellPos, OriginPostion);
 	MapCell* CurrCell = GetCellFromMaps(CurrentMap, Index);
+	MapAsset* CurrAsset = GetAssetFromMaps(CurrentMap, Index);
 
 	if (CurrCell && CurrCell->IsCollidableType())
 	{
@@ -1902,7 +2235,7 @@ Collision* MapManager::CheckCollidingPoint(Vector Position)
 	else return nullptr;
 }
 
-Vector MapManager::ConvertMapPositionToScreenPosition(MapCoordinate Position, Map* CurrentMap) 
+Vector MapManager::ConvertMapPositionToScreenPosition(MapCoordinate Position, Map* CurrentMap)
 {
 	MapCell* CurrCell = GetCellFromMaps(CurrentMap, Position);
 

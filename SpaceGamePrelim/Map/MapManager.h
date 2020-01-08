@@ -65,9 +65,10 @@ private:
 	MapAssetManager* m_AssetManager;
 	MapFactory* m_MapFactory;
 
-	Scene* m_ParentScene;
+	static Scene* m_ParentScene;
 
 	MapCell* GetCellFromMaps(Map* CurrentMap, MapCoordinate RequestedCell);
+	MapAsset* GetAssetFromMaps(Map* CurrentMap, MapCoordinate RequestedCell);
 	void SetLink(Map* NewMap);
 	void GenerateNeighbors();
 	void GenerateNeighbor(std::string MapType, MapDirection ActiveMapDir, MapDirection NewMapDir, MapCoordinate NewMapCoord);
@@ -80,13 +81,18 @@ private:
 	void UpdateCells();
 	void Zoom();
 	void CheckPhysicalConnections();
-	Collision* CheckCellForCollision(
-		Vector Position,
+	Collision* CheckCellForCollision(Vector Position,
 		MapCollisionDir
 		Direction,
 		MapDirection SpecDirection,
 		Vector Movement,
 		Rect ObjectDimensions,
+		GameEntity* Entity);
+	Collision* CheckAssetForCollision(Vector Position, 
+		MapCollisionDir Direction, 
+		MapDirection SpecDirection, 
+		Vector Movement, 
+		Rect ObjectDimensions, 
 		GameEntity* Entity);
 
 	void ComputeStartingOffsets();
@@ -151,8 +157,8 @@ public:
 		}
 	}
 
-	void SetParentScene(Scene* Parent) { m_ParentScene = Parent; }
-	Scene* GetParentScene() { return m_ParentScene; }
+	static void SetParentScene(Scene* Parent) { m_ParentScene = Parent; }
+	static Scene* GetParentScene() { return m_ParentScene; }
 	void HandleMapZoom();
 	void DrawGrid();
 	void Draw();

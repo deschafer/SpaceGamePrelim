@@ -4,6 +4,7 @@ MapWall::MapWall(Rect Dimensions, Scene* Parent) :
 	MapCell(Dimensions, Parent)
 {
 	m_ObjType = MapObjectTypes::CELL_WALL;
+	m_Collidable = false;
 }
 
 MapWall::~MapWall()
@@ -14,12 +15,14 @@ MapWall::MapWall(Rect Dimensions, Scene* Parent, std::vector<std::string> RedTex
 	MapCell(Dimensions, Parent, RedTextureIDs, Position, CellType)
 {
 	m_ObjType = MapObjectTypes::CELL_WALL;
+	m_Collidable = false;
 }
 
 MapWall::MapWall(Rect Dimensions, Scene* Parent, std::vector<std::string> RedTextureIDs, MapCoordinate Position, Rect DestRect, Cell CellType) :
 	MapCell(Dimensions, Parent, RedTextureIDs, Position, DestRect, CellType)
 {
 	m_ObjType = MapObjectTypes::CELL_WALL;
+	m_Collidable = false;
 }
 
 //

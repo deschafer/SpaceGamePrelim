@@ -1,6 +1,6 @@
 
 #include "Door.h"
-
+#include "..\MapManager.h"
 
 #include <iostream>
 
@@ -9,6 +9,8 @@ using namespace std;
 Door::Door(Rect Dimensions, Scene* ParentScene) : 
 	MapAsset(Dimensions, ParentScene)
 {
+	SetInteractable(true);
+
 	Vector ScreenPosition = GetLocatableScreenPosition();
 
 	m_DoorOpen = new SimpleEntity(Rect(ScreenPosition.getX(), ScreenPosition.getY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene);
@@ -36,6 +38,9 @@ MapAsset* Door::Copy()
 
 	// reset the copied asset
 	NewDoor->Reset();
+	NewDoor->ClearState();
+	NewDoor->SetInteractable(true);
+	NewDoor->SetParentScene(MapManager::GetParentScene());
 
 	return NewDoor;
 }
@@ -44,13 +49,27 @@ bool Door::OnInteraction(GameEntity* object)
 {
 	cout << "Interaction made with door" << endl;
 
+	SetColor(255, 0, 0, 255);
+
+	m_Open = !m_Open;
+	if (m_Open)
+	{
+		// set the collidable map cell at this point as not collidable as well
+		m_Collidable = false;
+	}
+	else
+	{
+		m_Collidable = true;
+	}
+
+	/*
 	if (!m_CurrentAction) 
 	{
 		// then we need to create a new animation
 		if (m_Open)
 		{
 			// then we close the door
-			m_CurrentAction = new AnimationChangeAction(this, "DoorClosing", 500, m_Dimensions, m_ParentScene);
+			m_CurrentAction = new AnimationChangeAction(this, "DoorClosing", 50, m_Dimensions, m_ParentScene);
 
 			m_CurrentAction->SetInitialImage(m_DoorOpen);
 			m_CurrentAction->SetChangeImage(m_DoorClosing);
@@ -64,7 +83,7 @@ bool Door::OnInteraction(GameEntity* object)
 		else
 		{
 			// then we open the door
-			m_CurrentAction = new AnimationChangeAction(this, "DoorOpening", 500, m_Dimensions, m_ParentScene);
+			m_CurrentAction = new AnimationChangeAction(this, "DoorOpening", 50, m_Dimensions, m_ParentScene);
 
 			m_CurrentAction->SetInitialImage(m_DoorClosed);
 			m_CurrentAction->SetChangeImage(m_DoorOpening);
@@ -76,6 +95,7 @@ bool Door::OnInteraction(GameEntity* object)
 			m_Collidable = false;
 		}
 	}
+	*/
 
 	return false;
 }

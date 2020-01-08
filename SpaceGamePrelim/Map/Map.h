@@ -72,6 +72,8 @@ public:
 
 	void Generate();
 	MapObject* GetCell(int X, int Y);
+	MapObject* GetCell(MapCoordinate Coord);
+	MapAsset* GetAsset(int X, int Y);
 	MapObject* GetCorridorCell(int X, int Y);
 	MapObject*** GetCellArray() { return m_Cells; }
 	MapObject**** GetCellArrayAddress() { return &m_Cells; }

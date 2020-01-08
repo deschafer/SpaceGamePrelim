@@ -45,7 +45,11 @@ void Action::Stop()
 
 void Action::Update()
 {
-	m_CurrentImage->Update();
+	if (m_CurrentImage)
+	{
+		m_CurrentImage->Update();
+		m_CurrentImage->SetDimensions(m_DrawableObject->GetDimensions());
+	}
 }
 
 bool Action::Draw(double X, double Y)

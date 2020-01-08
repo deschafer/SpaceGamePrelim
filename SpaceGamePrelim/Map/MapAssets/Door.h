@@ -24,7 +24,7 @@ private:
 	AnimationChangeAction *m_CurrentAction = nullptr;
 
 public:
-	Door() : Door(Rect (0,0,0,0), nullptr) {}
+	Door() = delete;
 	Door(Rect Dimensions, Scene* Parent);
 	~Door();
 

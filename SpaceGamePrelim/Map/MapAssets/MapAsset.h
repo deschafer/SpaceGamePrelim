@@ -8,7 +8,6 @@ class MapAsset : public MapCell
 {
 protected:
 
-	bool m_Collidable;
 	bool m_Updated;
 	bool m_Drawn;
 	int m_IntegerWidth;

@@ -131,6 +131,29 @@ MapObject* Map::GetCell(int X, int Y)
 	}
 }
 
+//
+// GetCell()
+// Gets the cell from m_Cells specefied by position
+// X,Y. If not within the bounds of m_Cells,
+// it will return nullptr, so check the return.
+//
+MapObject* Map::GetCell(MapCoordinate Coord)
+{
+	return GetCell(Coord.GetPositionX(), Coord.GetPositionY());
+}
+
+MapAsset* Map::GetAsset(int X, int Y)
+{
+	if (X < m_Width && X >= 0 && Y < m_Height && Y >= 0)
+	{
+		return m_Assets[X][Y];
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
 MapObject* Map::GetCorridorCell(int X, int Y)
 {
 	if (X < m_Width && X >= 0 && Y < m_Height && Y >= 0)

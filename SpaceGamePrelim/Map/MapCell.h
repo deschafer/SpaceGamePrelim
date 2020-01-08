@@ -34,6 +34,8 @@ protected:
 	Cell m_CellType;		// Type of this cell object
 	Rect m_DestRect;		// Width and height of this individual object
 	Rect m_OriginSize;
+	bool m_Collidable = false;
+
 
 	// Texture Properties -- have to be list to support multiple textures
 	std::vector<int> m_CurrentFrame;
@@ -70,7 +72,7 @@ public:
 	virtual void Zoom();
 	virtual bool Draw(double X, double Y);
 	virtual bool OnCollision(GameEntity* Enitity);
-	virtual bool IsCollidableType() { return false; }
+	virtual bool IsCollidableType() { return m_Collidable; }
 	virtual void Update();
 	virtual ~MapCell();
 

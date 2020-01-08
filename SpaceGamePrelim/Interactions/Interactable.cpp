@@ -8,17 +8,40 @@ bool Interactable::OnInteraction(GameEntity * InteractingEntity)
 	return m_Interactable;
 }
 
-Interactable::Interactable(bool IsInteractable) :
-	m_Interactable(IsInteractable)
+void Interactable::SetInteractable(bool IsInteractable)
 {
-	// add this interactable to the InteractionManager
-	try 
+	if (IsInteractable && !m_Interactable)
 	{
-		m_InteractableIndex = InteractionManager::Instance()->AddInteractable(this);
+		m_Interactable = IsInteractable;
+
+		// then we need to add to the interactable list
+		InteractionManager::Instance()->AddInteractable(this);
+	} 
+	else if (!IsInteractable && m_Interactable)
+	{
+		m_Interactable = IsInteractable;
+
+		// then we need to add to the interactable list
+		InteractionManager::Instance()->RemoveInteractable(m_InteractableIndex);
 	}
-	catch (...) 
+}
+
+Interactable::Interactable(bool IsInteractable) :
+	m_Interactable(IsInteractable),
+	m_InteractableIndex(0)
+{
+	if (m_Interactable)
 	{
-		std::cout << "Expection thrown, Interactable::Interactable(bool arg)\n";
+
+		// add this interactable to the InteractionManager
+		try
+		{
+			m_InteractableIndex = InteractionManager::Instance()->AddInteractable(this);
+		}
+		catch (...)
+		{
+			std::cout << "Expection thrown, Interactable::Interactable(bool arg)\n";
+		}
 	}
 }
 

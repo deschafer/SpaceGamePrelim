@@ -90,12 +90,6 @@ void Corridor::AddAsset(MapCoordinate CellPosition, MapAsset* Cell)
 
 	if ((X < m_Width) && (Y < m_Height) && (Y >= 0) && (X >= 0))
 	{
-		// add to assets to be kept track of as an asset
-		if (m_Assets[X][Y]) {
-			delete m_Assets[X][Y];
-		}
-		m_Assets[X][Y] = Cell;
-
 		// KEYWORD: CollFix -- remove this once asset collisions work
 		// we need collisions to check assets as well
 		// Also add to cells for collisions
