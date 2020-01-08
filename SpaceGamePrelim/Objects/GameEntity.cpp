@@ -134,7 +134,7 @@ void GameEntity::Update()
 		m_Velocity.setY(0);
 
 	// set the dimensions of the drawable class
-	Drawable::m_Dimensions = Rect(m_Position.getX(), m_Position.getY(), m_DestDimensions.Width(), m_DestDimensions.Height());
+	Drawable::m_Dimensions = Rect(m_Position, m_DestDimensions.Width(), m_DestDimensions.Height());
 }
 
 
@@ -150,7 +150,7 @@ bool GameEntity::Draw()
 		SDL_Renderer* Temp = MainApplication::Instance()->GetRenderer();
 		SetLocatableScreenPosition(m_Position);
 
-		TextureManager::Instance()->DrawCurrentFrame(
+		TextureManager::Instance()->DrawFrame(
 			static_cast<int>(round(m_Position.getX())),
 			static_cast<int>(round(m_Position.getY())),
 			m_RedTextureIndex,

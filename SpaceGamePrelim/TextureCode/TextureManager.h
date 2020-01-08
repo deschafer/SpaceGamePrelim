@@ -48,27 +48,7 @@ public:
 	int RemoveTexture(std::string TextureID);
 	void SetReducedTexture(std::string ID, TextureProperties* Properties);
 
-	void DrawCurrentFrame(
-		int X, 
-		int Y, 
-		int RedIndex, 
-		SDL_RendererFlip Flip, 
-		SDL_Renderer *pRenderer, 
-		Rect DestRect,
-		int CurrentRow, 
-		int CurrentFrame = 1);
-	void DrawStaticFrame(
-		int X, 
-		int Y, 
-		int RedIndex, 
-		SDL_Renderer *pRenderer);
-	void DrawStaticFrame(
-		int X, 
-		int Y, 
-		int RedIndex, 
-		Rect DestDimesnions,
-		SDL_Renderer *pRenderer);
-	void DrawCurrentFrame(
+	void DrawFrame(
 		int X,
 		int Y,
 		int RedIndex,
@@ -78,19 +58,6 @@ public:
 		SDL_Color Color,
 		int CurrentRow,
 		int CurrentFrame = 1);
-	void DrawStaticFrame(
-		int X,
-		int Y,
-		int RedIndex,
-		SDL_Renderer *pRenderer,
-		SDL_Color Color);
-	void DrawStaticFrame(
-		int X,
-		int Y,
-		int RedIndex,
-		Rect DestDimesnions,
-		SDL_Renderer *pRenderer,
-		SDL_Color Color);
 
 	void AddTextureGroup(std::string GroupID, std::vector<std::string> ReducedTextures);
 	std::string GetReducedFromTextureGrp(std::string TextureGroupID);

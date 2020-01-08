@@ -3,6 +3,7 @@
 #include <vector>
 #include <list>
 #include <iostream>
+#include <mutex>
 
 #include "..\Parsing\TinyXML\tinyxml.h"
 #include "RoomManager.h"
@@ -60,17 +61,12 @@ public:
 		std::vector<unsigned> &GlobalAssets, 
 		unsigned &LocalAssets)
 	{
-		static bool Entry = false;
-
-		// Preventing access from multiple threads
-		while (Entry);
-			Entry = true;
+		m_Mutex.lock();
 
 		RoomProperties* Properties = nullptr;
 		int Random = rand() % (m_QueuedPossibleRooms.size());
 		std::pair<RoomProperties*, std::string> CurrentSet;	
 		unsigned CurrentAssetList;
-
 
 		// Randomize the list
 		for (int i = 0; i < Random; i++)
@@ -108,16 +104,15 @@ public:
 			if (Properties->m_MinHeight <= RoomHeight &&
 				Properties->m_MinWidth <= RoomWidth)
 			{
-				Entry = false;
 				RoomType = CurrentSet.second;
 				GlobalAssets = m_GlobalAssetListIDs;
 				LocalAssets = CurrentAssetList;
-				
-				return Properties;
 			}
+			else Properties = nullptr;
 		}
-		Entry = false;
-		return nullptr;
+
+		m_Mutex.unlock();
+		return Properties;
 	}
 
 private:
@@ -129,6 +124,8 @@ private:
 	std::list<unsigned> m_QueuedAssetListIDs;		// local assets only
 
 	std::string m_MapTypeName;
+
+	std::mutex m_Mutex;
 
 	int m_MinRoomWidth;
 	int m_MinRoomHeight;

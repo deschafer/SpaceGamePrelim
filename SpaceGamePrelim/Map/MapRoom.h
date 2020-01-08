@@ -71,7 +71,7 @@ public:
 
 	void SetBorderingRoom() { m_BorderingRoom = true; }
 
-	MapRoom();
+	MapRoom() = delete;
 	MapRoom(std::string RoomType, int Width, int Height, Map* ParentMap); // Known room
 	MapRoom(std::string RoomType, int Width, int Height, Map* ParentMap, std::vector<unsigned> AssetLists);
 	MapRoom(int Width, int Height);						  // Random room

@@ -21,8 +21,8 @@ public:
 	}
 	Rect(Vector Position, int NewWidth, int NewHeight)
 	{
-		m_TopLeftX = Position.getX();
-		m_TopLeftY = Position.getY();
+		m_TopLeftX = (int)Position.getX();
+		m_TopLeftY = (int)Position.getY();
 		m_Width = NewWidth;
 		m_Height = NewHeight;
 	}

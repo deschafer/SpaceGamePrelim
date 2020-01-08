@@ -28,40 +28,14 @@ MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
 	std::vector<std::string> RedTextureIDs, MapCoordinate Position,
 	Cell CellType) : 
 	m_CellType(CellType),
-	m_DestRect(0, 0, 0, 0),
-	Interactable(true),
-	MapObject(Rect(m_Position.GetPositionX(), m_Position.GetPositionY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene)
-{
-	MapCell(Dimensions, ParentScene);
-
-	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
-
-	TextureManager* Manager = TextureManager::Instance();
-	// Getting the proper indices for each of the textures 
-	// associated with this object
-	for (size_t i = 0; i < m_RedTextureIDs->size(); i++)
-	{
-		m_RedTextureIndex.push_back(Manager->GetRedTextureIndex((*m_RedTextureIDs)[i]));
-	}
-
-	MapObject::m_Position = Position;
-}
-
-//
-// MapCell()
-// For a MapCell that has animated textures with assoc properties
-//
-MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
-	std::vector<std::string> RedTextureIDs, std::vector<TextureProperties*> Properties, MapCoordinate Position,
-	Cell CellType) :
-	m_CellType(CellType),
-	m_Animated(true),
-	m_DestRect(0, 0, 0, 0),
+	m_Animated(false),
 	m_OriginSize(m_DestRect),
+	m_DestRect(0, 0, 0, 0),
 	Interactable(true),
 	MapObject(Rect(m_Position.GetPositionX(), m_Position.GetPositionY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene)
 {
-	TextureProperties* CurrentProp;
+	
+
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
 
 	TextureManager* Manager = TextureManager::Instance();
@@ -73,18 +47,6 @@ MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
 	}
 
 	MapObject::m_Position = Position;
-
-	// For each of the properties, save them to the approp pos
-	for (size_t i = 0; i < Properties.size(); i++)
-	{
-		CurrentProp = Properties[i];
-		m_AnimationSpeed.push_back(CurrentProp->GetAnimationSpeed());
-		m_NumberFrames.push_back(CurrentProp->GetNumberFrames());
-
-		m_CurrentFrame.push_back(1);
-		m_CurrentRow.push_back(1);
-	}
-
 }
 
 //
@@ -97,10 +59,11 @@ MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
 	Rect DstDimen, Cell CellType) :
 	m_CellType(CellType),
 	m_DestRect(DstDimen),
+	m_Animated(false),
+	m_OriginSize(m_DestRect),
 	Interactable(true),
 	MapObject(Rect(m_Position.GetPositionX(), m_Position.GetPositionY(), m_DestRect.Width(), m_DestRect.Height()), ParentScene)
 {
-	MapCell(Dimensions, ParentScene);
 
 	m_RedTextureIDs = new std::vector<std::string>(RedTextureIDs);
 
@@ -151,14 +114,17 @@ void MapCell::SetLocatableScreenPosition(Vector Position)
 //
 bool MapCell::Draw(double X, double Y)
 {
-	if (MapObject::Draw()) {
+	if (MapObject::Draw(X,Y)) {
+
+		Zoom();
+
 		// set this as our last screen position
 		SetLocatableScreenPosition(Vector((float)X, (float)Y));
 
 		// Drawing each texture with its respective properties
 		for (size_t i = 0; i < m_RedTextureIndex.size(); i++)
 		{
-			TextureManager::Instance()->DrawCurrentFrame(
+			TextureManager::Instance()->DrawFrame(
 				(int)X,
 				(int)Y,
 				m_RedTextureIndex[i],
@@ -166,8 +132,8 @@ bool MapCell::Draw(double X, double Y)
 				MainApplication::Instance()->GetRenderer(),
 				m_DestRect,
 				GetColor(),
-				m_CurrentRow[i],
-				m_CurrentFrame[i]
+				1,
+				0
 			);
 		}
 	}

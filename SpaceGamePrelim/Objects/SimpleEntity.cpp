@@ -20,7 +20,7 @@ bool SimpleEntity::Draw(double X, double Y)
 		// for each of the textures assoc. with this object, it gets drawn
 		for (size_t i = 0; i < m_TextureSet.size(); i++)
 		{
-			TextureManager::Instance()->DrawCurrentFrame(
+			TextureManager::Instance()->DrawFrame(
 				m_Dimensions.TopLeftX(),
 				m_Dimensions.TopLeftX(),
 				m_TextureIndicesSet[i],

@@ -5,7 +5,7 @@ Drawable::Drawable(Rect Dimensions, Scene* ParentScene) :
 	m_Dimensions(Dimensions),
 	m_Visible(true),
 	m_ParentScene(ParentScene),
-	Locatable(Vector(Dimensions.TopLeftX(), Dimensions.TopLeftY()))
+	Locatable(Vector((float)Dimensions.TopLeftX(), (float)Dimensions.TopLeftY()))
 {
 	if (ParentScene)
 		ParentScene->AddDrawable(this);

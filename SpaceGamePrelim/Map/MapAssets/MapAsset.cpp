@@ -9,6 +9,9 @@ MapAsset::MapAsset(Rect Dimensions, Scene* Parent) :
 	m_IntegerWidth((int)ceil(m_DestRect.Width() / MapManager::GetCellSourceWidth())),
 	m_ParentRoom(nullptr),
 	m_ParentMap(nullptr),
+	m_Collidable(true),
+	m_Drawn(false),
+	m_Updated(false),
 	MapCell(Dimensions, Parent)
 {
 }
@@ -27,10 +30,11 @@ MapAsset::MapAsset(Rect Dimensions, Scene* ParentScene,
 	m_IntegerHeight((int)ceil(m_DestRect.Height() / MapManager::GetCellSourceHeight())),
 	m_IntegerWidth((int)ceil(m_DestRect.Width() / MapManager::GetCellSourceWidth())),
 	m_ParentRoom(nullptr),
-	m_ParentMap(nullptr)
+	m_ParentMap(nullptr), 
+	m_Collidable(true),
+	m_Drawn(false),
+	m_Updated(false)
 {
-	m_Updated = false;
-	m_Drawn = false;
 	m_ParentRoom = Parent;
 }
 

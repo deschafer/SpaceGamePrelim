@@ -48,11 +48,6 @@ protected:
 		Cell CellType);
 	MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
 		std::vector<std::string> RedTextureIDs,
-		std::vector<TextureProperties*> Properties,
-		MapCoordinate Position,
-		Cell CellType);
-	MapCell::MapCell(Rect Dimensions, Scene* ParentScene,
-		std::vector<std::string> RedTextureIDs,
 		MapCoordinate Position,
 		Rect DstDimen,
 		Cell CellType);

@@ -42,8 +42,6 @@ const static int MinCandidateSideLength = 2;
 const static int ReflectionChance = 2;
 
 
-MapRoom::MapRoom()
-{}
 MapRoom::~MapRoom()
 {
 	//TODO: Implement proper destruction here
@@ -117,7 +115,16 @@ MapRoom::MapRoom(std::string RoomType, int Width, int Height, Map* ParentMap, st
 // CTOR that should be used to create a MapRoom with an unknown type
 // NOTE: May not be staying in final version due to min room size complications
 //
-MapRoom::MapRoom(int Width, int Height)
+MapRoom::MapRoom(int Width, int Height) :
+	m_Assets(nullptr),
+	m_BorderingRoom(nullptr),
+	m_CellHeight(MapManager::GetCellHeight()),
+	m_CellWidth(MapManager::GetCellWidth()),
+	m_ParentMap(nullptr),
+	m_Doorways(nullptr),
+	m_CellSpawnGroupSize(0),
+	m_CountCells(0),
+	m_CellSpawnRate(0)
 {
 	// Getting the properties assoc with this room type
 	m_Properties = RoomManager::Instance()->GetRandomTypeDefinition(m_RoomType);
@@ -1078,7 +1085,7 @@ void MapRoom::Generate()
 				tempStr.push_back(WallSideRight);
 
 				m_Cells[Start][0] = new MapWall(Rect(0,0,m_CellWidth, m_CellHeight), 
-					MapManager::Instance()->GetParentScene(), 
+					nullptr,
 					tempStr,
 					MapCoordinate(TempX, TempY), 
 					Rect(0, 0, m_CellWidth, m_CellHeight), 
@@ -1133,7 +1140,7 @@ void MapRoom::Generate()
 
 			// Finally, creating a new map cell representing the outer walls of this room
 			m_Cells[TempX][TempY] = new MapWall(Rect(0, 0, m_CellWidth, m_CellHeight),
-				MapManager::Instance()->GetParentScene(), 
+				nullptr,
 				tempStr, 
 				MapCoordinate(TempX, TempY), 
 				Rect(0, 0, m_CellWidth, m_CellHeight), 
@@ -1319,7 +1326,7 @@ void MarkFloorTile(MapObject*** &Cells, int X, int Y, int XMax, int YMax)
 	{
 		Strings.push_back(TextureManager::Instance()->GetReducedFromTextureGrp(FloorGroup));
 		Cells[X][Y] = new MapInactive(Rect(0, 0, MapManager::ActiveCellsWidth, MapManager::ActiveCellsHeight),
-			MapManager::Instance()->GetParentScene(), Strings, MapCoordinate(X * Width, Y * Height), Rect(0, 0, Width, Height), Cell::Floor);
+			nullptr, Strings, MapCoordinate(X * Width, Y * Height), Rect(0, 0, Width, Height), Cell::Floor);
 	}
 	// One cell to the east
 	if ((X + 1) < XMax &&
