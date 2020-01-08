@@ -253,8 +253,6 @@ bool SceneFactory::LoadNewScene(std::string Filename, Scene* LoadingScene)
 			}
 		}
 	}
-	// Before finishing, set the new objects
-	LoadingScene->SetGameObjects(ParsedObjects);
 
 	return true;
 }

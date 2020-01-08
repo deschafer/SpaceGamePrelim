@@ -34,6 +34,7 @@ void Action::Start()
 void Action::Stop()
 {
 	m_Start = false;
+	m_Completed = true;
 
 	// set the drawable back as visible when complete
 	if (m_DrawableObject)

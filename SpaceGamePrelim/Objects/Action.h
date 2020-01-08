@@ -11,6 +11,7 @@ class Action : public Drawable
 {
 private:
 	bool m_Start;
+	bool m_Completed = false;
 	std::string m_Name;
 	double m_Duration;
 	Rect m_Dimensions;
@@ -36,6 +37,8 @@ public:
 	// this is implementation dependent
 	virtual void Start();
 	virtual void Stop();
+	virtual bool IsCompleted() { return m_Completed; }
+	virtual bool IsStarted() { return m_Start; }
 
 	virtual void Update();
 

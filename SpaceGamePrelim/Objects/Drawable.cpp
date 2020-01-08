@@ -1,5 +1,6 @@
 #include "Drawable.h"
 #include "..\Scene\Scene.h"
+#include "Action.h"
 
 Drawable::Drawable(Rect Dimensions, Scene* ParentScene) :
 	m_Dimensions(Dimensions),
@@ -19,6 +20,26 @@ Drawable::~Drawable()
 
 bool Drawable::Draw(double X, double Y)
 {
+	Action* RemovedAction = nullptr;
+
+	for (Action* CurrAction : m_Actions)
+	{
+		if (CurrAction && CurrAction->IsStarted())
+		{
+			continue;
+		}
+		else if (CurrAction->IsCompleted())
+		{
+			RemovedAction = CurrAction;
+		}
+	}
+	
+	if (RemovedAction)
+	{
+		m_Actions.remove(RemovedAction);
+		delete RemovedAction;
+	}
+
 	return m_Visible;
 }
 

@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "..\Map\MapAssets\Door.h"
+#include "..\Frame\ZoomManager.h"
 
 std::mutex InteractionManager::m_InstanceMutex;
 std::mutex InteractionManager::m_GetMutex;
@@ -45,6 +46,8 @@ void InteractionManager::InteractWithSurroundings(GameEntity* InteractingEntity)
 
 	std::vector<Interactable*> InteractingObjects;
 
+	double InteractionDistance = ZoomManager::Instance()->GetScale() * m_InteractionDistance;
+
 	// we iterate through all of our interactables
 	for (Interactable* CurrentInteractable : m_Interactables)
 	{
@@ -53,7 +56,7 @@ void InteractionManager::InteractWithSurroundings(GameEntity* InteractingEntity)
 			Vector Difference = InteractingEntity->GetLocatableScreenPosition() - CurrentInteractable->GetInteractablePosition();
 
 			// then get the magnitude of the difference vector
-			if (Difference.length() <= m_InteractionDistance && Difference.length() >= 0)
+			if (Difference.length() <= InteractionDistance && Difference.length() >= 0)
 			{
 				// then add this to the InteractingObjects vector
 				InteractingObjects.push_back(CurrentInteractable);

@@ -5,7 +5,10 @@ AnimationChangeAction::AnimationChangeAction(Drawable* DrawableObject,
 	double Duration, 
 	Rect Position, 
 	Scene* Parent) : 
-	Action(DrawableObject, Name, Duration, Position, Parent)
+	Action(DrawableObject, Name, Duration, Position, Parent),
+	m_FirstImage(nullptr),
+	m_LastImage(nullptr),
+	m_MiddleAnimation(nullptr)
 {
 	// we create a new simple entity with the dimensions and parent scene of the action
 	m_FirstImage = new SimpleEntity(GetDimensions(), GetParentScene());

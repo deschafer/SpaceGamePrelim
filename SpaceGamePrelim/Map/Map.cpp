@@ -170,8 +170,6 @@ void Map::Generate()
 		Index++;
 	}
 
-	cout << "Generating phase two\n";
-
 	// Pot.Asset.Placement -- search term. this is being considered for asset placement
 	// if we place assets here, we can consider doorways
 	// however, we have to consider the border rooms of this map that are not
@@ -180,7 +178,7 @@ void Map::Generate()
 	// Adding assets to every room
 	// For each room where assets are added, get that position and add them to the map
 
-	PlaceAssets();
+	//PlaceAssets();
 
 	// At this point in time, the entire map has been generated and all 
 	// of the rooms have been made and connected together.

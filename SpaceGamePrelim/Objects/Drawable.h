@@ -1,11 +1,14 @@
 #pragma once
 
 #include <vector>
+#include <list>
 
 #include "Colorable.h"
 #include "Locatable.h"
 #include "../BasicTypes/BasicTypes.h"
+
 class Scene;
+class Action;
 
 //
 // Purpose of this class is to provide an abstract interface to all drawn objects in the game.
@@ -24,6 +27,7 @@ protected:
 	bool m_Visible;
 	Rect m_Dimensions;	// dimensions in the game space, not the source texture dimensions
 	Scene* m_ParentScene;
+	std::list<Action*> m_Actions;
 
 public:
 
@@ -53,6 +57,8 @@ public:
 	Rect SetDimensions(Rect Dim) { m_Dimensions = Dim; m_LocatableScreenPosition = Vector((float)Dim.TopLeftX(), (float)Dim.TopLeftY()); }
 	void SetParentScene(Scene* ParentScene);
 	Scene* GetParentScene() { return m_ParentScene; }
+
+	virtual void AddAction(Action* NewAction) { m_Actions.push_back(NewAction);	}
 
 	// same with color, classes need to implement this
 	SDL_Color GetColor() { return m_Color; }
