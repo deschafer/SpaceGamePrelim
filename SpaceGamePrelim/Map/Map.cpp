@@ -180,7 +180,7 @@ void Map::Generate()
 	// Adding assets to every room
 	// For each room where assets are added, get that position and add them to the map
 
-	PlaceAssets();
+	// PlaceAssets();
 
 	// At this point in time, the entire map has been generated and all 
 	// of the rooms have been made and connected together.

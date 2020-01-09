@@ -16,7 +16,6 @@ class Scene
 protected:
 
 	std::string m_SceneID;
-	std::vector<GameObject*> m_Objects;
 	std::list<Drawable*> m_Drawables;
 	std::map<std::string, Callback> m_Handlers;
 	
@@ -30,10 +29,10 @@ public:
 
 	std::string GetSceneID() { return m_SceneID; }
 	bool IsPauseScreen() { return m_PauseScreen; }
-	void SetGameObjects(std::vector<GameObject*> Objects) {
-		m_Objects.clear();
+	void SetDrawables(std::vector<Drawable*> Objects) {
+		m_Drawables.clear();
 		for (size_t i = 0; i < Objects.size(); i++)
-			m_Objects.push_back(Objects[i]);
+			m_Drawables.push_back(Objects[i]);
 	}
 	void AddDrawable(Drawable* NewDrawable) { m_Drawables.push_back(NewDrawable); }
 	void RemoveDrawable(Drawable* SelDrawable) { m_Drawables.remove(SelDrawable); }

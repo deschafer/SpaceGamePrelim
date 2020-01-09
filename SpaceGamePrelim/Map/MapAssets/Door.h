@@ -15,8 +15,18 @@ private:
 	SimpleEntity* m_DoorClosing;
 	SimpleEntity* m_DoorOpening;
 
+	Door() : Door(Rect(-1,-1,-1,-1), nullptr) {}
+
+	static const std::string m_DoorOpenStr;
+	static const std::string m_DoorClosedStr;
+	static const std::string m_DoorClosingStr; 
+	static const std::string m_DoorOpeningStr;
+
+protected:
+	Door(Door const&) = default;
+	Door& operator=(Door const&) = default;
+
 public:
-	Door() = delete;
 	Door(Rect Dimensions, Scene* Parent);
 	~Door();
 
